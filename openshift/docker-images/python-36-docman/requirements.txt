@@ -1,1 +1,1 @@
-../../../services/document-manager/requirements.txt
+../../../services/document-manager/backend/requirements.txt
