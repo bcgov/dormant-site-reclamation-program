@@ -1,7 +1,7 @@
 {
   "name": "dsrp-react-public-app",
   "version": "0.1.0",
-  "description": "React.js public frontend for DUCK application",
+  "description": "React.js public frontend for DSRP application",
   "private": true,
   "homepage": "${BASE_PATH}/",
   "dependencies": {
