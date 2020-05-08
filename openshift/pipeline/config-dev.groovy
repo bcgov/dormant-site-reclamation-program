@@ -287,6 +287,26 @@ app {
                 //             'MEMORY_LIMIT':"${vars.resources.digdag.memory_limit}"
                 //     ]
                 // ]
+                [
+                    'file':'openshift/templates/tools/metabase.dc.json',
+                    'params':[
+                            'NAME':"metabase",
+                            'NAME_DATABASE':"metabase-postgres",
+                            'VERSION':"${app.deployment.version}",
+                            'SUFFIX': "${vars.deployment.suffix}",
+                            'METABASE_PVC_SIZE':"${vars.METABASE_PVC_SIZE}",
+                            'ENVIRONMENT_NAME':"${app.deployment.env.name}",
+                            'APPLICATION_DOMAIN': "${vars.modules.'metabase'.HOST}",
+                            'CPU_REQUEST':"${vars.resources.metabase.cpu_request}",
+                            'CPU_LIMIT':"${vars.resources.metabase.cpu_limit}",
+                            'MEMORY_REQUEST':"${vars.resources.metabase.memory_request}",
+                            'MEMORY_LIMIT':"${vars.resources.metabase.memory_limit}",
+                            'DB_CPU_REQUEST':"${vars.resources.metabase.db_cpu_request}",
+                            'DB_CPU_LIMIT':"${vars.resources.metabase.db_cpu_limit}",
+                            'DB_MEMORY_REQUEST':"${vars.resources.metabase.db_memory_request}",
+                            'DB_MEMORY_LIMIT':"${vars.resources.metabase.db_memory_limit}"
+                    ]
+                ],
         ]
     }
 }
@@ -298,6 +318,8 @@ environments {
             DOCUMENT_PVC_SIZE = '1Gi'
             BACKUP_VERIFICATION_PVC_SIZE = '200Mi'
             LOG_PVC_SIZE = '1Gi'
+            METABASE_PVC_SIZE = '5Gi'
+
             git {
                 changeId = "${opt.'pr'}"
             }
@@ -325,6 +347,16 @@ environments {
                     memory_limit = "256Mi"
                     replica_min = 1
                     replica_max = 1
+                }
+                metabase {
+                    cpu_request = "10m"
+                    cpu_limit = "200m"
+                    memory_request = "1Gi"
+                    memory_limit = "2Gi"
+                    db_cpu_request = "50m"
+                    db_cpu_limit = "100m"
+                    db_memory_request = "256Mi"
+                    db_memory_limit = "1Gi"
                 }
                 nginx {
                     cpu_request = "10m"
@@ -423,6 +455,9 @@ environments {
                 }
                 'dsrp-docgen-api' {
                     HOST = "http://docgen${vars.deployment.suffix}:3030"
+                }
+                'metabase' {
+                    HOST = "dsrp-metabase-${vars.deployment.suffix}.pathfinder.gov.bc.ca"
                 }
             }
         }
