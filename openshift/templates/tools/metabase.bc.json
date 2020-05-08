@@ -155,7 +155,7 @@
       "displayName": "Git Repo URL",
       "description": "The URL to the Git repository.",
       "required": true,
-      "value": "https://github.com/bcgov/mds.git"
+      "value": "https://github.com/bcgov/dormant-site-reclamation-program.git"
     },
     {
       "name": "VERSION",
