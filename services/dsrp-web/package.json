@@ -140,7 +140,7 @@
     "collectCoverageFrom": [
       "**/src/**/*.js",
       "!src/index.js",
-      "!src/app.js",
+      "!src/App.js",
       "!src/fetchEnv.js",
       "!src/assetsTransformer.js",
       "!src/setupTests.js"
