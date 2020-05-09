@@ -3,7 +3,7 @@
 import React from "react";
 import { Link, Redirect, Route, Switch } from "react-router-dom";
 import { Result, Button, Icon, Typography } from "antd";
-import AuthenticationGuard from "@/HOC/AuthenticationGuard";
+import AuthenticationGuard from "@/hoc/AuthenticationGuard";
 import * as routes from "@/constants/routes";
 
 const { Text } = Typography;

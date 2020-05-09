@@ -9,7 +9,7 @@ import Routes from "./routes/Routes";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import ModalWrapper from "@/components/common/wrappers/ModalWrapper";
-import AuthenticationGuard from "@/HOC/AuthenticationGuard";
+import AuthenticationGuard from "@/hoc/AuthenticationGuard";
 import WarningBanner from "@/components/common/WarningBanner";
 import { detectIE } from "@/utils/environmentUtils";
 import configureStore from "./store/configureStore";
