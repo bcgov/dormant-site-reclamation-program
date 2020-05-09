@@ -2,7 +2,7 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "mds-docgen-dc",
+    "name": "dsrp-docgen-dc",
     "annotations": {
       "template.openshift.io/bindable": "false"
     }
@@ -143,9 +143,7 @@
             "type": "ImageChange",
             "imageChangeParams": {
               "automatic": true,
-              "containerNames": [
-                "${NAME}"
-              ],
+              "containerNames": ["${NAME}"],
               "from": {
                 "kind": "ImageStreamTag",
                 "name": "${NAME}:${VERSION}"

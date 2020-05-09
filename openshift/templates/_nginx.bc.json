@@ -2,7 +2,7 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "mds-nginx-bc",
+    "name": "dsrp-nginx-bc",
     "creationTimestamp": null
   },
   "parameters": [

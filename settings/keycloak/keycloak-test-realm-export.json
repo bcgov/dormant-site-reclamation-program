@@ -65,10 +65,7 @@
         "description": "Composite role access for Executive group",
         "composite": true,
         "composites": {
-          "realm": [
-            "core_view_all",
-            "nris_view_all"
-          ]
+          "realm": ["core_view_all", "nris_view_all"]
         },
         "clientRole": false,
         "containerId": "mds",
@@ -134,10 +131,7 @@
         "description": "Users who have access to the Core application, assigned by IDIR identity provider mapping",
         "composite": true,
         "composites": {
-          "realm": [
-            "core_view_all",
-            "nris_view_all"
-          ]
+          "realm": ["core_view_all", "nris_view_all"]
         },
         "clientRole": false,
         "containerId": "mds",
@@ -273,9 +267,7 @@
             "core_admin"
           ],
           "client": {
-            "central-scheduler": [
-              "admin"
-            ]
+            "central-scheduler": ["admin"]
           }
         },
         "clientRole": false,
@@ -334,9 +326,7 @@
         "description": "BCeID role for proponent minespace users.",
         "composite": true,
         "composites": {
-          "realm": [
-            "mds_minespace_proponents"
-          ]
+          "realm": ["mds_minespace_proponents"]
         },
         "clientRole": false,
         "containerId": "mds",
@@ -428,11 +418,7 @@
         "description": "Composite role access for Geospatial Group",
         "composite": true,
         "composites": {
-          "realm": [
-            "core_view_all",
-            "core_geospatial",
-            "nris_view_all"
-          ]
+          "realm": ["core_view_all", "core_geospatial", "nris_view_all"]
         },
         "clientRole": false,
         "containerId": "mds",
@@ -444,11 +430,7 @@
         "description": "Users who have access to the Minespace application, assigned by the BCeID identity provider mapping",
         "composite": true,
         "composites": {
-          "realm": [
-            "core_view_all",
-            "core_edit_variances",
-            "nris_view_all"
-          ]
+          "realm": ["core_view_all", "core_edit_variances", "nris_view_all"]
         },
         "clientRole": false,
         "containerId": "mds",
@@ -498,10 +480,7 @@
         "description": "Realm Administrator",
         "composite": true,
         "composites": {
-          "realm": [
-            "offline_access",
-            "uma_authorization"
-          ],
+          "realm": ["offline_access", "uma_authorization"],
           "client": {
             "realm-management": [
               "view-users",
@@ -524,10 +503,7 @@
               "manage-authorization",
               "manage-identity-providers"
             ],
-            "account": [
-              "view-profile",
-              "manage-account"
-            ]
+            "account": ["view-profile", "manage-account"]
           }
         },
         "clientRole": false,
@@ -571,10 +547,7 @@
           "composite": true,
           "composites": {
             "client": {
-              "realm-management": [
-                "query-users",
-                "query-groups"
-              ]
+              "realm-management": ["query-users", "query-groups"]
             }
           },
           "clientRole": true,
@@ -657,9 +630,7 @@
           "composite": true,
           "composites": {
             "client": {
-              "realm-management": [
-                "query-clients"
-              ]
+              "realm-management": ["query-clients"]
             }
           },
           "clientRole": true,
@@ -840,9 +811,7 @@
           "composite": true,
           "composites": {
             "client": {
-              "account": [
-                "manage-account-links"
-              ]
+              "account": ["manage-account-links"]
             }
           },
           "clientRole": true,
@@ -867,10 +836,7 @@
       "name": "Abandoned Mines",
       "path": "/Abandoned Mines",
       "attributes": {},
-      "realmRoles": [
-        "mds_abandoned_mines",
-        "mds_users"
-      ],
+      "realmRoles": ["mds_abandoned_mines", "mds_users"],
       "clientRoles": {},
       "subGroups": []
     },
@@ -879,11 +845,7 @@
       "name": "Administrative Users",
       "path": "/Administrative Users",
       "attributes": {},
-      "realmRoles": [
-        "core_executive_view",
-        "mds_users",
-        "mds_administrative_users"
-      ],
+      "realmRoles": ["core_executive_view", "mds_users", "mds_administrative_users"],
       "clientRoles": {},
       "subGroups": []
     },
@@ -892,11 +854,7 @@
       "name": "Chief Inspector",
       "path": "/Chief Inspector",
       "attributes": {},
-      "realmRoles": [
-        "core_executive_view",
-        "mds_users",
-        "mds_chief_inspector"
-      ],
+      "realmRoles": ["core_executive_view", "mds_users", "mds_chief_inspector"],
       "clientRoles": {},
       "subGroups": []
     },
@@ -905,10 +863,7 @@
       "name": "Compliance and Enforcement",
       "path": "/Compliance and Enforcement",
       "attributes": {},
-      "realmRoles": [
-        "mds_compliance_enforcement",
-        "mds_users"
-      ],
+      "realmRoles": ["mds_compliance_enforcement", "mds_users"],
       "clientRoles": {},
       "subGroups": []
     },
@@ -917,10 +872,7 @@
       "name": "Core Application Admins",
       "path": "/Core Application Admins",
       "attributes": {},
-      "realmRoles": [
-        "core_executive_view",
-        "mds_application_admins"
-      ],
+      "realmRoles": ["core_executive_view", "mds_application_admins"],
       "clientRoles": {},
       "subGroups": []
     },
@@ -929,10 +881,7 @@
       "name": "Data Cleanup Team",
       "path": "/Data Cleanup Team",
       "attributes": {},
-      "realmRoles": [
-        "mds_users",
-        "mds_data_cleanup"
-      ],
+      "realmRoles": ["mds_users", "mds_data_cleanup"],
       "clientRoles": {},
       "subGroups": []
     },
@@ -941,11 +890,7 @@
       "name": "Executive",
       "path": "/Executive",
       "attributes": {},
-      "realmRoles": [
-        "mds_executive",
-        "core_executive_view",
-        "mds_users"
-      ],
+      "realmRoles": ["mds_executive", "core_executive_view", "mds_users"],
       "clientRoles": {},
       "subGroups": []
     },
@@ -954,10 +899,7 @@
       "name": "Geospatial",
       "path": "/Geospatial",
       "attributes": {},
-      "realmRoles": [
-        "mds_geospatial",
-        "mds_users"
-      ],
+      "realmRoles": ["mds_geospatial", "mds_users"],
       "clientRoles": {},
       "subGroups": []
     },
@@ -966,10 +908,7 @@
       "name": "Health and Safety",
       "path": "/Health and Safety",
       "attributes": {},
-      "realmRoles": [
-        "mds_health_safety",
-        "mds_users"
-      ],
+      "realmRoles": ["mds_health_safety", "mds_users"],
       "clientRoles": {},
       "subGroups": []
     },
@@ -978,9 +917,7 @@
       "name": "MDS Keycloak Realm Admin",
       "path": "/MDS Keycloak Realm Admin",
       "attributes": {},
-      "realmRoles": [
-        "admin"
-      ],
+      "realmRoles": ["admin"],
       "clientRoles": {},
       "subGroups": []
     },
@@ -989,10 +926,7 @@
       "name": "Major Mines Permitting",
       "path": "/Major Mines Permitting",
       "attributes": {},
-      "realmRoles": [
-        "mds_major_mines",
-        "mds_users"
-      ],
+      "realmRoles": ["mds_major_mines", "mds_users"],
       "clientRoles": {},
       "subGroups": []
     },
@@ -1001,9 +935,7 @@
       "name": "Mineral Titles",
       "path": "/Mineral Titles",
       "attributes": {},
-      "realmRoles": [
-        "mds_users"
-      ],
+      "realmRoles": ["mds_users"],
       "clientRoles": {},
       "subGroups": []
     },
@@ -1012,10 +944,7 @@
       "name": "Regional Mines Permitting",
       "path": "/Regional Mines Permitting",
       "attributes": {},
-      "realmRoles": [
-        "mds_regional_mines",
-        "mds_users"
-      ],
+      "realmRoles": ["mds_regional_mines", "mds_users"],
       "clientRoles": {},
       "subGroups": []
     },
@@ -1024,10 +953,7 @@
       "name": "Securities",
       "path": "/Securities",
       "attributes": {},
-      "realmRoles": [
-        "mds_securities",
-        "mds_users"
-      ],
+      "realmRoles": ["mds_securities", "mds_users"],
       "clientRoles": {},
       "subGroups": []
     },
@@ -1036,51 +962,35 @@
       "name": "View Only Role",
       "path": "/View Only Role",
       "attributes": {},
-      "realmRoles": [
-        "mds_users"
-      ],
+      "realmRoles": ["mds_users"],
       "clientRoles": {},
       "subGroups": []
     }
   ],
-  "defaultRoles": [
-    "offline_access",
-    "uma_authorization"
-  ],
-  "requiredCredentials": [
-    "password"
-  ],
+  "defaultRoles": ["offline_access", "uma_authorization"],
+  "requiredCredentials": ["password"],
   "otpPolicyType": "totp",
   "otpPolicyAlgorithm": "HmacSHA1",
   "otpPolicyInitialCounter": 0,
   "otpPolicyDigits": 6,
   "otpPolicyLookAheadWindow": 1,
   "otpPolicyPeriod": 30,
-  "otpSupportedApplications": [
-    "FreeOTP",
-    "Google Authenticator"
-  ],
+  "otpSupportedApplications": ["FreeOTP", "Google Authenticator"],
   "scopeMappings": [
     {
       "client": "central-scheduler",
-      "roles": [
-        "digdag_admin"
-      ]
+      "roles": ["digdag_admin"]
     },
     {
       "clientScope": "offline_access",
-      "roles": [
-        "offline_access"
-      ]
+      "roles": ["offline_access"]
     }
   ],
   "clientScopeMappings": {
     "account": [
       {
         "clientScope": "External_API_Client",
-        "roles": [
-          "view-profile"
-        ]
+        "roles": ["view-profile"]
       }
     ]
   },
@@ -1096,14 +1006,8 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
-      "redirectUris": [
-        "http://localhost:3000/*",
-        "https://localhost:3000/*"
-      ],
-      "webOrigins": [
-        "https://localhost:3000",
-        "http://localhost:3000"
-      ],
+      "redirectUris": ["http://localhost:3000/*", "https://localhost:3000/*"],
+      "webOrigins": ["https://localhost:3000", "http://localhost:3000"],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -1230,13 +1134,8 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
-      "optionalClientScopes": [
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "roles"],
+      "optionalClientScopes": ["offline_access"]
     },
     {
       "id": "dcf1f946-6ea2-42a4-8fe0-b05b037aa580",
@@ -1246,12 +1145,8 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
-      "redirectUris": [
-        "http://localhost:3020/*"
-      ],
-      "webOrigins": [
-        "http://localhost:3020"
-      ],
+      "redirectUris": ["http://localhost:3020/*"],
+      "webOrigins": ["http://localhost:3020"],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -1378,13 +1273,8 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
-      "optionalClientScopes": [
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "roles"],
+      "optionalClientScopes": ["offline_access"]
     },
     {
       "id": "68e59a57-6588-41bd-9f2d-14dd240158ee",
@@ -1395,11 +1285,7 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
-      "redirectUris": [
-        "http://localhost:8080/*",
-        "https://mds-digdag-dev-pr-1094.pathfinder.gov.bc.ca/*",
-        "https://mds-digdag-empr-mds-test.pathfinder.gov.bc.ca/*"
-      ],
+      "redirectUris": ["http://localhost:8080/*"],
       "webOrigins": [],
       "notBefore": 0,
       "bearerOnly": false,
@@ -1488,13 +1374,8 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
-      "optionalClientScopes": [
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "roles"],
+      "optionalClientScopes": ["offline_access"]
     },
     {
       "id": "a7d4e108-a78f-4387-9c77-53574e194ef9",
@@ -1504,12 +1385,8 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
-      "redirectUris": [
-        "https://minespace-dev.pathfinder.gov.bc.ca/*"
-      ],
-      "webOrigins": [
-        "https://minespace-dev.pathfinder.gov.bc.ca"
-      ],
+      "redirectUris": ["https://minespace-dev.pathfinder.gov.bc.ca/*"],
+      "webOrigins": ["https://minespace-dev.pathfinder.gov.bc.ca"],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -1678,13 +1555,8 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
-      "optionalClientScopes": [
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "roles"],
+      "optionalClientScopes": ["offline_access"]
     },
     {
       "id": "1b21e322-c1ef-4d1f-9051-2838fd373653",
@@ -1980,10 +1852,7 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
+      "defaultClientScopes": ["web-origins", "roles"],
       "optionalClientScopes": []
     },
     {
@@ -2128,13 +1997,8 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
-      "optionalClientScopes": [
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "roles"],
+      "optionalClientScopes": ["offline_access"]
     },
     {
       "id": "6aa7813a-c58d-44d8-97fb-3f9f3920121d",
@@ -2245,10 +2109,7 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
+      "defaultClientScopes": ["web-origins", "roles"],
       "optionalClientScopes": []
     },
     {
@@ -2260,9 +2121,7 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
-      "redirectUris": [
-        "/auth/admin/mds/console/*"
-      ],
+      "redirectUris": ["/auth/admin/mds/console/*"],
       "webOrigins": [],
       "notBefore": 0,
       "bearerOnly": false,
@@ -2378,10 +2237,7 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
+      "defaultClientScopes": ["web-origins", "roles"],
       "optionalClientScopes": []
     },
     {
@@ -2543,13 +2399,8 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
-      "optionalClientScopes": [
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "roles"],
+      "optionalClientScopes": ["offline_access"]
     },
     {
       "id": "3b606f35-0340-40ed-abd6-dc92f43c059a",
@@ -2561,12 +2412,8 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
-      "redirectUris": [
-        "https://minesdigitalservices-dev.pathfinder.gov.bc.ca/*"
-      ],
-      "webOrigins": [
-        "https://minesdigitalservices-dev.pathfinder.gov.bc.ca"
-      ],
+      "redirectUris": ["https://minesdigitalservices-dev.pathfinder.gov.bc.ca/*"],
+      "webOrigins": ["https://minesdigitalservices-dev.pathfinder.gov.bc.ca"],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -2693,13 +2540,8 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
-      "optionalClientScopes": [
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "roles"],
+      "optionalClientScopes": ["offline_access"]
     },
     {
       "id": "4c996ba4-e603-4146-8380-21f210a91369",
@@ -2709,9 +2551,7 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
-      "redirectUris": [
-        "https://minesdigitalservices-dev.pathfinder.gov.bc.ca/*"
-      ],
+      "redirectUris": ["https://minesdigitalservices-dev.pathfinder.gov.bc.ca/*"],
       "webOrigins": [],
       "notBefore": 0,
       "bearerOnly": false,
@@ -2783,11 +2623,7 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "External_API_Client",
-        "roles"
-      ],
+      "defaultClientScopes": ["web-origins", "External_API_Client", "roles"],
       "optionalClientScopes": []
     },
     {
@@ -2799,13 +2635,8 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
-      "defaultRoles": [
-        "view-profile",
-        "manage-account"
-      ],
-      "redirectUris": [
-        "/auth/realms/mds/account/*"
-      ],
+      "defaultRoles": ["view-profile", "manage-account"],
+      "redirectUris": ["/auth/realms/mds/account/*"],
       "webOrigins": [],
       "notBefore": 0,
       "bearerOnly": false,
@@ -2906,10 +2737,7 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
+      "defaultClientScopes": ["web-origins", "roles"],
       "optionalClientScopes": []
     }
   ],
@@ -3449,18 +3277,8 @@
       ]
     }
   ],
-  "defaultDefaultClientScopes": [
-    "role_list",
-    "profile",
-    "email",
-    "roles",
-    "web-origins"
-  ],
-  "defaultOptionalClientScopes": [
-    "address",
-    "phone",
-    "offline_access"
-  ],
+  "defaultDefaultClientScopes": ["role_list", "profile", "email", "roles", "web-origins"],
+  "defaultOptionalClientScopes": ["address", "phone", "offline_access"],
   "browserSecurityHeaders": {
     "xContentTypeOptions": "nosniff",
     "xRobotsTag": "none",
@@ -3480,9 +3298,7 @@
   "loginTheme": "bcgov-with-login-form",
   "eventsEnabled": false,
   "eventsExpiration": 7200,
-  "eventsListeners": [
-    "jboss-logging"
-  ],
+  "eventsListeners": ["jboss-logging"],
   "enabledEventTypes": [
     "SEND_RESET_PASSWORD",
     "UPDATE_TOTP",
@@ -3723,12 +3539,8 @@
         "subType": "anonymous",
         "subComponents": {},
         "config": {
-          "host-sending-registration-request-must-match": [
-            "true"
-          ],
-          "client-uris-must-match": [
-            "true"
-          ]
+          "host-sending-registration-request-must-match": ["true"],
+          "client-uris-must-match": ["true"]
         }
       },
       {
@@ -3746,9 +3558,7 @@
         "subType": "anonymous",
         "subComponents": {},
         "config": {
-          "max-clients": [
-            "200"
-          ]
+          "max-clients": ["200"]
         }
       },
       {
@@ -3777,9 +3587,7 @@
         "subType": "anonymous",
         "subComponents": {},
         "config": {
-          "allow-default-scopes": [
-            "true"
-          ]
+          "allow-default-scopes": ["true"]
         }
       },
       {
@@ -3808,9 +3616,7 @@
         "subType": "authenticated",
         "subComponents": {},
         "config": {
-          "allow-default-scopes": [
-            "true"
-          ]
+          "allow-default-scopes": ["true"]
         }
       }
     ],
@@ -3821,9 +3627,7 @@
         "providerId": "hmac-generated",
         "subComponents": {},
         "config": {
-          "priority": [
-            "100"
-          ]
+          "priority": ["100"]
         }
       },
       {
@@ -3832,9 +3636,7 @@
         "providerId": "rsa-generated",
         "subComponents": {},
         "config": {
-          "priority": [
-            "100"
-          ]
+          "priority": ["100"]
         }
       },
       {
@@ -3843,17 +3645,13 @@
         "providerId": "aes-generated",
         "subComponents": {},
         "config": {
-          "priority": [
-            "100"
-          ]
+          "priority": ["100"]
         }
       }
     ]
   },
   "internationalizationEnabled": false,
-  "supportedLocales": [
-    ""
-  ],
+  "supportedLocales": [""],
   "authenticationFlows": [
     {
       "id": "b236a7bd-cd94-4600-80b7-72cab676f525",

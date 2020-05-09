@@ -2,7 +2,7 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "mds-python-dc",
+    "name": "dsrp-python-dc",
     "creationTimestamp": null
   },
   "parameters": [
@@ -59,39 +59,19 @@
       "value": "/"
     },
     {
-      "name": "MDS_NROS_DOCUMENT_API_SECRET",
+      "name": "DSRP_IDIR_SECRET",
       "required": false,
-      "value": "template.mds-nros-client-service"
+      "value": "template.dsrp-idir-secret"
     },
     {
-      "name": "MDS_VFCBC_DOCUMENT_API_SECRET",
+      "name": "DSRP_METABASE_SECRET",
       "required": false,
-      "value": "template.mds-vfcbc-client-service"
-    },
-    {
-      "name": "MDS_NRIS_API_SECRET",
-      "required": false,
-      "value": "template.mds-nris-secret"
-    },
-    {
-      "name": "MDS_IDIR_SECRET",
-      "required": false,
-      "value": "template.mds-idir-secret"
-    },
-    {
-      "name": "MDS_METABASE_SECRET",
-      "required": false,
-      "value": "template.mds-metabase-key"
-    },
-    {
-      "name": "METABASE_SITE_URL",
-      "required": false,
-      "value": "https://mds-metabase-empr-mds-prod.pathfinder.gov.bc.ca"
+      "value": "template.dsrp-metabase-key"
     },
     {
       "name": "REDIS_CONFIG_NAME",
       "required": false,
-      "value": "template.mds-redis-secret"
+      "value": "template.dsrp-redis-secret"
     },
     {
       "name": "CACHE_REDIS_HOST",
@@ -128,19 +108,6 @@
     {
       "name": "REPLICA_MAX",
       "value": "1"
-    },
-    {
-      "name": "MDS_ELASTIC_SECRET",
-      "required": false,
-      "value": "template.mds-elastic-secret"
-    },
-    {
-      "name": "ELASTIC_ENABLED",
-      "value": "0"
-    },
-    {
-      "name": "ELASTIC_SERVICE_NAME",
-      "value": "MDS Dev"
     },
     {
       "name": "ENVIRONMENT_NAME",
@@ -324,7 +291,7 @@
                     "name": "NRIS_USER_NAME",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_NRIS_API_SECRET}",
+                        "name": "${DSRP_NRIS_API_SECRET}",
                         "key": "user-name"
                       }
                     }
@@ -333,7 +300,7 @@
                     "name": "NRIS_PASS",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_NRIS_API_SECRET}",
+                        "name": "${DSRP_NRIS_API_SECRET}",
                         "key": "password"
                       }
                     }
@@ -342,7 +309,7 @@
                     "name": "NRIS_TOKEN_URL",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_NRIS_API_SECRET}",
+                        "name": "${DSRP_NRIS_API_SECRET}",
                         "key": "token-url"
                       }
                     }
@@ -351,7 +318,7 @@
                     "name": "NRIS_REMOTE_CLIENT_ID",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_NRIS_API_SECRET}",
+                        "name": "${DSRP_NRIS_API_SECRET}",
                         "key": "user-name"
                       }
                     }
@@ -360,7 +327,7 @@
                     "name": "NRIS_REMOTE_CLIENT_SECRET",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_NRIS_API_SECRET}",
+                        "name": "${DSRP_NRIS_API_SECRET}",
                         "key": "password"
                       }
                     }
@@ -369,7 +336,7 @@
                     "name": "NRIS_REMOTE_TOKEN_URL",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_NRIS_API_SECRET}",
+                        "name": "${DSRP_NRIS_API_SECRET}",
                         "key": "token-url"
                       }
                     }
@@ -378,7 +345,7 @@
                     "name": "LDAP_IDIR_USERNAME",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_IDIR_SECRET}",
+                        "name": "${DSRP_IDIR_SECRET}",
                         "key": "username"
                       }
                     }
@@ -387,7 +354,7 @@
                     "name": "LDAP_IDIR_PASSWORD",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_IDIR_SECRET}",
+                        "name": "${DSRP_IDIR_SECRET}",
                         "key": "password"
                       }
                     }
@@ -404,7 +371,7 @@
                     "name": "ELASTIC_SECRET_TOKEN",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_ELASTIC_SECRET}",
+                        "name": "${DSRP_ELASTIC_SECRET}",
                         "key": "secret-token"
                       }
                     }
@@ -413,7 +380,7 @@
                     "name": "ELASTIC_SERVER_URL",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_ELASTIC_SECRET}",
+                        "name": "${DSRP_ELASTIC_SECRET}",
                         "key": "server-url"
                       }
                     }
@@ -487,7 +454,7 @@
                     "name": "METABASE_EMBEDDING_SECRET_KEY",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_METABASE_SECRET}",
+                        "name": "${DSRP_METABASE_SECRET}",
                         "key": "embedding-secret-key"
                       }
                     }
@@ -500,7 +467,7 @@
                     "name": "NROS_TOKEN_URL",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_NROS_DOCUMENT_API_SECRET}",
+                        "name": "${DSRP_NROS_DOCUMENT_API_SECRET}",
                         "key": "token-url"
                       }
                     }
@@ -509,7 +476,7 @@
                     "name": "NROS_CLIENT_ID",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_NROS_DOCUMENT_API_SECRET}",
+                        "name": "${DSRP_NROS_DOCUMENT_API_SECRET}",
                         "key": "service-client"
                       }
                     }
@@ -518,7 +485,7 @@
                     "name": "NROS_CLIENT_SECRET",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_NROS_DOCUMENT_API_SECRET}",
+                        "name": "${DSRP_NROS_DOCUMENT_API_SECRET}",
                         "key": "password"
                       }
                     }
@@ -527,7 +494,7 @@
                     "name": "VFCBC_TOKEN_URL",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_VFCBC_DOCUMENT_API_SECRET}",
+                        "name": "${DSRP_VFCBC_DOCUMENT_API_SECRET}",
                         "key": "token-url"
                       }
                     }
@@ -536,7 +503,7 @@
                     "name": "VFCBC_CLIENT_ID",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_VFCBC_DOCUMENT_API_SECRET}",
+                        "name": "${DSRP_VFCBC_DOCUMENT_API_SECRET}",
                         "key": "service-client"
                       }
                     }
@@ -545,7 +512,7 @@
                     "name": "VFCBC_CLIENT_SECRET",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_VFCBC_DOCUMENT_API_SECRET}",
+                        "name": "${DSRP_VFCBC_DOCUMENT_API_SECRET}",
                         "key": "password"
                       }
                     }
@@ -624,7 +591,7 @@
                   },
                   {
                     "name": "FLYWAY_URL",
-                    "value": "jdbc:postgresql://${DB_CONFIG_NAME}/mds"
+                    "value": "jdbc:postgresql://${DB_CONFIG_NAME}/dsrp"
                   },
                   {
                     "name": "PGUSER",
