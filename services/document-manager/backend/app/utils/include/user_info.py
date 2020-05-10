@@ -6,8 +6,8 @@ VALID_REALM = ['idir']
 DUMMY_AUTH_CLAIMS = {
     "iss": "test_issuer",
     "typ": "Bearer",
-    "username": "mds",
-    "preferred_username": "mds",
+    "username": "dsrp",
+    "preferred_username": "dsrp",
     "email": "test-email",
     "given_name": "test-given-name",
     "realm_access": {

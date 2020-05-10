@@ -18,7 +18,7 @@ class DummyResource(Resource):
     def delete(self):
         return "example delete method"
 
-    @requires_any_of([VIEW_ALL, MINESPACE_PROPONENT])
+    @requires_any_of([VIEW_ALL])
     def put(self):
         return "example put method"
 
