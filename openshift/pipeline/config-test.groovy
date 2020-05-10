@@ -315,11 +315,11 @@ environments {
                 changeId = "${opt.'pr'}"
             }
             keycloak {
-                clientId_dsrp = "mines-application-test"
-                resource = "mines-application-test"
+                clientId_dsrp = "dormant-application-test"
+                resource = "dormant-application-test"
                 idpHint_dsrp = "idir"
                 url = "https://sso-test.pathfinder.gov.bc.ca/auth"
-                known_config_url = "https://sso-test.pathfinder.gov.bc.ca/auth/realms/dsrp/.well-known/openid-configuration"
+                known_config_url = "https://sso-test.pathfinder.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration"
                 siteminder_url = "https://logontest.gov.bc.ca"
             }
             resources {
