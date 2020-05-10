@@ -1,11 +1,10 @@
 import axios from "axios";
 import { notification } from "antd";
-import jwt from "jsonwebtoken";
 import queryString from "query-string";
-import * as ENV from "@/constants/environment";
 import { request, success, error } from "@/actions/genericActions";
 import * as reducerTypes from "@/constants/reducerTypes";
 import * as authenticationActions from "@/actions/authenticationActions";
+import * as ENV from "@/constants/environment";
 
 export const unAuthenticateUser = (toastMessage) => (dispatch) => {
   dispatch(authenticationActions.logoutUser());
@@ -18,12 +17,6 @@ export const unAuthenticateUser = (toastMessage) => (dispatch) => {
   }
 };
 
-export const getUserRoles = (token) => (dispatch) => {
-  const decodedToken = jwt.decode(token);
-  const isProponent = decodedToken.realm_access.roles.includes("minespace-proponent");
-  dispatch(authenticationActions.storeIsProponent(isProponent));
-};
-
 export const getUserInfoFromToken = (token, errorMessage) => (dispatch) => {
   dispatch(request(reducerTypes.GET_USER_INFO));
   return axios
@@ -33,11 +26,8 @@ export const getUserInfoFromToken = (token, errorMessage) => (dispatch) => {
       },
     })
     .then((response) => {
-      dispatch(getUserRoles(token));
       dispatch(success(reducerTypes.GET_USER_INFO));
       dispatch(authenticationActions.authenticateUser(response.data));
-      // core User has successfully logged in, remove flag from localStorage
-      localStorage.removeItem("authenticatingFromCoreFlag");
     })
     .catch((err) => {
       dispatch(error(reducerTypes.GET_USER_INFO));
@@ -48,17 +38,16 @@ export const getUserInfoFromToken = (token, errorMessage) => (dispatch) => {
           duration: 10,
         });
       } else {
-        throw new Error(err);
+        throw err;
       }
     });
 };
 
-export const authenticateUser = (code, redirectUrl = "") => (dispatch) => {
-  const redirect_uri = redirectUrl || ENV.BCEID_LOGIN_REDIRECT_URI;
+export const authenticateUser = (code) => (dispatch) => {
   const data = {
     code,
     grant_type: "authorization_code",
-    redirect_uri,
+    redirect_uri: ENV.BCEID_LOGIN_REDIRECT_URI,
     client_id: ENV.KEYCLOAK.clientId,
   };
   dispatch(request(reducerTypes.AUTHENTICATE_USER));
@@ -67,16 +56,14 @@ export const authenticateUser = (code, redirectUrl = "") => (dispatch) => {
     .then((response) => {
       dispatch(success(reducerTypes.AUTHENTICATE_USER));
       localStorage.setItem("jwt", response.data.access_token);
-      dispatch(getUserInfoFromToken(response.data.access_token));
-      return response;
+      return dispatch(getUserInfoFromToken(response.data.access_token));
     })
-    .catch((err) => {
+    .catch(() => {
       notification.error({
-        message: "Unexpected error occurred, please try again",
+        message: "Unexpected error occured, please try again",
         duration: 10,
       });
       dispatch(error(reducerTypes.AUTHENTICATE_USER));
       dispatch(unAuthenticateUser());
-      throw new Error(err);
     });
 };

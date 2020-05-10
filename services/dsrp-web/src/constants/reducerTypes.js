@@ -8,6 +8,7 @@ export const GET_USER_INFO = "GET_USER_INFO";
 export const STATIC_CONTENT = "STATIC_CONTENT";
 export const LOAD_ALL_STATIC_CONTENT = "LOAD_ALL_STATIC_CONTENT";
 export const MODAL = "MODAL";
+export const NETWORK = "NETWORK";
 
 // OrgBook
 export const ORGBOOK = "ORGBOOK";
