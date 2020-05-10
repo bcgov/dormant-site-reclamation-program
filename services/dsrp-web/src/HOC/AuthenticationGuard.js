@@ -16,7 +16,7 @@ import * as ENV from "@/constants/environment";
 
 /**
  * @constant authenticationGuard - a Higher Order Component Thats checks for user authorization and returns the App component if the user is Authenticated.
- * CORE/IDIR users are authenticated programmatically when Dormant Site Reclamation Project mounts,
+ * CORE/IDIR users are authenticated programmatically when Dormant Site Reclamation Program mounts,
  */
 
 const propTypes = {
@@ -49,12 +49,12 @@ export const AuthenticationGuard = (isPublic) => (WrappedComponent) => {
       // NOTE: Redirect to a more appropriate page in the future:
       const redirectUrl = `${ENV.WINDOW_LOCATION}${route.HOME.dynamicRoute(guid)}`;
 
-      // all routing from core includes 'redirectingFromCore=true', if the user is not authenticated on Dormant Site Reclamation Project yet, redirect to the Keycloak Login
+      // all routing from core includes 'redirectingFromCore=true', if the user is not authenticated on Dormant Site Reclamation Program yet, redirect to the Keycloak Login
       if (redirectingFromCore && !token) {
         window.location.replace(`${ENV.KEYCLOAK.loginURL}${redirectUrl}`);
       }
 
-      // after successful login, re-direct back to Dormant Site Reclamation Project with a code, swap code for token and authenticate IDIR user
+      // after successful login, re-direct back to Dormant Site Reclamation Program with a code, swap code for token and authenticate IDIR user
       // set state in local Storage to persist login flow between redirects
       // value is removed from localStorage after userInfo is obtained
       // if type=true, Login is occurring through standard flow, bypass this block
