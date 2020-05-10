@@ -64,13 +64,11 @@ export class HeaderDropdown extends Component {
           </Button>
         </Menu.Item>
         <Divider className="bg-color-table-seperator" style={{ margin: 0 }} />
-        <AuthorizationWrapper>
-          <Menu.Item key="review-applications">
-            <Button className="header-dropdown-item-button">
-              <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
-            </Button>
-          </Menu.Item>
-        </AuthorizationWrapper>
+        <Menu.Item key="review-applications">
+          <Button className="header-dropdown-item-button">
+            <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
+          </Button>
+        </Menu.Item>
         <Divider className="bg-color-table-seperator" style={{ margin: 0 }} />
         {menuItemLogout}
       </Menu>
@@ -78,13 +76,11 @@ export class HeaderDropdown extends Component {
 
     const dropdownMenuDesktop = (
       <Menu className="header-dropdown-menu">
-        <AuthorizationWrapper>
-          <Menu.Item key="review-applications">
-            <Button className="header-dropdown-item-button">
-              <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
-            </Button>
-          </Menu.Item>
-        </AuthorizationWrapper>
+        <Menu.Item key="review-applications">
+          <Button className="header-dropdown-item-button">
+            <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
+          </Button>
+        </Menu.Item>
         {menuItemLogout}
       </Menu>
     );
@@ -93,12 +89,18 @@ export class HeaderDropdown extends Component {
     return (
       <>
         <MediaQuery minWidth={smallestDesktopWidth}>
-          <Button className="header-dropdown-item-button">
-            <Link to={routes.SUBMIT_APPLICATION.route}>Apply</Link>
-          </Button>
-          <Button className="header-dropdown-item-button">
-            <Link to={routes.VIEW_APPLICATION_STATUS.route}>Status</Link>
-          </Button>
+          <Link
+            to={routes.SUBMIT_APPLICATION.route}
+            className={this.setActiveLink(routes.SUBMIT_APPLICATION.route)}
+          >
+            Apply
+          </Link>
+          <Link
+            to={routes.VIEW_APPLICATION_STATUS.route}
+            className={this.setActiveLink(routes.VIEW_APPLICATION_STATUS.route)}
+          >
+            Status
+          </Link>
           <Dropdown overlay={dropdownMenuDesktop}>
             <Button className="header-dropdown-button">
               {this.props.userInfo.email}

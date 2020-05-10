@@ -19,7 +19,7 @@ export const authenticationReducer = (state = initialState, action) => {
         ...state,
         isAuthenticated: true,
         userInfo: action.payload.userInfo,
-        redirect: route.SUBMIT_APPLICATION.route,
+        redirect: route.REVIEW_APPLICATIONS.route,
       };
     case ActionTypes.LOGOUT:
       return {
