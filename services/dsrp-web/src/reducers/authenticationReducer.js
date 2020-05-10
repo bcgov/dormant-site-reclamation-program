@@ -1,5 +1,4 @@
 import * as ActionTypes from "@/constants/actionTypes";
-import * as ReducerTypes from "@/constants/reducerTypes";
 import * as route from "@/constants/routes";
 import { AUTHENTICATION } from "../constants/reducerTypes";
 
@@ -38,8 +37,8 @@ const authenticationReducerObject = {
   [AUTHENTICATION]: authenticationReducer,
 };
 
-export const isAuthenticated = (state) => state[ReducerTypes.AUTHENTICATION].isAuthenticated;
-export const getUserInfo = (state) => state[ReducerTypes.AUTHENTICATION].userInfo;
-export const getRedirect = (state) => state[ReducerTypes.AUTHENTICATION].redirect;
+export const isAuthenticated = (state) => state[AUTHENTICATION].isAuthenticated;
+export const getUserInfo = (state) => state[AUTHENTICATION].userInfo;
+export const getRedirect = (state) => state[AUTHENTICATION].redirect;
 
 export default authenticationReducerObject;

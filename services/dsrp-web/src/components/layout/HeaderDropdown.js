@@ -9,7 +9,7 @@ import * as routes from "@/constants/routes";
 import { signOutFromSiteMinder } from "@/utils/authenticationHelpers";
 import { isAuthenticated, getUserInfo } from "@/selectors/authenticationSelectors";
 import { MENU } from "@/constants/assets";
-import AuthorizationWrapper from "../common/wrappers/AuthorizationWrapper";
+import AuthorizationWrapper from "@/components/common/wrappers/AuthorizationWrapper";
 
 const propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
@@ -31,18 +31,16 @@ export class HeaderDropdown extends Component {
   };
 
   render() {
-    const buttonLogin = (
-      <Button className="login-btn">
-        <a
-          href={`${ENV.KEYCLOAK.loginURL}${ENV.BCEID_LOGIN_REDIRECT_URI}&kc_idp_hint=${ENV.KEYCLOAK.idpHint}`}
-        >
-          Log in
-        </a>
-      </Button>
-    );
-
     if (!this.props.isAuthenticated) {
-      return buttonLogin;
+      return (
+        <Button className="login-btn">
+          <a
+            href={`${ENV.KEYCLOAK.loginURL}${ENV.BCEID_LOGIN_REDIRECT_URI}&kc_idp_hint=${ENV.KEYCLOAK.idpHint}`}
+          >
+            Log in
+          </a>
+        </Button>
+      );
     }
 
     const menuItemLogout = (
@@ -53,36 +51,26 @@ export class HeaderDropdown extends Component {
       </Menu.Item>
     );
 
-    const menuItemSubmitApplication = (
-      <Menu.Item key="submit-application">
-        <Button className="header-dropdown-item-button">
-          <Link to={routes.SUBMIT_APPLICATION.route}>Apply</Link>
-        </Button>
-      </Menu.Item>
-    );
-
-    const menuItemViewApplicationStatus = (
-      <Menu.Item key="view-application-status">
-        <Button className="header-dropdown-item-button">
-          <Link to={routes.VIEW_APPLICATION_STATUS.route}>Status</Link>
-        </Button>
-      </Menu.Item>
-    );
-
-    const menuItemReviewApplications = (
-      <Menu.Item key="review-applications">
-        <Button className="header-dropdown-item-button">
-          <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
-        </Button>
-      </Menu.Item>
-    );
-
     const dropdownMenuMobile = (
       <Menu className="header-dropdown-menu">
-        {menuItemSubmitApplication}
-        {menuItemViewApplicationStatus}
+        <Menu.Item key="submit-application">
+          <Button className="header-dropdown-item-button">
+            <Link to={routes.SUBMIT_APPLICATION.route}>Apply</Link>
+          </Button>
+        </Menu.Item>
+        <Menu.Item key="view-application-status">
+          <Button className="header-dropdown-item-button">
+            <Link to={routes.VIEW_APPLICATION_STATUS.route}>Status</Link>
+          </Button>
+        </Menu.Item>
         <Divider className="bg-color-table-seperator" style={{ margin: 0 }} />
-        <AuthorizationWrapper>{menuItemReviewApplications}</AuthorizationWrapper>
+        <AuthorizationWrapper>
+          <Menu.Item key="review-applications">
+            <Button className="header-dropdown-item-button">
+              <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
+            </Button>
+          </Menu.Item>
+        </AuthorizationWrapper>
         <Divider className="bg-color-table-seperator" style={{ margin: 0 }} />
         {menuItemLogout}
       </Menu>
@@ -90,7 +78,13 @@ export class HeaderDropdown extends Component {
 
     const dropdownMenuDesktop = (
       <Menu className="header-dropdown-menu">
-        <AuthorizationWrapper>{menuItemReviewApplications}</AuthorizationWrapper>
+        <AuthorizationWrapper>
+          <Menu.Item key="review-applications">
+            <Button className="header-dropdown-item-button">
+              <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
+            </Button>
+          </Menu.Item>
+        </AuthorizationWrapper>
         {menuItemLogout}
       </Menu>
     );
@@ -99,8 +93,12 @@ export class HeaderDropdown extends Component {
     return (
       <>
         <MediaQuery minWidth={smallestDesktopWidth}>
-          {menuItemSubmitApplication}
-          {menuItemViewApplicationStatus}
+          <Button className="header-dropdown-item-button">
+            <Link to={routes.SUBMIT_APPLICATION.route}>Apply</Link>
+          </Button>
+          <Button className="header-dropdown-item-button">
+            <Link to={routes.VIEW_APPLICATION_STATUS.route}>Status</Link>
+          </Button>
           <Dropdown overlay={dropdownMenuDesktop}>
             <Button className="header-dropdown-button">
               {this.props.userInfo.email}
