@@ -47,7 +47,8 @@ export const AuthenticationGuard = (isPublic) => (WrappedComponent) => {
       const { code, type, redirectingFromCore } = queryString.parse(window.location.search);
 
       // NOTE: Redirect to a more appropriate page in the future:
-      const redirectUrl = `${ENV.WINDOW_LOCATION}${route.HOME.dynamicRoute(guid)}`;
+      // const redirectUrl = `${ENV.WINDOW_LOCATION}${route.HOME.dynamicRoute(guid)}`;
+      const redirectUrl = `${ENV.WINDOW_LOCATION}${route.HOME.route}`;
 
       // all routing from core includes 'redirectingFromCore=true', if the user is not authenticated on Dormant Site Reclamation Program yet, redirect to the Keycloak Login
       if (redirectingFromCore && !token) {
