@@ -4,7 +4,7 @@ const dotenv = require("dotenv").config({ path: `${__dirname}/.env` });
 
 let { BASE_PATH } = process.env;
 let BUILD_DIR = process.env.BUILD_DIR || "build";
-let PORT = process.env.PORT || 3020;
+let PORT = process.env.PORT || 3000;
 if (dotenv.parsed) {
   BASE_PATH = dotenv.parsed.BASE_PATH || BASE_PATH;
   BUILD_DIR = dotenv.parsed.BUILD_DIR || BUILD_DIR;

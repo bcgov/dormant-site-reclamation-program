@@ -24,7 +24,7 @@
       "displayName": "SonarQube host",
       "description": "SonarQube server",
       "required": true,
-      "value": "https://sonarqube-empr-mds-tools.pathfinder.gov.bc.ca"
+      "value": "https://sonarqube-eazios-tools.pathfinder.gov.bc.ca"
     },
     {
       "name": "DB_CONFIG_NAME",
@@ -124,10 +124,6 @@
               {
                 "name": "DB_PORT",
                 "value": "5432"
-              },
-              {
-                "name": "DB_NAME_TEST",
-                "value": "mds_test"
               },
               {
                 "name": "UPLOADED_DOCUMENT_DEST",

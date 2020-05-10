@@ -50,24 +50,24 @@
     {
       "description": "Oracle FDW secret name",
       "name": "FDW_SECRET_NAME",
-      "value": "template.mds-postgresql-mms-fdw-secret"
+      "value": "template.dsrp-postgresql-mms-fdw-secret"
     },
     {
       "description": "Postgres secret name",
       "name": "POSTGRES_SECRET_NAME",
-      "value": "template.mds-postgresql-secret"
+      "value": "template.dsrp-postgresql-secret"
     },
     {
       "description": "Postgres NRIS secret name",
       "name": "POSTGRES_NRIS_SECRET_NAME",
-      "value": "template.mds-postgresql-nris-secret"
+      "value": "template.dsrp-postgresql-nris-secret"
     },
     {
       "description": "Name of the PostgreSQL database accessed.",
       "displayName": "PostgreSQL Database Name",
       "name": "POSTGRESQL_DATABASE",
       "required": true,
-      "value": "mds"
+      "value": "dsrp"
     },
     {
       "description": "Volume space available for data, e.g. 512Mi, 2Gi.",
@@ -152,9 +152,7 @@
         "name": "${NAME}${SUFFIX}"
       },
       "spec": {
-        "accessModes": [
-          "ReadWriteOnce"
-        ],
+        "accessModes": ["ReadWriteOnce"],
         "resources": {
           "requests": {
             "storage": "${VOLUME_CAPACITY}"
@@ -330,11 +328,7 @@
                 ],
                 "readinessProbe": {
                   "exec": {
-                    "command": [
-                      "/bin/bash",
-                      "-c",
-                      "pg_isready -h localhost -p 5432"
-                    ]
+                    "command": ["/bin/bash", "-c", "pg_isready -h localhost -p 5432"]
                   },
                   "initialDelaySeconds": 5,
                   "timeoutSeconds": 1
@@ -386,9 +380,7 @@
           {
             "imageChangeParams": {
               "automatic": true,
-              "containerNames": [
-                "postgresql"
-              ],
+              "containerNames": ["postgresql"],
               "from": {
                 "kind": "ImageStreamTag",
                 "name": "${IMAGE_STREAM_NAME}:${IMAGE_STREAM_VERSION}",

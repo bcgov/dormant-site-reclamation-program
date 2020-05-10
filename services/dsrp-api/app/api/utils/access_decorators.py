@@ -13,7 +13,6 @@ CLOSE_PERMIT = "core_close_permits"
 EDIT_DO = "core_edit_do"
 EDIT_VARIANCE = "core_edit_variances"
 EDIT_SECURITIES = "core_edit_securities"
-MINESPACE_PROPONENT = "mds_minespace_proponents"
 EDIT_SUBMISSIONS = "core_edit_submissions"
 
 

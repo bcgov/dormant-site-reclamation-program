@@ -2,7 +2,7 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "mds-python-docman-dc",
+    "name": "dsrp-python-docman-dc",
     "creationTimestamp": null
   },
   "parameters": [
@@ -90,9 +90,9 @@
       "value": "4"
     },
     {
-      "name": "MDS_ELASTIC_SECRET",
+      "name": "DSRP_ELASTIC_SECRET",
       "required": false,
-      "value": "template.mds-elastic-secret"
+      "value": "template.dsrp-elastic-secret"
     },
     {
       "name": "ELASTIC_ENABLED",
@@ -100,12 +100,12 @@
     },
     {
       "name": "ELASTIC_SERVICE_NAME",
-      "value": "MDS Document Manager Dev"
+      "value": "DSRP Document Manager Dev"
     },
     {
       "name": "REDIS_CONFIG_NAME",
       "required": false,
-      "value": "template.mds-redis-secret"
+      "value": "template.dsrp-redis-secret"
     },
     {
       "name": "CACHE_REDIS_HOST",
@@ -153,7 +153,7 @@
       "apiVersion": "v1",
       "kind": "PersistentVolumeClaim",
       "metadata": {
-        "name": "mds-document-storage${SUFFIX}"
+        "name": "dsrp-document-storage${SUFFIX}"
       },
       "spec": {
         "accessModes": ["ReadWriteMany"],
@@ -183,11 +183,7 @@
               "failurePolicy": "Retry",
               "execNewPod": {
                 "containerName": "app",
-                "command": [
-                  "bash",
-                  "-c",
-                  "cd /opt/app-root/src && flask db upgrade"
-                ]
+                "command": ["bash", "-c", "cd /opt/app-root/src && flask db upgrade"]
               }
             },
             "maxSurge": "50%",
@@ -296,7 +292,7 @@
                     "name": "ELASTIC_SECRET_TOKEN",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_ELASTIC_SECRET}",
+                        "name": "${DSRP_ELASTIC_SECRET}",
                         "key": "secret-token"
                       }
                     }
@@ -305,7 +301,7 @@
                     "name": "ELASTIC_SERVER_URL",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${MDS_ELASTIC_SECRET}",
+                        "name": "${DSRP_ELASTIC_SECRET}",
                         "key": "server-url"
                       }
                     }
@@ -392,7 +388,7 @@
                 "volumeMounts": [
                   {
                     "mountPath": "/opt/app-root/src/document_uploads",
-                    "name": "mds-document-storage-data"
+                    "name": "dsrp-document-storage-data"
                   }
                 ],
                 "imagePullPolicy": "Always"
@@ -403,9 +399,9 @@
             "securityContext": {},
             "volumes": [
               {
-                "name": "mds-document-storage-data",
+                "name": "dsrp-document-storage-data",
                 "persistentVolumeClaim": {
-                  "claimName": "mds-document-storage${SUFFIX}"
+                  "claimName": "dsrp-document-storage${SUFFIX}"
                 }
               }
             ]

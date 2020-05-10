@@ -34,7 +34,7 @@
             "kind": "RoleBinding",
             "metadata": {
                 "name": "jenkins_edit",
-                "namespace": "empr-mds-dev"
+                "namespace": "eazios-dev"
             },
             "roleRef": {
                 "name": "edit"
@@ -43,7 +43,7 @@
                 {
                     "kind": "ServiceAccount",
                     "name": "jenkins",
-                    "namespace": "empr-mds-tools"
+                    "namespace": "eazios-tools"
                 }
             ]
         },{
@@ -52,7 +52,7 @@
             "kind": "RoleBinding",
             "metadata": {
                 "name": "jenkins_edit",
-                "namespace": "empr-mds-test"
+                "namespace": "eazios-test"
             },
             "roleRef": {
                 "name": "edit"
@@ -61,7 +61,7 @@
                 {
                     "kind": "ServiceAccount",
                     "name": "jenkins",
-                    "namespace": "empr-mds-tools"
+                    "namespace": "eazios-tools"
                 }
             ]
         },{
@@ -70,7 +70,7 @@
             "kind": "RoleBinding",
             "metadata": {
                 "name": "jenkins_edit",
-                "namespace": "empr-mds-prod"
+                "namespace": "eazios-prod"
             },
             "roleRef": {
                 "name": "edit"
@@ -79,7 +79,7 @@
                 {
                     "kind": "ServiceAccount",
                     "name": "jenkins",
-                    "namespace": "empr-mds-tools"
+                    "namespace": "eazios-tools"
                 }
             ]
         }

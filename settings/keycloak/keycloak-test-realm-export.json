@@ -7,7 +7,7 @@
   "revokeRefreshToken": false,
   "refreshTokenMaxReuse": 0,
   "accessTokenLifespan": 300,
-  "accessTokenLifespanForImplicitFlow":\ 900,
+  "accessTokenLifespanForImplicitFlow": 900,
   "ssoSessionIdleTimeout": 1800,
   "ssoSessionMaxLifespan": 36000,
   "ssoSessionIdleTimeoutRememberMe": 0,
@@ -185,10 +185,7 @@
           "composite": true,
           "composites": {
             "client": {
-              "realm-management": [
-                "query-users",
-                "query-groups"
-              ]
+              "realm-management": ["query-users", "query-groups"]
             }
           },
           "clientRole": true,
@@ -220,9 +217,7 @@
           "composite": true,
           "composites": {
             "client": {
-              "realm-management": [
-                "query-clients"
-              ]
+              "realm-management": ["query-clients"]
             }
           },
           "clientRole": true,
@@ -314,9 +309,7 @@
           "composite": true,
           "composites": {
             "client": {
-              "account": [
-                "manage-account-links"
-              ]
+              "account": ["manage-account-links"]
             }
           },
           "clientRole": true,
@@ -364,36 +357,24 @@
       "attributes": {},
       "realmRoles": [],
       "clientRoles": {
-        "realm-management": [
-          "realm-admin"
-        ]
+        "realm-management": ["realm-admin"]
       },
       "subGroups": []
     }
   ],
-  "defaultRoles": [
-    "offline_access",
-    "uma_authorization"
-  ],
-  "requiredCredentials": [
-    "password"
-  ],
+  "defaultRoles": ["offline_access", "uma_authorization"],
+  "requiredCredentials": ["password"],
   "otpPolicyType": "totp",
   "otpPolicyAlgorithm": "HmacSHA1",
   "otpPolicyInitialCounter": 0,
   "otpPolicyDigits": 6,
   "otpPolicyLookAheadWindow": 1,
   "otpPolicyPeriod": 30,
-  "otpSupportedApplications": [
-    "FreeOTP",
-    "Google Authenticator"
-  ],
+  "otpSupportedApplications": ["FreeOTP", "Google Authenticator"],
   "scopeMappings": [
     {
       "clientScope": "offline_access",
-      "roles": [
-        "offline_access"
-      ]
+      "roles": ["offline_access"]
     }
   ],
   "clients": [
@@ -543,13 +524,8 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
-      "optionalClientScopes": [
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "roles"],
+      "optionalClientScopes": ["offline_access"]
     },
     {
       "id": "a89d0bae-ca4e-42aa-a6a5-a8d6767ea6bf",
@@ -575,18 +551,8 @@
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
       "nodeReRegistrationTimeout": 0,
-      "defaultClientScopes": [
-        "web-origins",
-        "role_list",
-        "roles",
-        "profile",
-        "email"
-      ],
-      "optionalClientScopes": [
-        "address",
-        "phone",
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "role_list", "roles", "profile", "email"],
+      "optionalClientScopes": ["address", "phone", "offline_access"]
     },
     {
       "id": "f902258b-a4de-48ac-a1b4-932a67783495",
@@ -597,9 +563,7 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
-      "redirectUris": [
-        "/auth/admin/hud2v882/console/*"
-      ],
+      "redirectUris": ["/auth/admin/hud2v882/console/*"],
       "webOrigins": [],
       "notBefore": 0,
       "bearerOnly": false,
@@ -632,18 +596,8 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "role_list",
-        "roles",
-        "profile",
-        "email"
-      ],
-      "optionalClientScopes": [
-        "address",
-        "phone",
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "role_list", "roles", "profile", "email"],
+      "optionalClientScopes": ["address", "phone", "offline_access"]
     },
     {
       "id": "7ea48725-9cb1-48e3-ac27-fcadc81473bb",
@@ -805,13 +759,8 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
-      "optionalClientScopes": [
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "roles"],
+      "optionalClientScopes": ["offline_access"]
     },
     {
       "id": "a0d75f48-db61-49f1-97c5-7e024bfc035b",
@@ -822,13 +771,8 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
-      "redirectUris": [
-        "http://localhost*",
-        "http://localhost:3020/*"
-      ],
-      "webOrigins": [
-        "http://localhost:3020"
-      ],
+      "redirectUris": ["http://localhost*", "http://localhost:3020/*"],
+      "webOrigins": ["http://localhost:3020"],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -1003,13 +947,8 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
-      "optionalClientScopes": [
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "roles"],
+      "optionalClientScopes": ["offline_access"]
     },
     {
       "id": "91eb2b72-3180-43ca-8d05-164eed2a8308",
@@ -1035,18 +974,8 @@
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
       "nodeReRegistrationTimeout": 0,
-      "defaultClientScopes": [
-        "web-origins",
-        "role_list",
-        "roles",
-        "profile",
-        "email"
-      ],
-      "optionalClientScopes": [
-        "address",
-        "phone",
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "role_list", "roles", "profile", "email"],
+      "optionalClientScopes": ["address", "phone", "offline_access"]
     },
     {
       "id": "b9eb96ff-6b71-4a70-ae1b-affd6211209d",
@@ -1072,18 +1001,8 @@
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
       "nodeReRegistrationTimeout": 0,
-      "defaultClientScopes": [
-        "web-origins",
-        "role_list",
-        "roles",
-        "profile",
-        "email"
-      ],
-      "optionalClientScopes": [
-        "address",
-        "phone",
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "role_list", "roles", "profile", "email"],
+      "optionalClientScopes": ["address", "phone", "offline_access"]
     },
     {
       "id": "2aba9cc8-f39b-4761-8a74-34dfcc1f46fb",
@@ -1095,12 +1014,8 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
-      "redirectUris": [
-        "https://minesdigitalservices-dev.pathfinder.gov.bc.ca/*"
-      ],
-      "webOrigins": [
-        "https://minesdigitalservices-dev.pathfinder.gov.bc.ca"
-      ],
+      "redirectUris": ["https://minesdigitalservices-dev.pathfinder.gov.bc.ca/*"],
+      "webOrigins": ["https://minesdigitalservices-dev.pathfinder.gov.bc.ca"],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -1275,13 +1190,8 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
-      "optionalClientScopes": [
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "roles"],
+      "optionalClientScopes": ["offline_access"]
     },
     {
       "id": "74a8b89c-b50a-4e0e-9dbc-eac5b703623c",
@@ -1292,13 +1202,8 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
-      "defaultRoles": [
-        "view-profile",
-        "manage-account"
-      ],
-      "redirectUris": [
-        "/auth/realms/hud2v882/account/*"
-      ],
+      "defaultRoles": ["view-profile", "manage-account"],
+      "redirectUris": ["/auth/realms/hud2v882/account/*"],
       "webOrigins": [],
       "notBefore": 0,
       "bearerOnly": false,
@@ -1314,18 +1219,8 @@
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
       "nodeReRegistrationTimeout": 0,
-      "defaultClientScopes": [
-        "web-origins",
-        "role_list",
-        "roles",
-        "profile",
-        "email"
-      ],
-      "optionalClientScopes": [
-        "address",
-        "phone",
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "role_list", "roles", "profile", "email"],
+      "optionalClientScopes": ["address", "phone", "offline_access"]
     },
     {
       "id": "1d8c6fe1-deea-49a3-9174-9c7bb173ffc5",
@@ -1336,12 +1231,8 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
-      "redirectUris": [
-        "https://minespace-dev.pathfinder.gov.bc.ca/*"
-      ],
-      "webOrigins": [
-        "https://minespace-dev.pathfinder.gov.bc.ca"
-      ],
+      "redirectUris": ["https://minespace-dev.pathfinder.gov.bc.ca/*"],
+      "webOrigins": ["https://minespace-dev.pathfinder.gov.bc.ca"],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -1516,13 +1407,8 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
-      "optionalClientScopes": [
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "roles"],
+      "optionalClientScopes": ["offline_access"]
     },
     {
       "id": "84f502d7-35d1-4d94-8198-64b703335d13",
@@ -1535,14 +1421,8 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
-      "redirectUris": [
-        "http://localhost:3000/*",
-        "https://localhost:3000/*"
-      ],
-      "webOrigins": [
-        "https://localhost:3000",
-        "http://localhost:3000"
-      ],
+      "redirectUris": ["http://localhost:3000/*", "https://localhost:3000/*"],
+      "webOrigins": ["https://localhost:3000", "http://localhost:3000"],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -1717,13 +1597,8 @@
           }
         }
       ],
-      "defaultClientScopes": [
-        "web-origins",
-        "roles"
-      ],
-      "optionalClientScopes": [
-        "offline_access"
-      ]
+      "defaultClientScopes": ["web-origins", "roles"],
+      "optionalClientScopes": ["offline_access"]
     }
   ],
   "clientScopes": [
@@ -2169,18 +2044,8 @@
       }
     }
   ],
-  "defaultDefaultClientScopes": [
-    "web-origins",
-    "roles",
-    "email",
-    "profile",
-    "role_list"
-  ],
-  "defaultOptionalClientScopes": [
-    "phone",
-    "address",
-    "offline_access"
-  ],
+  "defaultDefaultClientScopes": ["web-origins", "roles", "email", "profile", "role_list"],
+  "defaultOptionalClientScopes": ["phone", "address", "offline_access"],
   "browserSecurityHeaders": {
     "contentSecurityPolicyReportOnly": "",
     "xContentTypeOptions": "nosniff",
@@ -2192,9 +2057,7 @@
   },
   "smtpServer": {},
   "eventsEnabled": false,
-  "eventsListeners": [
-    "jboss-logging"
-  ],
+  "eventsListeners": ["jboss-logging"],
   "enabledEventTypes": [],
   "adminEventsEnabled": false,
   "adminEventsDetailsEnabled": false,
@@ -2307,9 +2170,7 @@
         "subType": "anonymous",
         "subComponents": {},
         "config": {
-          "max-clients": [
-            "200"
-          ]
+          "max-clients": ["200"]
         }
       },
       {
@@ -2327,12 +2188,8 @@
         "subType": "anonymous",
         "subComponents": {},
         "config": {
-          "host-sending-registration-request-must-match": [
-            "true"
-          ],
-          "client-uris-must-match": [
-            "true"
-          ]
+          "host-sending-registration-request-must-match": ["true"],
+          "client-uris-must-match": ["true"]
         }
       },
       {
@@ -2342,9 +2199,7 @@
         "subType": "authenticated",
         "subComponents": {},
         "config": {
-          "allow-default-scopes": [
-            "true"
-          ]
+          "allow-default-scopes": ["true"]
         }
       },
       {
@@ -2400,9 +2255,7 @@
         "subType": "anonymous",
         "subComponents": {},
         "config": {
-          "allow-default-scopes": [
-            "true"
-          ]
+          "allow-default-scopes": ["true"]
         }
       }
     ],
@@ -2413,12 +2266,8 @@
         "providerId": "hmac-generated",
         "subComponents": {},
         "config": {
-          "priority": [
-            "100"
-          ],
-          "algorithm": [
-            "HS256"
-          ]
+          "priority": ["100"],
+          "algorithm": ["HS256"]
         }
       },
       {
@@ -2427,9 +2276,7 @@
         "providerId": "aes-generated",
         "subComponents": {},
         "config": {
-          "priority": [
-            "100"
-          ]
+          "priority": ["100"]
         }
       },
       {
@@ -2438,9 +2285,7 @@
         "providerId": "rsa-generated",
         "subComponents": {},
         "config": {
-          "priority": [
-            "100"
-          ]
+          "priority": ["100"]
         }
       }
     ]
