@@ -22,7 +22,7 @@ export const LandingPage = (props) => (
       gutter={[{ sm: 0, xl: 64 }]}
     >
       <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-        <Title>Welcome to Dormant Site Reclamation Project</Title>
+        <Title>Welcome to Dormant Site Reclamation Program</Title>
         <Paragraph className="header-text">
           Manage applications, see inspection histories, get ducks, and more.
         </Paragraph>
@@ -45,7 +45,7 @@ export const LandingPage = (props) => (
       className="landing-section"
     >
       <Col sm={{ span: 24 }} xl={{ span: 12 }} xxl={{ span: 10 }}>
-        <Title level={4}>What is Dormant Site Reclamation Project?</Title>
+        <Title level={4}>What is Dormant Site Reclamation Program?</Title>
         <Paragraph>
           The <Text strong>Ministry of Energy, Mines and Petroleum Resources</Text> is developing a
           system to make it easier for the public, industry and government to see what&apos;s
@@ -53,7 +53,7 @@ export const LandingPage = (props) => (
           <Text strong>Duck Services (DUCK)</Text>.
         </Paragraph>
         <Paragraph>
-          <Text strong>Dormant Site Reclamation Project</Text> is part of the DUCK system, developed
+          <Text strong>Dormant Site Reclamation Program</Text> is part of the DUCK system, developed
           specifically for industry. It is intended to make it easier for businesses to manage
           applications, see their inspection history and submit reports.
         </Paragraph>
@@ -62,7 +62,7 @@ export const LandingPage = (props) => (
           across B.C.
         </Paragraph>
 
-        <Title level={4}>What can I do in Dormant Site Reclamation Project?</Title>
+        <Title level={4}>What can I do in Dormant Site Reclamation Program?</Title>
         <ul className="landing-list">
           <li>Upload any report specified in the Health, Safety and Reclamation Code</li>
           <li>View all code variances granted to and incidents reported by your mine</li>
@@ -76,34 +76,34 @@ export const LandingPage = (props) => (
         <Title level={4}>How do I get access?</Title>
         <Paragraph>
           You must have a <Text strong>Business or Personal BCeID</Text> and then contact us to
-          request access to Dormant Site Reclamation Project.
+          request access to Dormant Site Reclamation Program.
         </Paragraph>
         <Paragraph strong>If you have a BCeID:</Paragraph>
         <Paragraph>
           Contact us at&nbsp;
           <a href={`mailto:${Strings.HELP_EMAIL}`}>{Strings.HELP_EMAIL}</a>
-          &nbsp;to request access to Dormant Site Reclamation Project.
+          &nbsp;to request access to Dormant Site Reclamation Program.
         </Paragraph>
         <Paragraph strong>
-          If you have multiple employees who need to use Dormant Site Reclamation Project:
+          If you have multiple employees who need to use Dormant Site Reclamation Program:
         </Paragraph>
 
         <Paragraph>
           <Text>Add them to your Business BCeID</Text>
           <Text>
-            Let us know you want them to be able to access Dormant Site Reclamation Project
+            Let us know you want them to be able to access Dormant Site Reclamation Program
           </Text>
         </Paragraph>
 
         <Title level={4}>Don&apos;t have a BCeID?</Title>
         <Paragraph>
-          In order to access Dormant Site Reclamation Project, you need to register for a Business
+          In order to access Dormant Site Reclamation Program, you need to register for a Business
           or Personal BCeID. It can take several weeks to process the request, so give yourself
           plenty of lead time.
         </Paragraph>
         <Paragraph>
           Once you have your BCeID, you can add employees and delegates. You can request that anyone
-          added to your Business BCeID account be given access to Dormant Site Reclamation Project.
+          added to your Business BCeID account be given access to Dormant Site Reclamation Program.
         </Paragraph>
         <Row type="flex" justify="center">
           <Col>
@@ -133,7 +133,7 @@ export const LandingPage = (props) => (
             <Col>
               <Paragraph>
                 Please let us know about any questions or comments you have regarding your
-                experience using Dormant Site Reclamation Project.
+                experience using Dormant Site Reclamation Program.
               </Paragraph>
               <Paragraph>
                 Email us at&nbsp;

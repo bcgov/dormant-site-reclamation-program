@@ -1,6 +1,5 @@
 import axios from "axios";
-import { ENVIRONMENT, KEYCLOAK } from "@/constants/environment";
-import { DEFAULT_ENVIRONMENT } from "@/constants/environment";
+import { ENVIRONMENT, KEYCLOAK, DEFAULT_ENVIRONMENT } from "@/constants/environment";
 
 export default function fetchEnv() {
   return axios
@@ -22,9 +21,9 @@ export default function fetchEnv() {
       KEYCLOAK.idpHint = env.keycloak_idpHint;
       KEYCLOAK.resource = env.keycloak_resource;
       KEYCLOAK.siteMinderLogoutURL = `${env.siteminder_url}/clp-cgi/logoff.cgi?returl=`;
-      KEYCLOAK.loginURL = `${env.keycloak_url}/realms/mds/protocol/openid-connect/auth?response_type=code&client_id=${env.keycloak_clientId}&redirect_uri=`;
-      KEYCLOAK.keycloakLogoutURL = `${env.keycloak_url}/realms/mds/protocol/openid-connect/logout?redirect_uri=`;
-      KEYCLOAK.tokenURL = `${env.keycloak_url}/realms/mds/protocol/openid-connect/token`;
-      KEYCLOAK.userInfoURL = `${env.keycloak_url}/realms/mds/protocol/openid-connect/userinfo`;
+      KEYCLOAK.loginURL = `${env.keycloak_url}/realms/hud2v882/protocol/openid-connect/auth?response_type=code&client_id=${env.keycloak_clientId}&redirect_uri=`;
+      KEYCLOAK.keycloakLogoutURL = `${env.keycloak_url}/realms/hud2v882/protocol/openid-connect/logout?redirect_uri=`;
+      KEYCLOAK.tokenURL = `${env.keycloak_url}/realms/hud2v882/protocol/openid-connect/token`;
+      KEYCLOAK.userInfoURL = `${env.keycloak_url}/realms/hud2v882/protocol/openid-connect/userinfo`;
     });
 }

@@ -1,8 +1,8 @@
 {
-  "id": "mds",
-  "realm": "mds",
-  "displayName": "MDS - Local Development",
-  "displayNameHtml": "MDS - Local Development",
+  "id": "hud2v882",
+  "realm": "hud2v882",
+  "displayName": "Dormant Sites - Local Development",
+  "displayNameHtml": "Dormant Sites - Local Development",
   "notBefore": 0,
   "revokeRefreshToken": false,
   "refreshTokenMaxReuse": 0,
@@ -1123,7 +1123,7 @@
     },
     {
       "id": "48db8abc-1a98-4068-b13b-401fdb3cda4e",
-      "clientId": "mines-application-local",
+      "clientId": "dormant-application-local",
       "rootUrl": "http://localhost:3000/",
       "adminUrl": "http://localhost:3000/",
       "surrogateAuthRequired": false,

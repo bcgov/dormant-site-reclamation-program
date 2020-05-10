@@ -1,7 +1,5 @@
-/* eslint-disable */
-
 import React from "react";
-import { Link, Redirect, Route, Switch } from "react-router-dom";
+import { Link, Route, Switch } from "react-router-dom";
 import { Result, Button, Icon, Typography } from "antd";
 import AuthenticationGuard from "@/hoc/AuthenticationGuard";
 import * as routes from "@/constants/routes";
@@ -14,12 +12,23 @@ const Routes = () => (
     <Route exact path={routes.HOME.route} component={routes.HOME.component} />
     <Route exact path={routes.RETURN_PAGE.route} component={routes.RETURN_PAGE.component} />
 
-    {/* PRIVATE ROUTES */}
-    {/* <Route
+    <Route
       exact
-      path={routes.MINES.route}
-      component={AuthenticationGuard()(routes.MINES.component)}
-    /> */}
+      path={routes.SUBMIT_APPLICATION.route}
+      component={routes.SUBMIT_APPLICATION.component}
+    />
+    <Route
+      exact
+      path={routes.VIEW_APPLICATION_STATUS.route}
+      component={routes.VIEW_APPLICATION_STATUS.component}
+    />
+
+    {/* PRIVATE ROUTES */}
+    <Route
+      exact
+      path={routes.REVIEW_APPLICATIONS.route}
+      component={AuthenticationGuard()(routes.REVIEW_APPLICATIONS.component)}
+    />
 
     {/* 404 - PAGE NOT FOUND */}
     <Route

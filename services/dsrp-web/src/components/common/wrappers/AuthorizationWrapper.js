@@ -1,8 +1,5 @@
-import React from "react";
 import { PropTypes } from "prop-types";
-import { connect } from "react-redux";
 import { detectDevelopmentEnvironment, detectProdEnvironment } from "@/utils/environmentUtils";
-import { isProponent } from "@/selectors/authenticationSelectors";
 
 /**
  * @constant AuthorizationWrapper conditionally renders react children depending
@@ -30,43 +27,25 @@ import { isProponent } from "@/selectors/authenticationSelectors";
  *
  * inDevelopment - if the feature is still being built and not ready to be shared with a larger audience, `inDevelopment` only displays the content in local and dev environment
  * inTesting - if the feature is ready to be shared with a larger audience, but not ready to be displayed in PROD, `inTesting` will display content in every environment except Prod.
- * isProponent - This prop comes directly from the store, only Dormant Site Reclamation Project proponents have access to create anything, CORE users are view only
  */
 
 const propTypes = {
   inDevelopment: PropTypes.bool,
   inTesting: PropTypes.bool,
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.element.isRequired),
-    PropTypes.element.isRequired,
-  ]),
+  children: PropTypes.element.isRequired,
 };
 
 const defaultProps = {
-  inDevelopment: undefined,
-  inTesting: undefined,
+  inDevelopment: false,
+  inTesting: false,
 };
 
-export const AuthorizationWrapper = (props) => {
-  const checkDev = props.inDevelopment && detectDevelopmentEnvironment();
-  const checkTest = props.inTesting && !detectProdEnvironment();
-  // do not show any actions if the user is not a proponents, unless in the development
-  if (!props.isProponent && !detectDevelopmentEnvironment()) {
-    return <span />;
-  } 
-    if (props.inDevelopment === undefined && props.inTesting === undefined) {
-      return <span>{props.children}</span>;
-    } if (checkDev || checkTest) {
-      return <span>{props.children}</span>;
-    }
-  
-};
-
-const mapStateToProps = (state) => ({
-  isProponent: isProponent(state),
-});
+export const AuthorizationWrapper = (props) =>
+  ((props.inDevelopment && detectDevelopmentEnvironment()) ||
+    (props.inTesting && !detectProdEnvironment())) &&
+  props.children;
 
 AuthorizationWrapper.propTypes = propTypes;
 AuthorizationWrapper.defaultProps = defaultProps;
 
-export default connect(mapStateToProps)(AuthorizationWrapper);
+export default AuthorizationWrapper;
