@@ -42,7 +42,7 @@ export class HeaderDropdown extends Component {
     );
 
     if (!this.props.isAuthenticated) {
-      return <></>; //buttonLogin;
+      return buttonLogin;
     }
 
     const menuItemLogout = (

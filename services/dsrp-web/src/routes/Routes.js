@@ -10,7 +10,6 @@ const Routes = () => (
   <Switch>
     {/* PUBLIC ROUTES */}
     <Route exact path={routes.HOME.route} component={routes.HOME.component} />
-    <Route exact path={routes.RETURN_PAGE.route} component={routes.RETURN_PAGE.component} />
     <Route
       exact
       path={routes.SUBMIT_APPLICATION.route}
@@ -21,6 +20,7 @@ const Routes = () => (
       path={routes.VIEW_APPLICATION_STATUS.route}
       component={routes.VIEW_APPLICATION_STATUS.component}
     />
+    <Route exact path={routes.RETURN_PAGE.route} component={routes.RETURN_PAGE.component} />
 
     {/* PRIVATE ROUTES */}
     <Route
