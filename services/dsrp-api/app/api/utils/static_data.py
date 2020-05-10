@@ -6,7 +6,7 @@ from app.api.constants import STATIC_DATA
 """ 
 This function is run right before setup_marshmallow and it looks through all of tables in our database.
 It creates a mapping of classes to lists if their PK's, this is only done for code tables. To find the code tables
-the classes are inspected and if they have a column named active_ind, it's type is not a UUID and its type is a string
+the classes are inspected and if they have a column named active, it's type is not a UUID and its type is a string
 the PK's are added to STATIC_DATA under the class name.
 
 Parameters: Base <SQL Alchemy Model>
@@ -21,26 +21,15 @@ def setup_static_data(Base):
                 mapper = inspect(class_)
                 pk = mapper.primary_key[0]
                 for col in mapper.columns:
-                    if col.name == 'active_ind':
+                    if col.name == 'active':
                         if type(pk.type) != UUID and pk.type.python_type == str:
                             STATIC_DATA[class_.__name__] = [
-                                a
-                                for a, in class_.query.with_entities(getattr(
-                                    class_, pk.name, None)).filter_by(active_ind=True).all()
-                            ]
-
-                    # This section is specific to NoW_submissions. Some of the code values that NROS and vFCBC send are
-                    # in long form so they are stored in the descriptions of the code tables so the descriptions of those
-                    # tables are also added under a (class name)_description in STATIC_DATA.
-
-                    if class_ in [] and col.name == 'description':
-                        if type(pk.type) != UUID and pk.type.python_type == str:
-                            STATIC_DATA[f'{class_.__name__}_description'] = [
                                 a for a, in class_.query.with_entities(
-                                    getattr(class_, 'description', None)).filter_by(
-                                        active_ind=True).all()
+                                    getattr(class_, pk.name, None)).filter_by(
+                                        active=True).all()
                             ]
 
             except Exception as e:
                 raise e
+            
     current_app.logger.debug(STATIC_DATA)

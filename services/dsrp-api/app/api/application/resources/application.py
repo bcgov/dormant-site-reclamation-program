@@ -12,15 +12,15 @@ from app.api.utils.resources_mixins import UserMixin
 
 class ApplicationListResource(Resource, UserMixin):
     @api.doc(description='Get all applications')
-    @requires_role_view_all
+    #@requires_role_view_all
     @api.marshal_with(APPLICATION, envelope='records', code=200)
     def get(self):
 
-        applications = Application.find_all()
+        applications = Application.get_all()
         return applications
 
     @api.doc(description='Create an application')
-    @requires_role_view_all
+    #@requires_role_view_all
     @api.expect(APPLICATION)
     @api.marshal_with(APPLICATION, code=201)
     def post(self):
@@ -37,7 +37,7 @@ class ApplicationListResource(Resource, UserMixin):
 
 class ApplicationResource(Resource, UserMixin):
     @api.doc(description='Get an application')
-    @requires_role_view_all
+    ##@requires_role_view_all
     @api.marshal_with(APPLICATION, code=200)
     def get(self, application_guid):
 
@@ -49,7 +49,7 @@ class ApplicationResource(Resource, UserMixin):
         return application
 
     @api.doc(description='Update an application')
-    @requires_role_view_all
+    #@requires_role_view_all
     @api.expect(Application)
     @api.marshal_with(APPLICATION, code=200)
     def put(self, application_guid):

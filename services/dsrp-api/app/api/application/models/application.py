@@ -8,26 +8,27 @@ from app.api.utils.models_mixins import Base, AuditMixin
 from app.api.utils.field_template import FieldTemplate
 
 
-class Applications(Base, AuditMixin):
+class Application(Base, AuditMixin):
     __tablename__ = "application"
 
     class _ModelSchema(Base._ModelSchema):
-        application_id = fields.Integer(dump_only=True)
-        application_guid = fields.String(dump_only=True)
+        id = fields.Integer(dump_only=True)
+        guid = fields.String(dump_only=True)
+        submission_date = fields.String(dump_only=True)
 
-    application_id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
-    application_guid = db.Column(
+    id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
+    guid = db.Column(
         UUID(as_uuid=True), nullable=False, unique=True, server_default=FetchedValue())
-    submission_date = db.Column(db.DateTime)
-    reference_number = db.Column(db.String)
+    submission_date = db.Column(db.DateTime, nullable=False, server_default=FetchedValue())
+    json = db.Column(db.String)
 
     def __repr__(self):
-        return '<Application %r>' % self.application_guid
+        return f'<{self.__name__} {self.guid}>'
 
     @classmethod
     def get_all(cls):
         return cls.query.all()
 
     @classmethod
-    def find_by_application_guid(cls, bond_guid):
-        return cls.query.filter_by(application_guid=application_guid).first()
+    def find_by_guid(cls, guid):
+        return cls.query.filter_by(guid=guid).first()

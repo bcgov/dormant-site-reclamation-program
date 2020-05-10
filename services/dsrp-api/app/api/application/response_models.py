@@ -3,9 +3,9 @@ from flask_restplus import fields
 
 APPLICATION = api.model(
     'Application', {
-        'application_id': fields.Integer,
-        'application_guid': fields.String,
+        'id': fields.Integer,
+        'guid': fields.String,
         'application_status_code': fields.String,
-        'reference_number': fields.String,
-        'submission_date': fields.DateTime
+        'submission_date': fields.DateTime,
+        'json': fields.String
     })
