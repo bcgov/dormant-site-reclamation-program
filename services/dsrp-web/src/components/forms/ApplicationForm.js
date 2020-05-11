@@ -1,9 +1,6 @@
 import React, { Component } from "react";
-import { reduxForm } from "redux-form";
-import { Form, Button, Col, Row, Steps } from "antd";
+import { Button, Col, Row, Steps, Form } from "antd";
 import PropTypes from "prop-types";
-import { resetForm } from "@/utils/helpers";
-import * as FORM from "@/constants/forms";
 import ApplicationSectionOne from "@/components/forms/ApplicationSectionOne";
 import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
 import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree";
@@ -30,55 +27,37 @@ export class ApplicationForm extends Component {
   steps = [
     {
       title: "Company Details",
-      content: <ApplicationSectionOne />,
+      content: <ApplicationSectionOne onSubmit={this.nextFormStep} />,
     },
     {
       title: "Add Sites",
-      content: <ApplicationSectionTwo />,
+      content: (
+        <ApplicationSectionTwo previousStep={this.previousFormStep} onSubmit={this.nextFormStep} />
+      ),
     },
     {
       title: "Review",
-      content: <ApplicationSectionThree />,
+      content: (
+        <ApplicationSectionThree
+          previousStep={this.previousFormStep}
+          onSubmit={this.props.handleSubmit}
+        />
+      ),
     },
   ];
-
-  handleReset = () => {
-    resetForm(FORM.APPLICATION_FORM);
-  };
 
   render() {
     return (
       <Row>
         <Col>
-          <Form layout="vertical" onSubmit={this.props.handleSubmit}>
-            <Steps current={this.state.current}>
-              {this.steps.map((item) => (
-                <Step key={item.title} title={item.title} />
-              ))}
-            </Steps>
-            <Row className="steps-content">
-              <Col>{this.steps[this.state.current].content}</Col>
-            </Row>
-            <Row className="steps-action">
-              <Col>
-                {this.state.current < this.steps.length - 1 && (
-                  <Button type="primary" onClick={() => this.nextFormStep()}>
-                    Next
-                  </Button>
-                )}
-                {this.state.current === this.steps.length - 1 && (
-                  <Button type="primary" htmlType="submit">
-                    Submit
-                  </Button>
-                )}
-                {this.state.current > 0 && (
-                  <Button style={{ margin: "0 8px" }} onClick={() => this.previousFormStep()}>
-                    Previous
-                  </Button>
-                )}
-              </Col>
-            </Row>
-          </Form>
+          <Steps current={this.state.current}>
+            {this.steps.map((item) => (
+              <Step key={item.title} title={item.title} />
+            ))}
+          </Steps>
+          <Row className="steps-content">
+            <Col>{this.steps[this.state.current].content}</Col>
+          </Row>
         </Col>
       </Row>
     );
@@ -87,8 +66,4 @@ export class ApplicationForm extends Component {
 
 ApplicationForm.propTypes = propTypes;
 
-export default reduxForm({
-  form: FORM.APPLICATION_FORM,
-  onSubmitSuccess: resetForm(FORM.APPLICATION_FORM),
-  touchOnBlur: false,
-})(ApplicationForm);
+export default ApplicationForm;
