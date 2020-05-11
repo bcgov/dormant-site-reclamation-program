@@ -13,7 +13,7 @@ const propTypes = {
 };
 
 export const LandingPage = (props) => (
-  <div>
+  <>
     <Row
       type="flex"
       justify="center"
@@ -144,7 +144,7 @@ export const LandingPage = (props) => (
         </Card>
       </Col>
     </Row>
-  </div>
+  </>
 );
 
 const mapStateToProps = (state) => ({

@@ -89,18 +89,20 @@ export class HeaderDropdown extends Component {
     return (
       <>
         <MediaQuery minWidth={smallestDesktopWidth}>
-          <Link
-            to={routes.SUBMIT_APPLICATION.route}
-            className={this.setActiveLink(routes.SUBMIT_APPLICATION.route)}
-          >
-            Apply
-          </Link>
-          <Link
-            to={routes.VIEW_APPLICATION_STATUS.route}
-            className={this.setActiveLink(routes.VIEW_APPLICATION_STATUS.route)}
-          >
-            Status
-          </Link>
+          <span>
+            <Link
+              to={routes.SUBMIT_APPLICATION.route}
+              className={this.setActiveLink(routes.SUBMIT_APPLICATION.route)}
+            >
+              Apply
+            </Link>
+            <Link
+              to={routes.VIEW_APPLICATION_STATUS.route}
+              className={this.setActiveLink(routes.VIEW_APPLICATION_STATUS.route)}
+            >
+              Status
+            </Link>
+          </span>
           <Dropdown overlay={dropdownMenuDesktop}>
             <Button className="header-dropdown-button">
               {this.props.userInfo.email}
