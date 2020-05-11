@@ -6,7 +6,7 @@ import MediaQuery from "react-responsive";
 import PropTypes from "prop-types";
 import * as ENV from "@/constants/environment";
 import * as routes from "@/constants/routes";
-import { signOutFromSiteMinder } from "@/utils/authenticationHelpers";
+import { signOutFromSSO } from "@/utils/authenticationHelpers";
 import { isAuthenticated, getUserInfo } from "@/selectors/authenticationSelectors";
 import { MENU } from "@/constants/assets";
 import AuthorizationWrapper from "@/components/common/wrappers/AuthorizationWrapper";
@@ -23,7 +23,7 @@ const defaultProps = {
 
 export class HeaderDropdown extends Component {
   handleLogout = () => {
-    signOutFromSiteMinder();
+    signOutFromSSO();
   };
 
   setActiveLink = (pathname) => {
