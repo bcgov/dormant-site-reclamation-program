@@ -8,6 +8,7 @@ export const DEFAULT_ENVIRONMENT = {
   keycloak_clientId: "dsrp-local",
   keycloak_idpHint: "test",
   keycloak_url: "https://sso-test.pathfinder.gov.bc.ca/auth",
+  siteminder_url: "https://logontest7.gov.bc.ca",
 };
 
 export const ENVIRONMENT = {
