@@ -1,15 +1,22 @@
 import React from "react";
+import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import { Row, Col, Card, Button, Typography } from "antd";
 import PropTypes from "prop-types";
 import * as Strings from "@/constants/strings";
 import * as ENV from "@/constants/environment";
 import { isAuthenticated } from "@/selectors/authenticationSelectors";
+import * as routes from "@/constants/routes";
 
 const { Paragraph, Text, Title } = Typography;
 
 const propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
+};
+
+const testAPICall = () => {
+  console.log("test");
 };
 
 export const LandingPage = (props) => (
@@ -26,15 +33,9 @@ export const LandingPage = (props) => (
         <Paragraph className="header-text">
           Manage applications, see inspection histories, get ducks, and more.
         </Paragraph>
-        {!props.isAuthenticated && (
-          <Button type="primary" size="large" className="login">
-            <a
-              href={`${ENV.KEYCLOAK.loginURL}${ENV.BCEID_LOGIN_REDIRECT_URI}&kc_idp_hint=${ENV.KEYCLOAK.idpHint}`}
-            >
-              Log in
-            </a>
-          </Button>
-        )}
+        <Link to={routes.SUBMISSION_FORM.route}>
+          <Button>Submit Proposal</Button>
+        </Link>
       </Col>
     </Row>
     <Row
@@ -151,6 +152,8 @@ const mapStateToProps = (state) => ({
   isAuthenticated: isAuthenticated(state),
 });
 
+const mapDispatchToProps = (dispatch) => bindActionCreators({}, dispatch);
+
 LandingPage.propTypes = propTypes;
 
-export default connect(mapStateToProps)(LandingPage);
+export default connect(mapStateToProps, mapDispatchToProps)(LandingPage);

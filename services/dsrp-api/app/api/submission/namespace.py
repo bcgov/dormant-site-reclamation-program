@@ -1,7 +1,7 @@
 from flask_restplus import Namespace
 
-from app.api.submission.resources.submission import SubmissionResource
+from app.api.submission.resources.submission import SubmissionListResource
 
 api = Namespace('submission', description='')
 
-api.add_resource(SubmissionResource, '')
+api.add_resource(SubmissionListResource, '')

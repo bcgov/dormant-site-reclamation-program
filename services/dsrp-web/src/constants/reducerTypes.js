@@ -13,3 +13,5 @@ export const MODAL = "MODAL";
 export const ORGBOOK = "ORGBOOK";
 export const ORGBOOK_SEARCH = "ORGBOOK_SEARCH";
 export const ORGBOOK_CREDENTIAL = "ORGBOOK_CREDENTIAL";
+
+export const CREATE_SUBMISSION = "CREATE_SUBMISSION";
