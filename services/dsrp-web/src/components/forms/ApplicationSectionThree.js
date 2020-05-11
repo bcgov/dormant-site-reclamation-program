@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { reduxForm } from "redux-form";
+import { reduxForm , Field, FormSection } from "redux-form";
 import { Row, Col, Typography, Form, Button } from "antd";
-import { Field, FormSection } from "redux-form";
+
 import { renderConfig } from "@/components/common/config";
 import { required, dateNotInFuture, maxLength } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
@@ -29,7 +29,11 @@ class ApplicationSectionThree extends Component {
         </FormSection>
         <Row className="steps-action">
           <Col>
-            <Button type="primary" htmlType="submit">
+            <Button
+              type="primary"
+              htmlType="submit"
+              disabled={this.props.submitting || this.props.pristine}
+            >
               Submit
             </Button>
             <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
