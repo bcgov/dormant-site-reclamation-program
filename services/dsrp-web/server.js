@@ -31,7 +31,7 @@ const staticServe = express.static(`${__dirname}/${BUILD_DIR}`, {
 
 app.get(`${BASE_PATH}/env`, (req, res) => {
   res.json({
-    backend: "mds-python-backend",
+    backend: "dsrp-python-backend",
     apiUrl: process.env.API_URL,
     docManUrl: process.env.DOCUMENT_MANAGER_URL,
     keycloak_resource: process.env.KEYCLOAK_RESOURCE,

@@ -8,7 +8,7 @@ from flask_restplus import Resource, reqparse
 
 from app.docman.models.document import Document
 from app.extensions import api, cache
-from app.utils.access_decorators import requires_any_of, MINE_EDIT, VIEW_ALL, MINESPACE_PROPONENT, EDIT_PARTY, EDIT_PERMIT, EDIT_DO, EDIT_VARIANCE
+from app.utils.access_decorators import requires_any_of, VIEW_ALL
 from app.constants import FILE_UPLOAD_SIZE, FILE_UPLOAD_OFFSET, FILE_UPLOAD_PATH, DOWNLOAD_TOKEN, TIMEOUT_24_HOURS, TUS_API_VERSION, TUS_API_SUPPORTED_VERSIONS, FORBIDDEN_FILETYPES
 
 
@@ -27,8 +27,8 @@ class DocumentListResource(Resource):
     parser.add_argument(
         'filename', type=str, required=False, help='File name + extension of the document.')
 
-    @requires_any_of(
-        [MINE_EDIT, EDIT_PARTY, EDIT_PERMIT, EDIT_DO, EDIT_VARIANCE, MINESPACE_PROPONENT])
+    #@requires_any_of(
+     #   [VIEW_ALL])
     def post(self):
         if request.headers.get('Tus-Resumable') is None:
             raise BadRequest('Received file upload for unsupported file transfer protocol')
@@ -115,8 +115,8 @@ class DocumentListResource(Resource):
 
 @api.route(f'/documents/<string:document_guid>')
 class DocumentResource(Resource):
-    @requires_any_of(
-        [MINE_EDIT, EDIT_PARTY, EDIT_PERMIT, EDIT_DO, EDIT_VARIANCE, MINESPACE_PROPONENT])
+    #@requires_any_of(
+     #   [VIEW_ALL])
     def patch(self, document_guid):
         file_path = cache.get(FILE_UPLOAD_PATH(document_guid))
         if file_path is None or not os.path.lexists(file_path):
@@ -166,8 +166,8 @@ class DocumentResource(Resource):
             'Access-Control-Expose-Headers'] = "Tus-Resumable,Tus-Version,Upload-Offset"
         return response
 
-    @requires_any_of(
-        [MINE_EDIT, EDIT_PARTY, EDIT_PERMIT, EDIT_DO, EDIT_VARIANCE, MINESPACE_PROPONENT])
+    #@requires_any_of(
+     #   [VIEW_ALL])
     def head(self, document_guid):
         if document_guid is None:
             raise BadRequest('Must specify document GUID in HEAD')

@@ -6,8 +6,8 @@ VALID_REALM = ['idir']
 DUMMY_AUTH_CLAIMS = {
     "iss": "test_issuer",
     "typ": "Bearer",
-    "username": "mds",
-    "preferred_username": "mds",
+    "username": "dsrp",
+    "preferred_username": "dsrp",
     "email": "test-email",
     "given_name": "test-given-name",
     "realm_access": {
@@ -35,6 +35,7 @@ class User:
 
     def get_user_username(self):
         raw_info = self.get_user_raw_info()
+        
         realms = list(set(VALID_REALM) & set(raw_info['realm_access']['roles']))
         return realms[0] + '\\' + raw_info['preferred_username'] if realms else raw_info[
             'preferred_username']

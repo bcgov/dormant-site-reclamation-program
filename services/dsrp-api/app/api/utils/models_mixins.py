@@ -31,26 +31,7 @@ class UserBoundQuery(db.Query):
 # add listener for the before_compile event on UserBoundQuery
 @db.event.listens_for(UserBoundQuery, 'before_compile', retval=True)
 def ensure_constrained(query):
-    from app import auth
-
-    if not query._user_bound or not auth.apply_security:
-        return query
-
-    mzero = query._mapper_zero()
-    if mzero is not None:
-        user_security = auth.get_current_user_security()
-
-        if user_security.is_restricted():
-            # use reflection to get current model
-            cls = mzero.class_
-
-            # if model includes mine_guid, apply filter on mine_guid.
-            if hasattr(cls, 'mine_guid') and query._user_bound:
-                query = query.enable_assertions(False).filter(
-                    cls.mine_guid.in_(user_security.mine_ids))
-
     return query
-
 
 class DictLoadingError(Exception):
     """Raised when incoming type does not match expected type, prevents coalesing"""
@@ -78,7 +59,7 @@ class Base(db.Model):
                 raise e
 
     def delete(self, commit=True):
-        if hasattr(self, 'deleted_ind'):
+        if hasattr(self, 'deleted'):
             raise Exception("Not implemented for soft deletion.")
         db.session.delete(self)
         current_app.logger.debug(f'Deleting object: {self}')

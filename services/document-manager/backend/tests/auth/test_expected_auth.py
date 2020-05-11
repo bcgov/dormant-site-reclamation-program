@@ -1,5 +1,5 @@
 import pytest
-from app.utils.access_decorators import VIEW_ALL, MINE_EDIT, MINE_ADMIN, MINESPACE_PROPONENT, EDIT_PARTY, EDIT_PERMIT, EDIT_DO, EDIT_VARIANCE
+from app.utils.access_decorators import VIEW_ALL
 from app.docman.resources.document import DocumentResource, DocumentListResource
 
 
@@ -7,11 +7,11 @@ from app.docman.resources.document import DocumentResource, DocumentListResource
     "resource,method,expected_roles",
     [(DocumentListResource, "get", []),
      (DocumentListResource, "post",
-      [MINE_EDIT, EDIT_PARTY, EDIT_PERMIT, EDIT_VARIANCE, EDIT_DO, MINESPACE_PROPONENT]),
+      [VIEW_ALL]),
      (DocumentResource, "patch",
-      [MINE_EDIT, EDIT_PARTY, EDIT_PERMIT, EDIT_VARIANCE, EDIT_DO, MINESPACE_PROPONENT]),
+      [VIEW_ALL]),
      (DocumentResource, "head",
-      [MINE_EDIT, EDIT_PARTY, EDIT_PERMIT, EDIT_VARIANCE, EDIT_DO, MINESPACE_PROPONENT])])
+      [VIEW_ALL])])
 def test_endpoint_auth(resource, method, expected_roles):
     endpoint = getattr(resource, method, None)
     assert endpoint != None, '{0} does not have a {1} method.'.format(resource, method.upper())
