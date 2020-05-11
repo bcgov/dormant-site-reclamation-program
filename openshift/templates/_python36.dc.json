@@ -31,11 +31,6 @@
       "required": true
     },
     {
-      "name": "DB_NRIS_CONFIG_NAME",
-      "description": "Configuration name for the nris database",
-      "required": true
-    },
-    {
       "name": "VERSION",
       "required": true
     },
@@ -121,15 +116,7 @@
       "required": true
     },
     {
-      "name": "NRIS_API_URL",
-      "required": true
-    },
-    {
       "name": "DOCUMENT_MANAGER_URL",
-      "required": true
-    },
-    {
-      "name": "DOCUMENT_GENERATOR_URL",
       "required": true
     }
   ],
@@ -191,7 +178,11 @@
               "failurePolicy": "Retry",
               "execNewPod": {
                 "containerName": "flyway-migration",
-                "command": ["bash", "-c", "$FLYWAY_HOME/scripts/run_migrations.sh"]
+                "command": [
+                  "bash",
+                  "-c",
+                  "$FLYWAY_HOME/scripts/run_migrations.sh"
+                ]
               }
             },
             "maxSurge": "50%",
@@ -205,7 +196,9 @@
             "type": "ImageChange",
             "imageChangeParams": {
               "automatic": true,
-              "containerNames": ["app"],
+              "containerNames": [
+                "app"
+              ],
               "from": {
                 "kind": "ImageStreamTag",
                 "name": "${NAME}:${VERSION}"
@@ -216,7 +209,9 @@
             "type": "ImageChange",
             "imageChangeParams": {
               "automatic": true,
-              "containerNames": ["flyway-migration"],
+              "containerNames": [
+                "flyway-migration"
+              ],
               "from": {
                 "kind": "ImageStreamTag",
                 "name": "${FLYWAY_NAME}:${VERSION}"
@@ -284,60 +279,6 @@
                       "secretKeyRef": {
                         "name": "${DB_CONFIG_NAME}",
                         "key": "database-name"
-                      }
-                    }
-                  },
-                  {
-                    "name": "NRIS_USER_NAME",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DSRP_NRIS_API_SECRET}",
-                        "key": "user-name"
-                      }
-                    }
-                  },
-                  {
-                    "name": "NRIS_PASS",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DSRP_NRIS_API_SECRET}",
-                        "key": "password"
-                      }
-                    }
-                  },
-                  {
-                    "name": "NRIS_TOKEN_URL",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DSRP_NRIS_API_SECRET}",
-                        "key": "token-url"
-                      }
-                    }
-                  },
-                  {
-                    "name": "NRIS_REMOTE_CLIENT_ID",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DSRP_NRIS_API_SECRET}",
-                        "key": "user-name"
-                      }
-                    }
-                  },
-                  {
-                    "name": "NRIS_REMOTE_CLIENT_SECRET",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DSRP_NRIS_API_SECRET}",
-                        "key": "password"
-                      }
-                    }
-                  },
-                  {
-                    "name": "NRIS_REMOTE_TOKEN_URL",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DSRP_NRIS_API_SECRET}",
-                        "key": "token-url"
                       }
                     }
                   },
@@ -554,7 +495,9 @@
               },
               {
                 "name": "flyway-migration",
-                "command": ["cat"],
+                "command": [
+                  "cat"
+                ],
                 "stdin": true,
                 "image": " ",
                 "env": [
