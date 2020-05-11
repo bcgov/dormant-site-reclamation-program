@@ -48,11 +48,6 @@
       "value": "9.6"
     },
     {
-      "description": "Oracle FDW secret name",
-      "name": "FDW_SECRET_NAME",
-      "value": "template.dsrp-postgresql-mms-fdw-secret"
-    },
-    {
       "description": "Postgres secret name",
       "name": "POSTGRES_SECRET_NAME",
       "value": "template.dsrp-postgresql-secret"
@@ -226,60 +221,6 @@
                       "secretKeyRef": {
                         "key": "database-name",
                         "name": "${POSTGRES_SECRET_NAME}"
-                      }
-                    }
-                  },
-                  {
-                    "name": "FDW_NAME",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "key": "oracle-fdw-name",
-                        "name": "${FDW_SECRET_NAME}"
-                      }
-                    }
-                  },
-                  {
-                    "name": "FDW_FOREIGN_SCHEMA",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "key": "oracle-fdw-foreign-schema",
-                        "name": "${FDW_SECRET_NAME}"
-                      }
-                    }
-                  },
-                  {
-                    "name": "FDW_FOREIGN_SERVER",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "key": "oracle-fdw-foreign-server",
-                        "name": "${FDW_SECRET_NAME}"
-                      }
-                    }
-                  },
-                  {
-                    "name": "FDW_USER",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "key": "oracle-fdw-user",
-                        "name": "${FDW_SECRET_NAME}"
-                      }
-                    }
-                  },
-                  {
-                    "name": "FDW_PASS",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "key": "oracle-fdw-password",
-                        "name": "${FDW_SECRET_NAME}"
-                      }
-                    }
-                  },
-                  {
-                    "name": "FDW_SCHEMA",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "key": "oracle-fdw-schema",
-                        "name": "${FDW_SECRET_NAME}"
                       }
                     }
                   },

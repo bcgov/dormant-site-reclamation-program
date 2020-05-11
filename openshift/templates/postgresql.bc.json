@@ -43,9 +43,8 @@
             "name": "${TAG_NAME}",
             "annotations": null,
             "from": {
-              "kind": "ImageStreamTag",
-              "name": "postgresql-9.6-oracle-fdw:v1-stable",
-              "namespace": "bcgov"
+              "kind": "DockerImage",
+              "name": "registry.redhat.io/rhel8/postgresql-12:latest"
             },
             "generation": 1,
             "importPolicy": {},
