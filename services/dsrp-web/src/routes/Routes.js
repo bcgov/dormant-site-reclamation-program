@@ -11,8 +11,6 @@ const Routes = () => (
     {/* PUBLIC ROUTES */}
     <Route exact path={routes.HOME.route} component={routes.HOME.component} />
     <Route exact path={routes.RETURN_PAGE.route} component={routes.RETURN_PAGE.component} />
-    <Route exact path={routes.SUBMISSION_FORM.route} component={routes.SUBMISSION_FORM.component} />
-
     <Route
       exact
       path={routes.SUBMIT_APPLICATION.route}

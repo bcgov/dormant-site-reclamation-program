@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Button, Row, Col, Steps, Typography } from "antd";
+import ApplicationForm from "@/components/forms/ApplicationForm";
 
 const { Paragraph, Title } = Typography;
 const { Step } = Steps;
@@ -9,7 +10,7 @@ const steps = [
   {
     title: "First",
     subTitle: "First Sub",
-    content: "First-content",
+    content: <ApplicationForm />,
   },
   {
     title: "Second",
