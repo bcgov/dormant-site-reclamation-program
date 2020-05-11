@@ -37,6 +37,10 @@ def create_app(test_config=None):
     register_routes(app)
     register_commands(app)
 
+    with app.app_context():
+        from sqlalchemy.orm import configure_mappers
+        configure_mappers()
+        
     return app
 
 
