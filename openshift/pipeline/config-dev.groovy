@@ -313,9 +313,6 @@ environments {
                 application_suffix = "-pr-${vars.git.changeId}"
                 node_env = "development"
                 fn_layer_url = "https://delivery.apps.gov.bc.ca/ext/sgw/geo.allgov"
-                elastic_enabled_dsrp = 0
-                elastic_service_name = "dsrp Dev"
-                elastic_service_name_docman = 'DocMan Dev'
             }
             modules {
                 'dsrp-frontend' {

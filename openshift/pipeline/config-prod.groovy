@@ -183,8 +183,6 @@ app {
                             'DB_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}",
                             'REDIS_CONFIG_NAME': "dsrp-redis${vars.deployment.suffix}",
                             'CACHE_REDIS_HOST': "dsrp-redis${vars.deployment.suffix}",
-                            'ELASTIC_ENABLED': "${vars.deployment.elastic_enabled_dsrp}",
-                            'ELASTIC_SERVICE_NAME': "${vars.deployment.elastic_service_name}",
                             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
                             'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/api",
                             'DOCUMENT_MANAGER_URL': "${vars.modules.'dsrp-docman-backend'.HOST}${vars.modules.'dsrp-docman-backend'.PATH}",
@@ -212,8 +210,6 @@ app {
                             'DB_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}",
                             'REDIS_CONFIG_NAME': "dsrp-redis${vars.deployment.suffix}",
                             'CACHE_REDIS_HOST': "dsrp-redis${vars.deployment.suffix}",
-                            'ELASTIC_ENABLED': "${vars.deployment.elastic_enabled_dsrp}",
-                            'ELASTIC_SERVICE_NAME': "${vars.deployment.elastic_service_name_docman}",
                             'DOCUMENT_CAPACITY':"${vars.DOCUMENT_PVC_SIZE}",
                             'DOCUMENT_CAPACITY_LOWER':"${vars.DOCUMENT_PVC_SIZE.toString().toLowerCase()}",
                             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
@@ -394,9 +390,6 @@ environments {
                 namespace = 'eazios-prod'
                 node_env = "production"
                 fn_layer_url = "https://apps.gov.bc.ca/ext/sgw/geo.allgov"
-                elastic_enabled_dsrp = 1
-                elastic_service_name = "dsrp Prod"
-                elastic_service_name_docman = 'DocMan Prod'
             }
             modules {
                 'dsrp-frontend' {
