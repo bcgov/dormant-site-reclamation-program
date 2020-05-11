@@ -327,10 +327,6 @@
                     }
                   },
                   {
-                    "name": "NRIS_API_URL",
-                    "value": "${NRIS_API_URL}"
-                  },
-                  {
                     "name": "FLASK_RUN_PORT",
                     "value": "5000"
                   },
@@ -564,15 +560,6 @@
                       "secretKeyRef": {
                         "name": "${DB_CONFIG_NAME}",
                         "key": "database-name"
-                      }
-                    }
-                  },
-                  {
-                    "name": "NRIS_USER_PASSWORD",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DB_NRIS_CONFIG_NAME}",
-                        "key": "database-nris-password"
                       }
                     }
                   },
