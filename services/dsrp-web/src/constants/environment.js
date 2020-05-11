@@ -5,7 +5,7 @@ export const DEFAULT_ENVIRONMENT = {
   environment: "development",
   firstNationsLayerUrl: "https://delivery.apps.gov.bc.ca/ext/sgw/geo.allgov",
   keycloak_resource: "dormant-application-local",
-  keycloak_clientId: "dsrp-local",
+  keycloak_clientId: "dormant-application-local",
   keycloak_idpHint: "test",
   keycloak_url: "https://sso-test.pathfinder.gov.bc.ca/auth",
   siteminder_url: "https://logontest7.gov.bc.ca",
