@@ -29,18 +29,15 @@ export class ApplicationForm extends Component {
 
   steps = [
     {
-      title: "First",
-      subTitle: "First Subtitle",
+      title: "Company Details",
       content: <ApplicationSectionOne />,
     },
     {
-      title: "Second",
-      subTitle: "Second Subtitle",
+      title: "Add Sites",
       content: <ApplicationSectionTwo />,
     },
     {
-      title: "Last",
-      subTitle: "Last Subtitle",
+      title: "Review",
       content: <ApplicationSectionThree />,
     },
   ];
@@ -51,35 +48,39 @@ export class ApplicationForm extends Component {
 
   render() {
     return (
-      <Form layout="vertical" onSubmit={this.props.handleSubmit}>
-        <Row gutter={48}>
-          <Col sm={24} className="border--right--layout">
+      <Row>
+        <Col>
+          <Form layout="vertical" onSubmit={this.props.handleSubmit}>
             <Steps current={this.state.current}>
               {this.steps.map((item) => (
-                <Step key={item.title} title={item.title} subTitle={item.subTitle} />
+                <Step key={item.title} title={item.title} />
               ))}
             </Steps>
-            <div className="steps-content">{this.steps[this.state.current].content}</div>
-            <div className="steps-action">
-              {this.state.current < this.steps.length - 1 && (
-                <Button type="primary" onClick={() => this.nextFormStep()}>
-                  Next
-                </Button>
-              )}
-              {this.state.current === this.steps.length - 1 && (
-                <Button type="primary" htmlType="submit">
-                  Submit
-                </Button>
-              )}
-              {this.state.current > 0 && (
-                <Button style={{ margin: "0 8px" }} onClick={() => this.previousFormStep()}>
-                  Previous
-                </Button>
-              )}
-            </div>
-          </Col>
-        </Row>
-      </Form>
+            <Row className="steps-content">
+              <Col>{this.steps[this.state.current].content}</Col>
+            </Row>
+            <Row className="steps-action">
+              <Col>
+                {this.state.current < this.steps.length - 1 && (
+                  <Button type="primary" onClick={() => this.nextFormStep()}>
+                    Next
+                  </Button>
+                )}
+                {this.state.current === this.steps.length - 1 && (
+                  <Button type="primary" htmlType="submit">
+                    Submit
+                  </Button>
+                )}
+                {this.state.current > 0 && (
+                  <Button style={{ margin: "0 8px" }} onClick={() => this.previousFormStep()}>
+                    Previous
+                  </Button>
+                )}
+              </Col>
+            </Row>
+          </Form>
+        </Col>
+      </Row>
     );
   }
 }
