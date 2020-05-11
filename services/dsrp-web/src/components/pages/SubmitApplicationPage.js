@@ -1,47 +1,63 @@
 import React, { Component } from "react";
+import { bindActionCreators } from "redux";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { Button, Row, Col, Steps, Typography } from "antd";
+import { createApplication } from "@/actionCreators/applicationActionCreator";
 import ApplicationForm from "@/components/forms/ApplicationForm";
+
+const propTypes = {
+  createApplication: PropTypes.func.isRequired,
+};
 
 const { Paragraph, Title } = Typography;
 const { Step } = Steps;
-
-// TEMP NOTE: Step props: description, icon, status, title, subTitle, disabled
-const steps = [
-  {
-    title: "First",
-    subTitle: "First Sub",
-    content: <ApplicationForm />,
-  },
-  {
-    title: "Second",
-    subTitle: "Second Sub",
-    content: "Second-content",
-  },
-  {
-    title: "Last",
-    subTitle: "Last Sub",
-    content: "Last-content",
-  },
-];
 
 export class SubmitApplicationPage extends Component {
   state = {
     current: 0,
   };
 
-  next() {
+  nextFormStep = () => {
     const current = this.state.current + 1;
     this.setState({ current });
-  }
+  };
 
-  prev() {
+  previousFormStep = () => {
     const current = this.state.current - 1;
     this.setState({ current });
-  }
+  };
+
+  handleSubmit = (values) => {
+    console.log("handleSubmit", values);
+
+    // TODO: Process form values appropriately.
+    const newValues = values;
+
+    const application = { json: newValues };
+    this.props.createApplication(application);
+  };
+
+  steps = [
+    {
+      title: "First",
+      subTitle: "First Sub",
+      // WIP of course!
+      content: <ApplicationForm onSubmit={this.handleSubmit} />,
+    },
+    {
+      title: "Second",
+      subTitle: "Second Sub",
+      content: "Second-content",
+    },
+    {
+      title: "Last",
+      subTitle: "Last Sub",
+      content: "Last-content",
+    },
+  ];
 
   render() {
-    const { current } = this.state;
-
     return (
       <>
         <Row
@@ -68,25 +84,25 @@ export class SubmitApplicationPage extends Component {
           className="landing-section"
         >
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-            <Steps current={current}>
-              {steps.map((item) => (
+            <Steps current={this.state.current}>
+              {this.steps.map((item) => (
                 <Step key={item.title} title={item.title} subTitle={item.subTitle} />
               ))}
             </Steps>
-            <div className="steps-content">{steps[current].content}</div>
+            <div className="steps-content">{this.steps[this.state.current].content}</div>
             <div className="steps-action">
-              {current < steps.length - 1 && (
-                <Button type="primary" onClick={() => this.next()}>
+              {this.state.current < this.steps.length - 1 && (
+                <Button type="primary" onClick={() => this.nextFormStep()}>
                   Next
                 </Button>
               )}
-              {current === steps.length - 1 && (
-                <Button type="primary" onClick={() => message.success("Processing complete!")}>
+              {this.state.current === this.steps.length - 1 && (
+                <Button type="primary" onClick={() => {}}>
                   Done
                 </Button>
               )}
-              {current > 0 && (
-                <Button style={{ margin: "0 8px" }} onClick={() => this.prev()}>
+              {this.state.current > 0 && (
+                <Button style={{ margin: "0 8px" }} onClick={() => this.previousFormStep()}>
                   Previous
                 </Button>
               )}
@@ -98,4 +114,16 @@ export class SubmitApplicationPage extends Component {
   }
 }
 
-export default SubmitApplicationPage;
+const mapStateToProps = () => ({});
+
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      createApplication,
+    },
+    dispatch
+  );
+
+SubmitApplicationPage.propTypes = propTypes;
+
+export default connect(mapStateToProps, mapDispatchToProps)(SubmitApplicationPage);

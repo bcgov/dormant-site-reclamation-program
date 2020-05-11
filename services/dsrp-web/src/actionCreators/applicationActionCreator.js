@@ -7,8 +7,9 @@ import { ENVIRONMENT } from "../constants/environment";
 import { createRequestHeader } from "../utils/requestHeaders";
 import CustomAxios from "../customAxios";
 
-export const createApplication = (payload) => (dispatch) => {
+export const createApplication = (application) => (dispatch) => {
   dispatch(request(reducerTypes.CREATE_APPLICATION));
+  const payload = { application };
   return CustomAxios()
     .post(ENVIRONMENT.apiUrl + API.APPLICATION, payload, createRequestHeader())
     .then((response) => {
