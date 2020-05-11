@@ -278,24 +278,6 @@
                     }
                   },
                   {
-                    "name": "LDAP_IDIR_USERNAME",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DSRP_IDIR_SECRET}",
-                        "key": "username"
-                      }
-                    }
-                  },
-                  {
-                    "name": "LDAP_IDIR_PASSWORD",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DSRP_IDIR_SECRET}",
-                        "key": "password"
-                      }
-                    }
-                  },
-                  {
                     "name": "FLASK_RUN_PORT",
                     "value": "5000"
                   },
@@ -368,60 +350,6 @@
                   {
                     "name": "METABASE_SITE_URL",
                     "value": "${METABASE_SITE_URL}"
-                  },
-                  {
-                    "name": "NROS_TOKEN_URL",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DSRP_NROS_DOCUMENT_API_SECRET}",
-                        "key": "token-url"
-                      }
-                    }
-                  },
-                  {
-                    "name": "NROS_CLIENT_ID",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DSRP_NROS_DOCUMENT_API_SECRET}",
-                        "key": "service-client"
-                      }
-                    }
-                  },
-                  {
-                    "name": "NROS_CLIENT_SECRET",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DSRP_NROS_DOCUMENT_API_SECRET}",
-                        "key": "password"
-                      }
-                    }
-                  },
-                  {
-                    "name": "VFCBC_TOKEN_URL",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DSRP_VFCBC_DOCUMENT_API_SECRET}",
-                        "key": "token-url"
-                      }
-                    }
-                  },
-                  {
-                    "name": "VFCBC_CLIENT_ID",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DSRP_VFCBC_DOCUMENT_API_SECRET}",
-                        "key": "service-client"
-                      }
-                    }
-                  },
-                  {
-                    "name": "VFCBC_CLIENT_SECRET",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DSRP_VFCBC_DOCUMENT_API_SECRET}",
-                        "key": "password"
-                      }
-                    }
                   }
                 ],
                 "resources": {
