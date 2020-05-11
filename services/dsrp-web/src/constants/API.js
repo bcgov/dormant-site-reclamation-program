@@ -12,3 +12,6 @@ export const DOCUMENT_MANAGER_TOKEN_GET_URL = (documentManagerGuid) =>
 // OrgBook
 export const ORGBOOK_SEARCH = (search) => `/orgbook/search?${queryString.stringify({ search })}`;
 export const ORGBOOK_CREDENTIAL = (credentialId) => `/orgbook/credential/${credentialId}`;
+
+// Application
+export const APPLICATION = "/application";

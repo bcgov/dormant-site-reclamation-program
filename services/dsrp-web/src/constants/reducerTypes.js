@@ -14,3 +14,6 @@ export const NETWORK = "NETWORK";
 export const ORGBOOK = "ORGBOOK";
 export const ORGBOOK_SEARCH = "ORGBOOK_SEARCH";
 export const ORGBOOK_CREDENTIAL = "ORGBOOK_CREDENTIAL";
+
+// Application
+export const CREATE_APPLICATION = "CREATE_APPLICATION";
