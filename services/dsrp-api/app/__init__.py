@@ -11,8 +11,9 @@ from marshmallow.exceptions import MarshmallowError
 from flask_jwt_oidc.exceptions import AuthError
 from werkzeug.exceptions import Forbidden, BadRequest
 
-from app.api.submission.namespace import api as submission_api
+from app.api.application.namespace import api as application_api
 
+from app.commands import register_commands
 from app.config import Config
 from app.extensions import db, jwt, api, cache
 
@@ -34,7 +35,12 @@ def create_app(test_config=None):
 
     register_extensions(app)
     register_routes(app)
+    register_commands(app)
 
+    with app.app_context():
+        from sqlalchemy.orm import configure_mappers
+        configure_mappers()
+        
     return app
 
 
@@ -62,7 +68,7 @@ def register_routes(app):
     # Set URL rules for resources
     app.add_url_rule('/', endpoint='index')
 
-    api.add_namespace(submission_api)
+    api.add_namespace(application_api)
 
     # Healthcheck endpoint
     @api.route('/health')

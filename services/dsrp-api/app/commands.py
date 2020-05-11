@@ -7,3 +7,6 @@ from flask import current_app
 
 from app.api.utils.include.user_info import User
 from app.extensions import db
+
+def register_commands(app):
+    return

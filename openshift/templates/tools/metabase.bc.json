@@ -2,7 +2,7 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "mds-metabase-bc",
+    "name": "dsrp-metabase-bc",
     "creationTimestamp": null
   },
   "objects": [

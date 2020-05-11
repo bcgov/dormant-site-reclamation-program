@@ -2,7 +2,7 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "mds-python-docman-bc",
+    "name": "dsrp-python-docman-bc",
     "creationTimestamp": null
   },
   "parameters": [

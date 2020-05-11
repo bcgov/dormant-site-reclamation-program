@@ -1,4 +1,11 @@
 import { REQUEST, SUCCESS, ERROR } from "../constants/actionTypes";
+import { NETWORK } from "../constants/reducerTypes";
+
+/**
+ * @file networkReducer.js
+ * Data is not associated with this reducer, only the network
+ * request status.
+ */
 
 const initialState = {
   isFetching: false,
@@ -38,4 +45,8 @@ export const networkReducer = (state = initialState, action) => {
   }
 };
 
-export default networkReducer;
+const networkReducerObject = {
+  [NETWORK]: networkReducer,
+};
+
+export default networkReducerObject;

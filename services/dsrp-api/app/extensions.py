@@ -13,5 +13,5 @@ cache = Cache()
 api = Api(
     prefix='{}'.format(Config.BASE_PATH),
     doc='{}/'.format(Config.BASE_PATH),
-    default='mds',
-    default_label='MDS related operations')
+    default='dsrp',
+    default_label='DSRP related operations')

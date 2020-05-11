@@ -2,7 +2,7 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "mds-python-bc",
+    "name": "dsrp-python-bc",
     "creationTimestamp": null
   },
   "parameters": [

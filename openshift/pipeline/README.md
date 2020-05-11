@@ -12,8 +12,8 @@ Collection of groovy scripts to help run jobs in a Jenkins pipeline.
 ```
 
 ## Library Dependency
-The scripts all inherit base classes from the [BCDevops/ocp-cd-pipeline](https://github.com/BCDevOps/ocp-cd-pipeline)
 
+The scripts all inherit base classes from the [BCDevops/ocp-cd-pipeline](https://github.com/BCDevOps/ocp-cd-pipeline)
 
 ## Git Flow
 
@@ -26,11 +26,13 @@ into `master` and then `master` is merged back into `develop` (to avoid
 commit-hash-related conflicts).
 
 ### Branch names:
+
 - SprintYEAR.SPRINT_NUMBER (e.g. Sprint2018.5) : Current release branch
-- fix/JIRA_TICKET_NUMBER (e.g. fix/MDS-32) : For any minor fixes.
-- feature/JIRA_TICKET_NUMBER (e.g. feature/MDS-32) : For any minor fixes.
+- fix/JIRA_TICKET_NUMBER (e.g. fix/-32) : For any minor fixes.
+- feature/JIRA_TICKET_NUMBER (e.g. feature/-32) : For any minor fixes.
 
 ### Pull requests:
+
 All the pull requests should be opened against the `develop`. To be mindful of
 OpenShift resources, PR's should only be opened when they are ready to receive
 feedback so they can be merged.

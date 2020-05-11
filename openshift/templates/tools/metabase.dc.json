@@ -2,7 +2,7 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "mds-metabase-dc"
+    "name": "dsrp-metabase-dc"
   },
   "objects": [
     {
@@ -91,9 +91,7 @@
         }
       },
       "spec": {
-        "accessModes": [
-          "ReadWriteOnce"
-        ],
+        "accessModes": ["ReadWriteOnce"],
         "resources": {
           "requests": {
             "storage": "${METABASE_PVC_SIZE}"
@@ -158,9 +156,7 @@
             "type": "ImageChange",
             "imageChangeParams": {
               "automatic": true,
-              "containerNames": [
-                "${NAME}"
-              ],
+              "containerNames": ["${NAME}"],
               "from": {
                 "kind": "ImageStreamTag",
                 "name": "${NAME}:${VERSION}"
@@ -171,9 +167,7 @@
             "type": "ImageChange",
             "imageChangeParams": {
               "automatic": true,
-              "containerNames": [
-                "${NAME_DATABASE}"
-              ],
+              "containerNames": ["${NAME_DATABASE}"],
               "from": {
                 "kind": "ImageStreamTag",
                 "name": "${NAME_DATABASE}:${VERSION}"
@@ -308,11 +302,7 @@
                 ],
                 "readinessProbe": {
                   "exec": {
-                    "command": [
-                      "/bin/bash",
-                      "-c",
-                      "pg_isready -h localhost -p 5432"
-                    ]
+                    "command": ["/bin/bash", "-c", "pg_isready -h localhost -p 5432"]
                   },
                   "initialDelaySeconds": 20,
                   "timeoutSeconds": 15
@@ -429,7 +419,7 @@
     },
     {
       "name": "METABASE_SECRET_NAME",
-      "value": "template.mds-metabase-key"
+      "value": "template.dsrp-metabase-key"
     }
   ]
 }

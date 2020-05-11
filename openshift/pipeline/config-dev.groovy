@@ -1,5 +1,5 @@
 app {
-    name = 'dsrp'
+    name = 'dormant-site-reclamation-program'
     version = 'snapshot'
 
     namespaces {
@@ -68,41 +68,6 @@ app {
                             'VOLUME_CAPACITY':"${vars.DB_PVC_SIZE}"
                     ]
                 ],
-                /*[
-                    'file':'openshift/templates/postgresql.dc.json',
-                    'params':[
-                            'NAME':"dsrp-postgresql",
-                            'SUFFIX':"${vars.deployment.suffix}-reporting",
-                            'DATABASE_SERVICE_NAME':"dsrp-postgresql${vars.deployment.suffix}",
-                            'CPU_REQUEST':"${vars.resources.postgres.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.postgres.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.postgres.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.postgres.memory_limit}",
-                            'IMAGE_STREAM_NAMESPACE':'',
-                            'IMAGE_STREAM_NAME':"dsrp-postgresql",
-                            'IMAGE_STREAM_VERSION':"${app.deployment.version}",
-                            'POSTGRESQL_DATABASE':'dsrp',
-                            'VOLUME_CAPACITY':"${vars.DB_PVC_SIZE}"
-                    ]
-                ],*/
-                /*[
-                    'file':'openshift/templates/dbbackup.dc.json',
-                    'params':[
-                            'NAME':"dsrp-database-backup",
-                            'FLYWAY_NAME':"dsrp-flyway-migration-client",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'VERSION':"${app.deployment.version}",
-                            'ENVIRONMENT_NAME':"${vars.deployment.namespace}",
-                            'ENVIRONMENT_FRIENDLY_NAME':"BC Mines Digital Services (DEV)",
-                            'DATABASE_SERVICE_NAME':"dsrp-postgresql${vars.deployment.suffix}",
-                            'CPU_REQUEST':"${vars.resources.backup.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.backup.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.backup.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.backup.memory_limit}",
-                            'VERIFICATION_VOLUME_SIZE':"${vars.BACKUP_VERIFICATION_PVC_SIZE}",
-                            'DB_NRIS_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}-nris"
-                    ]
-                ],*/
                 [
                     'file':'openshift/templates/redis.dc.json',
                     'params':[
@@ -324,12 +289,12 @@ environments {
                 changeId = "${opt.'pr'}"
             }
             keycloak {
-                clientId_dsrp = "mines-application-dev"
-                resource = "mines-application-dev"
+                clientId_dsrp = "dormant-application-dev"
+                resource = "dormant-application-dev"
                 idpHint_dsrp = "dev"
                 url = "https://sso-test.pathfinder.gov.bc.ca/auth"
-                known_config_url = "https://sso-test.pathfinder.gov.bc.ca/auth/realms/dsrp/.well-known/openid-configuration"
-                siteminder_url = "https://logontest.gov.bc.ca"
+                known_config_url = "https://sso-test.pathfinder.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration"
+                siteminder_url = "https://logontest7.gov.bc.ca"
             }
             resources {
                 node {
@@ -398,19 +363,6 @@ environments {
                     memory_request = "16Mi"
                     memory_limit = "32Mi"
                 }
-                /*
-                backup {
-                    cpu_request = "0"
-                    cpu_limit = "0"
-                    memory_request = "0"
-                    memory_limit = "0"
-                }*/
-                // digdag {
-                //     cpu_request = "100m"
-                //     cpu_limit = "200m"
-                //     memory_request = "512Mi"
-                //     memory_limit = "1Gi"
-                // }
             }
             deployment {
                 env {
@@ -423,7 +375,6 @@ environments {
                 node_env = "development"
                 fn_layer_url = "https://delivery.apps.gov.bc.ca/ext/sgw/geo.allgov"
                 elastic_enabled_dsrp = 0
-                elastic_enabled_nris = 0
                 elastic_service_name = "dsrp Dev"
                 elastic_service_name_nris = "NRIS API Dev"
                 elastic_service_name_docman = 'DocMan Dev'

@@ -1,27 +1,6 @@
 version: "2"
 
 services:
-  ####################### Keycloak Definition #######################
-  keycloak:
-    restart: always
-    container_name: dsrp_keycloak
-    image: jboss/keycloak
-    environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
-      - KEYCLOAK_IMPORT=/tmp/keycloak-local-realm.json
-      - DB_VENDOR=h2
-    volumes:
-      - ./settings/keycloak/keycloak-local-realm.json:/tmp/keycloak-local-realm.json
-      - ./settings/keycloak/keycloak-local-user.sh:/tmp/keycloak-local-user.sh
-    ports:
-      - "8080:8080"
-      - "8443:8443"
-    networks:
-      - dsrp
-    # logging:
-    #     driver: none
-
   ####################### Postgres Definition #######################
   postgres:
     restart: always

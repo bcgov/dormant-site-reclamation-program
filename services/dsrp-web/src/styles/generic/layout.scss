@@ -10,3 +10,16 @@
 .icon-lg {
   font-size: 24px !important;
 }
+
+.steps-content {
+  margin-top: 16px;
+  border-radius: 2px;
+  background-color: $card-bg;
+  min-height: 200px;
+  text-align: center;
+  padding-top: 80px;
+}
+
+.steps-action {
+  margin-top: 24px;
+}

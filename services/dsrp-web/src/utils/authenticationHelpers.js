@@ -1,5 +1,5 @@
-import { KEYCLOAK } from "@/constants/environment";
 import {
+  KEYCLOAK,
   KEYCLOAK_LOGOUT_REDIRECT_URI,
   SITEMINDER_LOGOUT_REDIRECT_URI,
 } from "@/constants/environment";

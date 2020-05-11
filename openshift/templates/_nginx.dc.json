@@ -2,7 +2,7 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "mds-nginx-dc",
+    "name": "dsrp-nginx-dc",
     "creationTimestamp": null
   },
   "parameters": [
@@ -84,7 +84,7 @@
       "apiVersion": "v1",
       "kind": "PersistentVolumeClaim",
       "metadata": {
-        "name": "mds-access-logs${SUFFIX}"
+        "name": "dsrp-access-logs${SUFFIX}"
       },
       "spec": {
         "accessModes": ["ReadWriteMany"],
@@ -241,7 +241,7 @@
               {
                 "name": "${NAME}${SUFFIX}-log",
                 "persistentVolumeClaim": {
-                  "claimName": "mds-access-logs${SUFFIX}"
+                  "claimName": "dsrp-access-logs${SUFFIX}"
                 }
               }
             ]

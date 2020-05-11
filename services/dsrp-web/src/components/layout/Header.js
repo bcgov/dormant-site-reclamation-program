@@ -24,7 +24,7 @@ export const Header = (props) => (
             </a>
           </span>
           <span className="header-title">
-            <Link to={routes.HOME.route}>Dormant Site Reclamation Project</Link>
+            <Link to={routes.HOME.route}>Dormant Site Reclamation Program</Link>
           </span>
           <span className="header-menu">
             <HeaderDropdown />

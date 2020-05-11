@@ -20,7 +20,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from app.api.utils.models_mixins import AuditMixin
 from app.api.utils.static_data import setup_static_data
 from app.api.utils.field_template import FieldTemplate
-
+from app.api.application.models.application import Application
 from app.api.constants import STATIC_DATA
 
 
@@ -29,7 +29,7 @@ class CoreConverter(ModelConverter):
     SQLA_TYPE_MAPPING.update({
         Geometry: fields.String,
         sa.Numeric: fields.Number,
-        # py_uuid: fields.UUID
+                                                 # py_uuid: fields.UUID
     })
 
 
@@ -68,7 +68,9 @@ def setup_schema(Base, session):
     inspired by: https://marshmallow-sqlalchemy.readthedocs.io/en/latest/recipes.html#automatically-generating-schemas-for-sqlalchemy-models
     """
     def setup_schema_fn():
-        for class_ in []:
+        for class_ in [
+                Application
+        ]:
             if hasattr(class_, "__tablename__") or getattr(class_, "__create_schema__", False):
                 try:
                     if class_.__name__.endswith("Schema"):

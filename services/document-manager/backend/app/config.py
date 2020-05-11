@@ -19,8 +19,8 @@ class Config(object):
 
     JWT_OIDC_WELL_KNOWN_CONFIG = os.environ.get(
         'JWT_OIDC_WELL_KNOWN_CONFIG',
-        'https://localhost:8080/auth/realms/mds/.well-known/openid-configuration')
-    JWT_OIDC_AUDIENCE = os.environ.get('JWT_OIDC_AUDIENCE', 'mds')
+        'https://sso-test.pathfinder.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration')
+    JWT_OIDC_AUDIENCE = os.environ.get('JWT_OIDC_AUDIENCE', 'account')
     JWT_OIDC_ALGORITHMS = os.environ.get('JWT_OIDC_ALGORITHMS', 'RS256')
 
     # Cache settings
