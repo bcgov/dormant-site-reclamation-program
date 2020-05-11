@@ -301,32 +301,6 @@
                     }
                   },
                   {
-                    "name": "ELASTIC_ENABLED",
-                    "value": "${ELASTIC_ENABLED}"
-                  },
-                  {
-                    "name": "ELASTIC_SERVICE_NAME",
-                    "value": "${ELASTIC_SERVICE_NAME}"
-                  },
-                  {
-                    "name": "ELASTIC_SECRET_TOKEN",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DSRP_ELASTIC_SECRET}",
-                        "key": "secret-token"
-                      }
-                    }
-                  },
-                  {
-                    "name": "ELASTIC_SERVER_URL",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DSRP_ELASTIC_SECRET}",
-                        "key": "server-url"
-                      }
-                    }
-                  },
-                  {
                     "name": "FLASK_RUN_PORT",
                     "value": "5000"
                   },
