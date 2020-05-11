@@ -255,7 +255,7 @@ environments {
                 idpHint_dsrp = "dev"
                 url = "https://sso-test.pathfinder.gov.bc.ca/auth"
                 known_config_url = "https://sso-test.pathfinder.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration"
-                siteminder_url = "https://logontest.gov.bc.ca"
+                siteminder_url = "https://logontest7.gov.bc.ca"
             }
             resources {
                 node {
