@@ -42,12 +42,15 @@ fi
 template='{.items[?(@.tag.name=="build-pr-%s")].metadata.name}'
 
 # ===================================================================================================
-oc project eazios-dev
+for pr in "$@"
+do
+    oc project eazios-dev
 
-oc delete secret,pvc,all -l change-id=$CHANGE_ID
+    oc delete secret,pvc,all -l change-id=$pr
 
-oc project eazios-tools
+    oc project eazios-tools
 
-oc delete is -l change-id=$CHANGE_ID
-tags=`oc get istag -o=jsonpath=$(printf "${template}" "${CHANGE_ID}")`
-oc delete istag ${tags}
+    oc delete is -l change-id=$pr
+    tags=`oc get istag -o=jsonpath=$(printf "${template}" "${pr}")`
+    oc delete istag ${tags}
+done

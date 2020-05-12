@@ -183,17 +183,6 @@ app {
                     ]
                 ],
                 [
-                    'file':'openshift/templates/tools/schemaspy.dc.json',
-                    'params':[
-                            'NAME':"schemaspy",
-                            'VERSION':"${app.deployment.version}",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'BACKEND_HOST': "https://${vars.modules.'dsrp-nginx'.HOST_dsrp}${vars.modules.'dsrp-nginx'.PATH}/api",
-                            'APPLICATION_DOMAIN': "${vars.modules.'schemaspy'.HOST}",
-                            'DB_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}"
-                    ]
-                ],
-                [
                     'file':'openshift/templates/tools/metabase.dc.json',
                     'params':[
                             'NAME':"metabase",
@@ -212,37 +201,6 @@ app {
                             'DB_MEMORY_REQUEST':"${vars.resources.metabase.db_memory_request}",
                             'DB_MEMORY_LIMIT':"${vars.resources.metabase.db_memory_limit}"
                     ]
-                ],
-                [
-                    'file':'openshift/templates/tools/logstash.dc.json',
-                    'params':[
-                            'NAME':"dsrp-logstash",
-                            'VERSION':"${app.deployment.version}",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'ENVIRONMENT_NAME':"${app.deployment.env.name}",
-                            'DB_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}",
-                            'CPU_REQUEST':"${vars.resources.logstash.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.logstash.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.logstash.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.logstash.memory_limit}"
-                    ]
-                ],
-                [
-                    'file':'openshift/templates/digdag/digdag.dc.json',
-                    'params':[
-                            'NAME':"digdag",
-                            'VERSION':"${app.deployment.version}",
-                            'NAMESPACE':"${vars.deployment.namespace}",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'SCHEDULER_PVC_SIZE':"${vars.SCHEDULER_PVC_SIZE}",
-                            'ENVIRONMENT_NAME':"${app.deployment.env.name}",
-                            'KEYCLOAK_DISCOVERY_URL':"${vars.keycloak.known_config_url}",
-                            'APPLICATION_DOMAIN': "${vars.modules.'digdag'.HOST}",
-                            'CPU_REQUEST':"${vars.resources.digdag.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.digdag.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.digdag.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.digdag.memory_limit}"
-                    ]
                 ]
         ]
     }
@@ -255,7 +213,6 @@ environments {
             DOCUMENT_PVC_SIZE = '5Gi'
             LOG_PVC_SIZE = '1Gi'
             METABASE_PVC_SIZE = '10Gi'
-            SCHEDULER_PVC_SIZE = '10Gi'
             git {
                 changeId = "${opt.'pr'}"
             }
@@ -326,18 +283,6 @@ environments {
                     db_memory_request = "256Mi"
                     db_memory_limit = "1Gi"
                 }
-                logstash {
-                    cpu_request = "50m"
-                    cpu_limit = "150m"
-                    memory_request = "512Mi"
-                    memory_limit = "1.5Gi"
-                }
-                digdag {
-                    cpu_request = "100m"
-                    cpu_limit = "200m"
-                    memory_request = "512Mi"
-                    memory_limit = "1Gi"
-                }
             }
             deployment {
                 env {
@@ -371,14 +316,8 @@ environments {
                 'dsrp-redis' {
                     HOST = "http://dsrp-redis${vars.deployment.suffix}"
                 }
-                'schemaspy' {
-                    HOST = "dsrp-schemaspy-${vars.deployment.namespace}.pathfinder.gov.bc.ca"
-                }
                 'metabase' {
                     HOST = "dsrp-metabase-${vars.deployment.namespace}.pathfinder.gov.bc.ca"
-                }
-                'digdag' {
-                    HOST = "dsrp-digdag-${vars.deployment.namespace}.pathfinder.gov.bc.ca"
                 }
             }
         }
