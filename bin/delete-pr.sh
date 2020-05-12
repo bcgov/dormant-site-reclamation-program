@@ -19,6 +19,16 @@ exit 1
 # ===================================================================================================
 # Setup
 # ---------------------------------------------------------------------------------------------------
+while getopts c:h FLAG; do
+  case $FLAG in
+    c ) CHANGE_ID=$OPTARG ;;
+    h ) usage ;;
+    \?) #unrecognized option - show help
+      echo -e \\n"Invalid script option"\\n
+      usage
+      ;;
+  esac
+done
 
 if ! oc whoami
 then

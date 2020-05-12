@@ -78,7 +78,7 @@ export const phoneMask = createTextMask({
 });
 
 export const postalCodeMask = createTextMask({
-  pattern: "XXX-XXX",
+  pattern: "XXX XXX",
   // placeholder: '_',
   maskDefinitions: {
     X: {
