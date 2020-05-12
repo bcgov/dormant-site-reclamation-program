@@ -76,9 +76,18 @@ export class PartyOrgBookForm extends Component {
 
     return (
       <Row gutter={48} type="flex" align="middle">
-        <Col span={18}>
-          <Form.Item label={this.props.label}>
+        <Col span={24}>
+          <Form.Item label={this.props.label}
+            validateStatus={
+              this.props.meta.touched ? (this.props.meta.error && "error") || (this.props.meta.warning && "warning") : ""
+            }
+            help={
+              this.props.meta.touched &&
+              ((this.props.meta.error && <span>{this.props.meta.error}</span>) ||
+                (this.props.meta.warning && <span>{this.props.meta.warning}</span>))
+            }>
             <Select
+              id={this.props.id}
               showSearch
               showArrow
               labelInValue
@@ -94,14 +103,15 @@ export class PartyOrgBookForm extends Component {
               onSelect={this.handleSelect}
               style={{ width: "100%" }}
               disabled={this.state.isAssociating}
+              {...this.props.input}
             >
               {this.state.options.map((option) => (
-                <Select.Option key={option.value}>{option.text}</Select.Option>
+                <Select.Option key={option.value} value={option.value}>{option.text}</Select.Option>
               ))}
             </Select>
           </Form.Item>
         </Col>
-        <Col span={4}>
+        {/* <Col span={4}>
           <Button
             type="primary"
             href={
@@ -117,7 +127,7 @@ export class PartyOrgBookForm extends Component {
               View on OrgBook
             </span>
           </Button>
-        </Col>
+        </Col> */}
       </Row>
     );
   }
