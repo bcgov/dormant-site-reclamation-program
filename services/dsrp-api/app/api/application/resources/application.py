@@ -9,6 +9,7 @@ from app.api.application.models.application import Application
 from app.api.utils.access_decorators import requires_role_view_all
 from app.api.utils.resources_mixins import UserMixin
 
+from app.api.services.email_service import EmailService
 
 class ApplicationListResource(Resource, UserMixin):
     @api.doc(description='Get all applications')
@@ -24,11 +25,13 @@ class ApplicationListResource(Resource, UserMixin):
     @api.expect(APPLICATION)
     @api.marshal_with(APPLICATION, code=201)
     def post(self):
-
-        try:
-            application = Application._schema().load(request.json['application'])
-        except MarshmallowError as e:
-            raise BadRequest(e)
+        with EmailService as es:
+            try:
+                application = Application._schema().load(request.json['application'])
+                es.send_email('jasyrotuck@gmail.com','TEST EMAIL')
+                es.send_email('jasyrotuck@gmail.com','TEST EMAIL2')
+            except MarshmallowError as e:
+                raise BadRequest(e)
 
         application.save()
 

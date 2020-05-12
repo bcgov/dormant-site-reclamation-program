@@ -335,6 +335,15 @@
                     "value": "${ENVIRONMENT_NAME}"
                   },
                   {
+                    "name": "SMTP_CRED_HOST",
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "name": "${SMTP_CRED}",
+                        "key": "stmp-host"
+                      }
+                    }
+                  },
+                  {
                     "name": "METABASE_EMBEDDING_SECRET_KEY",
                     "valueFrom": {
                       "secretKeyRef": {
