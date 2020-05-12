@@ -28,10 +28,10 @@ export const LandingPage = (props) => (
           The Dormant Sites Reclamation Program (Program) will access $100 million of federal
           funding provided to British Columbia through the Inactive and Orphan Well Fund – a fund
           established through the federal government’s COVID-19 Economic Response Plan. The Program
-          will offer opportunities for contractors in British Columbia to apply for grant money to
-          complete work on dormant site reclamation. The Program will also provide Indigenous
-          peoples, landowners and local communities the opportunity to nominate dormant sites for
-          reclamation.
+          will offer opportunities for contractors in British Columbia to apply for shared cost
+          arrangement money to complete work on dormant site reclamation. The Program will also
+          provide Indigenous peoples, landowners and local communities the opportunity to nominate
+          dormant sites for reclamation.
         </Paragraph>
 
         <Paragraph strong>Key Outcomes:</Paragraph>
@@ -50,13 +50,14 @@ export const LandingPage = (props) => (
         <Paragraph strong>Funding:</Paragraph>
 
         <ul className="landing-list">
-          <li>$100 million in grants offered in two increments of $50 million</li>
-          <li>Contractors with approved grants will receive:</li>
+          <li>$100 million in shared cost arrangements offered in two increments of $50 million</li>
+          <li>Contractors with approved shared cost arrangements will receive:</li>
           <ul>
             <li>10% of the contract amount once their application is approved</li>
             <li>Up to another 60% after submitting interim invoicing and reports </li>
             <li>
-              The remainder of the grant when the work is completed subject to compliance review.
+              The remainder of the shared cost arrangement when the work is completed subject to
+              compliance review.
             </li>
           </ul>
           <li>The Program will conclude operations in 2021/2022.</li>
@@ -66,8 +67,8 @@ export const LandingPage = (props) => (
 
         <ul className="landing-list">
           <li>
-            Grant funding will be available in two increments with targeted priorities, application
-            criteria, and timelines.
+            Shared cost arrangement funding will be available in two increments with targeted
+            priorities, application criteria, and timelines.
           </li>
         </ul>
 
@@ -104,8 +105,8 @@ export const LandingPage = (props) => (
         </ul>
 
         <Paragraph>
-          The company responsible for doing the contracted work must apply for the grant.
-          Contractors and consultants may not apply on behalf of others.
+          The company responsible for doing the contracted work must apply for the shared cost
+          arrangement. Contractors and consultants may not apply on behalf of others.
         </Paragraph>
 
         <Title level={4} className="landing-subheader">
@@ -126,7 +127,10 @@ export const LandingPage = (props) => (
           <li>
             Only the contractor who has signed the agreement with the permit holder can apply.
           </li>
-          <li>Grant funding will be awarded only to the contractor, not the permit holder.</li>
+          <li>
+            Shared cost arrangement funding will be awarded only to the contractor, not the permit
+            holder.
+          </li>
           <li>
             The contractor is responsible for ensuring that the payment of applicable municipal
             taxes relating to an applied-for site are in good standing
@@ -196,8 +200,8 @@ export const LandingPage = (props) => (
             sites investigation and/or reclamation across British Columbia
           </li>
           <li>
-            Grants of up to $100,000 (per application, per closure activity) to be awarded to
-            eligible contractors.
+            Shared cost arrangements of up to $100,000 (per application, per closure activity) to be
+            awarded to eligible contractors.
           </li>
           <li>
             Projects will be selected on a first come, first serve basis and must address sites with
@@ -245,13 +249,14 @@ export const LandingPage = (props) => (
         <Paragraph>
           Permit holders responsible for the Dormant Site will receive notification that the site is
           a Nominated Site under the program and will determine if the site work will be advanced to
-          a contractor. Contractors submitting grant applications in Increment #2 must identify when
-          a site is a Nominated Site in order to be prioritized.
+          a contractor. Contractors submitting shared cost arrangement applications in Increment #2
+          must identify when a site is a Nominated Site in order to be prioritized.
         </Paragraph>
 
         <Paragraph strong>Eligible Costs:</Paragraph>
         <Paragraph>
-          All costs associated with completing the work are eligible for grant funding, including:
+          All costs associated with completing the work are eligible for shared cost arrangement
+          funding, including:
         </Paragraph>
         <ul>
           <li>Materials and supplies</li>
@@ -266,7 +271,8 @@ export const LandingPage = (props) => (
         <ul>
           <li>Administration fees</li>
           <li>
-            Costs of work to prepare for contract bids, grant applications and project contracts
+            Costs of work to prepare for contract bids, shared cost arrangement applications and
+            project contracts
           </li>
           <ul>
             <li>Similar costs not directly incurred in relation to eligible closure activities</li>
@@ -304,31 +310,34 @@ export const LandingPage = (props) => (
             Program.
           </li>
           <li>
-            Successful applicants must sign a Grant Agreement (prior to receiving Part 2 and 3
-            funding)
+            Successful applicants must sign a Shared Cost Arrangement Agreement (prior to receiving
+            Part 2 and 3 funding)
           </li>
           <li>
             Applications, information and reports must be submitted as the timelines outlined in the
-            program guidelines and grant agreement
-          </li>
-          <li>All grants administered under the Program may be subject to provincial audit.</li>
-          <li>
-            Final funding will be subject to completion of work outlined in the terms of the Grant
-            Agreement.
+            program guidelines and shared cost arrangement agreement
           </li>
           <li>
-            Any information obtained under the Program Grant Agreement will be subject to the
-            provisions of FOIPPA.{" "}
+            All shared cost arrangements administered under the Program may be subject to provincial
+            audit.
+          </li>
+          <li>
+            Final funding will be subject to completion of work outlined in the terms of the Shared
+            Cost Arrangement Agreement.
+          </li>
+          <li>
+            Any information obtained under the Program Shared Cost Arrangement Agreement will be
+            subject to the provisions of FOIPPA.{" "}
           </li>
           <li>
             Program applications and the reported results of the scope of work under the Program
-            Grant Agreement may be shared with the BCOGC to verify site location, work required and
-            completed and compliance with Grant Agreement.
+            Shared Cost Arrangement Agreement may be shared with the BCOGC to verify site location,
+            work required and completed and compliance with Shared Cost Arrangement Agreement.
           </li>
           <li>
             Program results will be published annually. Applicant name (company), permit holder,
-            grant amount, facility location, and aggregate data on payment and performance measures
-            may be published.{" "}
+            shared cost arrangement amount, facility location, and aggregate data on payment and
+            performance measures may be published.{" "}
           </li>
         </ul>
 
