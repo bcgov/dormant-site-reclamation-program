@@ -10,17 +10,18 @@ import { Form, DatePicker } from "antd";
 const propTypes = {
   id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   input: PropTypes.objectOf(PropTypes.any).isRequired,
-  label: PropTypes.string.isRequired,
-  placeholder: PropTypes.string,
-  onChange: PropTypes.func,
   meta: PropTypes.objectOf(PropTypes.any).isRequired,
+  label: PropTypes.string,
+  placeholder: PropTypes.string,
+  disabled: PropTypes.bool,
   showTime: PropTypes.bool,
 };
 
 const defaultProps = {
+  label: "",
+  placeholder: "",
+  disabled: false,
   showTime: false,
-  placeholder: "yyyy-mm-dd",
-  onChange: () => {},
 };
 
 const RenderDate = (props) => (
@@ -36,10 +37,11 @@ const RenderDate = (props) => (
     }
   >
     <DatePicker
+      disabled={props.disabled}
       id={props.id}
       {...props.input}
       placeholder={props.placeholder}
-      onChange={(date, dateString) => props.input.onChange(dateString)}
+      onChange={(date, dateString) => props.input.onChange(dateString || null)}
       value={props.input.value ? moment(props.input.value) : null}
       showTime={props.showTime && { format: "HH:mm" }}
       format={props.showTime && "YYYY-MM-DD HH:mm"}

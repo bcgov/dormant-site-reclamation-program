@@ -50,7 +50,7 @@ export class SubmitApplicationPage extends Component {
           className="landing-section"
         >
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-            <ApplicationForm onSubmit={this.handleSubmit} />
+            <ApplicationForm handleSubmit={this.handleSubmit} />
           </Col>
         </Row>
       </>

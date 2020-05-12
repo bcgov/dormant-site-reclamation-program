@@ -15,6 +15,17 @@ DUMMY_AUTH_CLAIMS = {
     }
 }
 
+PUBLIC_DUMMY_AUTH_CLAIMS = {
+    "iss": "test_issuer",
+    "typ": "Bearer",
+    "username": "public",
+    "preferred_username": "public",
+    "email": "",
+    "given_name": "",
+    "realm_access": {
+        "roles": []
+    }
+}
 
 class User:
     _test_mode = False
@@ -22,7 +33,12 @@ class User:
     def get_user_raw_info(self):
         if self._test_mode:
             return DUMMY_AUTH_CLAIMS
-        token = jwt.get_token_auth_header()
+
+        try: 
+            token = jwt.get_token_auth_header()
+        except:
+            return PUBLIC_DUMMY_AUTH_CLAIMS
+            
         return jwt_jose.get_unverified_claims(token)
 
     def get_user_email(self):

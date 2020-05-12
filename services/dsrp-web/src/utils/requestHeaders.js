@@ -4,9 +4,12 @@
 
 // This file is anticipated to have multiple exports
 // eslint-disable-next-line import/prefer-default-export
-export const createRequestHeader = () => ({
-  headers: {
-    "Access-Control-Allow-Origin": "*",
-    Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-  },
-});
+export const createRequestHeader = () => {
+  let requestHeaders = { headers: {} };
+  requestHeaders.headers["Access-Control-Allow-Origin"] = "*";
+  const jwtToken = localStorage.getItem("jwt");
+  if (jwtToken) {
+    requestHeaders.headers["Authorization"] = `Bearer ${jwtToken}`;
+  }
+  return requestHeaders;
+};
