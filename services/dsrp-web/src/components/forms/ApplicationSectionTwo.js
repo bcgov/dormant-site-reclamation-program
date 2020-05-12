@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { reduxForm, FieldArray } from "redux-form";
-import { Row, Col, Typography, Form, Button, Divider } from "antd";
+import { Row, Col, Typography, Form, Button, Collapse, Icon } from "antd";
 import { Field, FormSection } from "redux-form";
 import { renderConfig } from "@/components/common/config";
 import { required, dateNotInFuture, maxLength } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 
 const { Text, Paragraph, Title } = Typography;
+const { Panel } = Collapse;
 
 const defaultProps = {};
 
@@ -17,23 +18,31 @@ const renderSites = ({ fields, meta: { error, submitFailed } }) => (
       <Col span={24}>{submitFailed && error && <>{error}</>}</Col>
     </Row>
     <Row gutter={[48, 48]}>
-      {fields.map((member, index) => (
-        <Col span={24} key={index}>
-          <Title level={4}>
-            Duck #{index + 1}
-            <Button style={{ float: "right" }} onClick={() => fields.remove(index)}>
-              Remove Duck
-            </Button>
-          </Title>
-          <Field
-            name={`${member}.first_name`}
-            label="First Name"
-            placeholder="First Name"
-            component={renderConfig.FIELD}
-            validate={[required]}
-          />
-        </Col>
-      ))}
+      <Col span={24}>
+        <Collapse bordered={false}>
+          {fields.map((member, index) => (
+            <Panel
+              key={index}
+              header={
+                <Title level={4}>
+                  Duck #{index + 1}
+                  <Button style={{ float: "right" }} onClick={() => fields.remove(index)}>
+                    <Icon type="close" />
+                  </Button>
+                </Title>
+              }
+            >
+              <Field
+                name={`${member}.first_name`}
+                label="First Name"
+                placeholder="First Name"
+                component={renderConfig.FIELD}
+                validate={[required]}
+              />
+            </Panel>
+          ))}
+        </Collapse>
+      </Col>
     </Row>
     <Button type="primary" onClick={() => fields.push({})}>
       Add Duck
