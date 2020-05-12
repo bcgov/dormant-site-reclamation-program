@@ -73,7 +73,7 @@
     },
     {
       "name": "SITEMINDER_URL",
-      "value": "https://logontest.gov.bc.ca"
+      "value": "https://logontest7.gov.bc.ca"
     },
     {
       "name": "KEYCLOAK_IDP_HINT",

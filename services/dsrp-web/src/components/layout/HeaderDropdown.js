@@ -31,18 +31,6 @@ export class HeaderDropdown extends Component {
   };
 
   render() {
-    if (!this.props.isAuthenticated) {
-      return (
-        <Button className="login-btn">
-          <a
-            href={`${ENV.KEYCLOAK.loginURL}${ENV.BCEID_LOGIN_REDIRECT_URI}&kc_idp_hint=${ENV.KEYCLOAK.idpHint}`}
-          >
-            Log in
-          </a>
-        </Button>
-      );
-    }
-
     const menuItemLogout = (
       <Menu.Item key="logout">
         <Button className="header-dropdown-item-button" onClick={this.handleLogout}>
@@ -51,8 +39,21 @@ export class HeaderDropdown extends Component {
       </Menu.Item>
     );
 
+    const anchorTagLogin = (
+      <a
+        href={`${ENV.KEYCLOAK.loginURL}${ENV.BCEID_LOGIN_REDIRECT_URI}&kc_idp_hint=${ENV.KEYCLOAK.idpHint}`}
+      >
+        Log in
+      </a>
+    );
+
     const dropdownMenuMobile = (
       <Menu className="header-dropdown-menu">
+        {!this.props.isAuthenticated && (
+          <Menu.Item key="login">
+            <Button className="header-dropdown-item-button">{anchorTagLogin}</Button>
+          </Menu.Item>
+        )}
         <Menu.Item key="submit-application">
           <Button className="header-dropdown-item-button">
             <Link to={routes.SUBMIT_APPLICATION.route}>Apply</Link>
@@ -63,25 +64,29 @@ export class HeaderDropdown extends Component {
             <Link to={routes.VIEW_APPLICATION_STATUS.route}>Status</Link>
           </Button>
         </Menu.Item>
+        <AuthorizationWrapper>
+          <Divider className="bg-color-table-seperator" style={{ margin: 0 }} />
+          <Menu.Item key="review-applications">
+            <Button className="header-dropdown-item-button">
+              <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
+            </Button>
+          </Menu.Item>
+        </AuthorizationWrapper>
         <Divider className="bg-color-table-seperator" style={{ margin: 0 }} />
-        <Menu.Item key="review-applications">
-          <Button className="header-dropdown-item-button">
-            <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
-          </Button>
-        </Menu.Item>
-        <Divider className="bg-color-table-seperator" style={{ margin: 0 }} />
-        {menuItemLogout}
+        {this.props.isAuthenticated && menuItemLogout}
       </Menu>
     );
 
     const dropdownMenuDesktop = (
       <Menu className="header-dropdown-menu">
-        <Menu.Item key="review-applications">
-          <Button className="header-dropdown-item-button">
-            <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
-          </Button>
-        </Menu.Item>
-        {menuItemLogout}
+        <AuthorizationWrapper>
+          <Menu.Item key="review-applications">
+            <Button className="header-dropdown-item-button">
+              <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
+            </Button>
+          </Menu.Item>
+        </AuthorizationWrapper>
+        {this.props.isAuthenticated && menuItemLogout}
       </Menu>
     );
 
@@ -89,24 +94,32 @@ export class HeaderDropdown extends Component {
     return (
       <>
         <MediaQuery minWidth={smallestDesktopWidth}>
-          <Link
-            to={routes.SUBMIT_APPLICATION.route}
-            className={this.setActiveLink(routes.SUBMIT_APPLICATION.route)}
-          >
-            Apply
-          </Link>
-          <Link
-            to={routes.VIEW_APPLICATION_STATUS.route}
-            className={this.setActiveLink(routes.VIEW_APPLICATION_STATUS.route)}
-          >
-            Status
-          </Link>
-          <Dropdown overlay={dropdownMenuDesktop}>
-            <Button className="header-dropdown-button">
-              {this.props.userInfo.email}
-              <Icon type="caret-down" />
-            </Button>
-          </Dropdown>
+          <span>
+            <Link
+              to={routes.SUBMIT_APPLICATION.route}
+              className={this.setActiveLink(routes.SUBMIT_APPLICATION.route)}
+            >
+              Apply
+            </Link>
+            <Link
+              to={routes.VIEW_APPLICATION_STATUS.route}
+              className={this.setActiveLink(routes.VIEW_APPLICATION_STATUS.route)}
+            >
+              Status
+            </Link>
+            {(this.props.isAuthenticated && (
+              <Dropdown overlay={dropdownMenuDesktop}>
+                <Button className="header-dropdown-button">
+                  {this.props.userInfo.email}
+                  <Icon type="caret-down" />
+                </Button>
+              </Dropdown>
+            )) || (
+              <Button className="login-btn" style={{ marginLeft: 32 }}>
+                {anchorTagLogin}
+              </Button>
+            )}
+          </span>
         </MediaQuery>
         <MediaQuery maxWidth={smallestDesktopWidth - 1}>
           <Dropdown overlay={dropdownMenuMobile} placement="bottomRight">

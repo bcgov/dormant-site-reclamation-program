@@ -147,16 +147,11 @@ app {
                             'APPLICATION_DOMAIN': "${vars.modules.'dsrp-python-backend'.HOST}",
                             'BASE_PATH': "${vars.modules.'dsrp-python-backend'.PATH}",
                             'DB_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}",
-                            'DB_NRIS_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}-nris",
                             'REDIS_CONFIG_NAME': "dsrp-redis${vars.deployment.suffix}",
                             'CACHE_REDIS_HOST': "dsrp-redis${vars.deployment.suffix}",
-                            'ELASTIC_ENABLED': "${vars.deployment.elastic_enabled_dsrp}",
-                            'ELASTIC_SERVICE_NAME': "${vars.deployment.elastic_service_name}",
                             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
                             'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_dsrp}${vars.modules.'dsrp-nginx'.PATH}/api",
-                            'NRIS_API_URL': "${vars.modules.'dsrp-nris-backend'.HOST}${vars.modules.'dsrp-nris-backend'.PATH}",
                             'DOCUMENT_MANAGER_URL': "${vars.modules.'dsrp-docman-backend'.HOST}${vars.modules.'dsrp-docman-backend'.PATH}",
-                            'DOCUMENT_GENERATOR_URL': "${vars.modules.'dsrp-docgen-api'.HOST}",
                     ]
                 ],
                 [
@@ -181,58 +176,47 @@ app {
                             'DB_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}",
                             'REDIS_CONFIG_NAME': "dsrp-redis${vars.deployment.suffix}",
                             'CACHE_REDIS_HOST': "dsrp-redis${vars.deployment.suffix}",
-                            'ELASTIC_ENABLED': "${vars.deployment.elastic_enabled_dsrp}",
-                            'ELASTIC_SERVICE_NAME': "${vars.deployment.elastic_service_name_docman}",
                             'DOCUMENT_CAPACITY':"${vars.DOCUMENT_PVC_SIZE}",
                             'DOCUMENT_CAPACITY_LOWER':"${vars.DOCUMENT_PVC_SIZE.toString().toLowerCase()}",
                             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
                             'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_dsrp}${vars.modules.'dsrp-nginx'.PATH}/document-manager",
                     ]
                 ],
+                // [
+                //     'file':'openshift/templates/digdag/digdag.dc.json',
+                //     'params':[
+                //             'NAME':"digdag",
+                //             'VERSION':"${app.deployment.version}",
+                //             'NAMESPACE':"${vars.deployment.namespace}",
+                //             'SUFFIX': "${vars.deployment.suffix}",
+                //             'SCHEDULER_PVC_SIZE':"200Mi",
+                //             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
+                //             'KEYCLOAK_DISCOVERY_URL':"${vars.keycloak.known_config_url}",
+                //             'APPLICATION_DOMAIN': "${vars.modules.'digdag'.HOST}",
+                //             'CPU_REQUEST':"${vars.resources.digdag.cpu_request}",
+                //             'CPU_LIMIT':"${vars.resources.digdag.cpu_limit}",
+                //             'MEMORY_REQUEST':"${vars.resources.digdag.memory_request}",
+                //             'MEMORY_LIMIT':"${vars.resources.digdag.memory_limit}"
+                //     ]
+                // ]
                 [
-                    'file':'openshift/templates/nris-api/_python36_oracle.dc.json',
+                    'file':'openshift/templates/tools/metabase.dc.json',
                     'params':[
-                            'NAME':"dsrp-nris-backend",
-                            'SUFFIX': "${vars.deployment.suffix}",
+                            'NAME':"metabase",
+                            'NAME_DATABASE':"metabase-postgres",
                             'VERSION':"${app.deployment.version}",
-                            'CPU_REQUEST':"${vars.resources.python_lite.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.python_lite.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.python_lite.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.python_lite.memory_limit}",
-                            'REPLICA_MIN':"${vars.resources.python_lite.replica_min}",
-                            'REPLICA_MAX':"${vars.resources.python_lite.replica_max}",
-                            'UWSGI_THREADS':"${vars.resources.python_lite.uwsgi_threads}",
-                            'UWSGI_PROCESSES':"${vars.resources.python_lite.uwsgi_processes}",
-                            'JWT_OIDC_WELL_KNOWN_CONFIG': "${vars.keycloak.known_config_url}",
-                            'JWT_OIDC_AUDIENCE': "${vars.keycloak.clientId_dsrp}",
-                            'APPLICATION_DOMAIN': "${vars.modules.'dsrp-nris-backend'.HOST}",
-                            'BASE_PATH': "${vars.modules.'dsrp-nris-backend'.PATH}",
-                            'DB_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}-nris",
-                            'REDIS_CONFIG_NAME': "dsrp-redis${vars.deployment.suffix}",
-                            'CACHE_REDIS_HOST': "dsrp-redis${vars.deployment.suffix}",
-                            'DB_HOST': "dsrp-postgresql${vars.deployment.suffix}",
-                            'ELASTIC_ENABLED': "${vars.deployment.elastic_enabled_nris}",
-                            'ELASTIC_SERVICE_NAME': "${vars.deployment.elastic_service_name_nris}",
+                            'SUFFIX': "${vars.deployment.suffix}",
+                            'METABASE_PVC_SIZE':"${vars.METABASE_PVC_SIZE}",
                             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
-                            'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_dsrp}${vars.modules.'dsrp-nginx'.PATH}/nris_api",
-                    ]
-                ],
-                [
-                    'file':'openshift/templates/docgen/docgen.dc.json',
-                    'params':[
-                            'NAME':"docgen",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'VERSION':"${app.deployment.version}",
-                            'APPLICATION_SUFFIX': "${vars.deployment.application_suffix}",
-                            'PORT':3030,
-                            'CPU_REQUEST':"${vars.resources.docgen.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.docgen.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.docgen.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.docgen.memory_limit}",
-                            'REPLICA_MIN':"${vars.resources.docgen.replica_min}",
-                            'REPLICA_MAX':"${vars.resources.docgen.replica_max}",
-                            'BASE_PATH': "${vars.modules.'dsrp-docgen-api'.PATH}",
-                            'NODE_ENV': "${vars.deployment.node_env}"
+                            'APPLICATION_DOMAIN': "${vars.modules.'metabase'.HOST}",
+                            'CPU_REQUEST':"${vars.resources.metabase.cpu_request}",
+                            'CPU_LIMIT':"${vars.resources.metabase.cpu_limit}",
+                            'MEMORY_REQUEST':"${vars.resources.metabase.memory_request}",
+                            'MEMORY_LIMIT':"${vars.resources.metabase.memory_limit}",
+                            'DB_CPU_REQUEST':"${vars.resources.metabase.db_cpu_request}",
+                            'DB_CPU_LIMIT':"${vars.resources.metabase.db_cpu_limit}",
+                            'DB_MEMORY_REQUEST':"${vars.resources.metabase.db_memory_request}",
+                            'DB_MEMORY_LIMIT':"${vars.resources.metabase.db_memory_limit}"
                     ]
                 ],
         ]
@@ -246,6 +230,8 @@ environments {
             DOCUMENT_PVC_SIZE = '1Gi'
             BACKUP_VERIFICATION_PVC_SIZE = '200Mi'
             LOG_PVC_SIZE = '1Gi'
+            METABASE_PVC_SIZE = '5Gi'
+
             git {
                 changeId = "${opt.'pr'}"
             }
@@ -255,7 +241,7 @@ environments {
                 idpHint_dsrp = "dev"
                 url = "https://sso-test.pathfinder.gov.bc.ca/auth"
                 known_config_url = "https://sso-test.pathfinder.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration"
-                siteminder_url = "https://logontest.gov.bc.ca"
+                siteminder_url = "https://logontest7.gov.bc.ca"
             }
             resources {
                 node {
@@ -266,13 +252,15 @@ environments {
                     replica_min = 1
                     replica_max = 1
                 }
-                docgen {
-                    cpu_request = "50m"
+                metabase {
+                    cpu_request = "10m"
                     cpu_limit = "200m"
-                    memory_request = "128Mi"
-                    memory_limit = "256Mi"
-                    replica_min = 1
-                    replica_max = 1
+                    memory_request = "1Gi"
+                    memory_limit = "2Gi"
+                    db_cpu_request = "50m"
+                    db_cpu_limit = "100m"
+                    db_memory_request = "256Mi"
+                    db_memory_limit = "1Gi"
                 }
                 nginx {
                     cpu_request = "10m"
@@ -325,10 +313,6 @@ environments {
                 application_suffix = "-pr-${vars.git.changeId}"
                 node_env = "development"
                 fn_layer_url = "https://delivery.apps.gov.bc.ca/ext/sgw/geo.allgov"
-                elastic_enabled_dsrp = 0
-                elastic_service_name = "dsrp Dev"
-                elastic_service_name_nris = "NRIS API Dev"
-                elastic_service_name_docman = 'DocMan Dev'
             }
             modules {
                 'dsrp-frontend' {
@@ -336,17 +320,13 @@ environments {
                     PATH = "/${vars.git.changeId}"
                 }
                 'dsrp-nginx' {
-                    HOST_dsrp = "minesdigitalservices-${vars.deployment.key}.pathfinder.gov.bc.ca"
+                    HOST_dsrp = "dsrp-${vars.deployment.key}.pathfinder.gov.bc.ca"
                     PATH = "/${vars.git.changeId}"
                     ROUTE = "/${vars.git.changeId}"
                 }
                 'dsrp-python-backend' {
                     HOST = "http://dsrp-python-backend${vars.deployment.suffix}:5000"
                     PATH = "/${vars.git.changeId}/api"
-                }
-                'dsrp-nris-backend' {
-                    HOST = "http://dsrp-nris-backend${vars.deployment.suffix}:5500"
-                    PATH = "/${vars.git.changeId}/nris-api"
                 }
                 'dsrp-docman-backend' {
                     HOST = "http://dsrp-docman-backend${vars.deployment.suffix}:5001"
@@ -355,8 +335,8 @@ environments {
                 'dsrp-redis' {
                     HOST = "http://dsrp-redis${vars.deployment.suffix}"
                 }
-                'dsrp-docgen-api' {
-                    HOST = "http://docgen${vars.deployment.suffix}:3030"
+                'metabase' {
+                    HOST = "dsrp-metabase-${vars.deployment.suffix}.pathfinder.gov.bc.ca"
                 }
             }
         }

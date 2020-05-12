@@ -86,14 +86,6 @@ app {
                     ]
                 ],
                 [
-                    'file':'openshift/templates/docgen/docgen.bc.json',
-                    'params':[
-                        'NAME':"docgen",
-                        'SUFFIX': "${app.build.suffix}",
-                        'TAG_NAME':"${app.build.version}"
-                    ]
-                ],
-                [
                     'file':'openshift/templates/flyway.bc.json',
                     'params':[
                             'NAME':"dsrp-flyway-migration",

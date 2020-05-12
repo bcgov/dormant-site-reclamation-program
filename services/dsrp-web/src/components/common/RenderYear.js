@@ -11,49 +11,51 @@ import moment from "moment";
 const propTypes = {
   id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   input: PropTypes.objectOf(PropTypes.any).isRequired,
-  label: PropTypes.string.isRequired,
-  placeholder: PropTypes.string,
-  required: PropTypes.bool,
-  onChange: PropTypes.func,
-  disabledDate: PropTypes.func,
-  disabled: PropTypes.bool,
   meta: PropTypes.objectOf(PropTypes.any).isRequired,
+  label: PropTypes.string,
+  placeholder: PropTypes.string,
+  disabled: PropTypes.bool,
 };
 
 const defaultProps = {
+  label: "",
   placeholder: "",
-  onChange: () => {},
-  disabledDate: () => {},
   disabled: false,
-  required: false,
 };
+
+const getInputValue = (value) => (value ? moment(`${value}-01-01`) : null);
 
 export class RenderDate extends Component {
   state = {
-    isopen: false,
-    time: this.props.input.value ? moment(`${this.props.input.value}-01-01`) : null,
+    value: getInputValue(this.props.input.value),
+    isOpen: false,
+  };
+
+  componentWillReceiveProps = (nextProps) => {
+    if (nextProps.input.value !== this.props.input.value) {
+      this.setState({
+        value: getInputValue(nextProps.input.value),
+      });
+    }
   };
 
   handlePanelChange = (value) => {
     this.setState({
-      time: value,
-      isopen: false,
+      value: value,
+      isOpen: false,
     });
-    this.props.input.onChange(moment(value).format("YYYY"));
+    this.props.input.onChange(value ? moment(value).format("YYYY") : null);
   };
 
-  handleOpenChange = (status) => {
-    if (status) {
-      this.setState({ isopen: true });
-    } else {
-      this.setState({ isopen: false });
-    }
+  handleOpenChange = (isOpen) => {
+    this.setState({ isOpen });
   };
 
-  clearValue = () => {
+  handleChange = () => {
     this.setState({
-      time: null,
+      value: null,
     });
+    this.props.input.onChange(null);
   };
 
   render = () => (
@@ -69,20 +71,18 @@ export class RenderDate extends Component {
         ((this.props.meta.error && <span>{this.props.meta.error}</span>) ||
           (this.props.meta.warning && <span>{this.props.meta.warning}</span>))
       }
-      required={this.props.required}
     >
       <DatePicker
         id={this.props.id}
-        value={this.state.time}
-        open={this.state.isopen}
+        value={this.state.value}
+        open={this.state.isOpen}
         placeholder={this.props.placeholder}
+        disabled={this.props.disabled}
         mode="year"
         format="YYYY"
         onOpenChange={this.handleOpenChange}
         onPanelChange={this.handlePanelChange}
-        onChange={this.clearValue}
-        disabledDate={this.props.disabledDate}
-        disabled={this.props.disabled}
+        onChange={this.handleChange}
       />
     </Form.Item>
   );
