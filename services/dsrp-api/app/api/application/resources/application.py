@@ -25,10 +25,10 @@ class ApplicationListResource(Resource, UserMixin):
     @api.expect(APPLICATION)
     @api.marshal_with(APPLICATION, code=201)
     def post(self):
-        with EmailService as es:
+        with EmailService() as es:
             try:
-                application = Application._schema().load(request.json['application'])
                 es.send_email('jasyrotuck@gmail.com','TEST EMAIL')
+                application = Application._schema().load(request.json['application'])
                 es.send_email('jasyrotuck@gmail.com','TEST EMAIL2')
             except MarshmallowError as e:
                 raise BadRequest(e)

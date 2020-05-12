@@ -2,7 +2,7 @@ from urllib.request import urlopen
 from app.extensions import cache
 from app.api.constants import PERMIT_HOLDER_CACHE, DORMANT_WELLS_CACHE, LIABILITY_PER_WELL_CACHE, TIMEOUT_12_HOURS, TIMEOUT_1_YEAR
 from flask import current_app
-from app.config import CONFIG
+from app.config import Config
 
 import requests
 import urllib
@@ -15,13 +15,8 @@ from email.mime.text import MIMEText
 
 session = requests.session()
 
-message_template = read_template('message.txt')
-
-
-
 class EmailService():
     #keys: host,port,user,pwrd
-    SMTP_CRED = CONFIG.SMTP_CRED
 
     SENDER_INFO = {
         'name': "BC Gov Dormant Site Reclamation Program",
@@ -33,14 +28,18 @@ class EmailService():
         'error':[]
     }
 
-    _smtp = None
-    def __enter__ (self):
+    _smtp = None    
+
+    def __init__(self):
+        self.SMTP_CRED = Config.SMTP_CRED
+
+    def __enter__(self):
         # set up the SMTP server
         self._smtp = smtplib.SMTP()
         self._smtp.set_debuglevel(0)
         self._smtp.connect(self.SMTP_CRED['host'], self.SMTP_CRED['port'])
         current_app.logger.info(f'Opening connection to {self.SMTP_CRED["host"]}:{self.SMTP_CRED["port"]}')
-        
+        return self 
 
     def __exit__(self, exc_type, exc_value, traceback):
         current_app.logger.info(
@@ -56,9 +55,9 @@ class EmailService():
 
         print(message)
 
-        msg['From']=self.SENDER_INFO['reply-email']
+        msg['From']='test@DCRP.com'
         msg['To']=to_email
-        msg['Subject']=subject        
+        msg['Subject']=subject
         # add in the message body
         msg.attach(MIMEText(message, 'plain'))
         
