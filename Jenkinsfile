@@ -83,6 +83,7 @@ pipeline {
                     }
                     echo "Squashing commits and merging to master"
                 }
+                // TODO: Change me back to the old repo name
                 withCredentials([usernamePassword(credentialsId: 'github-account', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                     sh """
                         # Update master with latest changes from develop
@@ -90,13 +91,13 @@ pipeline {
                         git fetch
                         git merge --squash origin/develop
                         git commit -m "Merge branch develop into master"
-                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/bcgov/dormant-site-reclamation-program.git
+                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/nayr974/dormant-site-reclamation-program.git
 
                         # Update the HEAD on develop to be the same as master
                         git checkout develop
                         git fetch
                         git merge -s ours -m "Updating develop with master" origin/master
-                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/bcgov/dormant-site-reclamation-program.git
+                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/nayr974/dormant-site-reclamation-program.git
                     """
                 }
             }
