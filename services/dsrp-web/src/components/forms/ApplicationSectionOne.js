@@ -6,6 +6,7 @@ import { renderConfig } from "@/components/common/config";
 import { required, dateNotInFuture, maxLength } from "@/utils/validate";
 import { phoneMask, postalCodeMask } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
+import OrgBookSearch from "@/components/common/OrgBookSearch"
 
 const { Text, Title } = Typography;
 
@@ -43,7 +44,7 @@ class ApplicationSectionOne extends Component {
                 name="company_name"
                 label="Company Name"
                 placeholder="Company Name"
-                component={renderConfig.FIELD}
+                component={OrgBookSearch}
                 validate={[required]}
               />
               <Field
