@@ -11,11 +11,6 @@ const { Text, Title } = Typography;
 
 const defaultProps = {};
 
-const validate = (values, form) => {
-  const errors = {};
-  return errors;
-};
-
 class ApplicationSectionOne extends Component {
   state = {
     uploadedFiles: [],
@@ -40,7 +35,7 @@ class ApplicationSectionOne extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <FormSection name="company_details">
-          <Title level={4}>Company Details</Title>
+          <Title level={2}>Company Details</Title>
           <Row gutter={48}>
             <Col span={24}>
               <Field
@@ -117,7 +112,7 @@ class ApplicationSectionOne extends Component {
           </Row>
         </FormSection>
         <FormSection name="company_contact">
-          <Title level={4}>Company Contact</Title>
+          <Title level={2}>Company Contact</Title>
           <Row gutter={48}>
             <Col span={12}>
               <Field
@@ -203,7 +198,7 @@ class ApplicationSectionOne extends Component {
           </Row>
         </FormSection>
         <FormSection name="ducks">
-          <Title level={4}>Good Pics of Ducks</Title>
+          <Title level={2}>Good Pics of Ducks</Title>
           <Row gutter={48}>
             <Col span={24}>
               <Form.Item label="Upload Pics of Ducks">
@@ -241,5 +236,4 @@ export default reduxForm({
   form: FORM.APPLICATION_FORM,
   destroyOnUnmount: false,
   forceUnregisterOnUnmount: true,
-  validate,
 })(ApplicationSectionOne);
