@@ -3,7 +3,7 @@ from flask_restplus import fields
 
 LIABILITY = api.model(
     'Liability', {
-        'well_auth_number': fields.String,
+        'well_auth_number': fields.Integer,
         'well_name': fields.String,
         'operator_name': fields.String,
         'ad_number': fields.String,

@@ -3,7 +3,7 @@ from flask_restplus import fields
 
 PERMIT_HOLDER = api.model(
     'PermitHolder', {
-        'operator_id': fields.String,
+        'operator_id': fields.Integer,
         'organization_name': fields.String,
         'phone_num': fields.String,
         'address_line_1': fields.String,
