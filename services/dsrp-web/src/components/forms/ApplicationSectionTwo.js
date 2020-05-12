@@ -17,7 +17,7 @@ class ApplicationSectionTwo extends Component {
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
-        <FormSection name="two">
+        <FormSection name="add_sites">
           <Field
             id="random_stuff"
             name="random_stuff"

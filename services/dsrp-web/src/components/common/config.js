@@ -11,6 +11,7 @@ import RenderSelect from "./RenderSelect";
 import RenderMultiSelect from "./RenderMultiSelect";
 import RenderRadioButtons from "./RenderRadioButtons";
 import RenderGroupedSelect from "./RenderGroupedSelect";
+import FileUpload from "./FileUpload";
 
 // This file is anticipated to have multiple exports
 // eslint-disable-next-line import/prefer-default-export
@@ -28,4 +29,5 @@ export const renderConfig = {
   MULTI_SELECT: RenderMultiSelect,
   RADIO: RenderRadioButtons,
   GROUPED_SELECT: RenderGroupedSelect,
+  FILE_UPLOAD: FileUpload,
 };

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { reduxForm , Field, FormSection } from "redux-form";
+import { reduxForm, Field, FormSection } from "redux-form";
 import { Row, Col, Typography, Form, Button } from "antd";
 
 import { renderConfig } from "@/components/common/config";
@@ -17,7 +17,7 @@ class ApplicationSectionThree extends Component {
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
-        <FormSection name="three">
+        <FormSection name="review">
           <Field
             id="date"
             name="date"
