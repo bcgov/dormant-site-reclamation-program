@@ -22,6 +22,7 @@ class ApplicationSectionThree extends Component {
             validate={[required, dateNotInFuture]}
           />
         </FormSection>
+
         <Row className="steps-action">
           <Col>
             <Button
