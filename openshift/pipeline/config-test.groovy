@@ -301,7 +301,7 @@ environments {
                     PATH = ""
                 }
                 'dsrp-nginx' {
-                    HOST = "dsrp-${vars.deployment.key}.pathfinder.gov.bc.ca"
+                    HOST_DSRP = "dsrp-${vars.deployment.key}.pathfinder.gov.bc.ca"
                     PATH = ""
                     ROUTE = "/"
                 }
