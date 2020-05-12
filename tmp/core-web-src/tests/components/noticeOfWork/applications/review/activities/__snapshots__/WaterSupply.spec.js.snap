@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WaterSupply renders properly 1`] = `
+<div>
+  <withStore(Table)
+    align="left"
+    columns={
+      Array [
+        Object {
+          "dataIndex": "supply_source_description",
+          "key": "supply_source_description",
+          "render": [Function],
+          "title": "Source",
+        },
+        Object {
+          "dataIndex": "activity_type_description",
+          "key": "activity_type_description",
+          "render": [Function],
+          "title": "Activity",
+        },
+        Object {
+          "dataIndex": "water_use_description",
+          "key": "water_use_description",
+          "render": [Function],
+          "title": "Water Use",
+        },
+        Object {
+          "dataIndex": "estimate_rate",
+          "key": "estimate_rate",
+          "render": [Function],
+          "title": "Estimate",
+        },
+      ]
+    }
+    dataSource={Array []}
+    locale={
+      Object {
+        "emptyText": "No data",
+      }
+    }
+    pagination={false}
+  />
+  <br />
+  <h4>
+    Reclamation Program
+  </h4>
+  <Row
+    gutter={16}
+  >
+    <Col
+      md={12}
+      sm={24}
+    >
+      <div
+        className="field-title"
+      >
+        Proposed reclamation and timing for this specific activity
+      </div>
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="reclamation_description"
+        name="reclamation_description"
+        validate={
+          Array [
+            [Function],
+          ]
+        }
+      />
+    </Col>
+    <Col
+      md={12}
+      sm={24}
+    >
+      <div
+        className="field-title"
+      >
+        Estimated Cost of reclamation activities described above
+      </div>
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="reclamation_cost"
+        name="reclamation_cost"
+        validate={
+          Array [
+            [Function],
+          ]
+        }
+      />
+    </Col>
+  </Row>
+</div>
+`;

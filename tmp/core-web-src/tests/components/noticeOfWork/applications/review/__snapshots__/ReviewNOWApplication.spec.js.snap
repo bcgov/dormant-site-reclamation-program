@@ -1,0 +1,1028 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReviewNOWApplication renders properly 1`] = `
+<div>
+  <Form
+    colon={true}
+    hideRequiredMark={false}
+    layout="vertical"
+    onSubmit={[Function]}
+  >
+    <div
+      className="side-menu--content"
+    >
+      <h2>
+        General Information
+      </h2>
+      <Divider />
+      <withRouter(Connect(ScrollContentWrapper))
+        id="application-info"
+        title="Application Info"
+      >
+        <div>
+          <Row
+            gutter={16}
+          >
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Name of Property
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="property_name"
+                name="property_name"
+                validate={
+                  Array [
+                    [Function],
+                    [Function],
+                  ]
+                }
+              />
+            </Col>
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Permit Status
+                <NOWFieldOriginTooltip />
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id=""
+                name=""
+              />
+            </Col>
+          </Row>
+          <Row
+            gutter={16}
+          >
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Mine Number
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="mine_no"
+                name="mine_no"
+              />
+            </Col>
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Individual or Company/Organization?
+                <NOWFieldOriginTooltip />
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id=""
+                name=""
+              />
+            </Col>
+          </Row>
+          <Row
+            gutter={16}
+          >
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Region
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="mine_region"
+                name="mine_region"
+              />
+            </Col>
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Relationship to Individual or Company/Organization?
+                <NOWFieldOriginTooltip />
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id=""
+                name=""
+              />
+            </Col>
+          </Row>
+          <Row
+            gutter={16}
+          >
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Lat
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="latitude"
+                name="latitude"
+                validate={
+                  Array [
+                    [Function],
+                  ]
+                }
+              />
+            </Col>
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Description of Land
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="description_of_land"
+                name="description_of_land"
+                validate={
+                  Array [
+                    [Function],
+                  ]
+                }
+              />
+            </Col>
+          </Row>
+          <Row
+            gutter={16}
+          >
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Long
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="longitude"
+                name="longitude"
+                validate={
+                  Array [
+                    [Function],
+                  ]
+                }
+              />
+            </Col>
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Type of Application
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="type_of_application"
+                name="type_of_application"
+              />
+            </Col>
+          </Row>
+          <Row
+            gutter={16}
+          >
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Type of Notice of Work
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="notice_of_work_type_code"
+                name="notice_of_work_type_code"
+                validate={
+                  Array [
+                    [Function],
+                  ]
+                }
+              />
+            </Col>
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Term of Application
+                <NOWFieldOriginTooltip />
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id=""
+                name=""
+                validate={
+                  Array [
+                    [Function],
+                  ]
+                }
+              />
+            </Col>
+          </Row>
+          <Row
+            gutter={16}
+          >
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Permit Type
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="application_permit_type_code"
+                name="application_permit_type_code"
+              />
+            </Col>
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Proposed Start Date
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="proposed_start_date"
+                name="proposed_start_date"
+              />
+            </Col>
+          </Row>
+          <Row
+            gutter={16}
+          >
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Crown Grant / District Lot Number
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="crown_grant_or_district_lot_numbers"
+                name="crown_grant_or_district_lot_numbers"
+              />
+            </Col>
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Proposed End Date
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="proposed_end_date"
+                name="proposed_end_date"
+              />
+            </Col>
+          </Row>
+          <Row
+            gutter={16}
+          >
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Tenure Number(s)
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="tenure_number"
+                name="tenure_number"
+                validate={
+                  Array [
+                    [Function],
+                  ]
+                }
+              />
+            </Col>
+          </Row>
+        </div>
+      </withRouter(Connect(ScrollContentWrapper))>
+      <withRouter(Connect(ScrollContentWrapper))
+        id="securities"
+        title="Securities"
+      >
+        <div>
+          <Row
+            gutter={16}
+          >
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Security Total
+              </div>
+              <Field
+                allowClear={true}
+                autoComplete="off"
+                component={[Function]}
+                disabled={true}
+                format={[Function]}
+                id="security_total"
+                name="security_total"
+                normalize={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                validate={
+                  Array [
+                    [Function],
+                  ]
+                }
+              />
+            </Col>
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Security Received
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="security_received_date"
+                name="security_received_date"
+              />
+            </Col>
+          </Row>
+        </div>
+      </withRouter(Connect(ScrollContentWrapper))>
+      <withRouter(Connect(ScrollContentWrapper))
+        id="contacts"
+        title="Contacts"
+      >
+        <ReviewNOWContacts />
+      </withRouter(Connect(ScrollContentWrapper))>
+      <withRouter(Connect(ScrollContentWrapper))
+        id="access"
+        title="Access"
+      >
+        <div>
+          <Row
+            gutter={16}
+          >
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Directions to Site
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="directions_to_site"
+                name="directions_to_site"
+                validate={
+                  Array [
+                    [Function],
+                  ]
+                }
+              />
+            </Col>
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Do you have the required access authorizations in place?
+                <NOWFieldOriginTooltip />
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="has_req_access_authorizations"
+                name="has_req_access_authorizations"
+              />
+            </Col>
+          </Row>
+          <Row
+            gutter={16}
+          >
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Do you need to build a road, create stream crossings or other surface disturbance that will not be on your tenure?
+                <NOWFieldOriginTooltip />
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="has_surface_disturbance_outside_tenure"
+                name="has_surface_disturbance_outside_tenure"
+              />
+            </Col>
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title--light"
+              >
+                Please provide the type and authorization numbers for each access authorization application or exemption to use the road(s).
+                <NOWFieldOriginTooltip />
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="req_access_authorization_numbers"
+                name="req_access_authorization_numbers"
+              />
+            </Col>
+          </Row>
+          <Row
+            gutter={16}
+          >
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Access presently gated
+                <NOWFieldOriginTooltip />
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="is_access_gated"
+                name="is_access_gated"
+              />
+            </Col>
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Key provided to the inspector
+                <NOWFieldOriginTooltip />
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="has_key_for_inspector"
+                name="has_key_for_inspector"
+              />
+            </Col>
+          </Row>
+        </div>
+      </withRouter(Connect(ScrollContentWrapper))>
+      <withRouter(Connect(ScrollContentWrapper))
+        id="state-of-land"
+        title="State of Land"
+      >
+        <div>
+          <h4>
+            Present State of Land
+          </h4>
+          <FormSection
+            name="state_of_land"
+          >
+            <Row
+              gutter={16}
+            >
+              <Col
+                md={12}
+                sm={24}
+              >
+                <div
+                  className="field-title"
+                >
+                  Present condition of the land
+                  <NOWFieldOriginTooltip />
+                </div>
+                <Field
+                  component={[Function]}
+                  disabled={true}
+                  id="present_land_condition_description"
+                  name="present_land_condition_description"
+                />
+              </Col>
+              <Col
+                md={12}
+                sm={24}
+              >
+                <div
+                  className="field-title"
+                >
+                  Current means of access
+                  <NOWFieldOriginTooltip />
+                </div>
+                <Field
+                  component={[Function]}
+                  disabled={true}
+                  id="means_of_access_description"
+                  name="means_of_access_description"
+                />
+              </Col>
+            </Row>
+            <Row
+              gutter={16}
+            >
+              <Col
+                md={12}
+                sm={24}
+              >
+                <div
+                  className="field-title"
+                >
+                  Physiography
+                  <NOWFieldOriginTooltip />
+                </div>
+                <Field
+                  component={[Function]}
+                  disabled={true}
+                  id="physiography_description"
+                  name="physiography_description"
+                />
+              </Col>
+              <Col
+                md={12}
+                sm={24}
+              >
+                <div
+                  className="field-title"
+                >
+                  Old Equipment
+                  <NOWFieldOriginTooltip />
+                </div>
+                <Field
+                  component={[Function]}
+                  disabled={true}
+                  id="old_equipment_description"
+                  name="old_equipment_description"
+                />
+              </Col>
+            </Row>
+            <Row
+              gutter={16}
+            >
+              <Col
+                md={12}
+                sm={24}
+              >
+                <div
+                  className="field-title"
+                >
+                  Type of vegetation
+                  <NOWFieldOriginTooltip />
+                </div>
+                <Field
+                  component={[Function]}
+                  disabled={true}
+                  id="type_of_vegetation_description"
+                  name="type_of_vegetation_description"
+                />
+              </Col>
+              <Col
+                md={12}
+                sm={24}
+              >
+                <div
+                  className="field-title"
+                >
+                  Recreational trail/use
+                  <NOWFieldOriginTooltip />
+                </div>
+                <Field
+                  component={[Function]}
+                  disabled={true}
+                  id="recreational_trail_use_description"
+                  name="recreational_trail_use_description"
+                />
+              </Col>
+            </Row>
+            <br />
+            <h4>
+              Land Ownership
+            </h4>
+            <Row
+              gutter={16}
+            >
+              <Col
+                md={12}
+                sm={24}
+              >
+                <div
+                  className="field-title"
+                >
+                  Application in a community watershed
+                </div>
+                <Field
+                  component={[Function]}
+                  disabled={true}
+                  id="has_community_water_shed"
+                  name="has_community_water_shed"
+                  validate={
+                    Array [
+                      [Function],
+                    ]
+                  }
+                />
+              </Col>
+              <Col
+                md={12}
+                sm={24}
+              >
+                <div
+                  className="field-title"
+                >
+                  Activities in park
+                  <NOWFieldOriginTooltip />
+                </div>
+                <Field
+                  component={[Function]}
+                  disabled={true}
+                  id="has_activity_in_park"
+                  name="has_activity_in_park"
+                />
+              </Col>
+            </Row>
+            <Row
+              gutter={16}
+            >
+              <Col
+                md={12}
+                sm={24}
+              >
+                <div
+                  className="field-title"
+                >
+                  Proposed activities on private land
+                  <NOWFieldOriginTooltip />
+                </div>
+                <Field
+                  component={[Function]}
+                  disabled={true}
+                  id="is_on_private_land"
+                  name="is_on_private_land"
+                />
+              </Col>
+              <Col
+                md={12}
+                sm={24}
+              >
+                <div
+                  className="field-title--light"
+                >
+                  Do you have authorization by the Lieutenant Governor in Council?
+                  <NOWFieldOriginTooltip />
+                </div>
+                <Field
+                  component={[Function]}
+                  disabled={true}
+                  id="has_auth_lieutenant_gov_council"
+                  name="has_auth_lieutenant_gov_council"
+                />
+              </Col>
+            </Row>
+            <br />
+            <h4>
+              Cultural Heritage Resources
+            </h4>
+            <Row
+              gutter={16}
+            >
+              <Col
+                md={12}
+                sm={24}
+              >
+                <div
+                  className="field-title"
+                >
+                  Are you aware of any protected archaeological sites that may be affected by the proposed project?
+                </div>
+                <Field
+                  component={[Function]}
+                  disabled={true}
+                  id="has_archaeology_sites_affected"
+                  name="has_archaeology_sites_affected"
+                  validate={
+                    Array [
+                      [Function],
+                    ]
+                  }
+                />
+                <div
+                  className="field-title--light"
+                >
+                  Plan to protect the archaeological site
+                  <NOWFieldOriginTooltip />
+                </div>
+                <Field
+                  component={[Function]}
+                  disabled={true}
+                  id="arch_site_protection_plan"
+                  name="arch_site_protection_plan"
+                />
+              </Col>
+            </Row>
+            <br />
+            <h4>
+              First Nations Engagement
+            </h4>
+            <Row
+              gutter={16}
+            >
+              <Col
+                md={12}
+                sm={24}
+              >
+                <div
+                  className="field-title"
+                >
+                  Have you shared information and engaged with First Nations in the area of the proposed activity?
+                  <NOWFieldOriginTooltip />
+                </div>
+                <Field
+                  component={[Function]}
+                  disabled={true}
+                  id="has_shared_info_with_fn"
+                  name="has_shared_info_with_fn"
+                />
+              </Col>
+              <Col
+                md={12}
+                sm={24}
+              >
+                <div
+                  className="field-title"
+                >
+                  As a result of the engagement, are you aware of any cultural heritage resources in the area where the work is proposed?
+                  <NOWFieldOriginTooltip />
+                </div>
+                <Field
+                  component={[Function]}
+                  disabled={true}
+                  id="has_fn_cultural_heritage_sites_in_area"
+                  name="has_fn_cultural_heritage_sites_in_area"
+                />
+              </Col>
+            </Row>
+            <Row
+              gutter={16}
+            >
+              <Col
+                md={12}
+                sm={24}
+              >
+                <div
+                  className="field-title"
+                >
+                  Describe your First Nations engagement activities
+                  <NOWFieldOriginTooltip />
+                </div>
+                <Field
+                  component={[Function]}
+                  disabled={true}
+                  id="fn_engagement_activities"
+                  name="fn_engagement_activities"
+                />
+              </Col>
+              <Col
+                md={12}
+                sm={24}
+              >
+                <div
+                  className="field-title"
+                >
+                  Describe any cultural heritage resources in the area
+                  <NOWFieldOriginTooltip />
+                </div>
+                <Field
+                  component={[Function]}
+                  disabled={true}
+                  id="cultural_heritage_description"
+                  name="cultural_heritage_description"
+                />
+              </Col>
+            </Row>
+          </FormSection>
+        </div>
+      </withRouter(Connect(ScrollContentWrapper))>
+      <withRouter(Connect(ScrollContentWrapper))
+        id="first-aid"
+        title="First Aid"
+      >
+        <div>
+          <Row
+            gutter={16}
+          >
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Proposed First Aid equipment on site
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="first_aid_equipment_on_site"
+                name="first_aid_equipment_on_site"
+              />
+            </Col>
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Level of First Aid Certificate held by attendant
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id="first_aid_cert_level"
+                name="first_aid_cert_level"
+              />
+            </Col>
+          </Row>
+        </div>
+      </withRouter(Connect(ScrollContentWrapper))>
+      <br />
+      <h2>
+        Work Plan
+      </h2>
+      <Divider />
+      <Row
+        gutter={16}
+      >
+        <Col
+          md={12}
+          sm={24}
+        >
+          <div
+            className="field-title"
+          >
+            Description of Work
+            <NOWFieldOriginTooltip />
+          </div>
+          <Field
+            component={[Function]}
+            disabled={true}
+            id="work_plan"
+            name="work_plan"
+          />
+        </Col>
+      </Row>
+      <br />
+      <withRouter(Connect(ScrollContentWrapper))
+        id="reclamation"
+        title="Summary of Reclamation"
+      >
+        <div>
+          <Row
+            gutter={16}
+          >
+            <Col
+              md={12}
+              sm={24}
+            >
+              <div
+                className="field-title"
+              >
+                Total merchantable timber volume
+                <NOWFieldOriginTooltip />
+              </div>
+              <Field
+                component={[Function]}
+                disabled={true}
+                id=""
+                name=""
+              />
+            </Col>
+          </Row>
+          <br />
+          <ReclamationSummary
+            summary={
+              Array [
+                Object {
+                  "cost": "0.00",
+                  "label": "Cut Lines and Induced Polarization Survey",
+                  "total": "0.00",
+                },
+                Object {
+                  "cost": "0.00",
+                  "label": "Water Supply",
+                  "total": "0.00",
+                },
+              ]
+            }
+          />
+        </div>
+      </withRouter(Connect(ScrollContentWrapper))>
+      <Connect(ReviewActivities)
+        isViewMode={true}
+      />
+      <withRouter(Connect(ScrollContentWrapper))
+        id="submission-documents"
+        title="Submission Documents (vFCBC/NROS)"
+      >
+        <NOWSubmissionDocuments
+          selectedRows={null}
+        />
+      </withRouter(Connect(ScrollContentWrapper))>
+      <withRouter(Connect(ScrollContentWrapper))
+        id="additional-documents"
+        title="Additional Documents"
+      >
+        <Connect(NOWDocuments)
+          isViewMode={true}
+        />
+      </withRouter(Connect(ScrollContentWrapper))>
+    </div>
+  </Form>
+</div>
+`;

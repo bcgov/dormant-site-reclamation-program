@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MinespaceUserList renders properly 1`] = `
+<CoreTable
+  columns={
+    Array [
+      Object {
+        "dataIndex": "email",
+        "render": [Function],
+        "title": "Email",
+        "width": 150,
+      },
+      Object {
+        "dataIndex": "mineNames",
+        "render": [Function],
+        "title": "Mines",
+        "width": 150,
+      },
+      Object {
+        "dataIndex": "delete",
+        "render": [Function],
+        "title": "",
+        "width": 150,
+      },
+    ]
+  }
+  dataSource={Array []}
+  tableProps={
+    Object {
+      "align": "center",
+      "locale": Object {
+        "emptyText": <NullScreen
+          message=""
+          type="no-results"
+        />,
+      },
+      "pagination": false,
+    }
+  }
+/>
+`;

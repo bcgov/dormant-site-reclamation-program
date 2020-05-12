@@ -1,0 +1,245 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReviewActivities renders properly 1`] = `
+<div>
+  <withRouter(Connect(ScrollContentWrapper))
+    data={
+      Object {
+        "details": Array [],
+      }
+    }
+    id="exploration-access"
+    isViewMode={true}
+    title="Access Roads, Trails, Helipads, Air Strips, Boat Ramps"
+  >
+    <FormSection
+      name="exploration_access"
+    >
+      <Connect(AccessRoads)
+        addRecord={[Function]}
+        editRecord={[Function]}
+        isViewMode={true}
+      />
+    </FormSection>
+  </withRouter(Connect(ScrollContentWrapper))>
+  <withRouter(Connect(ScrollContentWrapper))
+    data={Object {}}
+    id="blasting-operation"
+    isViewMode={true}
+    title="Blasting"
+  >
+    <FormSection
+      name="blasting_operation"
+    >
+      <Blasting
+        isViewMode={true}
+      />
+    </FormSection>
+  </withRouter(Connect(ScrollContentWrapper))>
+  <withRouter(Connect(ScrollContentWrapper))
+    data={
+      Object {
+        "details": Array [],
+      }
+    }
+    id="camps"
+    isViewMode={true}
+    title="Camps, Buildings, Staging Areas, Fuel/Lubricant Storage"
+  >
+    <FormSection
+      name="camps"
+    >
+      <Connect(Camps)
+        addRecord={[Function]}
+        editRecord={[Function]}
+        isViewMode={true}
+      />
+    </FormSection>
+  </withRouter(Connect(ScrollContentWrapper))>
+  <withRouter(Connect(ScrollContentWrapper))
+    data={
+      Object {
+        "details": Array [],
+      }
+    }
+    id="cut-lines-polarization-survey"
+    isViewMode={true}
+    showContent={true}
+    title="Cut Lines and Induced Polarization Survey"
+  >
+    <FormSection
+      name="cut_lines_polarization_survey"
+    >
+      <Connect(CutLines)
+        addRecord={[Function]}
+        editRecord={[Function]}
+        isViewMode={true}
+      />
+    </FormSection>
+  </withRouter(Connect(ScrollContentWrapper))>
+  <withRouter(Connect(ScrollContentWrapper))
+    data={
+      Object {
+        "details": Array [],
+      }
+    }
+    id="exploration-surface-drilling"
+    isViewMode={true}
+    title="Exploration Surface Drilling"
+  >
+    <FormSection
+      name="exploration_surface_drilling"
+    >
+      <Connect(SurfaceDrilling)
+        addRecord={[Function]}
+        editRecord={[Function]}
+        isViewMode={true}
+      />
+    </FormSection>
+  </withRouter(Connect(ScrollContentWrapper))>
+  <withRouter(Connect(ScrollContentWrapper))
+    data={
+      Object {
+        "details": Array [],
+      }
+    }
+    id="mechanical-trenching"
+    isViewMode={true}
+    title="Mechanical Trenching / Test Pits"
+  >
+    <FormSection
+      name="mechanical_trenching"
+    >
+      <Connect(MechanicalTrenching)
+        addRecord={[Function]}
+        editRecord={[Function]}
+        isViewMode={true}
+      />
+    </FormSection>
+  </withRouter(Connect(ScrollContentWrapper))>
+  <withRouter(Connect(ScrollContentWrapper))
+    data={
+      Object {
+        "details": Array [],
+      }
+    }
+    id="settling-pond"
+    isViewMode={true}
+    title="Settling Ponds"
+  >
+    <FormSection
+      name="settling_pond"
+    >
+      <Connect(SettlingPonds)
+        addRecord={[Function]}
+        editRecord={[Function]}
+        isViewMode={true}
+      />
+    </FormSection>
+  </withRouter(Connect(ScrollContentWrapper))>
+  <withRouter(Connect(ScrollContentWrapper))
+    data={
+      Object {
+        "details": Array [],
+      }
+    }
+    id="surface-bulk-sample"
+    isViewMode={true}
+    showContent={true}
+    title="Surface Bulk Sample"
+  >
+    <FormSection
+      name="surface_bulk_sample"
+    >
+      <Connect(SurfaceBulkSamples)
+        addRecord={[Function]}
+        editRecord={[Function]}
+        isViewMode={true}
+      />
+    </FormSection>
+  </withRouter(Connect(ScrollContentWrapper))>
+  <withRouter(Connect(ScrollContentWrapper))
+    data={
+      Object {
+        "details": Array [],
+      }
+    }
+    id="underground-exploration"
+    isViewMode={true}
+    showContent={true}
+    title="Underground Exploration"
+  >
+    <FormSection
+      name="underground_exploration"
+    >
+      <Connect(UndergroundExploration)
+        addRecord={[Function]}
+        editRecord={[Function]}
+        isViewMode={true}
+      />
+    </FormSection>
+  </withRouter(Connect(ScrollContentWrapper))>
+  <withRouter(Connect(ScrollContentWrapper))
+    data={
+      Object {
+        "details": Array [],
+      }
+    }
+    id="sand-and-gravel"
+    isViewMode={true}
+    showContent={false}
+    title="Sand and Gravel / Quarry Operations"
+  >
+    <FormSection
+      name="sand_and_gravel"
+    >
+      <Connect(SandGravelQuarry)
+        addRecord={[Function]}
+        editRecord={[Function]}
+        isViewMode={true}
+      />
+    </FormSection>
+  </withRouter(Connect(ScrollContentWrapper))>
+  <withRouter(Connect(ScrollContentWrapper))
+    data={
+      Object {
+        "details": Array [],
+      }
+    }
+    id="placer-operation"
+    isViewMode={true}
+    showContent={false}
+    title="Placer Operations"
+  >
+    <FormSection
+      name="placer_operation"
+    >
+      <Connect(Placer)
+        addRecord={[Function]}
+        editRecord={[Function]}
+        isViewMode={true}
+      />
+    </FormSection>
+  </withRouter(Connect(ScrollContentWrapper))>
+  <withRouter(Connect(ScrollContentWrapper))
+    data={
+      Object {
+        "details": Array [],
+      }
+    }
+    id="water-supply"
+    isViewMode={true}
+    title="Water Supply"
+  >
+    <FormSection
+      name="water_supply"
+    >
+      <Connect(WaterSupply)
+        addRecord={[Function]}
+        editRecord={[Function]}
+        isViewMode={true}
+      />
+    </FormSection>
+  </withRouter(Connect(ScrollContentWrapper))>
+</div>
+`;

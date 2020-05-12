@@ -1,0 +1,183 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SurfaceBulkSamples renders properly 1`] = `
+<div>
+  <withStore(Table)
+    align="left"
+    columns={
+      Array [
+        Object {
+          "dataIndex": "activity_type_description",
+          "key": "activity_type_description",
+          "render": [Function],
+          "title": "Activity",
+        },
+        Object {
+          "dataIndex": "quantity",
+          "key": "quantity",
+          "render": [Function],
+          "title": "Quantity",
+        },
+        Object {
+          "dataIndex": "disturbed_area",
+          "key": "disturbed_area",
+          "render": [Function],
+          "title": "Disturbed Area (ha)",
+        },
+        Object {
+          "dataIndex": "timber_volume",
+          "key": "timber_volume",
+          "render": [Function],
+          "title": "Merchantable timber volume (m3)",
+        },
+      ]
+    }
+    dataSource={Array []}
+    locale={
+      Object {
+        "emptyText": "No data",
+      }
+    }
+    pagination={false}
+  />
+  <br />
+  <Row
+    gutter={16}
+  >
+    <Col
+      md={12}
+      sm={24}
+    >
+      <div
+        className="field-title"
+      >
+        Processing Methods
+      </div>
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="processing_method_description"
+        name="processing_method_description"
+        validate={
+          Array [
+            [Function],
+          ]
+        }
+      />
+    </Col>
+    <Col
+      md={12}
+      sm={24}
+    >
+      <div
+        className="field-title"
+      >
+        Bed rock expansion
+        <NOWFieldOriginTooltip />
+      </div>
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="has_bedrock_expansion"
+        name="has_bedrock_expansion"
+      />
+    </Col>
+  </Row>
+  <Row
+    gutter={16}
+  >
+    <Col
+      md={12}
+      sm={24}
+    >
+      <div
+        className="field-title"
+      >
+        Surface water damage
+        <NOWFieldOriginTooltip />
+      </div>
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="surface_water_damage"
+        name="surface_water_damage"
+      />
+    </Col>
+    <Col
+      md={12}
+      sm={24}
+    >
+      <div
+        className="field-title"
+      >
+        If the material has potential for spontaneous combustion, give details of separate handling.
+        <NOWFieldOriginTooltip />
+      </div>
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="spontaneous_combustion_handling"
+        name="spontaneous_combustion_handling"
+      />
+    </Col>
+  </Row>
+  <br />
+  <Equipment
+    activity="surface_bulk_sample"
+    addRecord={[MockFunction]}
+    editRecord={[MockFunction]}
+    equipment={Array []}
+    isViewMode={true}
+  />
+  <br />
+  <h4>
+    Reclamation Program
+  </h4>
+  <Row
+    gutter={16}
+  >
+    <Col
+      md={12}
+      sm={24}
+    >
+      <div
+        className="field-title"
+      >
+        Proposed reclamation and timing for this specific activity
+      </div>
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="reclamation_description"
+        name="reclamation_description"
+        validate={
+          Array [
+            [Function],
+          ]
+        }
+      />
+    </Col>
+    <Col
+      md={12}
+      sm={24}
+    >
+      <div
+        className="field-title"
+      >
+        Estimated Cost of reclamation activities described above
+      </div>
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="reclamation_cost"
+        name="reclamation_cost"
+        validate={
+          Array [
+            [Function],
+          ]
+        }
+      />
+    </Col>
+  </Row>
+</div>
+`;

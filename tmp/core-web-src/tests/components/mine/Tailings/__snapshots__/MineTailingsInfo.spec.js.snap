@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MineTailingsInfo renders properly 1`] = `
+<div
+  className="tab__content"
+>
+  <div>
+    <h2>
+      Tailings
+    </h2>
+    <Divider />
+  </div>
+  <Row
+    gutter={16}
+    key="e2629897-053e-4218-9299-479375e47f78"
+    style={
+      Object {
+        "marginBottom": "10px",
+      }
+    }
+  >
+    <Col
+      span={6}
+    >
+      <h3>
+        MockTSF
+      </h3>
+    </Col>
+  </Row>
+  <br />
+  <br />
+  <div>
+    <div
+      className="inline-flex between"
+    >
+      <div>
+        <h3>
+          Reports
+        </h3>
+      </div>
+    </div>
+    <Connect(MineReportTable)
+      handleEditReport={[Function]}
+      handleRemoveReport={[Function]}
+      handleTableChange={[Function]}
+      isLoaded={false}
+      openEditReportModal={[Function]}
+      sortDir="desc"
+      sortField="received_date"
+    />
+  </div>
+</div>
+`;

@@ -1,0 +1,147 @@
+version: "2"
+
+services:
+  ####################### Postgres Definition #######################
+  postgres:
+    restart: always
+    container_name: dsrp_postgres
+    build:
+      context: migrations
+      dockerfile: Dockerfile.dev
+    environment:
+      - POSTGRES_USER=dsrp
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=dsrp
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - dsrp
+
+  ####################### Flyway Migration Definition #######################
+  flyway:
+    container_name: dsrp_flyway
+    build:
+      context: migrations
+      dockerfile: Dockerfile.flyway.dev
+    environment:
+      - FLYWAY_USER=dsrp
+      - FLYWAY_HOME=/flyway
+      - FLYWAY_PASSWORD=test
+      - FLYWAY_DB_NAME=dsrp
+      - FLYWAY_DB_HOST=postgres
+      - FLYWAY_URL=jdbc:postgresql://postgres/dsrp
+      - FLYWAY_OUT_OF_ORDER=true
+      - FLYWAY_CONNECT_RETRIES=60
+      - DOCMAN_USER_PASSWORD=docman_pass
+      - METABASE_USER_PASSWORD=metabase_pass
+    depends_on:
+      - postgres
+    networks:
+      - dsrp
+
+  ####################### Backend Definition #######################
+  backend:
+    restart: always
+    container_name: dsrp_backend
+    build:
+      context: services/dsrp-api
+    env_file: services/dsrp-api/.env
+    ports:
+      - 5000:5000
+    volumes:
+      - ./services/dsrp-api/:/app/
+    depends_on:
+      - flyway
+      - redis
+      - document_manager_backend
+    networks:
+      - dsrp
+
+  ####################### Redis Definition #######################
+  redis:
+    image: redis:3.2-alpine
+    container_name: dsrp_cache
+    restart: always
+    command: redis-server --requirepass redis-password
+    ports:
+      - "6379:6379"
+    networks:
+      - dsrp
+
+  ####################### Frontend Definition #######################
+  frontend:
+    restart: always
+    container_name: dsrp_frontend
+    build:
+      context: services/dsrp-web
+    command: ["npm", "run", "serve"]
+    volumes:
+      - ./services/dsrp-web/src/:/app/src/
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+    env_file: ./services/dsrp-web/.env
+    networks:
+      - dsrp
+
+  ####################### DOCUMENT_MANAGER_BACKEND Definition #######################
+  document_manager_backend:
+    restart: always
+    container_name: document_manager_backend
+    build:
+      context: services/document-manager/backend
+    ports:
+      - 5001:5001
+    volumes:
+      - ./services/document-manager/backend/:/app/
+    depends_on:
+      - flyway
+      - redis
+      - document_manager_migrate
+    env_file: ./services/document-manager/backend/.env
+    networks:
+      - dsrp
+
+  document_manager_migrate:
+    restart: on-failure
+    container_name: document_manager_migrate
+    build:
+      context: services/document-manager/backend
+    volumes:
+      - ./services/document-manager/backend/:/app/
+    depends_on:
+      - flyway
+      - redis
+    command: flask db upgrade
+    env_file: ./services/document-manager/backend/.env
+    networks:
+      - dsrp
+
+  ####################### DOCUMENT_GENERATION Definition #######################
+  docgen-api:
+    restart: always
+    container_name: docgen_api
+    image: bcgovimages/doc-gen-api:v1.0.0
+    command: ["npm", "run", "start"]
+    environment:
+      - APP_PORT=3030
+      - CACHE_DIR=/tmp/tmp-reports
+      - NODE_ENV=development
+    #volumes:
+    #  - ./services/docgen-api/:/carbone-api/
+    ports:
+      - 3030:3030
+    networks:
+      - dsrp
+
+####################### Networks Definition #######################
+networks:
+  dsrp:
+    driver: "bridge"
+
+####################### Volumes Definition #######################
+volumes:
+  postgres-data:

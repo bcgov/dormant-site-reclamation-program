@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MinespaceUserManagement renders properly 1`] = `
+<div>
+  <h2>
+    MineSpace User Management
+  </h2>
+  <br />
+  <Connect(NewMinespaceUser)
+    minespaceUserEmailHash={Object {}}
+    refreshData={[Function]}
+  />
+  <h3>
+    MineSpace Users
+  </h3>
+  <MinespaceUserList
+    handleDelete={[Function]}
+    isLoaded={false}
+    minespaceUserMines={Array []}
+    minespaceUsers={Array []}
+  />
+</div>
+`;

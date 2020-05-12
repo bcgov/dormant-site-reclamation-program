@@ -1,0 +1,17 @@
+.env
+.venv/
+node_modules/
+.DS_Store
+.gradle/
+pipeline/build/
+coverage/
+.idea/
+__pycache__
+*.pytest_cache
+*.pyc
+*tmp*.tar
+*.pgCustom
+*.sw*
+microservices/document_manager/backend/document_uploads/
+*last-backup
+venv*

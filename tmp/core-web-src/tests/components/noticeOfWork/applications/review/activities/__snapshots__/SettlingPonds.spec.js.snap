@@ -1,0 +1,222 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SettlingPonds renders properly 1`] = `
+<div>
+  <Row
+    gutter={16}
+  >
+    <Col
+      md={12}
+      sm={24}
+    >
+      <div
+        className="field-title"
+      >
+        Describe the waste water treatment facility (settling pond design, recycling, distance from creek, etc.)
+        <NOWFieldOriginTooltip />
+      </div>
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="wastewater_facility_description"
+        name="wastewater_facility_description"
+      />
+    </Col>
+  </Row>
+  <br />
+  <withStore(Table)
+    align="left"
+    columns={
+      Array [
+        Object {
+          "dataIndex": "activity_type_description",
+          "key": "activity_type_description",
+          "render": [Function],
+          "title": "Pond ID",
+        },
+        Object {
+          "dataIndex": "width",
+          "key": "width",
+          "render": [Function],
+          "title": "Width(m)",
+        },
+        Object {
+          "dataIndex": "length",
+          "key": "length",
+          "render": [Function],
+          "title": "Length(km)",
+        },
+        Object {
+          "dataIndex": "depth",
+          "key": "depth",
+          "render": [Function],
+          "title": "Depth(m)",
+        },
+        Object {
+          "dataIndex": "disturbed_area",
+          "key": "disturbed_area",
+          "render": [Function],
+          "title": "Disturbed Area (ha)",
+        },
+        Object {
+          "dataIndex": "timber_volume",
+          "key": "timber_volume",
+          "render": [Function],
+          "title": "Merchantable timber volume (m3)",
+        },
+        Object {
+          "dataIndex": "water_source_description",
+          "key": "water_source_description",
+          "render": [Function],
+          "title": "Water Source",
+        },
+        Object {
+          "dataIndex": "construction_plan",
+          "key": "construction_plan",
+          "render": [Function],
+          "title": "Construction Method",
+        },
+      ]
+    }
+    dataSource={Array []}
+    locale={
+      Object {
+        "emptyText": "No data",
+      }
+    }
+    pagination={false}
+  />
+  <br />
+  <Row
+    gutter={16}
+  >
+    <Col
+      md={12}
+      sm={24}
+    >
+      <div
+        className="field-title"
+      >
+        Disposal of fines from clean out (i.e. use as a subsoil material)
+        <NOWFieldOriginTooltip />
+      </div>
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="disposal_from_clean_out"
+        name="disposal_from_clean_out"
+      />
+    </Col>
+  </Row>
+  <Row
+    gutter={16}
+  >
+    <div
+      className="field-title"
+    >
+      Water from Ponds will be
+    </div>
+    <Col
+      md={8}
+      sm={24}
+    >
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="is_ponds_recycled"
+        label="Recycled"
+        name="is_ponds_recycled"
+        validate={
+          Array [
+            [Function],
+          ]
+        }
+      />
+    </Col>
+    <Col
+      md={8}
+      sm={24}
+    >
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="is_ponds_exfiltrated"
+        label="Exfiltrated to Ground"
+        name="is_ponds_exfiltrated"
+        validate={
+          Array [
+            [Function],
+          ]
+        }
+      />
+    </Col>
+    <Col
+      md={8}
+      sm={24}
+    >
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="is_ponds_discharged"
+        label="Discharged to Environment"
+        name="is_ponds_discharged"
+        validate={
+          Array [
+            [Function],
+          ]
+        }
+      />
+    </Col>
+  </Row>
+  <br />
+  <h4>
+    Reclamation Program
+  </h4>
+  <Row
+    gutter={16}
+  >
+    <Col
+      md={12}
+      sm={24}
+    >
+      <div
+        className="field-title"
+      >
+        Proposed reclamation and timing for this specific activity
+      </div>
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="reclamation_description"
+        name="reclamation_description"
+        validate={
+          Array [
+            [Function],
+          ]
+        }
+      />
+    </Col>
+    <Col
+      md={12}
+      sm={24}
+    >
+      <div
+        className="field-title"
+      >
+        Estimated Cost of reclamation activities described above
+      </div>
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="reclamation_cost"
+        name="reclamation_cost"
+        validate={
+          Array [
+            [Function],
+          ]
+        }
+      />
+    </Col>
+  </Row>
+</div>
+`;

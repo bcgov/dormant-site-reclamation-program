@@ -1,0 +1,2 @@
+export const APPLICATION_FORM = "APPLICATION_FORM";
+export default APPLICATION_FORM;

@@ -1,0 +1,139 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AccessRoads renders properly 1`] = `
+<div>
+  <withStore(Table)
+    align="left"
+    columns={
+      Array [
+        Object {
+          "dataIndex": "activity_type_description",
+          "key": "activity_type_description",
+          "render": [Function],
+          "title": "Access Type",
+        },
+        Object {
+          "dataIndex": "length",
+          "key": "length",
+          "render": [Function],
+          "title": "Length(km)",
+        },
+        Object {
+          "dataIndex": "disturbed_area",
+          "key": "disturbed_area",
+          "render": [Function],
+          "title": "Disturbed Area (ha)",
+        },
+        Object {
+          "dataIndex": "timber_volume",
+          "key": "timber_volume",
+          "render": [Function],
+          "title": "Merchantable timber volume (m3)",
+        },
+      ]
+    }
+    dataSource={Array []}
+    locale={
+      Object {
+        "emptyText": "No data",
+      }
+    }
+    pagination={false}
+  />
+  <br />
+  <h4>
+    Bridges, Culverts, and Crossings
+  </h4>
+  <Row
+    gutter={16}
+  >
+    <Col
+      md={12}
+      sm={24}
+    >
+      <div
+        className="field-title"
+      >
+        Are you proposing any bridges, culverts, and crossings?
+        <NOWFieldOriginTooltip />
+      </div>
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="has_proposed_bridges_or_culverts"
+        name="has_proposed_bridges_or_culverts"
+      />
+      <div
+        className="field-title"
+      >
+        Describe the changes and reference the locations need on map needed later in the application.
+        <NOWFieldOriginTooltip />
+      </div>
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="bridge_culvert_crossing_description"
+        name="bridge_culvert_crossing_description"
+      />
+    </Col>
+  </Row>
+  <br />
+  <Equipment
+    activity="exploration_access"
+    addRecord={[MockFunction]}
+    editRecord={[MockFunction]}
+    equipment={Array []}
+    isViewMode={true}
+  />
+  <br />
+  <h4>
+    Reclamation Program
+  </h4>
+  <Row
+    gutter={16}
+  >
+    <Col
+      md={12}
+      sm={24}
+    >
+      <div
+        className="field-title"
+      >
+        Proposed reclamation and timing for this specific activity
+      </div>
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="reclamation_description"
+        name="reclamation_description"
+        validate={
+          Array [
+            [Function],
+          ]
+        }
+      />
+    </Col>
+    <Col
+      md={12}
+      sm={24}
+    >
+      <div
+        className="field-title"
+      >
+        Estimated Cost of reclamation activities described above
+      </div>
+      <Field
+        component={[Function]}
+        disabled={true}
+        id="reclamation_cost"
+        name="reclamation_cost"
+        validate={
+          Array [
+            [Function],
+          ]
+        }
+      />
+    </Col>
+  </Row>
+</div>
+`;
