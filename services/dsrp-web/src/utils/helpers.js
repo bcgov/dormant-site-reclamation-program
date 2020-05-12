@@ -1,7 +1,7 @@
 /* eslint-disable */
 import moment from "moment";
 import { reset } from "redux-form";
-import { createNumberMask } from "redux-form-input-masks";
+import { createNumberMask, createTextMask } from "redux-form-input-masks";
 
 /**
  * Helper function to clear redux form after submission
@@ -64,6 +64,33 @@ export const currencyMask = createNumberMask({
   locale: "en-CA",
   allowEmpty: true,
   stringValue: false,
+});
+
+export const phoneMask = createTextMask({
+  pattern: "(999) 999-9999",
+  // placeholder: '_',
+  // maskDefinitions: defaultMaskDefinitions,
+  guide: false,
+  // stripMask: true,
+  allowEmpty: true,
+  // onChange: value => {},
+  // onCompletePattern: value => {},
+});
+
+export const postalCodeMask = createTextMask({
+  pattern: "XXX-XXX",
+  // placeholder: '_',
+  maskDefinitions: {
+    X: {
+      regExp: /[A-Za-z0-9]/,
+      transform: (char) => char.toUpperCase(),
+    },
+  },
+  guide: false,
+  // stripMask: true,
+  allowEmpty: true,
+  // onChange: value => {},
+  // onCompletePattern: value => {},
 });
 
 export const dateSorter = (key) => (a, b) => {

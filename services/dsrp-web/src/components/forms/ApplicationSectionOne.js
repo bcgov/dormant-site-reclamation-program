@@ -4,6 +4,7 @@ import { Row, Col, Typography, Form, Button } from "antd";
 import { Field, FormSection } from "redux-form";
 import { renderConfig } from "@/components/common/config";
 import { required, dateNotInFuture, maxLength } from "@/utils/validate";
+import { phoneMask, postalCodeMask } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
 
 const { Text, Title } = Typography;
@@ -110,6 +111,7 @@ class ApplicationSectionOne extends Component {
                 placeholder="Postal Code"
                 component={renderConfig.FIELD}
                 //validate={[required]}
+                {...postalCodeMask}
               />
             </Col>
           </Row>
@@ -149,6 +151,7 @@ class ApplicationSectionOne extends Component {
                     placeholder="Phone Number 1"
                     component={renderConfig.FIELD}
                     //validate={[required]}
+                    {...phoneMask}
                   />
                 </Col>
                 <Col span={8}>
@@ -171,6 +174,7 @@ class ApplicationSectionOne extends Component {
                     label="Phone Number 2"
                     placeholder="Phone Number 2"
                     component={renderConfig.FIELD}
+                    {...phoneMask}
                   />
                 </Col>
                 <Col span={8}>
