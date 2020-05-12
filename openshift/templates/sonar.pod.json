@@ -43,16 +43,6 @@
       "value": "/opt/app-root/src/document_uploads"
     },
     {
-      "name": "NRIS_TOKEN_URL",
-      "required": false,
-      "value": "https://api.nrs.gov.bc.ca/oauth2/v1/oauth/token"
-    },
-    {
-      "name": "DOCUMENT_GENERATOR_URL",
-      "required": false,
-      "value": ""
-    },
-    {
       "name": "CPU_LIMIT",
       "value": "500m"
     },
@@ -83,7 +73,12 @@
           {
             "name": "test",
             "image": "${IMAGE}",
-            "command": ["container-entrypoint", "bash", "-c", "./run_tests.sh"],
+            "command": [
+              "container-entrypoint",
+              "bash",
+              "-c",
+              "./run_tests.sh"
+            ],
             "resources": {
               "limits": {
                 "cpu": "${CPU_LIMIT}",
@@ -128,14 +123,6 @@
               {
                 "name": "UPLOADED_DOCUMENT_DEST",
                 "value": "${UPLOADED_DOCUMENT_DEST}"
-              },
-              {
-                "name": "NRIS_TOKEN_URL",
-                "value": "${NRIS_TOKEN_URL}"
-              },
-              {
-                "name": "DOCUMENT_GENERATOR_URL",
-                "value": "${DOCUMENT_GENERATOR_URL}"
               },
               {
                 "name": "GIT_BRANCH",

@@ -100,7 +100,6 @@ app {
                             'MEMORY_LIMIT':"${vars.resources.backup.memory_limit}",
                             'VERIFICATION_VOLUME_SIZE':"${vars.BACKUP_VERIFICATION_PVC_SIZE}",
                             'FLYWAY_NAME':"dsrp-flyway-migration-client",
-                            'DB_NRIS_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}-nris"
                     ]
                 ],
                 [
@@ -158,7 +157,6 @@ app {
                             'ROUTE': "${vars.modules.'dsrp-nginx'.ROUTE}",
                             'PATH_PREFIX': "${vars.modules.'dsrp-nginx'.PATH}",
                             'DSRP_SERVICE_URL': "${vars.modules.'dsrp-frontend'.HOST}",
-                            'NRIS_API_SERVICE_URL': "${vars.modules.'dsrp-nris-backend'.HOST}",
                             'DOCUMENT_MANAGER_SERVICE_URL': "${vars.modules.'dsrp-docman-backend'.HOST}",
                             'API_SERVICE_URL': "${vars.modules.'dsrp-python-backend'.HOST}",
                     ]
@@ -183,63 +181,11 @@ app {
                             'APPLICATION_DOMAIN': "${vars.modules.'dsrp-python-backend'.HOST}",
                             'BASE_PATH': "${vars.modules.'dsrp-python-backend'.PATH}",
                             'DB_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}",
-                            'DB_NRIS_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}-nris",
                             'REDIS_CONFIG_NAME': "dsrp-redis${vars.deployment.suffix}",
                             'CACHE_REDIS_HOST': "dsrp-redis${vars.deployment.suffix}",
-                            'ELASTIC_ENABLED': "${vars.deployment.elastic_enabled_dsrp}",
-                            'ELASTIC_SERVICE_NAME': "${vars.deployment.elastic_service_name}",
                             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
                             'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/api",
-                            'NRIS_API_URL': "${vars.modules.'dsrp-nris-backend'.HOST}${vars.modules.'dsrp-nris-backend'.PATH}",
                             'DOCUMENT_MANAGER_URL': "${vars.modules.'dsrp-docman-backend'.HOST}${vars.modules.'dsrp-docman-backend'.PATH}",
-                            'DOCUMENT_GENERATOR_URL': "${vars.modules.'dsrp-docgen-api'.HOST}",
-                    ]
-                ],
-                [
-                    'file':'openshift/templates/nris-api/_python36_oracle.dc.json',
-                    'params':[
-                            'NAME':"dsrp-nris-backend",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'VERSION':"${app.deployment.version}",
-                            'CPU_REQUEST':"${vars.resources.python_lite.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.python_lite.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.python_lite.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.python_lite.memory_limit}",
-                            'UWSGI_THREADS':"${vars.resources.python_lite.uwsgi_threads}",
-                            'UWSGI_PROCESSES':"${vars.resources.python_lite.uwsgi_processes}",
-                            'REPLICA_MIN':"${vars.resources.python_lite.replica_min}",
-                            'REPLICA_MAX':"${vars.resources.python_lite.replica_max}",
-                            'JWT_OIDC_WELL_KNOWN_CONFIG': "${vars.keycloak.known_config_url}",
-                            'JWT_OIDC_AUDIENCE': "${vars.keycloak.clientId_dsrp}",
-                            'APPLICATION_DOMAIN': "${vars.modules.'dsrp-nris-backend'.HOST}",
-                            'BASE_PATH': "${vars.modules.'dsrp-nris-backend'.PATH}",
-                            'DB_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}-nris",
-                            'REDIS_CONFIG_NAME': "dsrp-redis${vars.deployment.suffix}",
-                            'CACHE_REDIS_HOST': "dsrp-redis${vars.deployment.suffix}",
-                            'DB_HOST': "dsrp-postgresql${vars.deployment.suffix}",
-                            'ELASTIC_ENABLED': "${vars.deployment.elastic_enabled_nris}",
-                            'ELASTIC_SERVICE_NAME': "${vars.deployment.elastic_service_name_nris}",
-                            'ENVIRONMENT_NAME':"${app.deployment.env.name}",
-                            'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_dsrp}${vars.modules.'dsrp-nginx'.PATH}/nris_api",
-                    ]
-                ],
-                              [
-                    'file':'openshift/templates/docgen/docgen.dc.json',
-                    'params':[
-                            'NAME':"docgen",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'VERSION':"${app.deployment.version}",
-                            'APPLICATION_SUFFIX': "${vars.deployment.application_suffix}",
-                            'PORT':3030,
-                            'CPU_REQUEST':"${vars.resources.docgen.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.docgen.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.docgen.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.docgen.memory_limit}",
-                            'REPLICA_MIN':"${vars.resources.docgen.replica_min}",
-                            'REPLICA_MAX':"${vars.resources.docgen.replica_max}",
-                            'APPLICATION_DOMAIN': "${vars.modules.'dsrp-docgen-api'.HOST}",
-                            'BASE_PATH': "${vars.modules.'dsrp-docgen-api'.PATH}",
-                            'NODE_ENV': "${vars.deployment.node_env}"
                     ]
                 ],
                 [
@@ -264,8 +210,6 @@ app {
                             'DB_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}",
                             'REDIS_CONFIG_NAME': "dsrp-redis${vars.deployment.suffix}",
                             'CACHE_REDIS_HOST': "dsrp-redis${vars.deployment.suffix}",
-                            'ELASTIC_ENABLED': "${vars.deployment.elastic_enabled_dsrp}",
-                            'ELASTIC_SERVICE_NAME': "${vars.deployment.elastic_service_name_docman}",
                             'DOCUMENT_CAPACITY':"${vars.DOCUMENT_PVC_SIZE}",
                             'DOCUMENT_CAPACITY_LOWER':"${vars.DOCUMENT_PVC_SIZE.toString().toLowerCase()}",
                             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
@@ -359,14 +303,6 @@ environments {
                     replica_min = 2
                     replica_max = 4
                 }
-                docgen {
-                    cpu_request = "200m"
-                    cpu_limit = "1"
-                    memory_request = "512Mi"
-                    memory_limit = "2Gi"
-                    replica_min = 1
-                    replica_max = 1
-                }
                 nginx {
                     cpu_request = "10m"
                     cpu_limit = "50m"
@@ -454,11 +390,6 @@ environments {
                 namespace = 'eazios-prod'
                 node_env = "production"
                 fn_layer_url = "https://apps.gov.bc.ca/ext/sgw/geo.allgov"
-                elastic_enabled_dsrp = 1
-                elastic_enabled_nris = 1
-                elastic_service_name = "dsrp Prod"
-                elastic_service_name_nris = "NRIS API Prod"
-                elastic_service_name_docman = 'DocMan Prod'
             }
             modules {
                 'dsrp-frontend' {
@@ -474,19 +405,12 @@ environments {
                     HOST = "http://dsrp-python-backend${vars.deployment.suffix}:5000"
                     PATH = "/api"
                 }
-                'dsrp-nris-backend' {
-                    HOST = "http://dsrp-nris-backend${vars.deployment.suffix}:5500"
-                    PATH = "/nris-api"
-                }
                 'dsrp-docman-backend' {
                     HOST = "http://dsrp-docman-backend${vars.deployment.suffix}:5001"
                     PATH = "/document-manager"
                 }
                 'dsrp-redis' {
                     HOST = "http://dsrp-redis${vars.deployment.suffix}"
-                }
-                'dsrp-docgen-api' {
-                    HOST = "http://docgen${vars.deployment.suffix}:3030"
                 }
                 'schemaspy' {
                     HOST = "dsrp-schemaspy-${vars.deployment.namespace}.pathfinder.gov.bc.ca"

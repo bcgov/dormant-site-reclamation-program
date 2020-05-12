@@ -39,10 +39,6 @@
       "value": "/"
     },
     {
-      "name": "NRIS_API_SERVICE_URL",
-      "value": "/"
-    },
-    {
       "name": "DOCUMENT_MANAGER_SERVICE_URL",
       "value": "/"
     },
@@ -87,7 +83,9 @@
         "name": "dsrp-access-logs${SUFFIX}"
       },
       "spec": {
-        "accessModes": ["ReadWriteMany"],
+        "accessModes": [
+          "ReadWriteMany"
+        ],
         "resources": {
           "requests": {
             "storage": "${LOG_PVC_SIZE}"
@@ -137,7 +135,9 @@
             "type": "ImageChange",
             "imageChangeParams": {
               "automatic": true,
-              "containerNames": ["nginx"],
+              "containerNames": [
+                "nginx"
+              ],
               "from": {
                 "kind": "ImageStreamTag",
                 "name": "${NAME}:${VERSION}"
@@ -172,10 +172,6 @@
                   {
                     "name": "DSRP_SERVICE_URL",
                     "value": "${DSRP_SERVICE_URL}"
-                  },
-                  {
-                    "name": "NRIS_API_SERVICE_URL",
-                    "value": "${NRIS_API_SERVICE_URL}"
                   },
                   {
                     "name": "DOCUMENT_MANAGER_SERVICE_URL",
@@ -300,11 +296,10 @@
       "kind": "Route",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}${SUFFIX}-core",
+        "name": "${NAME}${SUFFIX}",
         "creationTimestamp": null,
         "labels": {
-          "component": "${NAME}",
-          "route": "core"
+          "component": "${NAME}"
         }
       },
       "spec": {
