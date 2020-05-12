@@ -19,17 +19,6 @@ exit 1
 # ===================================================================================================
 # Setup
 # ---------------------------------------------------------------------------------------------------
-while getopts c:h FLAG; do
-  case $FLAG in
-    c ) CHANGE_ID=$OPTARG ;;
-    h ) usage ;;
-    \?) #unrecognized option - show help
-      echo -e \\n"Invalid script option"\\n
-      usage
-      ;;
-  esac
-done
-
 if ! oc whoami
 then
     echo
@@ -50,7 +39,8 @@ do
 
     oc project eazios-tools
 
-    oc delete is -l change-id=$pr
+    oc delete all -l change-id=$pr
     tags=`oc get istag -o=jsonpath=$(printf "${template}" "${pr}")`
     oc delete istag ${tags}
+
 done

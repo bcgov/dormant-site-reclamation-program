@@ -43,8 +43,8 @@ println config
 config.app.namespaces.each {String key, Map env->
     println "Should we clean ${env.namespace}? ${env.disposable}"
     if (env.disposable == true){
-        oc(['delete', 'all', '-l', "app=${config.app.name}-${key}-pr-${config.app.git.changeId}", '-n', "${env.namespace}"])
-        oc(['delete', 'secret,configmap,pvc', '-l', "app=${config.app.name}-${key}-pr-${config.app.git.changeId}", '-n', "${env.namespace}"])
+        oc(['delete', 'secret,configmap,pvc,all', '-l', "app=${config.app.name}-${key}-pr-${config.app.git.changeId}", '-n', "${env.namespace}"])
+        oc(['delete', 'secret,configmap,pvc,all', '-l', "changeid=${config.app.git.changeId}", '-n', "${env.namespace}"])
 
         Map ret = ocGet(['is', '-l', "app-name=${config.app.name}", '-n', "${env.namespace}"])
         for(Map imageStream:ret.items){
