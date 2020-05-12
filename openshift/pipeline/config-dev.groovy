@@ -320,7 +320,7 @@ environments {
                     PATH = "/${vars.git.changeId}"
                 }
                 'dsrp-nginx' {
-                    HOST_dsrp = "minesdigitalservices-${vars.deployment.key}.pathfinder.gov.bc.ca"
+                    HOST_dsrp = "dsrp-${vars.deployment.key}.pathfinder.gov.bc.ca"
                     PATH = "/${vars.git.changeId}"
                     ROUTE = "/${vars.git.changeId}"
                 }

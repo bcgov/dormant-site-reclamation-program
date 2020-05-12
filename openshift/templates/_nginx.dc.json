@@ -296,11 +296,10 @@
       "kind": "Route",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}${SUFFIX}-core",
+        "name": "${NAME}${SUFFIX}",
         "creationTimestamp": null,
         "labels": {
-          "component": "${NAME}",
-          "route": "core"
+          "component": "${NAME}"
         }
       },
       "spec": {

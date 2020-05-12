@@ -285,19 +285,6 @@ export class NavBar extends Component {
           </Row>
           <Row>
             <Col span={24}>
-              <a
-                href="https://mdsfider.pathfinder.gov.bc.ca/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button id="feedback-btn" type="button" className="menu--hamburger__btn--link">
-                  Feedback
-                </Button>
-              </a>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={24}>
               <Link to={router.LOGOUT.route}>
                 <Button id="logout-btn" type="button" className="menu--hamburger__btn--link">
                   Log Out
