@@ -1,18 +1,15 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Row, Col, Form, Select, Spin, Icon, Button } from "antd";
-import debounce, { isEmpty } from "lodash";
+import { Row, Col, Form, Select, Spin, Icon } from "antd";
+import debounce from "lodash";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { searchOrgBook, fetchOrgBookCredential } from "@/actionCreators/orgbookActionCreator";
-import { getSearchOrgBookResults, getOrgBookCredential } from "@/selectors/orgbookSelectors";
-import { ORGBOOK_ENTITY_URL } from "@/constants/routes";
+import { searchOrgBook } from "@/actionCreators/orgbookActionCreator";
+import { getSearchOrgBookResults } from "@/selectors/orgbookSelectors";
 
 const propTypes = {
   searchOrgBook: PropTypes.func.isRequired,
-  fetchOrgBookCredential: PropTypes.func.isRequired,
   searchOrgBookResults: PropTypes.arrayOf(PropTypes.any),
-  orgBookCredential: PropTypes.objectOf(PropTypes.any),
 };
 
 const defaultProps = {
@@ -20,7 +17,7 @@ const defaultProps = {
   orgBookCredential: {},
 };
 
-export class PartyOrgBookForm extends Component {
+export class OrgBookSearch extends Component {
   constructor(props) {
     super(props);
     this.lastFetchId = 0;
@@ -37,13 +34,6 @@ export class PartyOrgBookForm extends Component {
   handleChange = () => {
     this.setState({
       isSearching: false,
-    });
-  };
-
-  handleSelect = (value) => {
-    const credentialId = value.key;
-    this.props.fetchOrgBookCredential(credentialId).then(() => {
-      this.setState({ credential: this.props.orgBookCredential });
     });
   };
 
@@ -72,8 +62,7 @@ export class PartyOrgBookForm extends Component {
   }
 
   render() {
-    const hasOrgBookCredential = !isEmpty(this.state.credential);
-
+    console.log("INPUT PROPS", this.props.input);
     return (
       <Row gutter={48} type="flex" align="middle">
         <Col span={24}>
@@ -87,10 +76,8 @@ export class PartyOrgBookForm extends Component {
                 (this.props.meta.warning && <span>{this.props.meta.warning}</span>))
             }>
             <Select
-              id={this.props.id}
               showSearch
               showArrow
-              labelInValue
               placeholder="Start typing to search OrgBook..."
               notFoundContent={
                 this.state.isSearching ? (
@@ -100,34 +87,15 @@ export class PartyOrgBookForm extends Component {
               filterOption={false}
               onSearch={this.handleSearchDebounced}
               onChange={this.handleChange}
-              onSelect={this.handleSelect}
-              style={{ width: "100%" }}
               disabled={this.state.isAssociating}
               {...this.props.input}
             >
               {this.state.options.map((option) => (
-                <Select.Option key={option.value} value={option.value}>{option.text}</Select.Option>
+                <Select.Option key={option.value} value={option.text}>{option.text}</Select.Option>
               ))}
             </Select>
           </Form.Item>
         </Col>
-        {/* <Col span={4}>
-          <Button
-            type="primary"
-            href={
-              hasOrgBookCredential
-                ? ORGBOOK_ENTITY_URL(this.state.credential.topic.source_id)
-                : null
-            }
-            target="_blank"
-            disabled={!hasOrgBookCredential}
-          >
-            <span>
-              <Icon type="book" style={{ paddingRight: 5 }} />
-              View on OrgBook
-            </span>
-          </Button>
-        </Col> */}
       </Row>
     );
   }
@@ -135,19 +103,17 @@ export class PartyOrgBookForm extends Component {
 
 const mapStateToProps = (state) => ({
   searchOrgBookResults: getSearchOrgBookResults(state),
-  orgBookCredential: getOrgBookCredential(state),
 });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       searchOrgBook,
-      fetchOrgBookCredential,
     },
     dispatch
   );
 
-PartyOrgBookForm.propTypes = propTypes;
-PartyOrgBookForm.defaultProps = defaultProps;
+OrgBookSearch.propTypes = propTypes;
+OrgBookSearch.defaultProps = defaultProps;
 
-export default connect(mapStateToProps, mapDispatchToProps)(PartyOrgBookForm);
+export default connect(mapStateToProps, mapDispatchToProps)(OrgBookSearch);

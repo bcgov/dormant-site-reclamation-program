@@ -46,6 +46,7 @@ class ApplicationSectionOne extends Component {
                 placeholder="Company Name"
                 component={OrgBookSearch}
                 validate={[required]}
+                format={null}
               />
               <Field
                 id="address_line_1"
@@ -81,6 +82,7 @@ class ApplicationSectionOne extends Component {
                 label="Province"
                 placeholder="Province"
                 component={renderConfig.SELECT}
+                format={null}
                 //validate={[required]}
                 data={[
                   { value: "AB", label: "Alberta" },
