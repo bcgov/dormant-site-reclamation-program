@@ -111,6 +111,7 @@ class ApplicationSectionOne extends Component {
             </Col>
           </Row>
         </FormSection>
+
         <FormSection name="company_contact">
           <Title level={2}>Company Contact</Title>
           <Row gutter={48}>
@@ -197,6 +198,7 @@ class ApplicationSectionOne extends Component {
             </Col>
           </Row>
         </FormSection>
+
         <FormSection name="ducks">
           <Title level={2}>Good Pics of Ducks</Title>
           <Row gutter={48}>
@@ -218,6 +220,7 @@ class ApplicationSectionOne extends Component {
             </Col>
           </Row>
         </FormSection>
+
         <Row className="steps-action">
           <Col>
             <Button type="primary" htmlType="submit">
