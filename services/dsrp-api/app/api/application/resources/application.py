@@ -33,7 +33,7 @@ class ApplicationListResource(Resource, UserMixin):
             raise BadRequest(e)
         
         with EmailService() as es:
-            es.send_application_confirmation(application)
+            application.send_confirmation_email(es)
 
         return application, 201
 

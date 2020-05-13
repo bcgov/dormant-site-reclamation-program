@@ -47,3 +47,22 @@ class Application(Base, AuditMixin):
         return 'jasyrotuck@gmail.com'
         #return self.json['submitter_email']
 
+
+    def send_confirmation_email(self, email_service):
+        if not email_service._smtp:
+            raise Exception('Initialize EmailService() as context manager using \'with\' keyword')
+
+        html_content = f"""
+        <html>
+            <head></head>
+            <body>
+            <p> 
+                We have successfully received your application in the BC Governments Dormant
+                Site Reclamation Program. Your reference number is {self.guid}, please keep this safe as you will
+                need it to carry your application forward in this process.
+            </p>
+            </body>
+        </html>
+        """
+
+        email_service.send_email(self.submitter_email, 'Application Confirmation', html_content)

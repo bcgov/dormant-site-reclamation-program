@@ -53,14 +53,18 @@ class EmailService():
 
         self._smtp.quit()   
 
-    def send_email(self, to_email,subject, msg_content):
-        msg = MIMEMultipart()       # create a message
+
+    def send_email(self, to_email, subject, html):
+        msg = MIMEMultipart()     
 
         msg['From']=self.SENDER_INFO['from-email']
         msg['To']=to_email
         msg['Subject']=subject
         # add in the message body
-        msg.attach(msg_content)
+        msg.attach(MIMEText(html,'html'))
+
+        signature = f'Email {self.SENDER_INFO["from-email"]} with this reference number if you have questions about your application.' 
+        msg.attach(MIMEText(signature,'plain'))
         
         # send the message via the server set up earlier.
         try:
@@ -68,24 +72,4 @@ class EmailService():
             self._sent_mail['success_count'] += 1
         except Exception as e: 
             self._sent_mail['errors'].append((msg['To']) + 'THREW' + str(e))
-            
-            
-    def send_application_confirmation(self, application):
-        content = f"""
-        <html>
-            <head></head>
-            <body>
-            <p> 
-                We have successfully received your application in the BC Governments Dormant
-                Site Reclamation Program. Your reference number is {application.guid}, please keep this safe as you will
-                need it to carry your application forward in this process.
-            <br/>
-            <br/>
-                Email {self.SENDER_INFO['from-email']} with this reference number if you have questions about your application. 
-            </p>
-            </body>
-        </html>
-        """
-        msg_content = MIMEText(content,'html')
-
-        self.send_email(application.submitter_email, 'Application Confirmation',msg_content)
+        
