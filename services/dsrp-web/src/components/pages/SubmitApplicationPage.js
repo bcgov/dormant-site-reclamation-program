@@ -14,12 +14,7 @@ const { Paragraph, Title } = Typography;
 
 export class SubmitApplicationPage extends Component {
   handleSubmit = (values) => {
-    console.log("handleSubmit", values);
-
-    // TODO: Process form values appropriately.
-    const newValues = values;
-
-    const application = { json: newValues };
+    const application = { json: values };
     this.props.createApplication(application);
   };
 
