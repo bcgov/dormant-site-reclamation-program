@@ -34,7 +34,7 @@ const renderWells = ({ fields }) => (
     <Title level={2}>Well Sites</Title>
     <Row gutter={[48, 48]}>
       <Col span={24}>
-        <Collapse bordered={false}>
+        <Collapse bordered={false} accordion>
           {fields.map((member, index) => (
             <Panel
               key={index}

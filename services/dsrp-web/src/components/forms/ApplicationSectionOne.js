@@ -8,7 +8,7 @@ import { phoneMask, postalCodeMask } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
 
-const { Text, Title } = Typography;
+const { Text, Title, Paragraph } = Typography;
 
 const defaultProps = {};
 
@@ -54,7 +54,7 @@ class ApplicationSectionOne extends Component {
                 label="Address Line 1"
                 placeholder="Address Line 1"
                 component={renderConfig.FIELD}
-                // validate={[required]}
+              // validate={[required]}
               />
               <Field
                 id="address_line_2"
@@ -62,7 +62,7 @@ class ApplicationSectionOne extends Component {
                 label="Address Line 2"
                 placeholder="Address Line 2"
                 component={renderConfig.FIELD}
-                // validate={[required]}
+              // validate={[required]}
               />
               <Field
                 id="city"
@@ -70,7 +70,7 @@ class ApplicationSectionOne extends Component {
                 label="City"
                 placeholder="City"
                 component={renderConfig.FIELD}
-                // validate={[required]}
+              // validate={[required]}
               />
             </Col>
           </Row>
@@ -125,7 +125,7 @@ class ApplicationSectionOne extends Component {
                 label="First Name"
                 placeholder="First Name"
                 component={renderConfig.FIELD}
-                // validate={[required]}
+              // validate={[required]}
               />
             </Col>
             <Col span={12}>
@@ -135,7 +135,7 @@ class ApplicationSectionOne extends Component {
                 label="Last Name"
                 placeholder="Last Name"
                 component={renderConfig.FIELD}
-                // validate={[required]}
+              // validate={[required]}
               />
             </Col>
           </Row>
@@ -196,7 +196,17 @@ class ApplicationSectionOne extends Component {
                 label="Email"
                 placeholder="Email"
                 component={renderConfig.FIELD}
-                // validate={[required]}
+              // validate={[required]}
+              />
+            </Col>
+            <Col span={12}>
+              <Field
+                id="fax"
+                name="fax"
+                label="Fax"
+                placeholder="Fax"
+                component={renderConfig.FIELD}
+              // validate={[required]}
               />
             </Col>
           </Row>
@@ -219,6 +229,21 @@ class ApplicationSectionOne extends Component {
                   allowMultiple={false}
                 />
               </Form.Item>
+            </Col>
+          </Row>
+        </FormSection>
+
+        <FormSection name="review_program_conditions">
+          <Paragraph><a href="#" target="_blank" rel="noopener noreferrer" >Review program details and requirements</a></Paragraph>
+          <Row gutter={48}>
+            <Col span={24}>
+              <Field
+                id="accept_program_details_and_requirements"
+                name="accept_program_details_and_requirements"
+                label="I have read and understand all of the conditions required to qualify for this program."
+                component={renderConfig.CHECKBOX}
+                validate={[required]}
+              />
             </Col>
           </Row>
         </FormSection>
