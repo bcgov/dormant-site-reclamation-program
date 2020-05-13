@@ -15,3 +15,8 @@ export const ORGBOOK_CREDENTIAL = (credentialId) => `/orgbook/credential/${crede
 
 // Application
 export const APPLICATION = "/application";
+
+// OGC
+export const PERMIT_HOLDER = () => "/permit_holder";
+export const WELL = (params) => `/well?${queryString.stringify(params)}`;
+export const LIABILITY = () => "/liability";

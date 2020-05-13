@@ -13,7 +13,15 @@ const propTypes = {
 };
 
 const RenderCheckbox = (props) => (
-  <Form.Item validateStatus={props.meta.touched ? props.meta.error && "error" : ""}>
+  <Form.Item
+    validateStatus={
+      props.meta.touched ? (props.meta.error && "error") || (props.meta.warning && "warning") : ""
+    }
+    help={
+      props.meta.touched &&
+      ((props.meta.error && <span>{props.meta.error}</span>) ||
+        (props.meta.warning && <span>{props.meta.warning}</span>))
+    }>
     <Checkbox id={props.id} checked={props.input.value} {...props.input}>
       {props.label}
     </Checkbox>

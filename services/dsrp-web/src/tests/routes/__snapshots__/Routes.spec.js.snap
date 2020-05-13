@@ -29,6 +29,37 @@ exports[`PrivateRoutes  renders properly 1`] = `
     path="/return-page"
   />
   <Route
+    component={
+      Object {
+        "$$typeof": Symbol(react.memo),
+        "WrappedComponent": [Function],
+        "compare": null,
+        "displayName": "Connect(SubmitApplicationPage)",
+        "type": [Function],
+      }
+    }
+    exact={true}
+    path="/submit-application"
+  />
+  <Route
+    component={[Function]}
+    exact={true}
+    path="/view-application-status"
+  />
+  <Route
+    component={
+      Object {
+        "$$typeof": Symbol(react.memo),
+        "WrappedComponent": [Function],
+        "compare": null,
+        "displayName": "Connect(authenticationGuard)",
+        "type": [Function],
+      }
+    }
+    exact={true}
+    path="/review-applications"
+  />
+  <Route
     render={[Function]}
   />
 </Switch>

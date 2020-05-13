@@ -12,7 +12,7 @@ const propTypes = {
 const { Step } = Steps;
 
 export class ApplicationForm extends Component {
-  state = { current: 1 };
+  state = { current: 0 };
 
   nextFormStep = () => {
     const current = this.state.current + 1;
@@ -30,7 +30,7 @@ export class ApplicationForm extends Component {
       content: <ApplicationSectionOne onSubmit={this.nextFormStep} />,
     },
     {
-      title: "Add Sites",
+      title: "Well Sites",
       content: (
         <ApplicationSectionTwo previousStep={this.previousFormStep} onSubmit={this.nextFormStep} />
       ),
