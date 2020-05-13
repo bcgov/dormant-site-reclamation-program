@@ -36,16 +36,14 @@ class EmailService():
         self.signature = f'<p>Email {self.SENDER_INFO["from-email"]} with this reference number if you have questions about your application.</p>' 
 
     def __enter__(self):
-        if self.SMTP_CRED['host'] == 'smtp.srvr':
-            self._smtp = 'STUB'
-            current_app.logger.info(f'EmailService STUB, change SMTP_CRED[\'host\'] to go live')
-
-        else:
+        if Config.SMTP_ENABLED:
             # set up the SMTP server
             self._smtp = smtplib.SMTP()
             self._smtp.set_debuglevel(0)
             self._smtp.connect(self.SMTP_CRED['host'], self.SMTP_CRED['port'])
             current_app.logger.info(f'Opening connection to {self.SMTP_CRED["host"]}:{self.SMTP_CRED["port"]}')
+        else:
+            current_app.logger.info(f'EmailService disabled, change SMTP_CRED_HOST env variable to go live')
         return self 
 
     def __exit__(self, exc_type, exc_value, traceback): 
@@ -58,7 +56,7 @@ class EmailService():
         if self._sent_mail['errors']:
             current_app.logger.error(self._sent_mail['errors'])  
 
-        if self._smtp != 'STUB':
+        if Config.SMTP_ENABLED:
             self._smtp.quit()   
 
 
@@ -75,7 +73,7 @@ class EmailService():
         
         # send the message via the server set up earlier.
         try:    
-            if self._smtp != "STUB":
+            if Config.SMTP_ENABLED:
                 self._smtp.send_message(msg)
             self._sent_mail['success_count'] += 1
         except Exception as e: 
