@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Button, Col, Row, Steps, Form } from "antd";
+import { Prompt } from "react-router-dom";
 import PropTypes from "prop-types";
 import ApplicationSectionOne from "@/components/forms/ApplicationSectionOne";
 import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
@@ -48,6 +49,15 @@ export class ApplicationForm extends Component {
 
   render() {
     return (
+      <React.Fragment>
+      <Prompt
+        when={true}
+        message={(location) => {
+          return this.props.location.pathname === location.pathname
+            ? true
+            : "You have unsaved changes. Are you sure you want to leave without saving?";
+        }}
+      />
       <Row>
         <Col>
           <Steps current={this.state.current}>
@@ -60,6 +70,7 @@ export class ApplicationForm extends Component {
           </Row>
         </Col>
       </Row>
+      </React.Fragment>
     );
   }
 }
