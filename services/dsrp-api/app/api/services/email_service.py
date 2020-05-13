@@ -23,22 +23,28 @@ class EmailService():
         'from-email': 'DormantSiteReclamation@gov.bc.ca'
     }
     
-    _sent_mail = {
-        'success_count':0,
-        'errors':[]
-    }
 
     _smtp = None    
 
     def __init__(self):
+        self._sent_mail = {
+            'success_count':0,
+            'errors':[]
+        }
+
         self.SMTP_CRED = Config.SMTP_CRED
 
     def __enter__(self):
-        # set up the SMTP server
-        self._smtp = smtplib.SMTP()
-        self._smtp.set_debuglevel(0)
-        self._smtp.connect(self.SMTP_CRED['host'], self.SMTP_CRED['port'])
-        current_app.logger.info(f'Opening connection to {self.SMTP_CRED["host"]}:{self.SMTP_CRED["port"]}')
+        if self.SMTP_CRED['host'] == 'smtp.srvr':
+            self._smtp = 'STUB'
+            current_app.logger.info(f'EmailService STUB, change SMTP_CRED[\'host\'] to go live')
+
+        else:
+            # set up the SMTP server
+            self._smtp = smtplib.SMTP()
+            self._smtp.set_debuglevel(0)
+            self._smtp.connect(self.SMTP_CRED['host'], self.SMTP_CRED['port'])
+            current_app.logger.info(f'Opening connection to {self.SMTP_CRED["host"]}:{self.SMTP_CRED["port"]}')
         return self 
 
     def __exit__(self, exc_type, exc_value, traceback): 
@@ -51,7 +57,8 @@ class EmailService():
         if self._sent_mail['errors']:
             current_app.logger.error(self._sent_mail['errors'])  
 
-        self._smtp.quit()   
+        if self._smtp != 'STUB':
+            self._smtp.quit()   
 
 
     def send_email(self, to_email, subject, html):
@@ -67,8 +74,9 @@ class EmailService():
         msg.attach(MIMEText(signature,'plain'))
         
         # send the message via the server set up earlier.
-        try:
-            self._smtp.send_message(msg)
+        try:    
+            if self._smtp != "STUB":
+                self._smtp.send_message(msg)
             self._sent_mail['success_count'] += 1
         except Exception as e: 
             self._sent_mail['errors'].append((msg['To']) + 'THREW' + str(e))
