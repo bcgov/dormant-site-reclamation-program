@@ -31,7 +31,6 @@ export const ReviewApplicationsPage = () => (
       className="landing-section"
     >
       <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-        <Paragraph>Content</Paragraph>
         <ReviewApplicationInfo />
       </Col>
     </Row>
