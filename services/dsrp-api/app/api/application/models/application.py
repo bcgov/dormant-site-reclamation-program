@@ -44,13 +44,15 @@ class Application(Base, AuditMixin):
 
     @hybrid_property
     def submitter_email(self):
-        return 'jasyrotuck@gmail.com'
-        #return self.json['submitter_email']
+        return self.json.get('company_contact', {'email':None}).get('email', None)
 
 
     def send_confirmation_email(self, email_service):
         if not email_service._smtp:
             raise Exception('Initialize EmailService() as context manager using \'with\' keyword')
+        
+        if not self.submitter_email:
+            raise Exception('Application.json.company_contact.email is not set, must set before email can be sent')
 
         html_content = f"""
         <html>
@@ -64,5 +66,5 @@ class Application(Base, AuditMixin):
             </body>
         </html>
         """
-
+    
         email_service.send_email(self.submitter_email, 'Application Confirmation', html_content)
