@@ -33,7 +33,7 @@ class EmailService():
         }
 
         self.SMTP_CRED = Config.SMTP_CRED
-        self.signature = f'Email {self.SENDER_INFO["from-email"]} with this reference number if you have questions about your application.' 
+        self.signature = f'<p>Email {self.SENDER_INFO["from-email"]} with this reference number if you have questions about your application.</p>' 
 
     def __enter__(self):
         if self.SMTP_CRED['host'] == 'smtp.srvr':
