@@ -79,8 +79,8 @@ class EmailService():
                 We have successfully received your application in the BC Governments Dormant
                 Site Reclamation Program. Your reference number is {application.guid}, please keep this safe as you will
                 need it to carry your application forward in this process.
-            </p>
-            <p>
+            <br/>
+            <br/>
                 Email {self.SENDER_INFO['from-email']} with this reference number if you have questions about your application. 
             </p>
             </body>
