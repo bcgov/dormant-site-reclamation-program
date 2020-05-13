@@ -29,11 +29,10 @@ const defaultProps = {
   data: [],
   disabled: false,
   meta: {},
-  onSelect: () => {},
+  onSelect: () => { },
 };
 
 const RenderSelect = (props) => {
-  console.log("INPUT PROPS", props.input);
   return (
     <Form.Item
       label={props.label}

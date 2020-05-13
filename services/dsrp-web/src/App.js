@@ -41,29 +41,27 @@ class App extends Component {
     const xxl = 18;
     return (
       <BrowserRouter basename={process.env.BASE_PATH}>
-        <Fragment>
+        <Layout>
+          <Header xs={xs} lg={lg} xl={xl} xxl={xxl} />
           <Layout>
-            <Header xs={xs} lg={lg} xl={xl} xxl={xxl} />
-            <Layout>
-              <Content>
-                {this.state.isIE && <WarningBanner type="IE" onClose={this.handleBannerClose} />}
-                <MediaQuery maxWidth={500}>
-                  {this.state.isMobile && (
-                    <WarningBanner type="mobile" onClose={this.handleMobileWarningClose} />
-                  )}
-                </MediaQuery>
-                <Row type="flex" justify="center" align="top">
-                  <Col xs={xs} lg={lg} xl={xl} xxl={xxl}>
-                    <Routes />
-                  </Col>
-                </Row>
-                <ModalWrapper />
-                <BackTop />
-              </Content>
-            </Layout>
-            <Footer xs={xs} lg={lg} xl={xl} xxl={xxl} />
+            <Content>
+              {this.state.isIE && <WarningBanner type="IE" onClose={this.handleBannerClose} />}
+              <MediaQuery maxWidth={500}>
+                {this.state.isMobile && (
+                  <WarningBanner type="mobile" onClose={this.handleMobileWarningClose} />
+                )}
+              </MediaQuery>
+              <Row type="flex" justify="center" align="top">
+                <Col xs={xs} lg={lg} xl={xl} xxl={xxl}>
+                  <Routes />
+                </Col>
+              </Row>
+              <ModalWrapper />
+              <BackTop />
+            </Content>
           </Layout>
-        </Fragment>
+          <Footer xs={xs} lg={lg} xl={xl} xxl={xxl} />
+        </Layout>
       </BrowserRouter>
     );
   }
