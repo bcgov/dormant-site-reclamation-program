@@ -1,5 +1,6 @@
 import React from "react";
 import { Row, Col, Typography } from "antd";
+import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 
 const { Paragraph, Title } = Typography;
 
@@ -35,4 +36,4 @@ export const ReviewApplicationsPage = () => (
   </>
 );
 
-export default ReviewApplicationsPage;
+export default AuthorizationGuard()(ReviewApplicationsPage);

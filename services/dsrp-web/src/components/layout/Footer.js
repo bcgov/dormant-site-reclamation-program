@@ -2,6 +2,7 @@ import React from "react";
 import { Layout, Row, Col } from "antd";
 import PropTypes from "prop-types";
 import * as Strings from "@/constants/strings";
+import AdminLogin from "@/components/admin/AdminLogin";
 
 const propTypes = {
   xs: PropTypes.number.isRequired,
@@ -20,7 +21,7 @@ export const Footer = (props) => (
               Home
             </a>
           </Col>
-          <Col xs={24} lg={4}>
+          <Col xs={24} lg={3}>
             <a
               className="footer-link"
               href="https://www2.gov.bc.ca/gov/content/home/disclaimer"
@@ -30,7 +31,7 @@ export const Footer = (props) => (
               Disclaimer
             </a>
           </Col>
-          <Col xs={24} lg={4}>
+          <Col xs={24} lg={3}>
             <a
               className="footer-link"
               href="https://www2.gov.bc.ca/gov/content/home/copyright"
@@ -40,7 +41,7 @@ export const Footer = (props) => (
               Copyright
             </a>
           </Col>
-          <Col xs={24} lg={4}>
+          <Col xs={24} lg={3}>
             <a
               className="footer-link"
               href="https://www2.gov.bc.ca/gov/content/home/privacy"
@@ -50,7 +51,7 @@ export const Footer = (props) => (
               Privacy
             </a>
           </Col>
-          <Col xs={24} lg={4}>
+          <Col xs={24} lg={3}>
             <a
               className="footer-link"
               href="https://www2.gov.bc.ca/gov/content/home/accessibility"
@@ -60,14 +61,15 @@ export const Footer = (props) => (
               Accessibility
             </a>
           </Col>
-          <Col xs={24} lg={4}>
+          <Col xs={24} lg={3}>
             <a className="footer-link" href={`mailto:${Strings.HELP_EMAIL}`}>
               Contact Us
             </a>
           </Col>
+          <AdminLogin />
         </Row>
       </Col>
-  </Row>
+    </Row>
   </Layout.Footer>
 );
 

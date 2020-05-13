@@ -10,6 +10,8 @@ const initialState = {
   isAuthenticated: false,
   userInfo: {},
   redirect: false,
+  userRoles: [],
+  isAdmin: false,
 };
 
 export const authenticationReducer = (state = initialState, action) => {
@@ -20,6 +22,12 @@ export const authenticationReducer = (state = initialState, action) => {
         isAuthenticated: true,
         userInfo: action.payload.userInfo,
         redirect: route.REVIEW_APPLICATIONS.route,
+      };
+    case ActionTypes.STORE_USER_ACCESS_DATA:
+      return {
+        ...state,
+        isAdmin: action.payload.token.realm_access.roles.includes("admin"),
+        userRoles: action.payload.token.realm_access.roles,
       };
     case ActionTypes.LOGOUT:
       return {
@@ -40,5 +48,7 @@ const authenticationReducerObject = {
 export const isAuthenticated = (state) => state[AUTHENTICATION].isAuthenticated;
 export const getUserInfo = (state) => state[AUTHENTICATION].userInfo;
 export const getRedirect = (state) => state[AUTHENTICATION].redirect;
+export const getUserRoles = (state) => state[AUTHENTICATION].userRoles;
+export const getIsAdmim = (state) => state[AUTHENTICATION].isAdmin;
 
 export default authenticationReducerObject;

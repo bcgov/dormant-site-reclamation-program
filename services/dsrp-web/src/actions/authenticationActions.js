@@ -18,9 +18,9 @@ export const storeKeycloakData = (data = {}) => ({
   },
 });
 
-export const storeUserAccessData = (roles = {}) => ({
+export const storeUserAccessData = (token = {}) => ({
   type: ActionTypes.STORE_USER_ACCESS_DATA,
   payload: {
-    roles,
+    token,
   },
 });
