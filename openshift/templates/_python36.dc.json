@@ -343,7 +343,7 @@
                     "valueFrom": {
                       "secretKeyRef": {
                         "name": "${SMTP_CREDENTIALS}",
-                        "key": "stmp-host"
+                        "key": "smtp-host"
                       }
                     }
                   },
