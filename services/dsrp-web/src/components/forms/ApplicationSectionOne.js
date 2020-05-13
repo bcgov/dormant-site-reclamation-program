@@ -54,7 +54,7 @@ class ApplicationSectionOne extends Component {
                 label="Address Line 1"
                 placeholder="Address Line 1"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+              //validate={[required]}
               />
               <Field
                 id="address_line_2"
@@ -62,7 +62,7 @@ class ApplicationSectionOne extends Component {
                 label="Address Line 2"
                 placeholder="Address Line 2"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+              //validate={[required]}
               />
               <Field
                 id="city"
@@ -70,7 +70,7 @@ class ApplicationSectionOne extends Component {
                 label="City"
                 placeholder="City"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+              //validate={[required]}
               />
             </Col>
           </Row>
@@ -125,7 +125,7 @@ class ApplicationSectionOne extends Component {
                 label="First Name"
                 placeholder="First Name"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+              //validate={[required]}
               />
             </Col>
             <Col span={12}>
@@ -135,7 +135,7 @@ class ApplicationSectionOne extends Component {
                 label="Last Name"
                 placeholder="Last Name"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+              //validate={[required]}
               />
             </Col>
           </Row>
@@ -196,23 +196,22 @@ class ApplicationSectionOne extends Component {
                 label="Email"
                 placeholder="Email"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+              //validate={[required]}
               />
             </Col>
           </Row>
         </FormSection>
 
-        <FormSection name="ducks">
-          <Title level={2}>Good Pics of Ducks</Title>
+        <FormSection name="good_standing_reports">
+          <Title level={2}>Good Standing Report</Title>
           <Row gutter={48}>
             <Col span={24}>
-              <Form.Item label="Upload Pics of Ducks">
+              <Form.Item label="Upload Good Standing Report">
                 <Field
-                  id="ducks"
-                  name="ducks"
+                  id="good_standing_report"
+                  name="good_standing_report"
                   component={renderConfig.FILE_UPLOAD}
-                  //   placeholder="how do i change this message"
-                  //   uploadUrl={DUCK_DOCUMENTS(this.props.ducks)}
+                  //   uploadUrl={}
                   //   acceptedFileTypesMap={{ ...DOCUMENT, ...EXCEL }}
                   onFileLoad={this.onFileLoad}
                   onRemoveFile={this.onRemoveFile}

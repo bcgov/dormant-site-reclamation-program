@@ -30,7 +30,7 @@ export class ApplicationForm extends Component {
       content: <ApplicationSectionOne onSubmit={this.nextFormStep} />,
     },
     {
-      title: "Add Sites",
+      title: "Well Sites",
       content: (
         <ApplicationSectionTwo previousStep={this.previousFormStep} onSubmit={this.nextFormStep} />
       ),
