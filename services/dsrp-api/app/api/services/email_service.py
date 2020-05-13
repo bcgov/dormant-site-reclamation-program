@@ -20,12 +20,12 @@ class EmailService():
 
     SENDER_INFO = {
         'name': "BC Gov Dormant Site Reclamation Program",
-        'reply-email ': 'DormantSiteReclamation@gov.bc.ca'
+        'from-email ': 'DormantSiteReclamation@gov.bc.ca'
     }
     
     _sent_mail = {
         'success_count':0,
-        'error':[]
+        'errors':[]
     }
 
     _smtp = None    
@@ -41,33 +41,42 @@ class EmailService():
         current_app.logger.info(f'Opening connection to {self.SMTP_CRED["host"]}:{self.SMTP_CRED["port"]}')
         return self 
 
-    def __exit__(self, exc_type, exc_value, traceback):
-        current_app.logger.info(f'EmailService.__exit__ values: {exc_type}, {exc_value}, {traceback}')
+    def __exit__(self, exc_type, exc_value, traceback): 
+        if exc_type is not None: 
+            current_app.logger.error(f'EmailService.__exit__ values: {exc_type}, {exc_value}, {traceback}')
+        
         current_app.logger.info(
-            f'Sent {self._sent_mail["success_count"]} emails successfully closing connection')
-        # Terminate the SMTP session and close the connection
-        ##check to make sure all emails were sent properly before logging
-        self._smtp.quit()
+            f'Sent {self._sent_mail["success_count"]} emails successfully, {len(self._sent_mail["errors"])} errors. closing connection')
+        
+        if self._sent_mail['errors']:
+            current_app.logger.error(self._sent_mail['errors'])  
 
-    def send_email(self, to_email,subject):
+        self._smtp.quit()   
+
+    def send_email(self, to_email,subject, msg_content):
         msg = MIMEMultipart()       # create a message
 
-        message = 'SENDING EMAILS ALL NIGHT LONG'
-
-        print(message)
-
-        msg['From']='test@DCRP.com'
+        msg['From']=self.SENDER_INFO['from-email']
         msg['To']=to_email
         msg['Subject']=subject
         # add in the message body
-        msg.attach(MIMEText(message, 'plain'))
+        msg.attach(msg_content)
         
         # send the message via the server set up earlier.
         try:
             self._smtp.send_message(msg)
             self._sent_mail['success_count'] += 1
         except Exception as e: 
-            #self._sent_mail['error'].append(str(msg) + '>>>' + str(e))
-            current_app.logger.error(e)
+            self._sent_mail['errors'].append((msg['To']) + 'THREW' + str(e))
             
-        
+            
+    def send_application_confirmation(self, application):
+        content = f""" We have successfully received your application in the BC Governments Dormant
+        Site Reclamation Program. Your reference number is {application.guid}, please keep this safe as you will
+        need it to carry your application forward in this process.
+
+        Email {self.SENDER_INFO['from-email']} with this reference number if you have questions about your application. 
+        """
+        msg_content = MIMEText(content,'plain')
+
+        self.send_email(application.submitter_email, 'Application Confirmation',msg_content)

@@ -1,5 +1,6 @@
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
 from marshmallow import fields, validate
 
@@ -32,6 +33,7 @@ class Application(Base, AuditMixin):
     def __repr__(self):
         return f'<{self.__name__} {self.guid}>'
 
+
     @classmethod
     def get_all(cls):
         return cls.query.all()
@@ -39,3 +41,9 @@ class Application(Base, AuditMixin):
     @classmethod
     def find_by_guid(cls, guid):
         return cls.query.filter_by(guid=guid).first()
+
+    @hybrid_property
+    def submitter_email(self):
+        return 'jasyrotuck@gmail.com'
+        #return self.json['submitter_email']
+
