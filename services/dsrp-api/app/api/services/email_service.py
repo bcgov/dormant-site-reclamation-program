@@ -61,6 +61,9 @@ class EmailService():
 
 
     def send_email(self, to_email, subject, html_body):
+        if Config.SMTP_ENABLED and not self._smtp:
+            raise Exception('Initialize EmailService() as context manager using \'with\' keyword')
+        
         msg = MIMEMultipart()     
 
         msg['From']=self.SENDER_INFO['from-email']

@@ -48,9 +48,6 @@ class Application(Base, AuditMixin):
 
 
     def send_confirmation_email(self, email_service):
-        if not email_service._smtp:
-            raise Exception('Initialize EmailService() as context manager using \'with\' keyword')
-        
         if not self.submitter_email:
             raise Exception('Application.json.company_contact.email is not set, must set before email can be sent')
 
