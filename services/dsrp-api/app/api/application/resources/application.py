@@ -26,14 +26,14 @@ class ApplicationListResource(Resource, UserMixin):
     @api.expect(APPLICATION)
     @api.marshal_with(APPLICATION, code=201)
     def post(self):
+        try:
+            application = Application._schema().load(request.json['application'])
+            application.save()
+        except MarshmallowError as e:
+            raise BadRequest(e)
+        
         with EmailService() as es:
-            try:
-                application = Application._schema().load(request.json['application'])
-                es.send_application_confirmation(application)
-            except MarshmallowError as e:
-                raise BadRequest(e)
-
-        application.save()
+            es.send_application_confirmation(application)
 
         return application, 201
 
