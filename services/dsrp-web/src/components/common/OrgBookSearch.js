@@ -62,7 +62,6 @@ export class OrgBookSearch extends Component {
   }
 
   render() {
-    console.log("INPUT PROPS", this.props.input);
     return (
       <Row gutter={48} type="flex" align="middle">
         <Col span={24}>
