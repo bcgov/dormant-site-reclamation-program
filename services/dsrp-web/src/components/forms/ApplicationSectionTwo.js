@@ -85,9 +85,7 @@ class ApplicationSectionTwo extends Component {
     });
 
     const contractedWorkTotals = { grandTotal: grandTotal, wellTotals: wellTotals };
-    this.setState({ contractedWorkTotals }, () =>
-      console.log("contractedWorkTotals", this.state.contractedWorkTotals)
-    );
+    this.setState({ contractedWorkTotals });
   };
 
   renderWells = ({ fields }) => (
@@ -292,7 +290,7 @@ class ApplicationSectionTwo extends Component {
                 label="Permit Holder"
                 placeholder="Search for permit holder for whom this work will be performed"
                 component={PermitHolderSelect}
-                validate={[required]}
+                // validate={[required]}
               />
             </Col>
           </Row>
