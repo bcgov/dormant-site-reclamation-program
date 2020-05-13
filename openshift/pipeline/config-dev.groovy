@@ -102,8 +102,8 @@ app {
                             'KEYCLOAK_CLIENT_ID': "${vars.keycloak.clientId_dsrp}",
                             'KEYCLOAK_URL': "${vars.keycloak.url}",
                             'KEYCLOAK_IDP_HINT': "${vars.keycloak.idpHint_dsrp}",
-                            'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_dsrp}${vars.modules.'dsrp-nginx'.PATH}/api",
-                            'DOCUMENT_MANAGER_URL': "https://${vars.modules.'dsrp-nginx'.HOST_dsrp}${vars.modules.'dsrp-nginx'.PATH}/document-manager"
+                            'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/api",
+                            'DOCUMENT_MANAGER_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/document-manager"
                     ]
                 ],
                 [
@@ -119,7 +119,7 @@ app {
                             'MEMORY_LIMIT':"${vars.resources.nginx.memory_limit}",
                             'REPLICA_MIN':"${vars.resources.nginx.replica_min}",
                             'REPLICA_MAX':"${vars.resources.nginx.replica_max}",
-                            'DSRP_DOMAIN': "${vars.modules.'dsrp-nginx'.HOST_dsrp}",
+                            'DSRP_DOMAIN': "${vars.modules.'dsrp-nginx'.HOST_DSRP}",
                             'ROUTE': "${vars.modules.'dsrp-nginx'.ROUTE}",
                             'PATH_PREFIX': "${vars.modules.'dsrp-nginx'.PATH}",
                             'DSRP_SERVICE_URL': "${vars.modules.'dsrp-frontend'.HOST}",
@@ -150,7 +150,7 @@ app {
                             'REDIS_CONFIG_NAME': "dsrp-redis${vars.deployment.suffix}",
                             'CACHE_REDIS_HOST': "dsrp-redis${vars.deployment.suffix}",
                             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
-                            'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_dsrp}${vars.modules.'dsrp-nginx'.PATH}/api",
+                            'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/api",
                             'DOCUMENT_MANAGER_URL': "${vars.modules.'dsrp-docman-backend'.HOST}${vars.modules.'dsrp-docman-backend'.PATH}",
                     ]
                 ],
@@ -179,46 +179,9 @@ app {
                             'DOCUMENT_CAPACITY':"${vars.DOCUMENT_PVC_SIZE}",
                             'DOCUMENT_CAPACITY_LOWER':"${vars.DOCUMENT_PVC_SIZE.toString().toLowerCase()}",
                             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
-                            'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_dsrp}${vars.modules.'dsrp-nginx'.PATH}/document-manager",
+                            'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/document-manager",
                     ]
-                ],
-                // [
-                //     'file':'openshift/templates/digdag/digdag.dc.json',
-                //     'params':[
-                //             'NAME':"digdag",
-                //             'VERSION':"${app.deployment.version}",
-                //             'NAMESPACE':"${vars.deployment.namespace}",
-                //             'SUFFIX': "${vars.deployment.suffix}",
-                //             'SCHEDULER_PVC_SIZE':"200Mi",
-                //             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
-                //             'KEYCLOAK_DISCOVERY_URL':"${vars.keycloak.known_config_url}",
-                //             'APPLICATION_DOMAIN': "${vars.modules.'digdag'.HOST}",
-                //             'CPU_REQUEST':"${vars.resources.digdag.cpu_request}",
-                //             'CPU_LIMIT':"${vars.resources.digdag.cpu_limit}",
-                //             'MEMORY_REQUEST':"${vars.resources.digdag.memory_request}",
-                //             'MEMORY_LIMIT':"${vars.resources.digdag.memory_limit}"
-                //     ]
-                // ]
-                [
-                    'file':'openshift/templates/tools/metabase.dc.json',
-                    'params':[
-                            'NAME':"metabase",
-                            'NAME_DATABASE':"metabase-postgres",
-                            'VERSION':"${app.deployment.version}",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'METABASE_PVC_SIZE':"${vars.METABASE_PVC_SIZE}",
-                            'ENVIRONMENT_NAME':"${app.deployment.env.name}",
-                            'APPLICATION_DOMAIN': "${vars.modules.'metabase'.HOST}",
-                            'CPU_REQUEST':"${vars.resources.metabase.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.metabase.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.metabase.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.metabase.memory_limit}",
-                            'DB_CPU_REQUEST':"${vars.resources.metabase.db_cpu_request}",
-                            'DB_CPU_LIMIT':"${vars.resources.metabase.db_cpu_limit}",
-                            'DB_MEMORY_REQUEST':"${vars.resources.metabase.db_memory_request}",
-                            'DB_MEMORY_LIMIT':"${vars.resources.metabase.db_memory_limit}"
-                    ]
-                ],
+                ]
         ]
     }
 }
@@ -230,7 +193,6 @@ environments {
             DOCUMENT_PVC_SIZE = '1Gi'
             BACKUP_VERIFICATION_PVC_SIZE = '200Mi'
             LOG_PVC_SIZE = '1Gi'
-            METABASE_PVC_SIZE = '5Gi'
 
             git {
                 changeId = "${opt.'pr'}"
@@ -251,16 +213,6 @@ environments {
                     memory_limit = "256Mi"
                     replica_min = 1
                     replica_max = 1
-                }
-                metabase {
-                    cpu_request = "10m"
-                    cpu_limit = "200m"
-                    memory_request = "1Gi"
-                    memory_limit = "2Gi"
-                    db_cpu_request = "50m"
-                    db_cpu_limit = "100m"
-                    db_memory_request = "256Mi"
-                    db_memory_limit = "1Gi"
                 }
                 nginx {
                     cpu_request = "10m"
@@ -320,7 +272,7 @@ environments {
                     PATH = "/${vars.git.changeId}"
                 }
                 'dsrp-nginx' {
-                    HOST_dsrp = "dsrp-${vars.deployment.key}.pathfinder.gov.bc.ca"
+                    HOST_DSRP = "dsrp-${vars.deployment.key}.pathfinder.gov.bc.ca"
                     PATH = "/${vars.git.changeId}"
                     ROUTE = "/${vars.git.changeId}"
                 }
@@ -334,9 +286,6 @@ environments {
                 }
                 'dsrp-redis' {
                     HOST = "http://dsrp-redis${vars.deployment.suffix}"
-                }
-                'metabase' {
-                    HOST = "dsrp-metabase-${vars.deployment.suffix}.pathfinder.gov.bc.ca"
                 }
             }
         }

@@ -8,11 +8,6 @@ import * as FORM from "@/constants/forms";
 
 const defaultProps = {};
 
-const validate = (values, form) => {
-  const errors = {};
-  return errors;
-};
-
 class ApplicationSectionThree extends Component {
   render() {
     return (
@@ -27,6 +22,7 @@ class ApplicationSectionThree extends Component {
             validate={[required, dateNotInFuture]}
           />
         </FormSection>
+
         <Row className="steps-action">
           <Col>
             <Button
@@ -52,5 +48,4 @@ export default reduxForm({
   form: FORM.APPLICATION_FORM,
   destroyOnUnmount: false,
   forceUnregisterOnUnmount: true,
-  validate,
 })(ApplicationSectionThree);

@@ -1,20 +1,16 @@
 import React, { Component } from "react";
-import { reduxForm } from "redux-form";
+import { reduxForm, Field, FormSection } from "redux-form";
 import { Row, Col, Typography, Form, Button } from "antd";
-import { Field, FormSection } from "redux-form";
+
 import { renderConfig } from "@/components/common/config";
 import { required, dateNotInFuture, maxLength } from "@/utils/validate";
 import { phoneMask, postalCodeMask } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
+import OrgBookSearch from "@/components/common/OrgBookSearch";
 
-const { Text, Title } = Typography;
+const { Text, Title, Paragraph } = Typography;
 
 const defaultProps = {};
-
-const validate = (values, form) => {
-  const errors = {};
-  return errors;
-};
 
 class ApplicationSectionOne extends Component {
   state = {
@@ -40,7 +36,7 @@ class ApplicationSectionOne extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <FormSection name="company_details">
-          <Title level={4}>Company Details</Title>
+          <Title level={2}>Company Details</Title>
           <Row gutter={48}>
             <Col span={24}>
               <Field
@@ -48,8 +44,9 @@ class ApplicationSectionOne extends Component {
                 name="company_name"
                 label="Company Name"
                 placeholder="Company Name"
-                component={renderConfig.FIELD}
+                component={OrgBookSearch}
                 validate={[required]}
+                format={null}
               />
               <Field
                 id="address_line_1"
@@ -57,7 +54,7 @@ class ApplicationSectionOne extends Component {
                 label="Address Line 1"
                 placeholder="Address Line 1"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+              // validate={[required]}
               />
               <Field
                 id="address_line_2"
@@ -65,7 +62,7 @@ class ApplicationSectionOne extends Component {
                 label="Address Line 2"
                 placeholder="Address Line 2"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+              // validate={[required]}
               />
               <Field
                 id="city"
@@ -73,7 +70,7 @@ class ApplicationSectionOne extends Component {
                 label="City"
                 placeholder="City"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+              // validate={[required]}
               />
             </Col>
           </Row>
@@ -85,7 +82,8 @@ class ApplicationSectionOne extends Component {
                 label="Province"
                 placeholder="Province"
                 component={renderConfig.SELECT}
-                //validate={[required]}
+                format={null}
+                // validate={[required]}
                 data={[
                   { value: "AB", label: "Alberta" },
                   { value: "BC", label: "British Columbia" },
@@ -110,14 +108,15 @@ class ApplicationSectionOne extends Component {
                 label="Postal Code"
                 placeholder="Postal Code"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+                // validate={[required]}
                 {...postalCodeMask}
               />
             </Col>
           </Row>
         </FormSection>
+
         <FormSection name="company_contact">
-          <Title level={4}>Company Contact</Title>
+          <Title level={2}>Company Contact</Title>
           <Row gutter={48}>
             <Col span={12}>
               <Field
@@ -126,7 +125,7 @@ class ApplicationSectionOne extends Component {
                 label="First Name"
                 placeholder="First Name"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+              // validate={[required]}
               />
             </Col>
             <Col span={12}>
@@ -136,7 +135,7 @@ class ApplicationSectionOne extends Component {
                 label="Last Name"
                 placeholder="Last Name"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+              // validate={[required]}
               />
             </Col>
           </Row>
@@ -150,7 +149,7 @@ class ApplicationSectionOne extends Component {
                     label="Phone Number 1"
                     placeholder="Phone Number 1"
                     component={renderConfig.FIELD}
-                    //validate={[required]}
+                    // validate={[required]}
                     {...phoneMask}
                   />
                 </Col>
@@ -197,22 +196,32 @@ class ApplicationSectionOne extends Component {
                 label="Email"
                 placeholder="Email"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+              // validate={[required]}
+              />
+            </Col>
+            <Col span={12}>
+              <Field
+                id="fax"
+                name="fax"
+                label="Fax"
+                placeholder="Fax"
+                component={renderConfig.FIELD}
+              // validate={[required]}
               />
             </Col>
           </Row>
         </FormSection>
-        <FormSection name="ducks">
-          <Title level={4}>Good Pics of Ducks</Title>
+
+        <FormSection name="good_standing_reports">
+          <Title level={2}>Good Standing Report</Title>
           <Row gutter={48}>
             <Col span={24}>
-              <Form.Item label="Upload Pics of Ducks">
+              <Form.Item label="Upload Good Standing Report">
                 <Field
-                  id="ducks"
-                  name="ducks"
+                  id="good_standing_report"
+                  name="good_standing_report"
                   component={renderConfig.FILE_UPLOAD}
-                  //   placeholder="how do i change this message"
-                  //   uploadUrl={DUCK_DOCUMENTS(this.props.ducks)}
+                  //   uploadUrl={}
                   //   acceptedFileTypesMap={{ ...DOCUMENT, ...EXCEL }}
                   onFileLoad={this.onFileLoad}
                   onRemoveFile={this.onRemoveFile}
@@ -223,6 +232,22 @@ class ApplicationSectionOne extends Component {
             </Col>
           </Row>
         </FormSection>
+
+        <FormSection name="review_program_conditions">
+          <Paragraph><a href="#" target="_blank" rel="noopener noreferrer" >Review program details and requirements</a></Paragraph>
+          <Row gutter={48}>
+            <Col span={24}>
+              <Field
+                id="accept_program_details_and_requirements"
+                name="accept_program_details_and_requirements"
+                label="I have read and understand all of the conditions required to qualify for this program."
+                component={renderConfig.CHECKBOX}
+                validate={[required]}
+              />
+            </Col>
+          </Row>
+        </FormSection>
+
         <Row className="steps-action">
           <Col>
             <Button type="primary" htmlType="submit">
@@ -241,5 +266,4 @@ export default reduxForm({
   form: FORM.APPLICATION_FORM,
   destroyOnUnmount: false,
   forceUnregisterOnUnmount: true,
-  validate,
 })(ApplicationSectionOne);

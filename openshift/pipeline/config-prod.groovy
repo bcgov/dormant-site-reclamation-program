@@ -67,41 +67,24 @@ app {
                             'VOLUME_CAPACITY':"${vars.DB_PVC_SIZE}"
                     ]
                 ],
-                [
-                    'file':'openshift/templates/postgresql.dc.json',
-                    'params':[
-                            'NAME':"dsrp-postgresql",
-                            'SUFFIX':"${vars.deployment.suffix}-reporting",
-                            'DATABASE_SERVICE_NAME':"dsrp-postgresql${vars.deployment.suffix}",
-                            'CPU_REQUEST':"${vars.resources.postgres.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.postgres.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.postgres.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.postgres.memory_limit}",
-                            'IMAGE_STREAM_NAMESPACE':'',
-                            'IMAGE_STREAM_NAME':"dsrp-postgresql",
-                            'IMAGE_STREAM_VERSION':"${app.deployment.version}",
-                            'POSTGRESQL_DATABASE':'dsrp',
-                            'VOLUME_CAPACITY':"${vars.DB_PVC_SIZE}"
-                    ]
-                ],
-                [
-                    'file':'openshift/templates/dbbackup.dc.json',
-                    'params':[
-                            'NAME':"dsrp-database-backup",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'VERSION':"${app.deployment.version}",
-                            'ENVIRONMENT_NAME':"${vars.deployment.namespace}",
-                            'ENVIRONMENT_FRIENDLY_NAME':"BC Mines Digital Services (PROD)",
-                            'DATABASE_SERVICE_NAME':"dsrp-postgresql${vars.deployment.suffix}",
-                            'NFS_VOLUME_IDENTIFIER':"bk-eazios-prod-x7ux0bwhqnsa",
-                            'CPU_REQUEST':"${vars.resources.backup.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.backup.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.backup.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.backup.memory_limit}",
-                            'VERIFICATION_VOLUME_SIZE':"${vars.BACKUP_VERIFICATION_PVC_SIZE}",
-                            'FLYWAY_NAME':"dsrp-flyway-migration-client",
-                    ]
-                ],
+                // [
+                //     'file':'openshift/templates/dbbackup.dc.json',
+                //     'params':[
+                //             'NAME':"dsrp-database-backup",
+                //             'SUFFIX': "${vars.deployment.suffix}",
+                //             'VERSION':"${app.deployment.version}",
+                //             'ENVIRONMENT_NAME':"${vars.deployment.namespace}",
+                //             'ENVIRONMENT_FRIENDLY_NAME':"BC Mines Digital Services (PROD)",
+                //             'DATABASE_SERVICE_NAME':"dsrp-postgresql${vars.deployment.suffix}",
+                //             'NFS_VOLUME_IDENTIFIER':"bk-eazios-prod-x7ux0bwhqnsa",
+                //             'CPU_REQUEST':"${vars.resources.backup.cpu_request}",
+                //             'CPU_LIMIT':"${vars.resources.backup.cpu_limit}",
+                //             'MEMORY_REQUEST':"${vars.resources.backup.memory_request}",
+                //             'MEMORY_LIMIT':"${vars.resources.backup.memory_limit}",
+                //             'VERIFICATION_VOLUME_SIZE':"${vars.BACKUP_VERIFICATION_PVC_SIZE}",
+                //             'FLYWAY_NAME':"dsrp-flyway-migration-client",
+                //     ]
+                // ],
                 [
                     'file':'openshift/templates/redis.dc.json',
                     'params':[
@@ -136,8 +119,8 @@ app {
                             'KEYCLOAK_CLIENT_ID': "${vars.keycloak.clientId_dsrp}",
                             'KEYCLOAK_URL': "${vars.keycloak.url}",
                             'KEYCLOAK_IDP_HINT': "${vars.keycloak.idpHint_dsrp}",
-                            'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_dsrp}${vars.modules.'dsrp-nginx'.PATH}/api",
-                            'DOCUMENT_MANAGER_URL': "https://${vars.modules.'dsrp-nginx'.HOST_dsrp}${vars.modules.'dsrp-nginx'.PATH}/document-manager"
+                            'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/api",
+                            'DOCUMENT_MANAGER_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/document-manager"
                     ]
                 ],
                 [
@@ -213,18 +196,7 @@ app {
                             'DOCUMENT_CAPACITY':"${vars.DOCUMENT_PVC_SIZE}",
                             'DOCUMENT_CAPACITY_LOWER':"${vars.DOCUMENT_PVC_SIZE.toString().toLowerCase()}",
                             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
-                            'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_dsrp}${vars.modules.'dsrp-nginx'.PATH}/document-manager",
-                    ]
-                ],
-                [
-                    'file':'openshift/templates/tools/schemaspy.dc.json',
-                    'params':[
-                            'NAME':"schemaspy",
-                            'VERSION':"${app.deployment.version}",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'BACKEND_HOST': "https://${vars.modules.'dsrp-nginx'.HOST_dsrp}${vars.modules.'dsrp-nginx'.PATH}/api",
-                            'APPLICATION_DOMAIN': "${vars.modules.'schemaspy'.HOST}",
-                            'DB_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}"
+                            'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/document-manager",
                     ]
                 ],
                 [
@@ -246,37 +218,6 @@ app {
                             'DB_MEMORY_REQUEST':"${vars.resources.metabase.db_memory_request}",
                             'DB_MEMORY_LIMIT':"${vars.resources.metabase.db_memory_limit}"
                     ]
-                ],
-                [
-                    'file':'openshift/templates/tools/logstash.dc.json',
-                    'params':[
-                            'NAME':"dsrp-logstash",
-                            'VERSION':"${app.deployment.version}",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'ENVIRONMENT_NAME':"${app.deployment.env.name}",
-                            'DB_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}",
-                            'CPU_REQUEST':"${vars.resources.logstash.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.logstash.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.logstash.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.logstash.memory_limit}"
-                    ]
-                ],
-                [
-                    'file':'openshift/templates/digdag/digdag.dc.json',
-                    'params':[
-                            'NAME':"digdag",
-                            'VERSION':"${app.deployment.version}",
-                            'NAMESPACE':"${vars.deployment.namespace}",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'SCHEDULER_PVC_SIZE':"${vars.SCHEDULER_PVC_SIZE}",
-                            'ENVIRONMENT_NAME':"${app.deployment.env.name}",
-                            'KEYCLOAK_DISCOVERY_URL':"${vars.keycloak.known_config_url}",
-                            'APPLICATION_DOMAIN': "${vars.modules.'digdag'.HOST}",
-                            'CPU_REQUEST':"${vars.resources.digdag.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.digdag.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.digdag.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.digdag.memory_limit}"
-                    ]
                 ]
         ]
     }
@@ -290,7 +231,6 @@ environments {
             BACKUP_VERIFICATION_PVC_SIZE = '10Gi'
             LOG_PVC_SIZE = '5Gi'
             METABASE_PVC_SIZE = '20Gi'
-            SCHEDULER_PVC_SIZE = '20Gi'
             git {
                 changeId = "${opt.'pr'}"
             }
@@ -359,18 +299,6 @@ environments {
                     db_memory_request = "256Mi"
                     db_memory_limit = "1Gi"
                 }
-                logstash {
-                    cpu_request = "50m"
-                    cpu_limit = "400m"
-                    memory_request = "1Gi"
-                    memory_limit = "2Gi"
-                }
-                digdag {
-                    cpu_request = "150m"
-                    cpu_limit = "300m"
-                    memory_request = "512Mi"
-                    memory_limit = "1Gi"
-                }
             }
             keycloak {
                 clientId_dsrp = "dormant-application-prod"
@@ -397,7 +325,7 @@ environments {
                     PATH = ""
                 }
                 'dsrp-nginx' {
-                    HOST_DSRP = "minesdigitalservices.gov.bc.ca"
+                    HOST_DSRP = "dormant-site-reclamation.gov.bc.ca"
                     PATH = ""
                     ROUTE = "/"
                 }
@@ -412,14 +340,8 @@ environments {
                 'dsrp-redis' {
                     HOST = "http://dsrp-redis${vars.deployment.suffix}"
                 }
-                'schemaspy' {
-                    HOST = "dsrp-schemaspy-${vars.deployment.namespace}.pathfinder.gov.bc.ca"
-                }
                 'metabase' {
                     HOST = "dsrp-metabase-${vars.deployment.namespace}.pathfinder.gov.bc.ca"
-                }
-                'digdag' {
-                    HOST = "dsrp-digdag-${vars.deployment.namespace}.pathfinder.gov.bc.ca"
                 }
             }
         }
