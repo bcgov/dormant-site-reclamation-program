@@ -1,10 +1,12 @@
 import React, { Component } from "react";
-import { reduxForm, FieldArray } from "redux-form";
+import { reduxForm, FieldArray, Field, FormSection } from "redux-form";
 import { Row, Col, Typography, Form, Button, Collapse, Icon } from "antd";
-import { Field, FormSection } from "redux-form";
+
 import { renderConfig } from "@/components/common/config";
 import { required, dateNotInFuture, maxLength } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
+
+import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
 
 const { Text, Paragraph, Title } = Typography;
 const { Panel } = Collapse;
@@ -12,7 +14,7 @@ const { Panel } = Collapse;
 const defaultProps = {};
 
 const renderSites = ({ fields, meta: { error, submitFailed } }) => (
-  <>
+  <React.Fragment>
     <Title level={2}>Ducks</Title>
     <Row gutter={48}>
       <Col span={24}>{submitFailed && error && <>{error}</>}</Col>
@@ -47,46 +49,44 @@ const renderSites = ({ fields, meta: { error, submitFailed } }) => (
     <Button type="primary" onClick={() => fields.push({})}>
       Add Duck
     </Button>
-  </>
+  </React.Fragment>
 );
 
 class ApplicationSectionTwo extends Component {
-  render() {
-    return (
-      <Form layout="vertical" onSubmit={this.props.handleSubmit}>
-        <FormSection name="contract_details">
-          <Title level={2}>Duck Details</Title>
-          <Row gutter={48}>
-            <Col span={24}>
-              <Field
-                id="random_stuff"
-                name="random_stuff"
-                label="Random Stuff"
-                placeholder="Enter random stuff"
-                component={renderConfig.FIELD}
-                validate={[required, maxLength(9)]}
-              />
-            </Col>
-          </Row>
-        </FormSection>
-
-        <FormSection name="add_sites">
-          <FieldArray name="sites" component={renderSites} />
-        </FormSection>
-
-        <Row className="steps-action">
-          <Col>
-            <Button type="primary" htmlType="submit">
-              Next
-            </Button>
-            <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
-              Previous
-            </Button>
+  render = () => (
+    <Form layout="vertical" onSubmit={this.props.handleSubmit}>
+      <FormSection name="contract_details">
+        <Title level={2}>Contact Information</Title>
+        <Row gutter={48}>
+          <Col span={24}>
+            <Field
+              id="organization_id"
+              name="organization_id"
+              label="Permit Holder"
+              placeholder="Search for permit holder for whom this work will be performed"
+              component={PermitHolderSelect}
+              validate={[required]}
+            />
           </Col>
         </Row>
-      </Form>
-    );
-  }
+      </FormSection>
+
+      <FormSection name="add_sites">
+        <FieldArray name="sites" component={renderSites} />
+      </FormSection>
+
+      <Row className="steps-action">
+        <Col>
+          <Button type="primary" htmlType="submit">
+            Next
+          </Button>
+          <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
+            Previous
+          </Button>
+        </Col>
+      </Row>
+    </Form>
+  );
 }
 
 ApplicationSectionTwo.defaultProps = defaultProps;

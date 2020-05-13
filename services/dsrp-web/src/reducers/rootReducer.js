@@ -7,6 +7,7 @@ import {
   orgbookReducer,
   authenticationReducer,
   networkReducer,
+  OGCReducer,
 } from "@/reducers";
 
 // Function to create a reusable reducer (used in src/reducers/rootReducer)
@@ -25,6 +26,7 @@ export const reducerObject = {
   ...orgbookReducer,
   ...authenticationReducer,
   ...networkReducer,
+  ...OGCReducer,
 };
 
 export const rootReducer = combineReducers(reducerObject);

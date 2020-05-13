@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import { reduxForm } from "redux-form";
+import { reduxForm, Field, FormSection } from "redux-form";
 import { Row, Col, Typography, Form, Button } from "antd";
-import { Field, FormSection } from "redux-form";
+
 import { renderConfig } from "@/components/common/config";
 import { required, dateNotInFuture, maxLength } from "@/utils/validate";
 import { phoneMask, postalCodeMask } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
-import OrgBookSearch from "@/components/common/OrgBookSearch"
+import OrgBookSearch from "@/components/common/OrgBookSearch";
 
 const { Text, Title } = Typography;
 
@@ -54,7 +54,7 @@ class ApplicationSectionOne extends Component {
                 label="Address Line 1"
                 placeholder="Address Line 1"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+                // validate={[required]}
               />
               <Field
                 id="address_line_2"
@@ -62,7 +62,7 @@ class ApplicationSectionOne extends Component {
                 label="Address Line 2"
                 placeholder="Address Line 2"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+                // validate={[required]}
               />
               <Field
                 id="city"
@@ -70,7 +70,7 @@ class ApplicationSectionOne extends Component {
                 label="City"
                 placeholder="City"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+                // validate={[required]}
               />
             </Col>
           </Row>
@@ -83,7 +83,7 @@ class ApplicationSectionOne extends Component {
                 placeholder="Province"
                 component={renderConfig.SELECT}
                 format={null}
-                //validate={[required]}
+                // validate={[required]}
                 data={[
                   { value: "AB", label: "Alberta" },
                   { value: "BC", label: "British Columbia" },
@@ -108,7 +108,7 @@ class ApplicationSectionOne extends Component {
                 label="Postal Code"
                 placeholder="Postal Code"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+                // validate={[required]}
                 {...postalCodeMask}
               />
             </Col>
@@ -125,7 +125,7 @@ class ApplicationSectionOne extends Component {
                 label="First Name"
                 placeholder="First Name"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+                // validate={[required]}
               />
             </Col>
             <Col span={12}>
@@ -135,7 +135,7 @@ class ApplicationSectionOne extends Component {
                 label="Last Name"
                 placeholder="Last Name"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+                // validate={[required]}
               />
             </Col>
           </Row>
@@ -149,7 +149,7 @@ class ApplicationSectionOne extends Component {
                     label="Phone Number 1"
                     placeholder="Phone Number 1"
                     component={renderConfig.FIELD}
-                    //validate={[required]}
+                    // validate={[required]}
                     {...phoneMask}
                   />
                 </Col>
@@ -196,7 +196,7 @@ class ApplicationSectionOne extends Component {
                 label="Email"
                 placeholder="Email"
                 component={renderConfig.FIELD}
-                //validate={[required]}
+                // validate={[required]}
               />
             </Col>
           </Row>
