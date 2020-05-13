@@ -151,19 +151,6 @@ class ApplicationSectionTwo extends Component {
 
         <FieldArray name="well_sites" component={renderWells} />
 
-        <FormSection name="contract_details">
-          <Row className="steps-action">
-            <Col>
-              <Button type="primary" htmlType="submit">
-                Next
-              </Button>
-              <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
-                Previous
-              </Button>
-            </Col>
-          </Row>
-        </FormSection>
-
         <Row className="steps-action">
           <Col>
             <Button type="primary" htmlType="submit">
