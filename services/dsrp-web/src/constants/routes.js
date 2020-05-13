@@ -29,7 +29,7 @@ export const REVIEW_APPLICATIONS = {
   component: ReviewApplicationsPage,
 };
 
-const ORGBOOK_URL = "https://orgbook.gov.bc.ca";
+export const ORGBOOK_URL = "https://orgbook.gov.bc.ca";
 
 export const ORGBOOK_ENTITY_URL = (sourceId) => `${ORGBOOK_URL}/en/organization/${sourceId}`;
 
