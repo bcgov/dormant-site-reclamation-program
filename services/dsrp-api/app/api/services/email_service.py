@@ -20,7 +20,7 @@ class EmailService():
 
     SENDER_INFO = {
         'name': "BC Gov Dormant Site Reclamation Program",
-        'from-email ': 'DormantSiteReclamation@gov.bc.ca'
+        'from-email': 'DormantSiteReclamation@gov.bc.ca'
     }
     
     _sent_mail = {
