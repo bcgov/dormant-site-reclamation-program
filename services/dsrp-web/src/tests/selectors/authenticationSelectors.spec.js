@@ -7,8 +7,10 @@ import * as route from "@/constants/routes";
 const mockData = {
   isAuthenticated: true,
   userInfo: { name: "test" },
-  redirectLogin: route.MINES.route,
+  redirectLogin: route.REVIEW_APPLICATIONS.route,
   redirectLogout: route.HOME.route,
+  userRoles: [],
+  isAdmin: false,
 };
 
 describe("authSelectors", () => {

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { notification } from "antd";
 import queryString from "query-string";
+import jwt from "jsonwebtoken";
 import { request, success, error } from "@/actions/genericActions";
 import * as reducerTypes from "@/constants/reducerTypes";
 import * as authenticationActions from "@/actions/authenticationActions";
@@ -18,6 +19,7 @@ export const unAuthenticateUser = (toastMessage) => (dispatch) => {
 };
 
 export const getUserInfoFromToken = (token, errorMessage) => (dispatch) => {
+  const decodedToken = jwt.decode(token);
   dispatch(request(reducerTypes.GET_USER_INFO));
   return axios
     .get(ENV.KEYCLOAK.userInfoURL, {
@@ -28,6 +30,7 @@ export const getUserInfoFromToken = (token, errorMessage) => (dispatch) => {
     .then((response) => {
       dispatch(success(reducerTypes.GET_USER_INFO));
       dispatch(authenticationActions.authenticateUser(response.data));
+      dispatch(authenticationActions.storeUserAccessData(decodedToken));
     })
     .catch((err) => {
       dispatch(error(reducerTypes.GET_USER_INFO));

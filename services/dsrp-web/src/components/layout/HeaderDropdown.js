@@ -4,7 +4,6 @@ import { Link, withRouter } from "react-router-dom";
 import { Menu, Dropdown, Button, Icon, Divider } from "antd";
 import MediaQuery from "react-responsive";
 import PropTypes from "prop-types";
-import * as ENV from "@/constants/environment";
 import * as routes from "@/constants/routes";
 import { signOutFromSiteMinder } from "@/utils/authenticationHelpers";
 import { isAuthenticated, getUserInfo } from "@/selectors/authenticationSelectors";
@@ -38,22 +37,8 @@ export class HeaderDropdown extends Component {
         </Button>
       </Menu.Item>
     );
-
-    const anchorTagLogin = (
-      <a
-        href={`${ENV.KEYCLOAK.loginURL}${ENV.BCEID_LOGIN_REDIRECT_URI}&kc_idp_hint=${ENV.KEYCLOAK.idpHint}`}
-      >
-        Log in
-      </a>
-    );
-
     const dropdownMenuMobile = (
       <Menu className="header-dropdown-menu">
-        {!this.props.isAuthenticated && (
-          <Menu.Item key="login">
-            <Button className="header-dropdown-item-button">{anchorTagLogin}</Button>
-          </Menu.Item>
-        )}
         <Menu.Item key="submit-application">
           <Button className="header-dropdown-item-button">
             <Link to={routes.SUBMIT_APPLICATION.route}>Apply</Link>
@@ -66,7 +51,7 @@ export class HeaderDropdown extends Component {
         </Menu.Item>
         <AuthorizationWrapper>
           <Divider className="bg-color-table-seperator" style={{ margin: 0 }} />
-          <Menu.Item key="review-applications">
+          <Menu.Item key="review-applications" className="custom-menu-item">
             <Button className="header-dropdown-item-button">
               <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
             </Button>
@@ -80,7 +65,7 @@ export class HeaderDropdown extends Component {
     const dropdownMenuDesktop = (
       <Menu className="header-dropdown-menu">
         <AuthorizationWrapper>
-          <Menu.Item key="review-applications">
+          <Menu.Item key="review-applications" className="custom-menu-item">
             <Button className="header-dropdown-item-button">
               <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
             </Button>
@@ -107,17 +92,13 @@ export class HeaderDropdown extends Component {
             >
               Status
             </Link>
-            {(this.props.isAuthenticated && (
+            {this.props.isAuthenticated && (
               <Dropdown overlay={dropdownMenuDesktop}>
                 <Button className="header-dropdown-button">
                   {this.props.userInfo.email}
                   <Icon type="caret-down" />
                 </Button>
               </Dropdown>
-            )) || (
-              <Button className="login-btn" style={{ marginLeft: 32 }}>
-                {anchorTagLogin}
-              </Button>
             )}
           </span>
         </MediaQuery>
