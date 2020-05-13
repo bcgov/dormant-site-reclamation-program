@@ -76,6 +76,16 @@ class Config(object):
     # OrgBook
     ORGBOOK_API_URL = os.environ.get('ORGBOOK_API_URL', 'https://orgbook.gov.bc.ca/api/v2/')
 
+    #SMTP
+    SMTP_CRED_HOST = os.environ.get('SMTP_CRED_HOST', 'stmp.srvr')
+
+    SMTP_CRED = {
+        'host':SMTP_CRED_HOST,
+        'port':25,
+        'user':None,
+        'pwrd':None
+    }
+
 
 class TestConfig(Config):
     # The following configs are for testing purposes and all variables and keys are generated using dummy data.
