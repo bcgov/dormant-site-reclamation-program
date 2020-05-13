@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { reduxForm, Field, FormSection } from "redux-form";
 import { Row, Col, Typography, Form, Button } from "antd";
-
 import { renderConfig } from "@/components/common/config";
-import { required, dateNotInFuture, maxLength } from "@/utils/validate";
+import { required } from "@/utils/validate";
 import { phoneMask, postalCodeMask } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
+import { ORGBOOK_URL } from "@/constants/routes";
 
 const { Text, Title, Paragraph } = Typography;
 
@@ -42,7 +42,13 @@ class ApplicationSectionOne extends Component {
               <Field
                 id="company_name"
                 name="company_name"
-                label="Company Name"
+                label={
+                  <span>
+                    <span>Company Name</span>
+                    <a style={{ float: "right" }} href={ORGBOOK_URL} target="_blank" rel="noopener noreferrer">
+                      Search BC Registries for your company
+                  </a>
+                  </span>}
                 placeholder="Company Name"
                 component={OrgBookSearch}
                 validate={[required]}

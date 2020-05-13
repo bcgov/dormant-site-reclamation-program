@@ -113,6 +113,10 @@
     {
       "name": "DOCUMENT_MANAGER_URL",
       "required": true
+    },
+    {
+      "name": "SMTP_CREDENTIALS",
+      "value": "smtp-credentials"
     }
   ],
   "objects": [
@@ -333,6 +337,15 @@
                   {
                     "name": "ENVIRONMENT_NAME",
                     "value": "${ENVIRONMENT_NAME}"
+                  },
+                  {
+                    "name": "SMTP_CRED_HOST",
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "name": "${SMTP_CREDENTIALS}",
+                        "key": "smtp-host"
+                      }
+                    }
                   },
                   {
                     "name": "METABASE_EMBEDDING_SECRET_KEY",
