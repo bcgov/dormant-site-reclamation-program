@@ -65,15 +65,19 @@ export class OrgBookSearch extends Component {
     return (
       <Row gutter={48} type="flex" align="middle">
         <Col span={24}>
-          <Form.Item label={this.props.label}
+          <Form.Item
+            label={this.props.label}
             validateStatus={
-              this.props.meta.touched ? (this.props.meta.error && "error") || (this.props.meta.warning && "warning") : ""
+              this.props.meta.touched
+                ? (this.props.meta.error && "error") || (this.props.meta.warning && "warning")
+                : ""
             }
             help={
               this.props.meta.touched &&
               ((this.props.meta.error && <span>{this.props.meta.error}</span>) ||
                 (this.props.meta.warning && <span>{this.props.meta.warning}</span>))
-            }>
+            }
+          >
             <Select
               showSearch
               showArrow
@@ -83,6 +87,7 @@ export class OrgBookSearch extends Component {
                   <Spin size="small" indicator={<Icon type="loading" />} />
                 ) : null
               }
+              labelInValue
               filterOption={false}
               onSearch={this.handleSearchDebounced}
               onChange={this.handleChange}
@@ -90,7 +95,7 @@ export class OrgBookSearch extends Component {
               {...this.props.input}
             >
               {this.state.options.map((option) => (
-                <Select.Option key={option.value} value={option.text}>{option.text}</Select.Option>
+                <Select.Option key={option.value}>{option.text}</Select.Option>
               ))}
             </Select>
           </Form.Item>
