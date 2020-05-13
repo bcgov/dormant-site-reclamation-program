@@ -71,12 +71,21 @@ class EmailService():
             
             
     def send_application_confirmation(self, application):
-        content = f""" We have successfully received your application in the BC Governments Dormant
-        Site Reclamation Program. Your reference number is {application.guid}, please keep this safe as you will
-        need it to carry your application forward in this process.
-
-        Email {self.SENDER_INFO['from-email']} with this reference number if you have questions about your application. 
+        content = f"""
+        <html>
+            <head></head>
+            <body>
+            <p> 
+                We have successfully received your application in the BC Governments Dormant
+                Site Reclamation Program. Your reference number is {application.guid}, please keep this safe as you will
+                need it to carry your application forward in this process.
+            </p>
+            <p>
+                Email {self.SENDER_INFO['from-email']} with this reference number if you have questions about your application. 
+            </p>
+            </body>
+        </html>
         """
-        msg_content = MIMEText(content,'plain')
+        msg_content = MIMEText(content,'html')
 
         self.send_email(application.submitter_email, 'Application Confirmation',msg_content)
