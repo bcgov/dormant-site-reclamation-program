@@ -42,6 +42,7 @@ class EmailService():
         return self 
 
     def __exit__(self, exc_type, exc_value, traceback):
+        current_app.logger.info(f'EmailService.__exit__ values: {exc_type}, {exc_value}, {traceback}')
         current_app.logger.info(
             f'Sent {self._sent_mail["success_count"]} emails successfully closing connection')
         # Terminate the SMTP session and close the connection
@@ -63,7 +64,7 @@ class EmailService():
         
         # send the message via the server set up earlier.
         try:
-            self._server.send_message(msg)
+            self._smtp.send_message(msg)
             self._sent_mail['success_count'] += 1
         except Exception as e: 
             #self._sent_mail['error'].append(str(msg) + '>>>' + str(e))
