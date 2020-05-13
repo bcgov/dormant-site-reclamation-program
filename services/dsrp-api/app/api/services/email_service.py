@@ -23,7 +23,7 @@ class EmailService():
         'from-email': 'DormantSiteReclamation@gov.bc.ca'
     }
     
-
+    signature = None
     _smtp = None    
 
     def __init__(self):
@@ -33,6 +33,7 @@ class EmailService():
         }
 
         self.SMTP_CRED = Config.SMTP_CRED
+        self.signature = f'Email {self.SENDER_INFO["from-email"]} with this reference number if you have questions about your application.' 
 
     def __enter__(self):
         if self.SMTP_CRED['host'] == 'smtp.srvr':
@@ -61,17 +62,16 @@ class EmailService():
             self._smtp.quit()   
 
 
-    def send_email(self, to_email, subject, html):
+    def send_email(self, to_email, subject, html_body):
         msg = MIMEMultipart()     
 
         msg['From']=self.SENDER_INFO['from-email']
         msg['To']=to_email
         msg['Subject']=subject
         # add in the message body
-        msg.attach(MIMEText(html,'html'))
 
-        signature = f'Email {self.SENDER_INFO["from-email"]} with this reference number if you have questions about your application.' 
-        msg.attach(MIMEText(signature,'plain'))
+        html = "<html><head></head><body>" + html_body + self.signature +"</body></html>"
+        msg.attach(MIMEText(html,'html'))
         
         # send the message via the server set up earlier.
         try:    
