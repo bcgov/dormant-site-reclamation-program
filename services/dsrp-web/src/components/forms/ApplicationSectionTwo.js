@@ -6,12 +6,14 @@ import { renderConfig } from "@/components/common/config";
 import { required, dateNotInFuture, maxLength } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 
+import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
+
 const { Text, Paragraph, Title } = Typography;
 const { Panel } = Collapse;
 
 const defaultProps = {};
 
-const createMemberName = (member, name) => `${member}.${name}`
+const createMemberName = (member, name) => `${member}.${name}`;
 
 const wellSiteConditions = [
   "Within 1000 m of a stream (defined in WSA and includes all water bodies)",
@@ -84,33 +86,33 @@ const renderWells = ({ fields }) => (
 
               <FormSection name={createMemberName(member, "contracted_work")}>
                 <Title level={4}>Contracted Work</Title>
-                <Paragraph>Enter the estimated cost of every work component your company will perform for this contract.</Paragraph>
+                <Paragraph>
+                  Enter the estimated cost of every work component your company will perform for
+                  this contract.
+                </Paragraph>
                 <Row gutter={48}>
                   <Col span={24}>
                     <Collapse bordered={false}>
                       <Panel header="Abandonment">
-                        <FormSection name="abandonment">
-                        </FormSection>
+                        <FormSection name="abandonment"></FormSection>
                       </Panel>
                       <Panel header="Preliminary Site Investigation">
-                        <FormSection name="preliminary_site_investigation">
-                        </FormSection>
+                        <FormSection name="preliminary_site_investigation"></FormSection>
                       </Panel>
                       <Panel header="Detailed Site Investigation">
-                        <FormSection name="detailed_site_investigation">
-                        </FormSection>
+                        <FormSection name="detailed_site_investigation"></FormSection>
                       </Panel>
                       <Panel header="Remediation">
-                        <FormSection name="remediation">
-                        </FormSection>
+                        <FormSection name="remediation"></FormSection>
                       </Panel>
                       <Panel header="Reclamation">
-                        <FormSection name="reclamation">
-                        </FormSection>
+                        <FormSection name="reclamation"></FormSection>
                       </Panel>
                     </Collapse>
                     <Paragraph style={{ float: "right" }}>
-                      <Text className="color-primary" strong>Grand total:&nbsp;</Text>
+                      <Text className="color-primary" strong>
+                        Grand total:&nbsp;
+                      </Text>
                       <Text>$0.00</Text>
                     </Paragraph>
                   </Col>
@@ -136,18 +138,31 @@ class ApplicationSectionTwo extends Component {
           <Row gutter={48}>
             <Col span={24}>
               <Field
-                id="random_stuff"
-                name="random_stuff"
-                label="Random Stuff"
-                placeholder="Enter random stuff"
-                component={renderConfig.FIELD}
-                validate={[required, maxLength(9)]}
+                id="organization_id"
+                name="organization_id"
+                label="Permit Holder"
+                placeholder="Search for permit holder for whom this work will be performed"
+                component={PermitHolderSelect}
+                validate={[required]}
               />
             </Col>
           </Row>
         </FormSection>
 
         <FieldArray name="well_sites" component={renderWells} />
+
+        <FormSection name="contract_details">
+          <Row className="steps-action">
+            <Col>
+              <Button type="primary" htmlType="submit">
+                Next
+              </Button>
+              <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
+                Previous
+              </Button>
+            </Col>
+          </Row>
+        </FormSection>
 
         <Row className="steps-action">
           <Col>

@@ -17,3 +17,9 @@ export const ORGBOOK_CREDENTIAL = "ORGBOOK_CREDENTIAL";
 
 // Application
 export const CREATE_APPLICATION = "CREATE_APPLICATION";
+
+// OGC
+export const OGC = "OGC";
+export const FETCH_PERMIT_HOLDERS = "FETCH_PERMIT_HOLDERS";
+export const FETCH_WELLS = "FETCH_WELLS";
+export const FETCH_LIABILITIES = "FETCH_LIABILITIES";
