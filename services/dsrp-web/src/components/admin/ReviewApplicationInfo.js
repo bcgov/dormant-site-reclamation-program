@@ -1,6 +1,8 @@
 /* eslint-disable */
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import { Table } from "antd";
 import { getApplications } from "@/selectors/applicationSelectors";
@@ -52,6 +54,17 @@ const columns = [
     dataIndex: "submission_date",
     sorter: (a, b) => a.submissionDate.length - b.submissionDate.length,
     render: (text) => <div title="submission_date">{formatDateTime(text)}</div>,
+  },
+  {
+    title: "View",
+    key: "",
+    dataIndex: "",
+    sortField: "",
+    render: (text, record) => (
+      <div title="View">
+        <Link to={router.MINE_SUMMARY.dynamicRoute(record.incident.mine_guid)}>{text}</Link>
+      </div>
+    ),
   },
 ];
 
