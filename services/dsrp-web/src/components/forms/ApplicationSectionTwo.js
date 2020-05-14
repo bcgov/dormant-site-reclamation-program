@@ -81,6 +81,8 @@ const asyncValidateWell = async (values, field) => {
 };
 
 const asyncValidate = (values, dispatch, props, field) => {
+  if (!field) return Promise.resolve();
+
   if (field === "contract_details.operator_id") {
     return Promise.all(
       values.well_sites.map((well, index) =>
