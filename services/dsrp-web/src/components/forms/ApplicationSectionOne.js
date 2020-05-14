@@ -1,37 +1,27 @@
+/* eslint-disable */
 import React, { Component } from "react";
 import { reduxForm, Field, FormSection } from "redux-form";
 import { Row, Col, Typography, Form, Button } from "antd";
+import PropTypes from "prop-types";
 
 import { renderConfig } from "@/components/common/config";
 import { required, dateNotInFuture, maxLength } from "@/utils/validate";
 import { phoneMask, postalCodeMask } from "@/utils/helpers";
+import { APPLICATION } from "@/constants/api";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
+import { DOCUMENT, EXCEL } from "@/constants/fileTypes";
 
 const { Text, Title, Paragraph } = Typography;
+
+const propTypes = {
+  onFileLoad: PropTypes.func.isRequired,
+  onRemoveFile: PropTypes.func.isRequired,
+};
 
 const defaultProps = {};
 
 class ApplicationSectionOne extends Component {
-  state = {
-    uploadedFiles: [],
-    filesToDelete: [],
-  };
-
-  onFileLoad = (document_name, document_manager_guid) => {
-    this.setState((prevState) => ({
-      uploadedFiles: [{ document_manager_guid, document_name }, ...prevState.uploadedFiles],
-    }));
-  };
-
-  onRemoveFile = (error, file) => {
-    this.setState((prevState) => ({
-      uploadedFiles: prevState.uploadedFiles.filter(
-        (doc) => doc.document_manager_guid !== file.serverId
-      ),
-    }));
-  };
-
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
@@ -54,7 +44,7 @@ class ApplicationSectionOne extends Component {
                 label="Address Line 1"
                 placeholder="Address Line 1"
                 component={renderConfig.FIELD}
-              // validate={[required]}
+                // validate={[required]}
               />
               <Field
                 id="address_line_2"
@@ -62,7 +52,7 @@ class ApplicationSectionOne extends Component {
                 label="Address Line 2"
                 placeholder="Address Line 2"
                 component={renderConfig.FIELD}
-              // validate={[required]}
+                // validate={[required]}
               />
               <Field
                 id="city"
@@ -70,7 +60,7 @@ class ApplicationSectionOne extends Component {
                 label="City"
                 placeholder="City"
                 component={renderConfig.FIELD}
-              // validate={[required]}
+                // validate={[required]}
               />
             </Col>
           </Row>
@@ -125,7 +115,7 @@ class ApplicationSectionOne extends Component {
                 label="First Name"
                 placeholder="First Name"
                 component={renderConfig.FIELD}
-              // validate={[required]}
+                // validate={[required]}
               />
             </Col>
             <Col span={12}>
@@ -135,7 +125,7 @@ class ApplicationSectionOne extends Component {
                 label="Last Name"
                 placeholder="Last Name"
                 component={renderConfig.FIELD}
-              // validate={[required]}
+                // validate={[required]}
               />
             </Col>
           </Row>
@@ -196,7 +186,7 @@ class ApplicationSectionOne extends Component {
                 label="Email"
                 placeholder="Email"
                 component={renderConfig.FIELD}
-              // validate={[required]}
+                // validate={[required]}
               />
             </Col>
             <Col span={12}>
@@ -206,7 +196,7 @@ class ApplicationSectionOne extends Component {
                 label="Fax"
                 placeholder="Fax"
                 component={renderConfig.FIELD}
-              // validate={[required]}
+                // validate={[required]}
               />
             </Col>
           </Row>
@@ -221,10 +211,10 @@ class ApplicationSectionOne extends Component {
                   id="good_standing_report"
                   name="good_standing_report"
                   component={renderConfig.FILE_UPLOAD}
-                  //   uploadUrl={}
-                  //   acceptedFileTypesMap={{ ...DOCUMENT, ...EXCEL }}
-                  onFileLoad={this.onFileLoad}
-                  onRemoveFile={this.onRemoveFile}
+                  uploadUrl={`${APPLICATION}/documents`}
+                  acceptedFileTypesMap={{ ...DOCUMENT, ...EXCEL }}
+                  onFileLoad={this.props.onFileLoad}
+                  onRemoveFile={this.props.onRemoveFile}
                   allowRevert
                   allowMultiple={false}
                 />
@@ -234,7 +224,11 @@ class ApplicationSectionOne extends Component {
         </FormSection>
 
         <FormSection name="review_program_conditions">
-          <Paragraph><a href="#" target="_blank" rel="noopener noreferrer" >Review program details and requirements</a></Paragraph>
+          <Paragraph>
+            <a href="#" target="_blank" rel="noopener noreferrer">
+              Review program details and requirements
+            </a>
+          </Paragraph>
           <Row gutter={48}>
             <Col span={24}>
               <Field
@@ -260,6 +254,7 @@ class ApplicationSectionOne extends Component {
   }
 }
 
+ApplicationSectionOne.propTypes = propTypes;
 ApplicationSectionOne.defaultProps = defaultProps;
 
 export default reduxForm({
