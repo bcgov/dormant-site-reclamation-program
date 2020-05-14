@@ -3,32 +3,29 @@ import { connect } from "react-redux";
 import { Row, Col, Typography } from "antd";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
+import { isEmpty } from "lodash";
 
 import ViewApplicationStatusForm from "@/components/forms/ViewApplicationStatusForm";
 import ApplicationStatusCard from "@/components/pages/ApplicationStatusCard";
 
-import { fetchApplication } from "@/actionCreators/applicationActionCreator";
+import { fetchApplicationByID } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
 
 const { Paragraph, Title } = Typography;
 
 const propTypes = {
+  fetchApplicationByID: PropTypes.func.isRequired,
   loadedApplication: PropTypes.shape({
     guid: PropTypes.string,
     application_status_code: PropTypes.string,
     submission_date: PropTypes.string,
     json: PropTypes.any,
-  }),
-};
-
-const defaultProps = {
-  loadedApplication: null,
+  }).isRequired,
 };
 
 export class ViewApplicationStatusPage extends Component {
   onFormSubmit = (values) => {
-    console.log(values);
-    this.props.fetchApplication(values.guid);
+    this.props.fetchApplicationByID(values.guid);
   };
 
   render() {
@@ -60,7 +57,7 @@ export class ViewApplicationStatusPage extends Component {
             <ViewApplicationStatusForm onSubmit={this.onFormSubmit} />
           </Col>
         </Row>
-        {this.props.loadedApplication && (
+        {!isEmpty(this.props.loadedApplication) && (
           <Row
             gutter={[{ sm: 0, xl: 64 }]}
             type="flex"
@@ -79,7 +76,6 @@ export class ViewApplicationStatusPage extends Component {
 }
 
 ViewApplicationStatusPage.propTypes = propTypes;
-ViewApplicationStatusPage.defaultProps = defaultProps;
 
 const mapStateToProps = (state) => ({
   loadedApplication: getApplication(state),
@@ -88,7 +84,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      fetchApplication,
+      fetchApplicationByID,
     },
     dispatch
   );
