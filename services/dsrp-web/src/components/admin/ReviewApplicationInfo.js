@@ -62,7 +62,7 @@ const columns = [
     sortField: "",
     render: (text, record) => (
       <div title="View">
-        <Link to={router.MINE_SUMMARY.dynamicRoute(record.incident.mine_guid)}>{text}</Link>
+        <Link to={"/"}>View</Link>
       </div>
     ),
   },
