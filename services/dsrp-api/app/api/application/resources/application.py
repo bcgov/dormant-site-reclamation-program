@@ -4,11 +4,13 @@ from werkzeug.exceptions import BadRequest, NotFound
 from marshmallow.exceptions import MarshmallowError
 
 from app.extensions import api
-from app.api.application.response_models import APPLICATION
-from app.api.application.models.application import Application
+from app.api.services.email_service import EmailService
 from app.api.utils.access_decorators import requires_role_view_all
 from app.api.utils.resources_mixins import UserMixin
 
+
+from app.api.application.response_models import APPLICATION
+from app.api.application.models.application import Application
 
 class ApplicationListResource(Resource, UserMixin):
     @api.doc(description='Get all applications')
@@ -24,13 +26,14 @@ class ApplicationListResource(Resource, UserMixin):
     @api.expect(APPLICATION)
     @api.marshal_with(APPLICATION, code=201)
     def post(self):
-
         try:
             application = Application._schema().load(request.json['application'])
+            application.save()
         except MarshmallowError as e:
             raise BadRequest(e)
-
-        application.save()
+        
+        with EmailService() as es:
+            application.send_confirmation_email(es)
 
         return application, 201
 

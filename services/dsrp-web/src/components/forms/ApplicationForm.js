@@ -25,6 +25,7 @@ export class ApplicationForm extends Component {
           onSubmit={this.nextFormStep}
           onFileLoad={this.props.onFileLoad}
           onRemoveFile={this.props.onRemoveFile}
+          initialValues={{ company_details: { province: "BC" } }}
         />
       ),
     },

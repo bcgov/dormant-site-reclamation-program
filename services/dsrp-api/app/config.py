@@ -79,6 +79,12 @@ class Config(object):
 
     #Doc Manager
     DOCUMENT_MANAGER_URL = os.environ.get('DOCUMENT_MANAGER_URL', 'http://localhost:5001')
+    #SMTP
+    SMTP_CRED_HOST = os.environ.get('SMTP_CRED_HOST', None)
+
+    SMTP_ENABLED = SMTP_CRED_HOST is not None
+
+    SMTP_CRED = {'host': SMTP_CRED_HOST, 'port': 25, 'user': None, 'pwrd': None}
 
 
 class TestConfig(Config):

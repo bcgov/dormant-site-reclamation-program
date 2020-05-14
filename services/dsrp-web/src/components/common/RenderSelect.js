@@ -29,7 +29,7 @@ const defaultProps = {
   data: [],
   disabled: false,
   meta: {},
-  onSelect: () => { },
+  onSelect: () => {},
 };
 
 const RenderSelect = (props) => {

@@ -1,10 +1,14 @@
 import React, { Component } from "react";
-import { reduxForm, FieldArray } from "redux-form";
+import { reduxForm, FieldArray, getFormValues } from "redux-form";
+import { connect } from "react-redux";
+import { compose } from "redux";
 import { Row, Col, Typography, Form, Divider, Button, Collapse, Descriptions, Icon } from "antd";
 import { Field, FormSection } from "redux-form";
+import { sum, flatten, union, merge } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import { required, dateNotInFuture, maxLength } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
+import { currencyMask, formatMoney } from "@/utils/helpers";
 
 import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
 
@@ -29,13 +33,70 @@ const wellSiteConditions = [
   "Drilled or abandoned prior to 1997",
 ];
 
-const renderWells = ({ fields }) => (
-  <>
-    <Title level={2}>Well Sites</Title>
-    <Row gutter={[48, 48]}>
-      <Col span={24}>
-        <Collapse bordered={false} accordion>
-          {fields.map((member, index) => (
+const renderMoneyTotal = (label, amount) => (
+  <Paragraph style={{ float: "right" }}>
+    <Text className="color-primary" strong>
+      {label}:&nbsp;
+    </Text>
+    <Text>{formatMoney(amount || 0)}</Text>
+  </Paragraph>
+);
+
+class ApplicationSectionTwo extends Component {
+  state = {
+    contractedWorkTotals: { grandTotal: 0, wellTotals: {} },
+  };
+
+  componentWillReceiveProps = (nextProps) => {
+    if (nextProps.formValues !== this.props.formValues) {
+      this.calculateContractWorkTotals(nextProps.formValues);
+    }
+  };
+
+  componentWillMount = () => {
+    this.calculateContractWorkTotals(this.props.formValues);
+  };
+
+  calculateContractWorkTotals = (formValues) => {
+    if (!formValues || !formValues.well_sites) {
+      return;
+    }
+
+    let grandTotal = 0;
+    let wellTotals = {};
+    formValues.well_sites.map((wellSite, wellIndex) => {
+      wellTotals[wellIndex] = { wellTotal: 0, sections: {} };
+
+      if (!wellSite.contracted_work) {
+        return;
+      }
+
+      const sectionNames = Object.keys(wellSite.contracted_work);
+      const sectionValues = Object.values(wellSite.contracted_work);
+
+      let wellTotal = 0;
+      sectionValues.map((section, sectionIndex) => {
+        const sectionTotal = sum(Object.values(section).filter((value) => !isNaN(value)));
+        wellTotals[wellIndex].sections[sectionNames[sectionIndex]] = sectionTotal;
+        wellTotal += sectionTotal;
+      });
+      wellTotals[wellIndex].wellTotal = wellTotal;
+
+      grandTotal += wellTotal;
+    });
+
+    const contractedWorkTotals = { grandTotal, wellTotals };
+    this.setState({ contractedWorkTotals });
+  };
+
+  renderWells = ({ fields }) => (
+    <>
+      <Collapse bordered={false} accordion>
+        {fields.map((member, index) => {
+          const wellTotals = this.state.contractedWorkTotals.wellTotals[index];
+          const wellSectionTotals = wellTotals ? wellTotals.sections : {};
+          const wellTotal = wellTotals ? wellTotals.wellTotal : 0;
+          return (
             <Panel
               key={index}
               header={
@@ -43,7 +104,7 @@ const renderWells = ({ fields }) => (
                   {/* NOTE: Could update name with the well's name when it is retrieved. */}
                   Well Site #{index + 1}
                   <Button style={{ float: "right" }} onClick={() => fields.remove(index)}>
-                    Remove Well Site #{index + 1}
+                    Remove
                   </Button>
                 </Title>
               }
@@ -94,62 +155,172 @@ const renderWells = ({ fields }) => (
                   <Col span={24}>
                     <Collapse bordered={false}>
                       <Panel header="Abandonment">
-                        <FormSection name="abandonment"></FormSection>
+                        <FormSection name="abandonment">
+                          <Field
+                            name="amount_0"
+                            label="amount_0"
+                            placeholder="amount_0"
+                            component={renderConfig.FIELD}
+                            {...currencyMask}
+                          />
+                          <Field
+                            name="amount_1"
+                            label="amount_1"
+                            placeholder="amount_1"
+                            component={renderConfig.FIELD}
+                            {...currencyMask}
+                          />
+                          {renderMoneyTotal("Section total", wellSectionTotals.abandonment)}
+                        </FormSection>
                       </Panel>
                       <Panel header="Preliminary Site Investigation">
-                        <FormSection name="preliminary_site_investigation"></FormSection>
+                        <FormSection name="preliminary_site_investigation">
+                          <Field
+                            name="amount_0"
+                            label="amount_0"
+                            placeholder="amount_0"
+                            component={renderConfig.FIELD}
+                            {...currencyMask}
+                          />
+                          <Field
+                            name="amount_1"
+                            label="amount_1"
+                            placeholder="amount_1"
+                            component={renderConfig.FIELD}
+                            {...currencyMask}
+                          />
+                          {renderMoneyTotal(
+                            "Section total",
+                            wellSectionTotals.preliminary_site_investigation
+                          )}
+                        </FormSection>
                       </Panel>
                       <Panel header="Detailed Site Investigation">
-                        <FormSection name="detailed_site_investigation"></FormSection>
+                        <FormSection name="detailed_site_investigation">
+                          <Field
+                            name="amount_0"
+                            label="amount_0"
+                            placeholder="amount_0"
+                            component={renderConfig.FIELD}
+                            {...currencyMask}
+                          />
+                          <Field
+                            name="amount_1"
+                            label="amount_1"
+                            placeholder="amount_1"
+                            component={renderConfig.FIELD}
+                            {...currencyMask}
+                          />
+                          {renderMoneyTotal(
+                            "Section total",
+                            wellSectionTotals.detailed_site_investigation
+                          )}
+                        </FormSection>
                       </Panel>
                       <Panel header="Remediation">
-                        <FormSection name="remediation"></FormSection>
+                        <FormSection name="remediation">
+                          <Field
+                            name="amount_0"
+                            label="amount_0"
+                            placeholder="amount_0"
+                            component={renderConfig.FIELD}
+                            {...currencyMask}
+                          />
+                          <Field
+                            name="amount_1"
+                            label="amount_1"
+                            placeholder="amount_1"
+                            component={renderConfig.FIELD}
+                            {...currencyMask}
+                          />
+                          {renderMoneyTotal("Section total", wellSectionTotals.remediation)}
+                        </FormSection>
                       </Panel>
                       <Panel header="Reclamation">
-                        <FormSection name="reclamation"></FormSection>
+                        <FormSection name="reclamation">
+                          <Field
+                            name="amount_0"
+                            label="amount_0"
+                            placeholder="amount_0"
+                            component={renderConfig.FIELD}
+                            {...currencyMask}
+                          />
+                          <Field
+                            name="amount_1"
+                            label="amount_1"
+                            placeholder="amount_1"
+                            component={renderConfig.FIELD}
+                            {...currencyMask}
+                          />
+                          {renderMoneyTotal("Section total", wellSectionTotals.reclamation)}
+                        </FormSection>
                       </Panel>
                     </Collapse>
-                    <Paragraph style={{ float: "right" }}>
-                      <Text className="color-primary" strong>
-                        Grand total:&nbsp;
-                      </Text>
-                      <Text>$0.00</Text>
-                    </Paragraph>
+                    {renderMoneyTotal("Well total", wellTotal)}
                   </Col>
                 </Row>
               </FormSection>
             </Panel>
-          ))}
-        </Collapse>
-      </Col>
-    </Row>
-    <Button type="primary" onClick={() => fields.push({})}>
-      Add Well Site
-    </Button>
-  </>
-);
+          );
+        })}
+      </Collapse>
+      <br />
+      <Button type="primary" onClick={() => fields.push({})}>
+        Add Well Site
+      </Button>
+    </>
+  );
 
-class ApplicationSectionTwo extends Component {
   render() {
+    const wellTotalsValues = Object.values(this.state.contractedWorkTotals.wellTotals);
+
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <FormSection name="contract_details">
           <Title level={2}>Contract Information</Title>
           <Row gutter={48}>
-            <Col span={24}>
+            <Col>
               <Field
                 id="organization_id"
                 name="organization_id"
                 label="Permit Holder"
                 placeholder="Search for permit holder for whom this work will be performed"
                 component={PermitHolderSelect}
-                validate={[required]}
+                // validate={[required]}
               />
             </Col>
           </Row>
         </FormSection>
 
-        <FieldArray name="well_sites" component={renderWells} />
+        <Title level={2}>Well Sites</Title>
+        <Row gutter={[48, 48]}>
+          <Col>
+            <FieldArray name="well_sites" component={this.renderWells} />
+          </Col>
+        </Row>
+
+        <br />
+        <Title level={4}>Estimated Expense Summary</Title>
+        {(wellTotalsValues.length > 0 && (
+          <Row gutter={16} type="flex">
+            <Col style={{ textAlign: "right" }}>
+              {wellTotalsValues.map((wellTotal, index) => (
+                <Paragraph className="color-primary" strong>
+                  {`Well Site #${index + 1} total:`}&nbsp;
+                </Paragraph>
+              ))}
+              <Paragraph className="color-primary" strong>
+                Grand total:&nbsp;
+              </Paragraph>
+            </Col>
+            <Col style={{ textAlign: "right" }}>
+              {wellTotalsValues.map((wellTotal) => (
+                <Paragraph>{formatMoney(wellTotal.wellTotal || 0)}</Paragraph>
+              ))}
+              <Paragraph>{formatMoney(this.state.contractedWorkTotals.grandTotal || 0)}</Paragraph>
+            </Col>
+          </Row>
+        )) || <Paragraph>Add a well site to see your estimated expense summary.</Paragraph>}
 
         <Row className="steps-action">
           <Col>
@@ -168,8 +339,13 @@ class ApplicationSectionTwo extends Component {
 
 ApplicationSectionTwo.defaultProps = defaultProps;
 
-export default reduxForm({
-  form: FORM.APPLICATION_FORM,
-  destroyOnUnmount: false,
-  forceUnregisterOnUnmount: true,
-})(ApplicationSectionTwo);
+export default compose(
+  connect((state) => ({
+    formValues: getFormValues(FORM.APPLICATION_FORM)(state),
+  })),
+  reduxForm({
+    form: FORM.APPLICATION_FORM,
+    destroyOnUnmount: false,
+    forceUnregisterOnUnmount: true,
+  })
+)(ApplicationSectionTwo);

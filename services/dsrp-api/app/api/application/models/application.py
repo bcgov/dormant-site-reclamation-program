@@ -1,5 +1,6 @@
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
 from marshmallow import fields, validate
 
@@ -32,6 +33,7 @@ class Application(Base, AuditMixin):
     def __repr__(self):
         return f'<{self.__name__} {self.guid}>'
 
+
     @classmethod
     def get_all(cls):
         return cls.query.all()
@@ -39,3 +41,22 @@ class Application(Base, AuditMixin):
     @classmethod
     def find_by_guid(cls, guid):
         return cls.query.filter_by(guid=guid).first()
+
+    @hybrid_property
+    def submitter_email(self):
+        return self.json.get('company_contact', {'email':None}).get('email', None)
+
+
+    def send_confirmation_email(self, email_service):
+        if not self.submitter_email:
+            raise Exception('Application.json.company_contact.email is not set, must set before email can be sent')
+
+        html_body = f"""
+            <p> 
+                We have successfully received your application in the BC Governments Dormant
+                Site Reclamation Program. Your reference number is {self.guid}, please keep this safe as you will
+                need it to carry your application forward in this process.
+            </p>
+        """
+    
+        email_service.send_email(self.submitter_email, 'Application Confirmation', html_body)

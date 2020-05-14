@@ -5,12 +5,13 @@ import { Row, Col, Typography, Form, Button } from "antd";
 import PropTypes from "prop-types";
 
 import { renderConfig } from "@/components/common/config";
-import { required, dateNotInFuture, maxLength } from "@/utils/validate";
+import { required } from "@/utils/validate";
 import { phoneMask, postalCodeMask } from "@/utils/helpers";
 import { APPLICATION } from "@/constants/api";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
 import { DOCUMENT, EXCEL } from "@/constants/fileTypes";
+import { ORGBOOK_URL } from "@/constants/routes";
 
 const { Text, Title, Paragraph } = Typography;
 
@@ -32,7 +33,19 @@ class ApplicationSectionOne extends Component {
               <Field
                 id="company_name"
                 name="company_name"
-                label="Company Name"
+                label={
+                  <>
+                    Company Name
+                    <a
+                      style={{ float: "right" }}
+                      href={ORGBOOK_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Search BC Registries for your company
+                    </a>
+                  </>
+                }
                 placeholder="Company Name"
                 component={OrgBookSearch}
                 validate={[required]}
@@ -72,8 +85,9 @@ class ApplicationSectionOne extends Component {
                 label="Province"
                 placeholder="Province"
                 component={renderConfig.SELECT}
+                validate={[required]}
                 format={null}
-                // validate={[required]}
+                disabled
                 data={[
                   { value: "AB", label: "Alberta" },
                   { value: "BC", label: "British Columbia" },
@@ -197,6 +211,7 @@ class ApplicationSectionOne extends Component {
                 placeholder="Fax"
                 component={renderConfig.FIELD}
                 // validate={[required]}
+                {...phoneMask}
               />
             </Col>
           </Row>
