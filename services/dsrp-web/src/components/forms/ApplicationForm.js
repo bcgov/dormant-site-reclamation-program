@@ -17,6 +17,16 @@ const { Step } = Steps;
 export class ApplicationForm extends Component {
   state = { current: 0 };
 
+  nextFormStep = () => {
+    const current = this.state.current + 1;
+    this.setState({ current });
+  };
+
+  previousFormStep = () => {
+    const current = this.state.current - 1;
+    this.setState({ current });
+  };
+
   steps = [
     {
       title: "Company Details",
@@ -45,16 +55,6 @@ export class ApplicationForm extends Component {
       ),
     },
   ];
-
-  nextFormStep = () => {
-    const current = this.state.current + 1;
-    this.setState({ current });
-  };
-
-  previousFormStep = () => {
-    const current = this.state.current - 1;
-    this.setState({ current });
-  };
 
   render() {
     return (
