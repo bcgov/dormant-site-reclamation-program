@@ -10,10 +10,10 @@ import { formatDateTime } from "@/utils/helpers";
 const columns = [
   {
     title: "Company Name",
-    dataIndex: "json",
+    dataIndex: "company_name",
     sorter: (a, b) => a.company_name.length - b.company_name.length,
     sortDirections: ["descend"],
-    render: (text) => <div title="company_name">{text}</div>,
+    render: (text) => <div title="company_name">{text || "N/A"}</div>,
   },
   {
     title: "Permit Holder",
@@ -59,11 +59,13 @@ export class ReviewApplicationInfo extends Component {
   };
 
   transformRowData = (applications) => {
-    const apps = applications.map(({ json, guid, ...rest }) => ({
-      key: guid,
-      json: JSON.parse(json),
-      ...rest,
-    }));
+    const apps = applications.map((application) => {
+      return {
+        key: application.guid,
+        company_name: application.json.company_details.company_name.label,
+        ...application,
+      };
+    });
     return apps;
   };
 
@@ -73,7 +75,7 @@ export class ReviewApplicationInfo extends Component {
         <Table
           columns={columns}
           pagination={false}
-          dataSource={this.props.applications}
+          dataSource={this.transformRowData(this.props.applications)}
           onChange={this.onChange}
           expandable={{
             expandedRowRender: () => <p style={{ margin: 0 }}>Surprise! more content here</p>,

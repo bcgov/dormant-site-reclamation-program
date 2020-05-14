@@ -1,25 +1,28 @@
+import json
 from flask_restplus import Resource
 from flask import request
 from werkzeug.exceptions import BadRequest, NotFound
 from marshmallow.exceptions import MarshmallowError
-
 from app.extensions import api
 from app.api.services.email_service import EmailService
 from app.api.utils.access_decorators import requires_role_view_all
 from app.api.utils.resources_mixins import UserMixin
 
 
-from app.api.application.response_models import APPLICATION
+from app.api.application.response_models import APPLICATION, APPLICATION_LIST
 from app.api.application.models.application import Application
 
 class ApplicationListResource(Resource, UserMixin):
     @api.doc(description='Get all applications')
     #@requires_role_view_all
-    @api.marshal_with(APPLICATION, envelope='records', code=200)
+    @api.marshal_with(APPLICATION_LIST, code=200)
     def get(self):
+        data = Application.get_all()
 
-        applications = Application.get_all()
-        return applications
+        return {
+            'records': data,
+        }
+
 
     @api.doc(description='Create an application')
     #@requires_role_view_all

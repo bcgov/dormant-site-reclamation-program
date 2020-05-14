@@ -5,7 +5,7 @@ import * as ENV from "@/constants/environment";
 import { getIsAdmim } from "@/selectors/authenticationSelectors";
 
 const propTypes = {
-  isAdmin: PropTypes.func.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
 };
 
 export const AdminLogin = (props) => (
