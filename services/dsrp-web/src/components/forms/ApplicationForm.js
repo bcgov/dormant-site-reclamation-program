@@ -27,7 +27,12 @@ export class ApplicationForm extends Component {
   steps = [
     {
       title: "Company Details",
-      content: <ApplicationSectionOne onSubmit={this.nextFormStep} />,
+      content: (
+        <ApplicationSectionOne
+          onSubmit={this.nextFormStep}
+          initialValues={{ company_details: { province: "BC" } }}
+        />
+      ),
     },
     {
       title: "Well Sites",

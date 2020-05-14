@@ -43,12 +43,18 @@ class ApplicationSectionOne extends Component {
                 id="company_name"
                 name="company_name"
                 label={
-                  <span>
-                    <span>Company Name</span>
-                    <a style={{ float: "right" }} href={ORGBOOK_URL} target="_blank" rel="noopener noreferrer">
+                  <>
+                    Company Name
+                    <a
+                      style={{ float: "right" }}
+                      href={ORGBOOK_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       Search BC Registries for your company
-                  </a>
-                  </span>}
+                    </a>
+                  </>
+                }
                 placeholder="Company Name"
                 component={OrgBookSearch}
                 validate={[required]}
@@ -60,7 +66,7 @@ class ApplicationSectionOne extends Component {
                 label="Address Line 1"
                 placeholder="Address Line 1"
                 component={renderConfig.FIELD}
-              // validate={[required]}
+                // validate={[required]}
               />
               <Field
                 id="address_line_2"
@@ -68,7 +74,7 @@ class ApplicationSectionOne extends Component {
                 label="Address Line 2"
                 placeholder="Address Line 2"
                 component={renderConfig.FIELD}
-              // validate={[required]}
+                // validate={[required]}
               />
               <Field
                 id="city"
@@ -76,7 +82,7 @@ class ApplicationSectionOne extends Component {
                 label="City"
                 placeholder="City"
                 component={renderConfig.FIELD}
-              // validate={[required]}
+                // validate={[required]}
               />
             </Col>
           </Row>
@@ -88,8 +94,9 @@ class ApplicationSectionOne extends Component {
                 label="Province"
                 placeholder="Province"
                 component={renderConfig.SELECT}
+                validate={[required]}
                 format={null}
-                // validate={[required]}
+                disabled
                 data={[
                   { value: "AB", label: "Alberta" },
                   { value: "BC", label: "British Columbia" },
@@ -131,7 +138,7 @@ class ApplicationSectionOne extends Component {
                 label="First Name"
                 placeholder="First Name"
                 component={renderConfig.FIELD}
-              // validate={[required]}
+                // validate={[required]}
               />
             </Col>
             <Col span={12}>
@@ -141,7 +148,7 @@ class ApplicationSectionOne extends Component {
                 label="Last Name"
                 placeholder="Last Name"
                 component={renderConfig.FIELD}
-              // validate={[required]}
+                // validate={[required]}
               />
             </Col>
           </Row>
@@ -202,7 +209,7 @@ class ApplicationSectionOne extends Component {
                 label="Email"
                 placeholder="Email"
                 component={renderConfig.FIELD}
-              // validate={[required]}
+                // validate={[required]}
               />
             </Col>
             <Col span={12}>
@@ -212,7 +219,8 @@ class ApplicationSectionOne extends Component {
                 label="Fax"
                 placeholder="Fax"
                 component={renderConfig.FIELD}
-              // validate={[required]}
+                // validate={[required]}
+                {...phoneMask}
               />
             </Col>
           </Row>
@@ -240,7 +248,11 @@ class ApplicationSectionOne extends Component {
         </FormSection>
 
         <FormSection name="review_program_conditions">
-          <Paragraph><a href="#" target="_blank" rel="noopener noreferrer" >Review program details and requirements</a></Paragraph>
+          <Paragraph>
+            <a href="#" target="_blank" rel="noopener noreferrer">
+              Review program details and requirements
+            </a>
+          </Paragraph>
           <Row gutter={48}>
             <Col span={24}>
               <Field
