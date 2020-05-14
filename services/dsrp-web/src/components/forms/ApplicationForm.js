@@ -6,13 +6,13 @@ import ApplicationSectionOne from "@/components/forms/ApplicationSectionOne";
 import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
 import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree";
 
+const { Step } = Steps;
+
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   onFileLoad: PropTypes.func.isRequired,
   onRemoveFile: PropTypes.func.isRequired,
 };
-
-const { Step } = Steps;
 
 export class ApplicationForm extends Component {
   state = { current: 0 };
