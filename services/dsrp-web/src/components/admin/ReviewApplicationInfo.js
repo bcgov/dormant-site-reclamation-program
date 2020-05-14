@@ -6,6 +6,12 @@ import { Table } from "antd";
 import { getApplications } from "@/selectors/applicationSelectors";
 import { fetchApplications } from "@/actionCreators/applicationActionCreator";
 import { formatDateTime } from "@/utils/helpers";
+import * as Strings from "@/constants/strings";
+
+const propTypes = {
+  applications: PropTypes.any.isRequired,
+  fetchApplications: PropTypes.func.isRequired,
+};
 
 const columns = [
   {
@@ -13,7 +19,7 @@ const columns = [
     dataIndex: "company_name",
     sorter: (a, b) => a.company_name.length - b.company_name.length,
     sortDirections: ["descend"],
-    render: (text) => <div title="company_name">{text || "N/A"}</div>,
+    render: (text) => <div title="company_name">{text || Strings.DASH}</div>,
   },
   {
     title: "Permit Holder",
@@ -28,17 +34,17 @@ const columns = [
   },
   {
     title: "Estimated Cost",
-    dataIndex: "wells",
+    dataIndex: "cost",
     sorter: (a, b) => a.wells.length - b.wells.length,
   },
   {
     title: "Eligable amount",
-    dataIndex: "wells",
+    dataIndex: "amount",
     sorter: (a, b) => a.wells.length - b.wells.length,
   },
   {
     title: "Total 10% Payment",
-    dataIndex: "wells",
+    dataIndex: "payment",
     sorter: (a, b) => a.wells.length - b.wells.length,
   },
   {
@@ -63,6 +69,11 @@ export class ReviewApplicationInfo extends Component {
       return {
         key: application.guid,
         company_name: application.json.company_details.company_name.label,
+        permit_holder: application.json.contract_details.organization_id,
+        wells: application.json.well_sites ? application.json.well_sites.length : 0,
+        cost: Strings.DASH,
+        amount: Strings.DASH,
+        payment: Strings.DASH,
         ...application,
       };
     });
@@ -98,7 +109,7 @@ const mapDispatchToProps = (dispatch) =>
     dispatch
   );
 
-// ReviewApplicationInfo.propTypes = propTypes;
+ReviewApplicationInfo.propTypes = propTypes;
 // ReviewApplicationInfo.defaultProps = defaultProps;
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReviewApplicationInfo);
