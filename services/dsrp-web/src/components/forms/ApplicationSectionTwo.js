@@ -73,7 +73,7 @@ class ApplicationSectionTwo extends Component {
       const sectionValues = Object.values(wellSite.contracted_work);
 
       let wellTotal = 0;
-      wellTotals[wellIndex] = { sections: {} };
+      wellTotals[wellIndex] = { wellTotal: 0, sections: {} };
       sectionValues.map((section, sectionIndex) => {
         const sectionTotal = sum(Object.values(section).filter((value) => !isNaN(value)));
         wellTotals[wellIndex].sections[sectionNames[sectionIndex]] = sectionTotal;
@@ -323,5 +323,6 @@ export default compose(
     form: FORM.APPLICATION_FORM,
     destroyOnUnmount: false,
     forceUnregisterOnUnmount: true,
+    enableReinitialize: true,
   })
 )(ApplicationSectionTwo);

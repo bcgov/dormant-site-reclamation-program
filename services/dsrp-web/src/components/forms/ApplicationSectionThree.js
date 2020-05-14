@@ -48,4 +48,5 @@ export default reduxForm({
   form: FORM.APPLICATION_FORM,
   destroyOnUnmount: false,
   forceUnregisterOnUnmount: true,
+  enableReinitialize: true,
 })(ApplicationSectionThree);
