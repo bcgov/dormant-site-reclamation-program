@@ -15,7 +15,7 @@ const propTypes = {
 const { Step } = Steps;
 
 export class ApplicationForm extends Component {
-  state = { current: 0 };
+  state = { current: 1 };
 
   nextFormStep = () => {
     const current = this.state.current + 1;

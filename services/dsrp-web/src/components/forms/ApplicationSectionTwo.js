@@ -9,7 +9,7 @@ import { renderConfig } from "@/components/common/config";
 import { required, dateNotInFuture, maxLength } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 import { currencyMask, formatMoney } from "@/utils/helpers";
-
+import CONTRACT_WORK_SECTIONS from "@/components/forms/contract_work_sections";
 import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
 
 const { Text, Paragraph, Title } = Typography;
@@ -34,12 +34,65 @@ const wellSiteConditions = [
 ];
 
 const renderMoneyTotal = (label, amount) => (
-  <Paragraph style={{ float: "right" }}>
+  <Paragraph>
     <Text className="color-primary" strong>
       {label}:&nbsp;
     </Text>
     <Text>{formatMoney(amount || 0)}</Text>
   </Paragraph>
+);
+
+const renderContractWorkPanel = (contractWorkSection, wellSectionTotal) => (
+  <Panel header={<Title level={4}>{contractWorkSection.sectionHeader}</Title>}>
+    <FormSection name={contractWorkSection.formSectionName}>
+      <Form.Item
+        label={
+          <Text className="color-primary" strong>
+            Contract Work Start and End Dates
+          </Text>
+        }
+      >
+        <Row gutter={48}>
+          <Col span={12}>
+            <Field
+              name="work_start_date"
+              label="Work Start Date"
+              placeholder="Select work start date"
+              component={renderConfig.DATE}
+            />
+          </Col>
+          <Col span={12}>
+            <Field
+              name="work_end_date"
+              label="Work End Date"
+              placeholder="Select work end date"
+              component={renderConfig.DATE}
+            />
+          </Col>
+        </Row>
+      </Form.Item>
+      {contractWorkSection.subSections.map((subSection) => (
+        <Form.Item
+          label={
+            <Text className="color-primary" strong>
+              {subSection.subSectionHeader}
+            </Text>
+          }
+        >
+          {subSection.amountFields.map((amountField) => (
+            <Field
+              name={amountField.fieldName}
+              label={amountField.fieldLabel}
+              placeholder="$0.00"
+              component={renderConfig.FIELD}
+              {...currencyMask}
+            />
+          ))}
+        </Form.Item>
+      ))}
+      {renderMoneyTotal("Section total", wellSectionTotal)}
+    </FormSection>
+  </Panel>
 );
 
 class ApplicationSectionTwo extends Component {
@@ -100,7 +153,7 @@ class ApplicationSectionTwo extends Component {
             <Panel
               key={index}
               header={
-                <Title level={4}>
+                <Title level={3}>
                   {/* NOTE: Could update name with the well's name when it is retrieved. */}
                   Well Site #{index + 1}
                   <Button style={{ float: "right" }} onClick={() => fields.remove(index)}>
@@ -110,7 +163,7 @@ class ApplicationSectionTwo extends Component {
               }
             >
               <FormSection name={createMemberName(member, "details")}>
-                <Title level={4}>Details</Title>
+                <Title level={3}>Details</Title>
                 <Row gutter={48}>
                   <Col span={24}>
                     <Field
@@ -130,7 +183,7 @@ class ApplicationSectionTwo extends Component {
               </FormSection>
 
               <FormSection name={createMemberName(member, "site_conditions")}>
-                <Title level={4}>Site Conditions</Title>
+                <Title level={3}>Site Conditions</Title>
                 <Paragraph>Reasons for site nomination (select all that apply):</Paragraph>
                 <Row gutter={48}>
                   <Col span={24}>
@@ -146,7 +199,7 @@ class ApplicationSectionTwo extends Component {
               </FormSection>
 
               <FormSection name={createMemberName(member, "contracted_work")}>
-                <Title level={4}>Contracted Work</Title>
+                <Title level={3}>Contracted Work</Title>
                 <Paragraph>
                   Enter the estimated cost of every work component your company will perform for
                   this contract.
@@ -154,107 +207,12 @@ class ApplicationSectionTwo extends Component {
                 <Row gutter={48}>
                   <Col span={24}>
                     <Collapse bordered={false}>
-                      <Panel header="Abandonment">
-                        <FormSection name="abandonment">
-                          <Field
-                            name="amount_0"
-                            label="amount_0"
-                            placeholder="amount_0"
-                            component={renderConfig.FIELD}
-                            {...currencyMask}
-                          />
-                          <Field
-                            name="amount_1"
-                            label="amount_1"
-                            placeholder="amount_1"
-                            component={renderConfig.FIELD}
-                            {...currencyMask}
-                          />
-                          {renderMoneyTotal("Section total", wellSectionTotals.abandonment)}
-                        </FormSection>
-                      </Panel>
-                      <Panel header="Preliminary Site Investigation">
-                        <FormSection name="preliminary_site_investigation">
-                          <Field
-                            name="amount_0"
-                            label="amount_0"
-                            placeholder="amount_0"
-                            component={renderConfig.FIELD}
-                            {...currencyMask}
-                          />
-                          <Field
-                            name="amount_1"
-                            label="amount_1"
-                            placeholder="amount_1"
-                            component={renderConfig.FIELD}
-                            {...currencyMask}
-                          />
-                          {renderMoneyTotal(
-                            "Section total",
-                            wellSectionTotals.preliminary_site_investigation
-                          )}
-                        </FormSection>
-                      </Panel>
-                      <Panel header="Detailed Site Investigation">
-                        <FormSection name="detailed_site_investigation">
-                          <Field
-                            name="amount_0"
-                            label="amount_0"
-                            placeholder="amount_0"
-                            component={renderConfig.FIELD}
-                            {...currencyMask}
-                          />
-                          <Field
-                            name="amount_1"
-                            label="amount_1"
-                            placeholder="amount_1"
-                            component={renderConfig.FIELD}
-                            {...currencyMask}
-                          />
-                          {renderMoneyTotal(
-                            "Section total",
-                            wellSectionTotals.detailed_site_investigation
-                          )}
-                        </FormSection>
-                      </Panel>
-                      <Panel header="Remediation">
-                        <FormSection name="remediation">
-                          <Field
-                            name="amount_0"
-                            label="amount_0"
-                            placeholder="amount_0"
-                            component={renderConfig.FIELD}
-                            {...currencyMask}
-                          />
-                          <Field
-                            name="amount_1"
-                            label="amount_1"
-                            placeholder="amount_1"
-                            component={renderConfig.FIELD}
-                            {...currencyMask}
-                          />
-                          {renderMoneyTotal("Section total", wellSectionTotals.remediation)}
-                        </FormSection>
-                      </Panel>
-                      <Panel header="Reclamation">
-                        <FormSection name="reclamation">
-                          <Field
-                            name="amount_0"
-                            label="amount_0"
-                            placeholder="amount_0"
-                            component={renderConfig.FIELD}
-                            {...currencyMask}
-                          />
-                          <Field
-                            name="amount_1"
-                            label="amount_1"
-                            placeholder="amount_1"
-                            component={renderConfig.FIELD}
-                            {...currencyMask}
-                          />
-                          {renderMoneyTotal("Section total", wellSectionTotals.reclamation)}
-                        </FormSection>
-                      </Panel>
+                      {CONTRACT_WORK_SECTIONS.map((contractWorkSection) =>
+                        renderContractWorkPanel(
+                          contractWorkSection,
+                          wellSectionTotals[contractWorkSection.formSectionName]
+                        )
+                      )}
                     </Collapse>
                     {renderMoneyTotal("Well total", wellTotal)}
                   </Col>
@@ -300,7 +258,7 @@ class ApplicationSectionTwo extends Component {
         </Row>
 
         <br />
-        <Title level={4}>Estimated Expense Summary</Title>
+        <Title level={3}>Estimated Expense Summary</Title>
         {(wellTotalsValues.length > 0 && (
           <Row gutter={16} type="flex">
             <Col style={{ textAlign: "right" }}>
