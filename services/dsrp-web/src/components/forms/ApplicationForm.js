@@ -62,13 +62,12 @@ export class ApplicationForm extends Component {
   ];
 
   componentDidUpdate = () => {
-    if (this.props.isDirty){
-    //if (this.props.isDirty) {
-      window.onbeforeunload = () => true
+    if (this.props.isDirty) {
+      window.onbeforeunload = () => true;
     } else {
-      window.onbeforeunload = undefined
+      window.onbeforeunload = undefined;
     }
-  }
+  };
 
   render() {
     return (
