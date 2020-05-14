@@ -1,13 +1,21 @@
 import React, { Component } from "react";
-import { Button, Col, Row, Steps, Form } from "antd";
-import { Prompt } from "react-router-dom";
+import { connect } from "react-redux";
+import { compose, bindActionCreators } from "redux";
+import { Col, Row, Steps } from "antd";
+import { Prompt, withRouter } from "react-router-dom";
+import { isDirty } from "redux-form";
+
 import PropTypes from "prop-types";
 import ApplicationSectionOne from "@/components/forms/ApplicationSectionOne";
 import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
 import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree";
+import APPLICATION_FORM from "@/constants/forms";
 
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
+  location: PropTypes.shape({
+    pathname: PropTypes.string
+  }).isRequired,
 };
 
 const { Step } = Steps;
@@ -48,10 +56,11 @@ export class ApplicationForm extends Component {
   ];
 
   render() {
+    console.log(this.props.isDirty(APPLICATION_FORM));
     return (
       <React.Fragment>
       <Prompt
-        when={true}
+        when={this.props.isDirty(APPLICATION_FORM)}
         message={(location) => {
           return this.props.location.pathname === location.pathname
             ? true
@@ -77,4 +86,13 @@ export class ApplicationForm extends Component {
 
 ApplicationForm.propTypes = propTypes;
 
-export default ApplicationForm;
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      isDirty,
+    },
+    dispatch
+  );
+
+
+export default compose(connect(null, mapDispatchToProps), withRouter)(ApplicationForm);
