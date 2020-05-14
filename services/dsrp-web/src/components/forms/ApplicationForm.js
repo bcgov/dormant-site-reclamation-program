@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { compose, bindActionCreators } from "redux";
 import { Col, Row, Steps } from "antd";
-import { Prompt, withRouter } from "react-router-dom";
 import { isDirty } from "redux-form";
 
 import PropTypes from "prop-types";
@@ -13,9 +12,7 @@ import APPLICATION_FORM from "@/constants/forms";
 
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
-  location: PropTypes.shape({
-    pathname: PropTypes.string
-  }).isRequired,
+  isDirty: PropTypes.bool.isRequired,
 };
 
 const { Step } = Steps;
@@ -55,18 +52,17 @@ export class ApplicationForm extends Component {
     },
   ];
 
+  componentDidUpdate = () => {
+    if (this.props.isDirty){
+    //if (this.props.isDirty) {
+      window.onbeforeunload = () => true
+    } else {
+      window.onbeforeunload = undefined
+    }
+  }
+
   render() {
-    console.log(this.props.isDirty(APPLICATION_FORM));
     return (
-      <React.Fragment>
-      <Prompt
-        when={this.props.isDirty(APPLICATION_FORM)}
-        message={(location) => {
-          return this.props.location.pathname === location.pathname
-            ? true
-            : "You have unsaved changes. Are you sure you want to leave without saving?";
-        }}
-      />
       <Row>
         <Col>
           <Steps current={this.state.current}>
@@ -79,20 +75,16 @@ export class ApplicationForm extends Component {
           </Row>
         </Col>
       </Row>
-      </React.Fragment>
     );
   }
 }
 
 ApplicationForm.propTypes = propTypes;
 
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {
-      isDirty,
-    },
-    dispatch
-  );
+const mapStateToProps = (state) => ({
+  isDirty: isDirty(APPLICATION_FORM)(state),
+});
+  
 
 
-export default compose(connect(null, mapDispatchToProps), withRouter)(ApplicationForm);
+export default connect(mapStateToProps)(ApplicationForm);
