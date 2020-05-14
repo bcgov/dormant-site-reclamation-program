@@ -99,7 +99,7 @@ class ApplicationResource(Resource, UserMixin):
     @api.marshal_with(APPLICATION, code=200)
     def get(self, application_guid):
 
-        application = Application.find_by_application_guid(application_guid)
+        application = Application.find_by_guid(application_guid)
 
         if application is None:
             raise NotFound('No application was found with the guid provided.')
@@ -114,7 +114,7 @@ class ApplicationResource(Resource, UserMixin):
         try:
             application = Application._schema().load(
                 request.json,
-                instance=Application.find_by_application_guid(
+                instance=Application.find_by_guid(
                     application_guid))
         except MarshmallowError as e:
             raise BadRequest(e)

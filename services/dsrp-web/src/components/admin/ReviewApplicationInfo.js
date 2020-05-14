@@ -7,8 +7,9 @@ import { bindActionCreators } from "redux";
 import { Table } from "antd";
 import { getApplications } from "@/selectors/applicationSelectors";
 import { fetchApplications } from "@/actionCreators/applicationActionCreator";
-import { formatDateTime } from "@/utils/helpers";
+import { formatDateTime, dateSorter } from "@/utils/helpers";
 import * as Strings from "@/constants/strings";
+import * as route from "@/constants/routes";
 
 const propTypes = {
   applications: PropTypes.any.isRequired,
@@ -19,8 +20,6 @@ const columns = [
   {
     title: "Company Name",
     dataIndex: "company_name",
-    sorter: (a, b) => a.company_name.length - b.company_name.length,
-    sortDirections: ["descend"],
     render: (text) => <div title="company_name">{text || Strings.DASH}</div>,
   },
   {
@@ -52,7 +51,7 @@ const columns = [
   {
     title: "Submission Date",
     dataIndex: "submission_date",
-    sorter: (a, b) => a.submissionDate.length - b.submissionDate.length,
+    sorter: (a, b) => dateSorter("submissionDate"),
     render: (text) => <div title="submission_date">{formatDateTime(text)}</div>,
   },
   {
@@ -62,7 +61,7 @@ const columns = [
     sortField: "",
     render: (text, record) => (
       <div title="View">
-        <Link to={"/"}>View</Link>
+        <Link to={route.VIEW_APPLICATION.dynamicRoute(record.key)}>View</Link>
       </div>
     ),
   },
@@ -98,7 +97,7 @@ export class ReviewApplicationInfo extends Component {
       <>
         <Table
           columns={columns}
-          pagination={false}
+          pagination={true}
           dataSource={this.transformRowData(this.props.applications)}
           onChange={this.onChange}
           expandable={{
