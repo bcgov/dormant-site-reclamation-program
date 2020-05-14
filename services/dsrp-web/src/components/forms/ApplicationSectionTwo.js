@@ -249,11 +249,6 @@ class ApplicationSectionTwo extends Component {
                       validate={[required, number]}
                       disabled={!this.props.isEditable}
                     />
-                    <Descriptions column={1} title="Well Site Details">
-                      <Descriptions.Item label="Name">N/A</Descriptions.Item>
-                      <Descriptions.Item label="Operator">N/A</Descriptions.Item>
-                      <Descriptions.Item label="Location">N/A</Descriptions.Item>
-                    </Descriptions>
                   </Col>
                 </Row>
               </FormSection>
