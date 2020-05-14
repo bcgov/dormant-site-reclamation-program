@@ -1,6 +1,7 @@
 import React from "react";
 import { Row, Col, Typography } from "antd";
 import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
+import ReviewApplicationInfo from "@/components/admin/ReviewApplicationInfo";
 
 const { Paragraph, Title } = Typography;
 
@@ -30,7 +31,7 @@ export const ReviewApplicationsPage = () => (
       className="landing-section"
     >
       <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-        <Paragraph>Content</Paragraph>
+        <ReviewApplicationInfo />
       </Col>
     </Row>
   </>

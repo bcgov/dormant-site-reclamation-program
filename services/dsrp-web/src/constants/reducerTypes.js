@@ -16,7 +16,9 @@ export const ORGBOOK_SEARCH = "ORGBOOK_SEARCH";
 export const ORGBOOK_CREDENTIAL = "ORGBOOK_CREDENTIAL";
 
 // Application
+export const APPLICATIONS = "APPLICATIONS";
 export const CREATE_APPLICATION = "CREATE_APPLICATION";
+export const GET_APPLICATIONS = "GET_APPLICATIONS";
 
 // OGC
 export const OGC = "OGC";

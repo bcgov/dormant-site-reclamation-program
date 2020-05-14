@@ -5,6 +5,7 @@ import * as reducerTypes from "../constants/reducerTypes";
 import * as API from "../constants/api";
 import { ENVIRONMENT } from "../constants/environment";
 import { createRequestHeader } from "../utils/requestHeaders";
+import * as applicationActions from "@/actions/applicationActions";
 import CustomAxios from "../customAxios";
 
 export const createApplication = (application) => (dispatch) => {
@@ -20,6 +21,18 @@ export const createApplication = (application) => (dispatch) => {
       dispatch(success(reducerTypes.CREATE_APPLICATION));
       return response;
     })
-    .catch(() => dispatch(error(reducerTypes.CREATE_APPLICATION)))
-    .finally(() => dispatch(hideLoading("modal")));
+    .catch(() => dispatch(error(reducerTypes.CREATE_APPLICATION)));
+};
+
+export const fetchApplications = () => (dispatch) => {
+  dispatch(request(reducerTypes.GET_APPLICATIONS));
+  return CustomAxios()
+    .get(ENVIRONMENT.apiUrl + API.APPLICATION, createRequestHeader())
+    .then((response) => {
+      dispatch(success(reducerTypes.GET_APPLICATIONS));
+      dispatch(applicationActions.storeApplications(response.data));
+      return response;
+    })
+    .catch(() => dispatch(error(reducerTypes.GET_APPLICATIONS)))
+    .finally(() => dispatch(hideLoading()));
 };
