@@ -14,12 +14,11 @@ class ApplicationSectionThree extends Component {
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <FormSection name="review">
           <Field
-            id="date"
-            name="date"
-            label="Date"
-            placeholder="Select date"
-            component={renderConfig.DATE}
-            validate={[required, dateNotInFuture]}
+            id="reviewed_and_verified"
+            name="reviewed_and_verified"
+            label="I have reviewed and verified that this application's information is correct."
+            component={renderConfig.CHECKBOX}
+            validate={[required]}
           />
         </FormSection>
 
@@ -48,5 +47,4 @@ export default reduxForm({
   form: FORM.APPLICATION_FORM,
   destroyOnUnmount: false,
   forceUnregisterOnUnmount: true,
-  enableReinitialize: true,
 })(ApplicationSectionThree);

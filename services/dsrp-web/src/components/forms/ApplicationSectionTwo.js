@@ -347,6 +347,5 @@ export default compose(
     form: FORM.APPLICATION_FORM,
     destroyOnUnmount: false,
     forceUnregisterOnUnmount: true,
-    enableReinitialize: true,
   })
 )(ApplicationSectionTwo);
