@@ -3,7 +3,6 @@ import React, { Component } from "react";
 import { reduxForm, Field, FormSection } from "redux-form";
 import { Row, Col, Typography, Form, Button } from "antd";
 import PropTypes from "prop-types";
-
 import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import { phoneMask, postalCodeMask } from "@/utils/helpers";
@@ -16,6 +15,7 @@ import { ORGBOOK_URL } from "@/constants/routes";
 const { Text, Title, Paragraph } = Typography;
 
 const propTypes = {
+  handleSubmit: PropTypes.func.isRequired,
   onFileLoad: PropTypes.func.isRequired,
   onRemoveFile: PropTypes.func.isRequired,
 };
@@ -200,7 +200,7 @@ class ApplicationSectionOne extends Component {
                 label="Email"
                 placeholder="Email"
                 component={renderConfig.FIELD}
-                // validate={[required]}
+                validate={[required]}
               />
             </Col>
             <Col span={12}>
