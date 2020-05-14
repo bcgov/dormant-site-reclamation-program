@@ -103,12 +103,11 @@ export const guidMask = createTextMask({
     },
   },
   guide: false,
-  // stripMask: true,
+  stripMask: false,
   allowEmpty: true,
   // onChange: value => {},
   // onCompletePattern: value => {},
 });
-
 
 export const dateSorter = (key) => (a, b) => {
   if (a[key] === b[key]) {

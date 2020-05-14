@@ -40,7 +40,7 @@ export const fetchApplications = () => (dispatch) => {
 export const fetchApplication = (guid) => (dispatch) => {
   dispatch(request(reducerTypes.GET_APPLICATION));
   return CustomAxios()
-    .get(ENVIRONMENT.apiUrl + API.APPLICATION + "/" + guid, createRequestHeader())
+    .get(`${ENVIRONMENT.apiUrl + API.APPLICATION  }/${  guid}`, createRequestHeader())
     .then((response) => {
       dispatch(success(reducerTypes.GET_APPLICATION));
       dispatch(applicationActions.storeApplication(response.data));

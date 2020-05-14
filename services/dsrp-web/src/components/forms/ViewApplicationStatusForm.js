@@ -5,7 +5,7 @@ import { Row, Col, Typography, Form, Button } from "antd";
 import PropTypes from "prop-types";
 
 import { renderConfig } from "@/components/common/config";
-import { required } from "@/utils/validate";
+import { required, exactLength } from "@/utils/validate";
 import { guidMask } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
 
@@ -29,7 +29,7 @@ class ViewApplicationStatusForm extends Component {
               label="Application Reference Number"
               placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
               component={renderConfig.FIELD}
-              validate={[required]}
+              validate={[required, exactLength(36)]}
               {...guidMask}
             />
           </Col>
