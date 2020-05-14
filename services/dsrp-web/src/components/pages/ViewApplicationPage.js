@@ -56,7 +56,7 @@ export class ViewApplicationPage extends Component {
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
                 <LinkButton onClick={this.goBack}>
                   <Icon type="arrow-left" style={{ paddingRight: "5px" }} />
-                  Return to Review Application
+                  Return to Review Applications
                 </LinkButton>
               </Col>
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
@@ -76,7 +76,7 @@ export class ViewApplicationPage extends Component {
             </Row>
           </>
         ) : (
-          <div>Loading ....</div>
+          <div>Loading...</div>
         )}
       </>
     );
