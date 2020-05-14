@@ -1,7 +1,7 @@
 import React from "react";
 import { Row, Col, Typography } from "antd";
 import PropTypes from "prop-types";
-
+import { formatDateTime } from "@/utils/helpers";
 const { Paragraph, Title } = Typography;
 
 const propTypes = {
@@ -16,8 +16,9 @@ const propTypes = {
 export const ApplicationStatusCard = (props) => (
   <Row>
     <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-      <Paragraph>{props.application.guid}</Paragraph>
-      <Paragraph>{props.application.application_status_code}</Paragraph>
+      <Paragraph>Identifier: {props.application.guid}</Paragraph>
+      <Paragraph>Status: {props.application.application_status_code}</Paragraph>
+      <Paragraph>Submission Date: {formatDateTime(props.application.submission_date)}</Paragraph>
     </Col>
   </Row>
 );
