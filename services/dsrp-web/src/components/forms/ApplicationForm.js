@@ -1,8 +1,8 @@
 /* eslint-disable */
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Col, Row, Steps } from "antd";
 import { isDirty } from "redux-form";
+import { Col, Row, Steps } from "antd";
 
 import PropTypes from "prop-types";
 import ApplicationSectionOne from "@/components/forms/ApplicationSectionOne";
@@ -93,7 +93,5 @@ ApplicationForm.propTypes = propTypes;
 const mapStateToProps = (state) => ({
   isDirty: isDirty(APPLICATION_FORM)(state),
 });
-  
-
 
 export default connect(mapStateToProps)(ApplicationForm);
