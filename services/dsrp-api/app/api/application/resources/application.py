@@ -8,9 +8,9 @@ from app.api.services.email_service import EmailService
 from app.api.utils.access_decorators import requires_role_view_all
 from app.api.utils.resources_mixins import UserMixin
 
-
 from app.api.application.response_models import APPLICATION
 from app.api.application.models.application import Application
+
 
 class ApplicationListResource(Resource, UserMixin):
     @api.doc(description='Get all applications')
@@ -31,7 +31,7 @@ class ApplicationListResource(Resource, UserMixin):
             application.save()
         except MarshmallowError as e:
             raise BadRequest(e)
-        
+
         with EmailService() as es:
             application.send_confirmation_email(es)
 
@@ -44,7 +44,7 @@ class ApplicationResource(Resource, UserMixin):
     @api.marshal_with(APPLICATION, code=200)
     def get(self, application_guid):
 
-        application = Application.find_by_application_guid(application_guid)
+        application = Application.find_by_guid(application_guid)
 
         if application is None:
             raise NotFound('No application was found with the guid provided.')
@@ -57,7 +57,8 @@ class ApplicationResource(Resource, UserMixin):
     @api.marshal_with(APPLICATION, code=200)
     def put(self, application_guid):
         try:
-            application = Application._schema().load(request.json, instance=Application.find_by_application_guid(application_guid))
+            application = Application._schema().load(
+                request.json, instance=Application.find_by_application_guid(application_guid))
         except MarshmallowError as e:
             raise BadRequest(e)
 

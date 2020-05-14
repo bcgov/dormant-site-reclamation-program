@@ -9,31 +9,29 @@ import { required } from "@/utils/validate";
 import { guidMask } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
 
-
 const propTypes = {
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
 };
 
 const defaultProps = {
-  onChange:()=>{},
+  onChange: () => {},
 };
 
 class ViewApplicationStatusForm extends Component {
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
-          <Row gutter={48}>
-            <Col span={24}>
-              <Field
-                id="guid"
-                name="guid"
-                label='Application Reference Number'
-                  
-                placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                component={renderConfig.FIELD}
-                validate={[required]}
-                {...guidMask}
-              />
+        <Row gutter={48}>
+          <Col span={24}>
+            <Field
+              id="guid"
+              name="guid"
+              label="Application Reference Number"
+              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+              component={renderConfig.FIELD}
+              validate={[required]}
+              {...guidMask}
+            />
           </Col>
         </Row>
         <Row className="steps-action">
