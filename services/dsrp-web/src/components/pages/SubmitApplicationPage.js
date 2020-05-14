@@ -13,9 +13,25 @@ const propTypes = {
 const { Paragraph, Title } = Typography;
 
 export class SubmitApplicationPage extends Component {
+  state = { uploadedFiles: [] };
+
   handleSubmit = (values) => {
-    const application = { json: values };
+    const application = { json: values, documents: this.state.uploadedFiles };
     this.props.createApplication(application);
+  };
+
+  onFileLoad = (document_name, document_manager_guid) => {
+    this.setState((prevState) => ({
+      uploadedFiles: [{ document_manager_guid, document_name }, ...prevState.uploadedFiles],
+    }));
+  };
+
+  onRemoveFile = (error, file) => {
+    this.setState((prevState) => ({
+      uploadedFiles: prevState.uploadedFiles.filter(
+        (doc) => doc.document_manager_guid !== file.serverId
+      ),
+    }));
   };
 
   render() {
@@ -45,7 +61,11 @@ export class SubmitApplicationPage extends Component {
           className="landing-section"
         >
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-            <ApplicationForm handleSubmit={this.handleSubmit} />
+            <ApplicationForm
+              handleSubmit={this.handleSubmit}
+              onFileLoad={this.onFileLoad}
+              onRemoveFile={this.onRemoveFile}
+            />
           </Col>
         </Row>
       </>
