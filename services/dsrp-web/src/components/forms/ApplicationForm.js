@@ -1,12 +1,20 @@
+/* eslint-disable */
 import React, { Component } from "react";
-import { Button, Col, Row, Steps, Form } from "antd";
+import { connect } from "react-redux";
+import { isDirty } from "redux-form";
+import { Col, Row, Steps } from "antd";
+
 import PropTypes from "prop-types";
 import ApplicationSectionOne from "@/components/forms/ApplicationSectionOne";
 import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
 import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree";
+import APPLICATION_FORM from "@/constants/forms";
 
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
+  isDirty: PropTypes.bool.isRequired,
+  onFileLoad: PropTypes.func.isRequired,
+  onRemoveFile: PropTypes.func.isRequired,
 };
 
 const { Step } = Steps;
@@ -27,7 +35,14 @@ export class ApplicationForm extends Component {
   steps = [
     {
       title: "Company Details",
-      content: <ApplicationSectionOne onSubmit={this.nextFormStep} />,
+      content: (
+        <ApplicationSectionOne
+          onSubmit={this.nextFormStep}
+          onFileLoad={this.props.onFileLoad}
+          onRemoveFile={this.props.onRemoveFile}
+          initialValues={{ company_details: { province: "BC" } }}
+        />
+      ),
     },
     {
       title: "Well Sites",
@@ -45,6 +60,14 @@ export class ApplicationForm extends Component {
       ),
     },
   ];
+
+  componentDidUpdate = () => {
+    if (this.props.isDirty) {
+      window.onbeforeunload = () => true;
+    } else {
+      window.onbeforeunload = undefined;
+    }
+  };
 
   render() {
     return (
@@ -66,4 +89,8 @@ export class ApplicationForm extends Component {
 
 ApplicationForm.propTypes = propTypes;
 
-export default ApplicationForm;
+const mapStateToProps = (state) => ({
+  isDirty: isDirty(APPLICATION_FORM)(state),
+});
+
+export default connect(mapStateToProps)(ApplicationForm);
