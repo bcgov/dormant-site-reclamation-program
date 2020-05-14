@@ -18,10 +18,8 @@ class ApplicationListResource(Resource, UserMixin):
     @api.doc(
         description='Get all applications. Default order: submission_date desc',
         params={
-            'page':
-            f'The page number of paginated records to return. Default: {PAGE_DEFAULT}',
-            'per_page':
-            f'The number of records to return per page. Default: {PER_PAGE_DEFAULT}',
+            'page': f'The page number of paginated records to return. Default: {PAGE_DEFAULT}',
+            'per_page': f'The number of records to return per page. Default: {PER_PAGE_DEFAULT}',
         })
     #@requires_role_view_all
     @api.marshal_with(APPLICATION_LIST, code=200)
@@ -30,12 +28,9 @@ class ApplicationListResource(Resource, UserMixin):
         records, pagination_details = self._apply_filters_and_pagination(
             page_number=request.args.get('page', PAGE_DEFAULT, type=int),
             page_size=request.args.get('per_page', PER_PAGE_DEFAULT, type=int),
-            sort_field=request.args.get('sort_field',
-                                        'submission_date',
-                                        type=str),
+            sort_field=request.args.get('sort_field', 'submission_date', type=str),
             sort_dir=request.args.get('sort_dir', 'desc', type=str),
-            application_status_code=request.args.getlist(
-                'application_status_code', type=str))
+            application_status_code=request.args.getlist('application_status_code', type=str))
 
         data = records.all()
 
@@ -59,9 +54,7 @@ class ApplicationListResource(Resource, UserMixin):
         filters = []
 
         if application_status_code:
-            filters.append(
-                Application.application_status_code.in_(
-                    application_status_code))
+            filters.append(Application.application_status_code.in_(application_status_code))
 
         base_query = base_query.filter(*filters)
 
@@ -81,8 +74,7 @@ class ApplicationListResource(Resource, UserMixin):
     @api.marshal_with(APPLICATION, code=201)
     def post(self):
         try:
-            application = Application._schema().load(
-                request.json['application'])
+            application = Application._schema().load(request.json['application'])
             application.save()
         except MarshmallowError as e:
             raise BadRequest(e)
@@ -113,9 +105,7 @@ class ApplicationResource(Resource, UserMixin):
     def put(self, application_guid):
         try:
             application = Application._schema().load(
-                request.json,
-                instance=Application.find_by_guid(
-                    application_guid))
+                request.json, instance=Application.find_by_guid(application_guid))
         except MarshmallowError as e:
             raise BadRequest(e)
 

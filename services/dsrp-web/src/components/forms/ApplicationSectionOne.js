@@ -43,14 +43,16 @@ class ApplicationSectionOne extends Component {
                 label={
                   <>
                     Company Name
-                    <a
-                      style={{ float: "right" }}
-                      href={ORGBOOK_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Search BC Registries for your company
-                    </a>
+                    {this.props.isEditable && (
+                      <a
+                        style={{ float: "right" }}
+                        href={ORGBOOK_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Search BC Registries for your company
+                      </a>
+                    )}
                   </>
                 }
                 placeholder="Company Name"
