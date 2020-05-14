@@ -36,6 +36,7 @@ const columns = [
   {
     title: "Submission Date",
     dataIndex: "submission_date",
+    sortField: "submission_date",
     sorter: true,
     render: (text) => <div title="submission_date">{formatDateTime(text)}</div>,
   },
