@@ -209,7 +209,7 @@ class ApplicationSectionOne extends Component {
                 label="Email"
                 placeholder="Email"
                 component={renderConfig.FIELD}
-                // validate={[required]}
+                validate={[required]}
               />
             </Col>
             <Col span={12}>
