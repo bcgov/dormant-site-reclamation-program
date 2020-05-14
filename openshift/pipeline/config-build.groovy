@@ -96,6 +96,14 @@ app {
                     ]
                 ],
                 [
+                'file':'openshift/templates/dbbackup.bc.json',
+                    'params':[
+                        'NAME':"dsrp-database-backup",
+                        'SUFFIX': "${app.build.suffix}",
+                        'VERSION':"${app.build.version}"
+                    ]
+                ],
+                [
                     'file':'openshift/templates/tools/metabase.bc.json',
                     'params':[
                             'NAME':"metabase",
