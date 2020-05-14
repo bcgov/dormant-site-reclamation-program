@@ -47,24 +47,7 @@
           }
         }
       },
-      {
-        "kind": "ImageStream",
-        "apiVersion": "v1",
-        "metadata": {
-          "name": "${FLYWAY_NAME}",
-          "generation": 1,
-          "creationTimestamp": null,
-          "labels": {
-            "shared": "true"
-          },
-          "annotations": {}
-        },
-        "spec": {
-          "lookupPolicy": {
-            "local": false
-          }
-        }
-      },
+
       {
         "kind": "DeploymentConfig",
         "apiVersion": "v1",
@@ -78,17 +61,6 @@
           "strategy": {
             "type": "Recreate",
             "recreateParams": {
-              "pre": {
-                "failurePolicy": "Retry",
-                "execNewPod": {
-                  "containerName": "flyway-migration",
-                  "command": [
-                    "bash",
-                    "-c",
-                    "$FLYWAY_HOME/scripts/run_migrations.sh"
-                  ]
-                }
-              },
               "maxSurge": "50%",
               "maxUnavailable": 0,
               "timeoutSeconds": 1200
@@ -106,17 +78,6 @@
                 "from": {
                   "kind": "ImageStreamTag",
                   "name": "${NAME}:${VERSION}"
-                }
-              }
-            },
-            {
-              "type": "ImageChange",
-              "imageChangeParams": {
-                "automatic": true,
-                "containerNames": ["flyway-migration"],
-                "from": {
-                  "kind": "ImageStreamTag",
-                  "name": "${FLYWAY_NAME}:${VERSION}"
                 }
               }
             }
@@ -323,17 +284,6 @@
       {
         "name": "MEMORY_LIMIT",
         "value": "0"
-      },
-      {
-        "name": "FLYWAY_NAME",
-        "displayName": "Name",
-        "description": "A name for flyway objects",
-        "required": true
-      },
-      {
-        "name": "DB_NRIS_CONFIG_NAME",
-        "description": "Configuration name for the nris database",
-        "required": true
       }
     ]
   }
