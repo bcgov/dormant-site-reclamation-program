@@ -10,14 +10,14 @@ import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
 import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree";
 import {APPLICATION_FORM} from "@/constants/forms";
 
+const { Step } = Steps;
+
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   isDirty: PropTypes.bool.isRequired,
   onFileLoad: PropTypes.func.isRequired,
   onRemoveFile: PropTypes.func.isRequired,
 };
-
-const { Step } = Steps;
 
 export class ApplicationForm extends Component {
   state = { current: 0 };

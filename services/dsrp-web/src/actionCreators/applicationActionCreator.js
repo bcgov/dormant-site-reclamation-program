@@ -37,10 +37,10 @@ export const fetchApplications = () => (dispatch) => {
     .finally(() => dispatch(hideLoading()));
 };
 
-export const fetchApplication = (guid) => (dispatch) => {
+export const fetchApplicationByID = (guid) => (dispatch) => {
   dispatch(request(reducerTypes.GET_APPLICATION));
   return CustomAxios()
-    .get(`${ENVIRONMENT.apiUrl + API.APPLICATION  }/${  guid}`, createRequestHeader())
+    .get(ENVIRONMENT.apiUrl + API.APPLICATION_BY_ID(guid), createRequestHeader())
     .then((response) => {
       dispatch(success(reducerTypes.GET_APPLICATION));
       dispatch(applicationActions.storeApplication(response.data));

@@ -164,29 +164,5 @@
   },
   "browserslist": [
     "> 0.1%"
-  ],
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "lint-prepush"
-    }
-  },
-  "lint-staged": {
-    "*.{js,css,json,md}": [
-      "npm run format:write",
-      "git add"
-    ],
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ]
-  },
-  "lint-prepush": {
-    "base": "develop",
-    "tasks": {
-      "*.js": [
-        "jest --env=jsdom --runInBand --findRelatedTests"
-      ]
-    }
-  }
+  ]
 }

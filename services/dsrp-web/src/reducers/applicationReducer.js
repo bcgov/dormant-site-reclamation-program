@@ -3,6 +3,7 @@ import { APPLICATIONS } from "../constants/reducerTypes";
 
 const initialState = {
   applications: [],
+  application: {},
 };
 
 export const applicationReducer = (state = initialState, action) => {

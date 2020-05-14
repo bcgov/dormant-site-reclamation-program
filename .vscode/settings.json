@@ -20,5 +20,6 @@
     "source.fixAll.eslint": true,
     "eslint.autoFixOnSave": true
   },
-  "cSpell.words": ["idir"]
+  "cSpell.words": ["idir"],
+  "workbench.colorTheme": "Abyss"
 }
