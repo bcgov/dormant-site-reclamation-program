@@ -45,3 +45,6 @@ export const fetchLiabilities = () => (dispatch) => {
     .catch(() => dispatch(error(reducerTypes.FETCH_LIABILITIES)))
     .finally(() => dispatch(hideLoading()));
 };
+
+export const validateWell = (params = {}) =>
+  CustomAxios().get(ENVIRONMENT.apiUrl + API.WELL(params), createRequestHeader());

@@ -1,16 +1,18 @@
 import React, { Component } from "react";
-import { reduxForm, FieldArray, getFormValues } from "redux-form";
+import { reduxForm, FieldArray, getFormValues, Field, FormSection } from "redux-form";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { Row, Col, Typography, Form, Divider, Button, Collapse, Descriptions, Icon } from "antd";
-import { Field, FormSection } from "redux-form";
-import { sum, flatten, union, merge } from "lodash";
+import { Row, Col, Typography, Form, Button, Collapse, Descriptions, Icon } from "antd";
+
+import { sum, get, set } from "lodash";
 import { renderConfig } from "@/components/common/config";
-import { required, dateNotInFuture, maxLength } from "@/utils/validate";
+import { required, number } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 import { currencyMask, formatMoney } from "@/utils/helpers";
 
 import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
+import WellField from "@/components/forms/WellField";
+import { validateWell } from "@/actionCreators/OGCActionCreator";
 
 const { Text, Paragraph, Title } = Typography;
 const { Panel } = Collapse;
@@ -42,6 +44,59 @@ const renderMoneyTotal = (label, amount) => (
   </Paragraph>
 );
 
+const asyncValidateError = (field, message) => {
+  const errors = {};
+  set(errors, field, message);
+  throw errors;
+};
+
+const asyncValidateWell = async (values, field) => {
+  if (isNaN(get(values, field))) {
+    asyncValidateError(field, "Input must be a number.");
+  }
+  return validateWell({ well_auth_number: get(values, field) }).then((response) => {
+    if (response.data.records.length === 0)
+      asyncValidateError(
+        field,
+        "This number does not match any registered well authorization number. If you believe this is in error, please contact us."
+      );
+    if (response.data.records.length === 1) {
+      if (!values.contract_details.operator_id)
+        asyncValidateError(
+          field,
+          "Please select the valid permit holder for this well authorization number."
+        );
+      if (response.data.records[0].operator_id !== values.contract_details.operator_id)
+        asyncValidateError(
+          field,
+          "This well authorization number does not belong to the selected permit holder. If you believe this is in error, please contact us."
+        );
+    }
+    if (response.data.records.length > 1)
+      asyncValidateError(
+        field,
+        "Cannot confirm this well authorization number. Please contact us for further assistance."
+      );
+  });
+};
+
+const asyncValidate = (values, dispatch, props, field) => {
+  if (field === "contract_details.operator_id") {
+    return Promise.all(
+      values.well_sites.map((well, index) =>
+        asyncValidateWell(
+          values,
+          `well_sites[${index}].details.well_authorization_number`
+        ).then(() => {})
+      )
+    );
+  }
+
+  if (field.includes("well_authorization_number") && get(values, field)) {
+    return asyncValidateWell(values, field);
+  }
+};
+
 class ApplicationSectionTwo extends Component {
   state = {
     contractedWorkTotals: { grandTotal: 0, wellTotals: {} },
@@ -63,7 +118,7 @@ class ApplicationSectionTwo extends Component {
     }
 
     let grandTotal = 0;
-    let wellTotals = {};
+    const wellTotals = {};
     formValues.well_sites.map((wellSite, wellIndex) => {
       if (!wellSite.contracted_work) {
         return;
@@ -84,7 +139,7 @@ class ApplicationSectionTwo extends Component {
       grandTotal += wellTotal;
     });
 
-    const contractedWorkTotals = { grandTotal: grandTotal, wellTotals: wellTotals };
+    const contractedWorkTotals = { grandTotal, wellTotals };
     this.setState({ contractedWorkTotals });
   };
 
@@ -120,14 +175,9 @@ class ApplicationSectionTwo extends Component {
                           name="well_authorization_number"
                           label="Well Authorization Number"
                           placeholder="Well Authorization Number"
-                          component={renderConfig.FIELD}
-                          validate={[required]}
+                          component={WellField}
+                          validate={[required, number]}
                         />
-                        <Descriptions column={1} title="Well Site Details">
-                          <Descriptions.Item label="Name">N/A</Descriptions.Item>
-                          <Descriptions.Item label="Operator">N/A</Descriptions.Item>
-                          <Descriptions.Item label="Location">N/A</Descriptions.Item>
-                        </Descriptions>
                       </Col>
                     </Row>
                   </FormSection>
@@ -285,8 +335,8 @@ class ApplicationSectionTwo extends Component {
           <Row gutter={48}>
             <Col span={24}>
               <Field
-                id="organization_id"
-                name="organization_id"
+                id="operator_id"
+                name="operator_id"
                 label="Permit Holder"
                 placeholder="Search for permit holder for whom this work will be performed"
                 component={PermitHolderSelect}
@@ -323,5 +373,10 @@ export default compose(
     form: FORM.APPLICATION_FORM,
     destroyOnUnmount: false,
     forceUnregisterOnUnmount: true,
+    asyncValidate,
+    asyncChangeFields: [
+      "contract_details.operator_id",
+      "well_sites[].details.well_authorization_number",
+    ],
   })
 )(ApplicationSectionTwo);
