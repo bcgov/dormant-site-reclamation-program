@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { reduxForm, FieldArray, getFormValues, Field, FormSection } from "redux-form";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import { compose } from "redux";
-import { Row, Col, Typography, Form, Button, Collapse, Descriptions, Icon } from "antd";
+import { Row, Col, Typography, Form, Divider, Button, Collapse, Descriptions, Icon } from "antd";
 
-import { sum, get, set } from "lodash";
+import { sum, flatten, union, merge, get, set } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import { required, number } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
@@ -17,7 +18,19 @@ import { validateWell } from "@/actionCreators/OGCActionCreator";
 const { Text, Paragraph, Title } = Typography;
 const { Panel } = Collapse;
 
-const defaultProps = {};
+const propTypes = {
+  previousStep: PropTypes.func,
+  onSubmit: PropTypes.func,
+  isEditable: PropTypes.bool,
+  initialValues: PropTypes.objectOf(PropTypes.strings),
+};
+
+const defaultProps = {
+  previousStep: () => {},
+  onSubmit: () => {},
+  isEditable: true,
+  initialValues: {},
+};
 
 const createMemberName = (member, name) => `${member}.${name}`;
 
@@ -160,9 +173,11 @@ class ApplicationSectionTwo extends Component {
                 <Title level={4}>
                   {/* NOTE: Could update name with the well's name when it is retrieved. */}
                   Well Site #{index + 1}
-                  <Button style={{ float: "right" }} onClick={() => fields.remove(index)}>
-                    Remove
-                  </Button>
+                  {this.props.isEditable && (
+                    <Button style={{ float: "right" }} onClick={() => fields.remove(index)}>
+                      Remove
+                    </Button>
+                  )}
                 </Title>
               }
             >
@@ -176,6 +191,7 @@ class ApplicationSectionTwo extends Component {
                       placeholder="Well Authorization Number"
                       component={WellField}
                       validate={[required, number]}
+                      disabled={!this.props.isEditable}
                     />
                     <Descriptions column={1} title="Well Site Details">
                       <Descriptions.Item label="Name">N/A</Descriptions.Item>
@@ -195,6 +211,7 @@ class ApplicationSectionTwo extends Component {
                       <Field
                         name={`site_condition_${index}`}
                         label={condition}
+                        disabled={!this.props.isEditable}
                         component={renderConfig.CHECKBOX}
                       />
                     ))}
@@ -218,6 +235,7 @@ class ApplicationSectionTwo extends Component {
                             label="amount_0"
                             placeholder="amount_0"
                             component={renderConfig.FIELD}
+                            disabled={!this.props.isEditable}
                             {...currencyMask}
                           />
                           <Field
@@ -225,6 +243,7 @@ class ApplicationSectionTwo extends Component {
                             label="amount_1"
                             placeholder="amount_1"
                             component={renderConfig.FIELD}
+                            disabled={!this.props.isEditable}
                             {...currencyMask}
                           />
                           {renderMoneyTotal("Section total", wellSectionTotals.abandonment)}
@@ -237,6 +256,7 @@ class ApplicationSectionTwo extends Component {
                             label="amount_0"
                             placeholder="amount_0"
                             component={renderConfig.FIELD}
+                            disabled={!this.props.isEditable}
                             {...currencyMask}
                           />
                           <Field
@@ -244,6 +264,7 @@ class ApplicationSectionTwo extends Component {
                             label="amount_1"
                             placeholder="amount_1"
                             component={renderConfig.FIELD}
+                            disabled={!this.props.isEditable}
                             {...currencyMask}
                           />
                           {renderMoneyTotal(
@@ -259,6 +280,7 @@ class ApplicationSectionTwo extends Component {
                             label="amount_0"
                             placeholder="amount_0"
                             component={renderConfig.FIELD}
+                            disabled={!this.props.isEditable}
                             {...currencyMask}
                           />
                           <Field
@@ -266,6 +288,7 @@ class ApplicationSectionTwo extends Component {
                             label="amount_1"
                             placeholder="amount_1"
                             component={renderConfig.FIELD}
+                            disabled={!this.props.isEditable}
                             {...currencyMask}
                           />
                           {renderMoneyTotal(
@@ -281,6 +304,7 @@ class ApplicationSectionTwo extends Component {
                             label="amount_0"
                             placeholder="amount_0"
                             component={renderConfig.FIELD}
+                            disabled={!this.props.isEditable}
                             {...currencyMask}
                           />
                           <Field
@@ -288,6 +312,7 @@ class ApplicationSectionTwo extends Component {
                             label="amount_1"
                             placeholder="amount_1"
                             component={renderConfig.FIELD}
+                            disabled={!this.props.isEditable}
                             {...currencyMask}
                           />
                           {renderMoneyTotal("Section total", wellSectionTotals.remediation)}
@@ -300,6 +325,7 @@ class ApplicationSectionTwo extends Component {
                             label="amount_0"
                             placeholder="amount_0"
                             component={renderConfig.FIELD}
+                            disabled={!this.props.isEditable}
                             {...currencyMask}
                           />
                           <Field
@@ -307,6 +333,7 @@ class ApplicationSectionTwo extends Component {
                             label="amount_1"
                             placeholder="amount_1"
                             component={renderConfig.FIELD}
+                            disabled={!this.props.isEditable}
                             {...currencyMask}
                           />
                           {renderMoneyTotal("Section total", wellSectionTotals.reclamation)}
@@ -322,9 +349,11 @@ class ApplicationSectionTwo extends Component {
         })}
       </Collapse>
       <br />
-      <Button type="primary" onClick={() => fields.push({})}>
-        Add Well Site
-      </Button>
+      {this.props.isEditable && (
+        <Button type="primary" onClick={() => fields.push({})}>
+          Add Well Site
+        </Button>
+      )}
     </>
   );
 
@@ -343,6 +372,7 @@ class ApplicationSectionTwo extends Component {
                 label="Permit Holder"
                 placeholder="Search for permit holder for whom this work will be performed"
                 component={PermitHolderSelect}
+                disabled={!this.props.isEditable}
                 // validate={[required]}
               />
             </Col>
@@ -378,22 +408,23 @@ class ApplicationSectionTwo extends Component {
             </Col>
           </Row>
         )) || <Paragraph>Add a well site to see your estimated expense summary.</Paragraph>}
-
-        <Row className="steps-action">
-          <Col>
-            <Button type="primary" htmlType="submit">
-              Next
-            </Button>
-            <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
-              Previous
-            </Button>
-          </Col>
-        </Row>
+        {this.props.isEditable && (
+          <Row className="steps-action">
+            <Col>
+              <Button type="primary" htmlType="submit">
+                Next
+              </Button>
+              <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
+                Previous
+              </Button>
+            </Col>
+          </Row>
+        )}
       </Form>
     );
   }
 }
-
+ApplicationSectionTwo.propTypes = propTypes;
 ApplicationSectionTwo.defaultProps = defaultProps;
 
 export default compose(
@@ -409,5 +440,7 @@ export default compose(
       "contract_details.operator_id",
       "well_sites[].details.well_authorization_number",
     ],
+    keepDirtyOnReinitialize: true,
+    enableReinitialize: true,
   })
 )(ApplicationSectionTwo);

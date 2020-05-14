@@ -1,51 +1,82 @@
 /* eslint-disable */
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 import { bindActionCreators } from "redux";
-import { Table } from "antd";
+import { Table, Icon } from "antd";
 import { getApplications } from "@/selectors/applicationSelectors";
 import { fetchApplications } from "@/actionCreators/applicationActionCreator";
 import { formatDateTime } from "@/utils/helpers";
+import * as Strings from "@/constants/strings";
+import * as route from "@/constants/routes";
+
+const propTypes = {
+  applications: PropTypes.any.isRequired,
+  fetchApplications: PropTypes.func.isRequired,
+};
 
 const columns = [
   {
-    title: "Company Name",
-    dataIndex: "json",
-    sorter: (a, b) => a.company_name.length - b.company_name.length,
-    sortDirections: ["descend"],
-    render: (text) => <div title="company_name">{text}</div>,
+    title: "Application ID",
+    dataIndex: "id",
+    render: (text) => <div title="id">{text || Strings.DASH}</div>,
+  },
+  {
+    title: "Company",
+    dataIndex: "company_name",
+    render: (text) => <div title="Company">{text || Strings.DASH}</div>,
+  },
+  {
+    title: "Received On",
+    dataIndex: "submission_date",
+    sortField: "submission_date",
+    sorter: true,
+    render: (text) => <div title="Received On">{formatDateTime(text)}</div>,
   },
   {
     title: "Permit Holder",
     dataIndex: "permit_holder",
-    defaultSortOrder: "descend",
-    sorter: (a, b) => a.permit_holder - b.permit_holder,
+    render: (text) => <div title="Permit Holder">{text || Strings.DASH}</div>,
   },
   {
-    title: "No. Wells",
+    title: "No. of Well Sites",
     dataIndex: "wells",
-    sorter: (a, b) => a.wells.length - b.wells.length,
+    render: (text) => <div title="No. of Well Sites">{text || Strings.DASH}</div>,
   },
   {
-    title: "Estimated Cost",
-    dataIndex: "wells",
-    sorter: (a, b) => a.wells.length - b.wells.length,
+    title: "No. of Work Types",
+    dataIndex: "cost",
+    render: (text) => <div title="No. of Work Types">{text || Strings.DASH}</div>,
   },
   {
-    title: "Eligable amount",
-    dataIndex: "wells",
-    sorter: (a, b) => a.wells.length - b.wells.length,
+    title: "Total Est. Cost",
+    dataIndex: "amount",
+    render: (text) => <div title="Total Est. Cost">{text || Strings.DASH}</div>,
   },
   {
-    title: "Total 10% Payment",
-    dataIndex: "wells",
-    sorter: (a, b) => a.wells.length - b.wells.length,
+    title: "Est. Shared Cost",
+    dataIndex: "payment",
+    render: (text) => <div title="Est. Shared Cost">{text || Strings.DASH}</div>,
   },
   {
-    title: "Submission Date",
-    dataIndex: "submission_date",
-    sorter: (a, b) => a.submissionDate.length - b.submissionDate.length,
-    render: (text) => <div title="submission_date">{formatDateTime(text)}</div>,
+    title: "Status",
+    dataIndex: "application_status_code",
+    render: (text) => <div title="Est. Shared Cost">{text || Strings.DASH}</div>,
+  },
+  {
+    title: "",
+    key: "",
+    dataIndex: "",
+    sortField: "",
+    render: (text, record) => (
+      <div title="View">
+        <Link to={route.VIEW_APPLICATION.dynamicRoute(record.key)}>
+          {" "}
+          <Icon type="eye" />
+        </Link>
+      </div>
+    ),
   },
 ];
 
@@ -59,11 +90,18 @@ export class ReviewApplicationInfo extends Component {
   };
 
   transformRowData = (applications) => {
-    const apps = applications.map(({ json, guid, ...rest }) => ({
-      key: guid,
-      json: JSON.parse(json),
-      ...rest,
-    }));
+    const apps = applications.map((application) => {
+      return {
+        key: application.guid,
+        company_name: application.json.company_details.company_name.label,
+        permit_holder: application.json.contract_details.organization_id,
+        wells: application.json.well_sites ? application.json.well_sites.length : 0,
+        cost: Strings.DASH,
+        amount: Strings.DASH,
+        payment: Strings.DASH,
+        ...application,
+      };
+    });
     return apps;
   };
 
@@ -72,8 +110,8 @@ export class ReviewApplicationInfo extends Component {
       <>
         <Table
           columns={columns}
-          pagination={false}
-          dataSource={this.props.applications}
+          pagination={true}
+          dataSource={this.transformRowData(this.props.applications)}
           onChange={this.onChange}
           expandable={{
             expandedRowRender: () => <p style={{ margin: 0 }}>Surprise! more content here</p>,
@@ -96,7 +134,7 @@ const mapDispatchToProps = (dispatch) =>
     dispatch
   );
 
-// ReviewApplicationInfo.propTypes = propTypes;
+ReviewApplicationInfo.propTypes = propTypes;
 // ReviewApplicationInfo.defaultProps = defaultProps;
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReviewApplicationInfo);

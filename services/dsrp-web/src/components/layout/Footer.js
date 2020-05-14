@@ -66,7 +66,9 @@ export const Footer = (props) => (
               Contact Us
             </a>
           </Col>
-          <AdminLogin />
+          <Col xs={24} lg={3}>
+            <AdminLogin />
+          </Col>
         </Row>
       </Col>
     </Row>

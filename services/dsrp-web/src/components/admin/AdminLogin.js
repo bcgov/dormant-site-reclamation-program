@@ -1,24 +1,22 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { Col } from "antd";
 import * as ENV from "@/constants/environment";
 import { getIsAdmim } from "@/selectors/authenticationSelectors";
 
 const propTypes = {
-  isAdmin: PropTypes.func.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
 };
 
 export const AdminLogin = (props) => (
   <>
     {!props.isAdmin && (
-      <Col xs={24} lg={3}>
-        <a
-          href={`${ENV.KEYCLOAK.loginURL}${ENV.BCEID_LOGIN_REDIRECT_URI}&kc_idp_hint=${ENV.KEYCLOAK.idpHint}`}
-        >
-          Admin
-        </a>
-      </Col>
+      <a
+        className="footer-link"
+        href={`${ENV.KEYCLOAK.loginURL}${ENV.BCEID_LOGIN_REDIRECT_URI}&kc_idp_hint=${ENV.KEYCLOAK.idpHint}`}
+      >
+        Admin
+      </a>
     )}
   </>
 );
