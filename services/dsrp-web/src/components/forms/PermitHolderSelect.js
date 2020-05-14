@@ -15,12 +15,14 @@ const propTypes = {
   permitHolders: PropTypes.arrayOf(PropTypes.any),
   permitHoldersDropDown: PropTypes.arrayOf(PropTypes.any),
   permitHoldersHash: PropTypes.objectOf(PropTypes.any),
+  disabled: PropTypes.bool,
 };
 
 const defaultProps = {
   permitHolders: [],
   permitHoldersDropDown: [],
   permitHoldersHash: [],
+  disabled: false,
 };
 
 export class PermitHolderSelect extends Component {

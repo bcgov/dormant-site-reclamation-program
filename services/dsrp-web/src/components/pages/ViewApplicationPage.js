@@ -3,19 +3,29 @@ import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { Row, Col, Typography } from "antd";
+import { Row, Col, Typography, Icon } from "antd";
+import { reset } from "redux-form";
 import { fetchApplicationByID } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/selectors/applicationSelectors";
-import ApplicationSectionOne from "@/components/forms/ApplicationSectionOne";
-import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
-import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree";
+import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm";
+import LinkButton from "@/components/common/LinkButton";
+import * as FORM from "@/constants/forms";
 
 const propTypes = {
+  match: PropTypes.shape({
+    params: {
+      id: PropTypes.string,
+    },
+  }).isRequired,
   fetchApplicationByID: PropTypes.func.isRequired,
   application: PropTypes.any.isRequired,
 };
 
-const { Paragraph, Title } = Typography;
+const defaultProps = {
+  application: {},
+};
+
+const { Paragraph, Title, Text } = Typography;
 
 export class ViewApplicationPage extends Component {
   state = { isLoaded: false };
@@ -27,42 +37,47 @@ export class ViewApplicationPage extends Component {
     });
   }
 
+  goBack = () => {
+    this.props.history.goBack();
+  };
+
   render() {
     return (
       <>
-        <Row
-          type="flex"
-          justify="center"
-          align="top"
-          className="landing-header"
-          gutter={[{ sm: 0, xl: 64 }]}
-        >
-          <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-            <Title>Application: {this.props.application.application_status_code || "-"}</Title>
-            <Paragraph>
-              Duis dictum quam vel dictum sollicitudin. Suspendisse potenti. Mauris convallis eget
-              urna vitae dapibus. Etiam volutpat, metus aliquam sollicitudin aliquet, diam dui
-              lacinia odio, id tempor purus libero ut orci.
-            </Paragraph>
-          </Col>
-        </Row>
-        <Row
-          gutter={[{ sm: 0, xl: 64 }]}
-          type="flex"
-          justify="center"
-          align="top"
-          className="landing-section"
-        >
-          {this.state.isLoaded ? (
-            <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-              <ApplicationSectionOne viewOnly initialValues={this.props.application} />
-              <ApplicationSectionTwo viewOnly initialValues={this.props.application} />
-              <ApplicationSectionThree viewOnly initialValues={this.props.application} />
-            </Col>
-          ) : (
-            <div>Loading ....</div>
-          )}
-        </Row>
+        {this.state.isLoaded ? (
+          <>
+            <Row
+              type="flex"
+              justify="center"
+              align="top"
+              className="landing-header"
+              gutter={[{ sm: 0, xl: 64 }]}
+            >
+              <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
+                <LinkButton onClick={this.goBack}>
+                  <Icon type="arrow-left" style={{ paddingRight: "5px" }} />
+                  Return to Review Application
+                </LinkButton>
+              </Col>
+              <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
+                <Title>Application ID: {this.props.application.id}</Title>
+              </Col>
+            </Row>
+            <Row
+              gutter={[{ sm: 0, xl: 64 }]}
+              type="flex"
+              justify="center"
+              align="top"
+              className="landing-section"
+            >
+              <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
+                <ViewOnlyApplicationForm initialValues={this.props.application.json} />
+              </Col>
+            </Row>
+          </>
+        ) : (
+          <div>Loading ....</div>
+        )}
       </>
     );
   }
@@ -76,6 +91,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchApplicationByID,
+      reset,
     },
     dispatch
   );
