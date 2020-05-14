@@ -3,7 +3,6 @@ import React, { Component } from "react";
 import { reduxForm, Field, FormSection } from "redux-form";
 import { Row, Col, Typography, Form, Button } from "antd";
 import PropTypes from "prop-types";
-
 import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import { phoneMask, postalCodeMask } from "@/utils/helpers";
@@ -16,11 +15,19 @@ import { ORGBOOK_URL } from "@/constants/routes";
 const { Text, Title, Paragraph } = Typography;
 
 const propTypes = {
-  onFileLoad: PropTypes.func.isRequired,
-  onRemoveFile: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func,
+  onFileLoad: PropTypes.func,
+  onRemoveFile: PropTypes.func,
+  isEditable: PropTypes.bool,
+  initialValues: PropTypes.objectOf(PropTypes.strings).isRequired,
 };
 
-const defaultProps = {};
+const defaultProps = {
+  handleSubmit: () => {},
+  onFileLoad: () => {},
+  onRemoveFile: () => {},
+  isEditable: true,
+};
 
 class ApplicationSectionOne extends Component {
   render() {
@@ -49,6 +56,7 @@ class ApplicationSectionOne extends Component {
                 placeholder="Company Name"
                 component={OrgBookSearch}
                 validate={[required]}
+                disabled={!this.props.isEditable}
                 format={null}
               />
               <Field
@@ -57,6 +65,7 @@ class ApplicationSectionOne extends Component {
                 label="Address Line 1"
                 placeholder="Address Line 1"
                 component={renderConfig.FIELD}
+                disabled={!this.props.isEditable}
                 // validate={[required]}
               />
               <Field
@@ -65,6 +74,7 @@ class ApplicationSectionOne extends Component {
                 label="Address Line 2"
                 placeholder="Address Line 2"
                 component={renderConfig.FIELD}
+                disabled={!this.props.isEditable}
                 // validate={[required]}
               />
               <Field
@@ -73,6 +83,7 @@ class ApplicationSectionOne extends Component {
                 label="City"
                 placeholder="City"
                 component={renderConfig.FIELD}
+                disabled={!this.props.isEditable}
                 // validate={[required]}
               />
             </Col>
@@ -112,6 +123,7 @@ class ApplicationSectionOne extends Component {
                 label="Postal Code"
                 placeholder="Postal Code"
                 component={renderConfig.FIELD}
+                disabled={!this.props.isEditable}
                 // validate={[required]}
                 {...postalCodeMask}
               />
@@ -129,6 +141,7 @@ class ApplicationSectionOne extends Component {
                 label="First Name"
                 placeholder="First Name"
                 component={renderConfig.FIELD}
+                disabled={!this.props.isEditable}
                 // validate={[required]}
               />
             </Col>
@@ -139,6 +152,7 @@ class ApplicationSectionOne extends Component {
                 label="Last Name"
                 placeholder="Last Name"
                 component={renderConfig.FIELD}
+                disabled={!this.props.isEditable}
                 // validate={[required]}
               />
             </Col>
@@ -153,6 +167,7 @@ class ApplicationSectionOne extends Component {
                     label="Phone Number 1"
                     placeholder="Phone Number 1"
                     component={renderConfig.FIELD}
+                    disabled={!this.props.isEditable}
                     // validate={[required]}
                     {...phoneMask}
                   />
@@ -164,6 +179,7 @@ class ApplicationSectionOne extends Component {
                     label="Ext. 1"
                     placeholder="Ext. 1"
                     component={renderConfig.FIELD}
+                    disabled={!this.props.isEditable}
                   />
                 </Col>
               </Row>
@@ -177,6 +193,7 @@ class ApplicationSectionOne extends Component {
                     label="Phone Number 2"
                     placeholder="Phone Number 2"
                     component={renderConfig.FIELD}
+                    disabled={!this.props.isEditable}
                     {...phoneMask}
                   />
                 </Col>
@@ -187,6 +204,7 @@ class ApplicationSectionOne extends Component {
                     label="Ext. 2"
                     placeholder="Ext. 2"
                     component={renderConfig.FIELD}
+                    disabled={!this.props.isEditable}
                   />
                 </Col>
               </Row>
@@ -200,7 +218,8 @@ class ApplicationSectionOne extends Component {
                 label="Email"
                 placeholder="Email"
                 component={renderConfig.FIELD}
-                // validate={[required]}
+                disabled={!this.props.isEditable}
+                validate={[required]}
               />
             </Col>
             <Col span={12}>
@@ -210,6 +229,7 @@ class ApplicationSectionOne extends Component {
                 label="Fax"
                 placeholder="Fax"
                 component={renderConfig.FIELD}
+                disabled={!this.props.isEditable}
                 // validate={[required]}
                 {...phoneMask}
               />
@@ -217,53 +237,56 @@ class ApplicationSectionOne extends Component {
           </Row>
         </FormSection>
 
-        <FormSection name="good_standing_reports">
-          <Title level={2}>Good Standing Report</Title>
-          <Row gutter={48}>
-            <Col span={24}>
-              <Form.Item label="Upload Good Standing Report">
-                <Field
-                  id="good_standing_report"
-                  name="good_standing_report"
-                  component={renderConfig.FILE_UPLOAD}
-                  uploadUrl={`${APPLICATION}/documents`}
-                  acceptedFileTypesMap={{ ...DOCUMENT, ...EXCEL }}
-                  onFileLoad={this.props.onFileLoad}
-                  onRemoveFile={this.props.onRemoveFile}
-                  allowRevert
-                  allowMultiple={false}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-        </FormSection>
+        {this.props.isEditable && (
+          <div>
+            <FormSection name="good_standing_reports">
+              <Title level={2}>Good Standing Report</Title>
+              <Row gutter={48}>
+                <Col span={24}>
+                  <Form.Item label="Upload Good Standing Report">
+                    <Field
+                      id="good_standing_report"
+                      name="good_standing_report"
+                      component={renderConfig.FILE_UPLOAD}
+                      uploadUrl={`${APPLICATION}/documents`}
+                      acceptedFileTypesMap={{ ...DOCUMENT, ...EXCEL }}
+                      onFileLoad={this.props.onFileLoad}
+                      onRemoveFile={this.props.onRemoveFile}
+                      allowRevert
+                      allowMultiple={false}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </FormSection>
 
-        <FormSection name="review_program_conditions">
-          <Paragraph>
-            <a href="#" target="_blank" rel="noopener noreferrer">
-              Review program details and requirements
-            </a>
-          </Paragraph>
-          <Row gutter={48}>
-            <Col span={24}>
-              <Field
-                id="accept_program_details_and_requirements"
-                name="accept_program_details_and_requirements"
-                label="I have read and understand all of the conditions required to qualify for this program."
-                component={renderConfig.CHECKBOX}
-                validate={[required]}
-              />
-            </Col>
-          </Row>
-        </FormSection>
-
-        <Row className="steps-action">
-          <Col>
-            <Button type="primary" htmlType="submit">
-              Next
-            </Button>
-          </Col>
-        </Row>
+            <FormSection name="review_program_conditions">
+              <Paragraph>
+                <a href="#" target="_blank" rel="noopener noreferrer">
+                  Review program details and requirements
+                </a>
+              </Paragraph>
+              <Row gutter={48}>
+                <Col span={24}>
+                  <Field
+                    id="accept_program_details_and_requirements"
+                    name="accept_program_details_and_requirements"
+                    label="I have read and understand all of the conditions required to qualify for this program."
+                    component={renderConfig.CHECKBOX}
+                    validate={[required]}
+                  />
+                </Col>
+              </Row>
+            </FormSection>
+            <Row className="steps-action">
+              <Col>
+                <Button type="primary" htmlType="submit">
+                  Next
+                </Button>
+              </Col>
+            </Row>
+          </div>
+        )}
       </Form>
     );
   }
@@ -276,4 +299,6 @@ export default reduxForm({
   form: FORM.APPLICATION_FORM,
   destroyOnUnmount: false,
   forceUnregisterOnUnmount: true,
+  keepDirtyOnReinitialize: true,
+  enableReinitialize: true,
 })(ApplicationSectionOne);

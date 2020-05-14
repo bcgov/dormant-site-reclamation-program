@@ -36,3 +36,16 @@ export const fetchApplications = () => (dispatch) => {
     .catch(() => dispatch(error(reducerTypes.GET_APPLICATIONS)))
     .finally(() => dispatch(hideLoading()));
 };
+
+export const fetchApplicationByID = (guid) => (dispatch) => {
+  dispatch(request(reducerTypes.GET_APPLICATION));
+  return CustomAxios()
+    .get(ENVIRONMENT.apiUrl + API.APPLICATION_BY_ID(guid), createRequestHeader())
+    .then((response) => {
+      dispatch(success(reducerTypes.GET_APPLICATION));
+      dispatch(applicationActions.storeApplication(response.data));
+      return response;
+    })
+    .catch(() => dispatch(error(reducerTypes.GET_APPLICATION)))
+    .finally(() => dispatch(hideLoading()));
+};

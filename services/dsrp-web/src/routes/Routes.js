@@ -28,7 +28,11 @@ const Routes = () => (
       path={routes.REVIEW_APPLICATIONS.route}
       component={AuthenticationGuard()(routes.REVIEW_APPLICATIONS.component)}
     />
-
+    <Route
+      exact
+      path={routes.VIEW_APPLICATION.route}
+      component={AuthenticationGuard()(routes.VIEW_APPLICATION.component)}
+    />
     {/* 404 - PAGE NOT FOUND */}
     <Route
       render={() => (

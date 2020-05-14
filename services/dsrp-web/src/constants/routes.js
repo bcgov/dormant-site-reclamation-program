@@ -3,6 +3,7 @@ import ReturnPage from "@/components/pages/ReturnPage";
 import SubmitApplicationPage from "@/components/pages/SubmitApplicationPage";
 import ViewApplicationStatusPage from "@/components/pages/ViewApplicationStatusPage";
 import ReviewApplicationsPage from "@/components/pages/ReviewApplicationsPage";
+import ViewApplicationPage from "@/components/pages/ViewApplicationPage";
 
 export const HOME = {
   route: "/",
@@ -27,6 +28,12 @@ export const VIEW_APPLICATION_STATUS = {
 export const REVIEW_APPLICATIONS = {
   route: "/review-applications",
   component: ReviewApplicationsPage,
+};
+
+export const VIEW_APPLICATION = {
+  route: "/review-applications/:id",
+  dynamicRoute: (guid) => `/review-applications/${guid}`,
+  component: ViewApplicationPage,
 };
 
 export const ORGBOOK_URL = "https://orgbook.gov.bc.ca";

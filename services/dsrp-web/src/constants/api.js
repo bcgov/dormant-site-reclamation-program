@@ -15,6 +15,7 @@ export const ORGBOOK_CREDENTIAL = (credentialId) => `/orgbook/credential/${crede
 
 // Application
 export const APPLICATION = "/application";
+export const APPLICATION_BY_ID = (guid) => `/application/${guid}`;
 
 // OGC
 export const PERMIT_HOLDER = () => "/permit_holder";
