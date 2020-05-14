@@ -48,23 +48,15 @@ class Application(Base, AuditMixin):
 
 
     def send_confirmation_email(self, email_service):
-        if not email_service._smtp:
-            raise Exception('Initialize EmailService() as context manager using \'with\' keyword')
-        
         if not self.submitter_email:
             raise Exception('Application.json.company_contact.email is not set, must set before email can be sent')
 
-        html_content = f"""
-        <html>
-            <head></head>
-            <body>
+        html_body = f"""
             <p> 
                 We have successfully received your application in the BC Governments Dormant
                 Site Reclamation Program. Your reference number is {self.guid}, please keep this safe as you will
                 need it to carry your application forward in this process.
             </p>
-            </body>
-        </html>
         """
     
-        email_service.send_email(self.submitter_email, 'Application Confirmation', html_content)
+        email_service.send_email(self.submitter_email, 'Application Confirmation', html_body)
