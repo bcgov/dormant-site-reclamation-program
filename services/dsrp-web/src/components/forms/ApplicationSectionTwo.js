@@ -9,7 +9,7 @@ import { renderConfig } from "@/components/common/config";
 import { required, dateNotInFuture, maxLength } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 import { currencyMask, formatMoney } from "@/utils/helpers";
-import CONTRACT_WORK_SECTIONS from "@/components/forms/contract_work_sections";
+import CONTRACT_WORK_SECTIONS from "@/constants/contract_work_sections";
 import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
 
 const { Text, Paragraph, Title } = Typography;
