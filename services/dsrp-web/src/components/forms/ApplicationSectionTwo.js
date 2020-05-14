@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { reduxForm, FieldArray, getFormValues } from "redux-form";
+import { reduxForm, FieldArray, getFormValues, Field, FormSection } from "redux-form";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import { compose } from "redux";
 import { Row, Col, Typography, Form, Divider, Button, Collapse, Descriptions, Icon } from "antd";
-import { Field, FormSection } from "redux-form";
+
 import { sum, flatten, union, merge } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import { required, dateNotInFuture, maxLength } from "@/utils/validate";
@@ -15,7 +16,19 @@ import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
 const { Text, Paragraph, Title } = Typography;
 const { Panel } = Collapse;
 
-const defaultProps = {};
+const propTypes = {
+  previousStep: PropTypes.func,
+  onSubmit: PropTypes.func,
+  isEditable: PropTypes.bool,
+  initialValues: PropTypes.objectOf(PropTypes.strings),
+};
+
+const defaultProps = {
+  previousStep: () => {},
+  onSubmit: () => {},
+  isEditable: true,
+  initialValues: {},
+};
 
 const createMemberName = (member, name) => `${member}.${name}`;
 
@@ -42,7 +55,7 @@ const renderMoneyTotal = (label, amount) => (
   </Paragraph>
 );
 
-const renderContractWorkPanel = (contractWorkSection, wellSectionTotal) => (
+const renderContractWorkPanel = (contractWorkSection, wellSectionTotal, isEditable) => (
   <Panel header={<Title level={4}>{contractWorkSection.sectionHeader}</Title>}>
     <FormSection name={contractWorkSection.formSectionName}>
       <Form.Item
@@ -59,6 +72,7 @@ const renderContractWorkPanel = (contractWorkSection, wellSectionTotal) => (
               label="Work Start Date"
               placeholder="Select work start date"
               component={renderConfig.DATE}
+              disabled={!isEditable}
             />
           </Col>
           <Col span={12}>
@@ -67,6 +81,7 @@ const renderContractWorkPanel = (contractWorkSection, wellSectionTotal) => (
               label="Work End Date"
               placeholder="Select work end date"
               component={renderConfig.DATE}
+              disabled={!isEditable}
             />
           </Col>
         </Row>
@@ -85,6 +100,7 @@ const renderContractWorkPanel = (contractWorkSection, wellSectionTotal) => (
               label={amountField.fieldLabel}
               placeholder="$0.00"
               component={renderConfig.FIELD}
+              disabled={!isEditable}
               {...currencyMask}
             />
           ))}
@@ -116,7 +132,7 @@ class ApplicationSectionTwo extends Component {
     }
 
     let grandTotal = 0;
-    let wellTotals = {};
+    const wellTotals = {};
     formValues.well_sites.map((wellSite, wellIndex) => {
       wellTotals[wellIndex] = { wellTotal: 0, sections: {} };
 
@@ -156,9 +172,11 @@ class ApplicationSectionTwo extends Component {
                 <Title level={3}>
                   {/* NOTE: Could update name with the well's name when it is retrieved. */}
                   Well Site #{index + 1}
-                  <Button style={{ float: "right" }} onClick={() => fields.remove(index)}>
-                    Remove
-                  </Button>
+                  {this.props.isEditable && (
+                    <Button style={{ float: "right" }} onClick={() => fields.remove(index)}>
+                      Remove
+                    </Button>
+                  )}
                 </Title>
               }
             >
@@ -172,6 +190,7 @@ class ApplicationSectionTwo extends Component {
                       placeholder="Well Authorization Number"
                       component={renderConfig.FIELD}
                       validate={[required]}
+                      disabled={!this.props.isEditable}
                     />
                     <Descriptions column={1} title="Well Site Details">
                       <Descriptions.Item label="Name">N/A</Descriptions.Item>
@@ -191,6 +210,7 @@ class ApplicationSectionTwo extends Component {
                       <Field
                         name={`site_condition_${index}`}
                         label={condition}
+                        disabled={!this.props.isEditable}
                         component={renderConfig.CHECKBOX}
                       />
                     ))}
@@ -210,7 +230,8 @@ class ApplicationSectionTwo extends Component {
                       {CONTRACT_WORK_SECTIONS.map((contractWorkSection) =>
                         renderContractWorkPanel(
                           contractWorkSection,
-                          wellSectionTotals[contractWorkSection.formSectionName]
+                          wellSectionTotals[contractWorkSection.formSectionName],
+                          this.props.isEditable
                         )
                       )}
                     </Collapse>
@@ -223,9 +244,11 @@ class ApplicationSectionTwo extends Component {
         })}
       </Collapse>
       <br />
-      <Button type="primary" onClick={() => fields.push({})}>
-        Add Well Site
-      </Button>
+      {this.props.isEditable && (
+        <Button type="primary" onClick={() => fields.push({})}>
+          Add Well Site
+        </Button>
+      )}
     </>
   );
 
@@ -244,6 +267,7 @@ class ApplicationSectionTwo extends Component {
                 label="Permit Holder"
                 placeholder="Search for permit holder for whom this work will be performed"
                 component={PermitHolderSelect}
+                disabled={!this.props.isEditable}
                 // validate={[required]}
               />
             </Col>
@@ -279,22 +303,23 @@ class ApplicationSectionTwo extends Component {
             </Col>
           </Row>
         )) || <Paragraph>Add a well site to see your estimated expense summary.</Paragraph>}
-
-        <Row className="steps-action">
-          <Col>
-            <Button type="primary" htmlType="submit">
-              Next
-            </Button>
-            <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
-              Previous
-            </Button>
-          </Col>
-        </Row>
+        {this.props.isEditable && (
+          <Row className="steps-action">
+            <Col>
+              <Button type="primary" htmlType="submit">
+                Next
+              </Button>
+              <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
+                Previous
+              </Button>
+            </Col>
+          </Row>
+        )}
       </Form>
     );
   }
 }
-
+ApplicationSectionTwo.propTypes = propTypes;
 ApplicationSectionTwo.defaultProps = defaultProps;
 
 export default compose(
@@ -305,5 +330,7 @@ export default compose(
     form: FORM.APPLICATION_FORM,
     destroyOnUnmount: false,
     forceUnregisterOnUnmount: true,
+    keepDirtyOnReinitialize: true,
+    enableReinitialize: true,
   })
 )(ApplicationSectionTwo);

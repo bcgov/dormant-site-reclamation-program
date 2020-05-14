@@ -14,11 +14,13 @@ const propTypes = {
   fetchOrgBookCredential: PropTypes.func.isRequired,
   searchOrgBookResults: PropTypes.arrayOf(PropTypes.any),
   orgBookCredential: PropTypes.objectOf(PropTypes.any),
+  disabled: PropTypes.bool,
 };
 
 const defaultProps = {
   searchOrgBookResults: [],
   orgBookCredential: {},
+  disabled: false,
 };
 
 export class OrgBookSearch extends Component {
@@ -74,6 +76,7 @@ export class OrgBookSearch extends Component {
 
   render() {
     const hasOrgBookCredential = !isEmpty(this.state.credential);
+    const isInputDisabled = this.state.isAssociating || this.props.disabled;
 
     return (
       <Row>
@@ -105,7 +108,7 @@ export class OrgBookSearch extends Component {
               onSearch={this.handleSearchDebounced}
               onChange={this.handleChange}
               onSelect={this.handleSelect}
-              disabled={this.state.isAssociating}
+              disabled={isInputDisabled}
               {...this.props.input}
             >
               {this.state.options.map((option) => (

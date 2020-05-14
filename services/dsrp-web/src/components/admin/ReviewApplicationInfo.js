@@ -4,10 +4,10 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { bindActionCreators } from "redux";
-import { Table } from "antd";
+import { Table, Icon } from "antd";
 import { getApplications } from "@/selectors/applicationSelectors";
 import { fetchApplications } from "@/actionCreators/applicationActionCreator";
-import { formatDateTime, dateSorter, nullableStringSorter } from "@/utils/helpers";
+import { formatDateTime } from "@/utils/helpers";
 import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
 
@@ -18,45 +18,63 @@ const propTypes = {
 
 const columns = [
   {
-    title: "Company Name",
+    title: "Application ID",
+    dataIndex: "id",
+    render: (text) => <div title="id">{text || Strings.DASH}</div>,
+  },
+  {
+    title: "Company",
     dataIndex: "company_name",
-    render: (text) => <div title="company_name">{text || Strings.DASH}</div>,
+    render: (text) => <div title="Company">{text || Strings.DASH}</div>,
+  },
+  {
+    title: "Received On",
+    dataIndex: "submission_date",
+    sortField: "submission_date",
+    sorter: true,
+    render: (text) => <div title="Received On">{formatDateTime(text)}</div>,
   },
   {
     title: "Permit Holder",
     dataIndex: "permit_holder",
+    render: (text) => <div title="Permit Holder">{text || Strings.DASH}</div>,
   },
   {
-    title: "No. Wells",
+    title: "No. of Well Sites",
     dataIndex: "wells",
+    render: (text) => <div title="No. of Well Sites">{text || Strings.DASH}</div>,
   },
   {
-    title: "Estimated Cost",
+    title: "No. of Work Types",
     dataIndex: "cost",
+    render: (text) => <div title="No. of Work Types">{text || Strings.DASH}</div>,
   },
   {
-    title: "Eligable amount",
+    title: "Total Est. Cost",
     dataIndex: "amount",
+    render: (text) => <div title="Total Est. Cost">{text || Strings.DASH}</div>,
   },
   {
-    title: "Total 10% Payment",
+    title: "Est. Shared Cost",
     dataIndex: "payment",
+    render: (text) => <div title="Est. Shared Cost">{text || Strings.DASH}</div>,
   },
   {
-    title: "Submission Date",
-    dataIndex: "submission_date",
-    sortField: "submission_date",
-    sorter: true,
-    render: (text) => <div title="submission_date">{formatDateTime(text)}</div>,
+    title: "Status",
+    dataIndex: "application_status_code",
+    render: (text) => <div title="Est. Shared Cost">{text || Strings.DASH}</div>,
   },
   {
-    title: "View",
+    title: "",
     key: "",
     dataIndex: "",
     sortField: "",
     render: (text, record) => (
       <div title="View">
-        <Link to={route.VIEW_APPLICATION.dynamicRoute(record.key)}>View</Link>
+        <Link to={route.VIEW_APPLICATION.dynamicRoute(record.key)}>
+          {" "}
+          <Icon type="eye" />
+        </Link>
       </div>
     ),
   },

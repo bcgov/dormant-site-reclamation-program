@@ -38,7 +38,8 @@ class App extends Component {
     const xs = 24;
     const lg = 22;
     const xl = 20;
-    const xxl = 18;
+    const xxl = 22;
+    const contentFull = 24;
     return (
       <BrowserRouter basename={process.env.BASE_PATH}>
         <Layout>
@@ -52,7 +53,7 @@ class App extends Component {
                 )}
               </MediaQuery>
               <Row type="flex" justify="center" align="top">
-                <Col xs={xs} lg={lg} xl={xl} xxl={xxl}>
+                <Col xs={xs} lg={lg} xl={xl} xxl={contentFull}>
                   <Routes />
                 </Col>
               </Row>
