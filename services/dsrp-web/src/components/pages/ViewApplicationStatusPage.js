@@ -1,5 +1,6 @@
 import React from "react";
 import { Row, Col, Typography } from "antd";
+import ViewApplicationStatusForm from "@/components/forms/ViewApplicationStatusForm"
 
 const { Paragraph, Title } = Typography;
 
@@ -18,6 +19,7 @@ export const ViewApplicationStatusPage = () => (
           Morbi dignissim eget elit ac ornare. Aliquam rhoncus condimentum condimentum. Aenean sed
           diam non elit rutrum sollicitudin. Sed non leo odio.
         </Paragraph>
+        
       </Col>
     </Row>
     <Row
@@ -28,7 +30,7 @@ export const ViewApplicationStatusPage = () => (
       className="landing-section"
     >
       <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-        <Paragraph>Content</Paragraph>
+        <ViewApplicationStatusForm/>
       </Col>
     </Row>
   </>
