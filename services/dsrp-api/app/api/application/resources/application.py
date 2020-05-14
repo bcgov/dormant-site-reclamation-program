@@ -54,7 +54,7 @@ class ApplicationListResource(Resource, UserMixin):
                                       sort_dir=None,
                                       application_status_code=[]):
 
-        base_query = Application.get_all()
+        base_query = Application.query
 
         filters = []
 
