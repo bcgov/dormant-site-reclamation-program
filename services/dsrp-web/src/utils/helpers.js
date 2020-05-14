@@ -93,6 +93,22 @@ export const postalCodeMask = createTextMask({
   // onCompletePattern: value => {},
 });
 
+export const guidMask = createTextMask({
+  pattern: "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+  // placeholder: '_',
+  maskDefinitions: {
+    X: {
+      regExp: /[A-Fa-f0-9]/,
+      transform: (char) => char.toLowerCase(),
+    },
+  },
+  guide: false,
+  stripMask: false,
+  allowEmpty: true,
+  // onChange: value => {},
+  // onCompletePattern: value => {},
+});
+
 export const dateSorter = (key) => (a, b) => {
   if (a[key] === b[key]) {
     return 0;

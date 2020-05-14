@@ -8,7 +8,7 @@ import PropTypes from "prop-types";
 import ApplicationSectionOne from "@/components/forms/ApplicationSectionOne";
 import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
 import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree";
-import APPLICATION_FORM from "@/constants/forms";
+import {APPLICATION_FORM} from "@/constants/forms";
 
 const { Step } = Steps;
 
