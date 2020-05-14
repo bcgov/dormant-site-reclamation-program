@@ -67,24 +67,24 @@ app {
                             'VOLUME_CAPACITY':"${vars.DB_PVC_SIZE}"
                     ]
                 ],
-                // [
-                //     'file':'openshift/templates/dbbackup.dc.json',
-                //     'params':[
-                //             'NAME':"dsrp-database-backup",
-                //             'SUFFIX': "${vars.deployment.suffix}",
-                //             'VERSION':"${app.deployment.version}",
-                //             'ENVIRONMENT_NAME':"${vars.deployment.namespace}",
-                //             'ENVIRONMENT_FRIENDLY_NAME':"BC Mines Digital Services (PROD)",
-                //             'DATABASE_SERVICE_NAME':"dsrp-postgresql${vars.deployment.suffix}",
-                //             'NFS_VOLUME_IDENTIFIER':"bk-eazios-prod-x7ux0bwhqnsa",
-                //             'CPU_REQUEST':"${vars.resources.backup.cpu_request}",
-                //             'CPU_LIMIT':"${vars.resources.backup.cpu_limit}",
-                //             'MEMORY_REQUEST':"${vars.resources.backup.memory_request}",
-                //             'MEMORY_LIMIT':"${vars.resources.backup.memory_limit}",
-                //             'VERIFICATION_VOLUME_SIZE':"${vars.BACKUP_VERIFICATION_PVC_SIZE}",
-                //             'FLYWAY_NAME':"dsrp-flyway-migration-client",
-                //     ]
-                // ],
+                [
+                    'file':'openshift/templates/dbbackup.dc.json',
+                    'params':[
+                            'NAME':"dsrp-database-backup",
+                            'SUFFIX': "${vars.deployment.suffix}",
+                            'VERSION':"${app.deployment.version}",
+                            'ENVIRONMENT_NAME':"${vars.deployment.namespace}",
+                            'ENVIRONMENT_FRIENDLY_NAME':"Dormant Site Reclamation Program (PROD)",
+                            'DATABASE_SERVICE_NAME':"dsrp-postgresql${vars.deployment.suffix}",
+                            'NFS_VOLUME_IDENTIFIER':"bk-eazios-prod-x7ux0bwhqnsa",
+                            'CPU_REQUEST':"${vars.resources.backup.cpu_request}",
+                            'CPU_LIMIT':"${vars.resources.backup.cpu_limit}",
+                            'MEMORY_REQUEST':"${vars.resources.backup.memory_request}",
+                            'MEMORY_LIMIT':"${vars.resources.backup.memory_limit}",
+                            'VERIFICATION_VOLUME_SIZE':"${vars.BACKUP_VERIFICATION_PVC_SIZE}",
+                            'FLYWAY_NAME':"dsrp-flyway-migration-client",
+                    ]
+                ],
                 [
                     'file':'openshift/templates/redis.dc.json',
                     'params':[
