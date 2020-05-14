@@ -7,7 +7,7 @@ import { bindActionCreators } from "redux";
 import { Table } from "antd";
 import { getApplications } from "@/selectors/applicationSelectors";
 import { fetchApplications } from "@/actionCreators/applicationActionCreator";
-import { formatDateTime, dateSorter } from "@/utils/helpers";
+import { formatDateTime, dateSorter, nullableStringSorter } from "@/utils/helpers";
 import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
 
@@ -25,33 +25,28 @@ const columns = [
   {
     title: "Permit Holder",
     dataIndex: "permit_holder",
-    defaultSortOrder: "descend",
-    sorter: (a, b) => a.permit_holder - b.permit_holder,
   },
   {
     title: "No. Wells",
     dataIndex: "wells",
-    sorter: (a, b) => a.wells.length - b.wells.length,
   },
   {
     title: "Estimated Cost",
     dataIndex: "cost",
-    sorter: (a, b) => a.wells.length - b.wells.length,
   },
   {
     title: "Eligable amount",
     dataIndex: "amount",
-    sorter: (a, b) => a.wells.length - b.wells.length,
   },
   {
     title: "Total 10% Payment",
     dataIndex: "payment",
-    sorter: (a, b) => a.wells.length - b.wells.length,
   },
   {
     title: "Submission Date",
     dataIndex: "submission_date",
-    sorter: (a, b) => dateSorter("submissionDate"),
+    sortField: "submission_date",
+    sorter: true,
     render: (text) => <div title="submission_date">{formatDateTime(text)}</div>,
   },
   {

@@ -6,16 +6,26 @@ import ApplicationSectionOne from "@/components/forms/ApplicationSectionOne";
 import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
 import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree";
 
+const { Step } = Steps;
+
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   onFileLoad: PropTypes.func.isRequired,
   onRemoveFile: PropTypes.func.isRequired,
 };
 
-const { Step } = Steps;
-
 export class ApplicationForm extends Component {
   state = { current: 0 };
+
+  nextFormStep = () => {
+    const current = this.state.current + 1;
+    this.setState({ current });
+  };
+
+  previousFormStep = () => {
+    const current = this.state.current - 1;
+    this.setState({ current });
+  };
 
   steps = [
     {
@@ -45,16 +55,6 @@ export class ApplicationForm extends Component {
       ),
     },
   ];
-
-  nextFormStep = () => {
-    const current = this.state.current + 1;
-    this.setState({ current });
-  };
-
-  previousFormStep = () => {
-    const current = this.state.current - 1;
-    this.setState({ current });
-  };
 
   render() {
     return (
