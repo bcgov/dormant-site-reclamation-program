@@ -9,7 +9,6 @@ import { fetchApplicationByID } from "@/actionCreators/applicationActionCreator"
 import { getApplication } from "@/selectors/applicationSelectors";
 import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm";
 import LinkButton from "@/components/common/LinkButton";
-import * as FORM from "@/constants/forms";
 
 const propTypes = {
   match: PropTypes.shape({
