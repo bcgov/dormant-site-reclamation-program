@@ -1,6 +1,6 @@
+/* eslint-disable */
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { compose, bindActionCreators } from "redux";
 import { Col, Row, Steps } from "antd";
 import { isDirty } from "redux-form";
 
@@ -13,6 +13,8 @@ import APPLICATION_FORM from "@/constants/forms";
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   isDirty: PropTypes.bool.isRequired,
+  onFileLoad: PropTypes.func.isRequired,
+  onRemoveFile: PropTypes.func.isRequired,
 };
 
 const { Step } = Steps;
@@ -33,7 +35,14 @@ export class ApplicationForm extends Component {
   steps = [
     {
       title: "Company Details",
-      content: <ApplicationSectionOne onSubmit={this.nextFormStep} />,
+      content: (
+        <ApplicationSectionOne
+          onSubmit={this.nextFormStep}
+          onFileLoad={this.props.onFileLoad}
+          onRemoveFile={this.props.onRemoveFile}
+          initialValues={{ company_details: { province: "BC" } }}
+        />
+      ),
     },
     {
       title: "Well Sites",
