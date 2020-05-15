@@ -12,6 +12,7 @@ import pyarrow as pa
 
 from .ogc_data_constants import PERMIT_HOLDER_CSV_DATA, DORMANT_WELLS_CSV_DATA, LIABILITY_PER_WELL_CSV_DATA
 
+# TODO: Stick into environment variables
 PERMIT_HOLDER_CSV = 'http://reports.bcogc.ca/ogc/f?p=200:201:14073940726161:CSV::::'
 DORMANT_WELLS_CSV = 'https://reports.bcogc.ca/ogc/f?p=200:81:9680316354055:CSV::::'
 LIABILITY_PER_WELL_CSV = 'https://reports.bcogc.ca/ogc/f?p=200:10:10256707131131:CSV::::'

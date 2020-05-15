@@ -96,6 +96,14 @@ app {
                     ]
                 ],
                 [
+                'file':'openshift/templates/dbbackup.bc.json',
+                    'params':[
+                        'NAME':"dsrp-database-backup",
+                        'SUFFIX': "${app.build.suffix}",
+                        'VERSION':"${app.build.version}"
+                    ]
+                ],
+                [
                     'file':'openshift/templates/tools/metabase.bc.json',
                     'params':[
                             'NAME':"metabase",
@@ -103,6 +111,13 @@ app {
                             'VERSION':"${app.build.version}",
                             'SOURCE_CONTEXT_DIR': "openshift/docker-images/metabase",
                             'SOURCE_REPOSITORY_URL': "${app.git.uri}"
+                    ]
+                ],
+                [
+                    'file':'openshift/templates/tools/metabase-postgres.bc.json',
+                    'params':[
+                            'NAME':"metabase-postgres",
+                            'VERSION':"${app.build.version}",
                     ]
                 ]
         ]
