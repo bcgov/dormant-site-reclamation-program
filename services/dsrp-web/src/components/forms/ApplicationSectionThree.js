@@ -2,23 +2,19 @@ import React, { Component } from "react";
 import { reduxForm, Field, FormSection } from "redux-form";
 import PropTypes from "prop-types";
 import { Row, Col, Form, Button } from "antd";
-
 import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 
 const propTypes = {
-  previousStep: PropTypes.func,
-  onSubmit: PropTypes.func,
+  handleSubmit: PropTypes.func.isRequired,
+  previousStep: PropTypes.func.isRequired,
+  initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   isEditable: PropTypes.bool,
-  initialValues: PropTypes.objectOf(PropTypes.strings),
 };
 
 const defaultProps = {
-  previousStep: () => {},
-  onSubmit: () => {},
   isEditable: true,
-  initialValues: {},
 };
 
 class ApplicationSectionThree extends Component {
