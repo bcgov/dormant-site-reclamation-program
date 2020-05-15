@@ -31,12 +31,6 @@ const defaultProps = {
 };
 
 class ApplicationSectionOne extends Component {
-  componentWillReceiveProps(nextProps) {
-    if (nextProps !== this.props) {
-      console.log("ApplicationSectionOne nextProps:", nextProps);
-    }
-  }
-
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>

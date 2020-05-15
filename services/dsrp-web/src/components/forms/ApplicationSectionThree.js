@@ -22,12 +22,6 @@ const defaultProps = {
 const { Title } = Typography;
 
 class ApplicationSectionThree extends Component {
-  componentWillReceiveProps(nextProps) {
-    if (nextProps !== this.props) {
-      console.log("ApplicationSectionThree nextProps:", nextProps);
-    }
-  }
-
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
