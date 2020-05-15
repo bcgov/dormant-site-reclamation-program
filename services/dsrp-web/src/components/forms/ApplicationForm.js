@@ -10,10 +10,11 @@ import { createApplication } from "@/actionCreators/applicationActionCreator";
 import ApplicationSectionOne from "@/components/forms/ApplicationSectionOne";
 import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
 import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree";
+import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm";
 import { APPLICATION_FORM } from "@/constants/forms";
 
 const { Step } = Steps;
-const { Text } = Typography;
+const { Text, Title, Paragraph } = Typography;
 
 const propTypes = {
   createApplication: PropTypes.func.isRequired,
@@ -172,12 +173,27 @@ export class ApplicationForm extends Component {
       {
         title: "Review",
         content: (
-          <ApplicationSectionThree
-            previousStep={this.previousFormStep}
-            onSubmit={this.handleSubmit}
-            initialValues={this.state.initialValues}
-            extraActions={extraActions}
-          />
+          <>
+            <Title level={3}>Review Application</Title>
+            <Paragraph>
+              Please review your application below and confirm that its information is correct.
+            </Paragraph>
+            <Row gutter={48}>
+              <Col>
+                <ViewOnlyApplicationForm
+                  isEditable={false}
+                  initialValues={this.props.formValues}
+                  noRenderStep3
+                />
+              </Col>
+            </Row>
+            <ApplicationSectionThree
+              previousStep={this.previousFormStep}
+              onSubmit={this.handleSubmit}
+              initialValues={this.state.initialValues}
+              extraActions={extraActions}
+            />
+          </>
         ),
       },
     ];

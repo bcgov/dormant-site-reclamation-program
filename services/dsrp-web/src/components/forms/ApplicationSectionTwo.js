@@ -375,9 +375,7 @@ class ApplicationSectionTwo extends Component {
               <Button
                 type="primary"
                 htmlType="submit"
-                onClick={() => {
-                  window.scrollTo(0, 0);
-                }}
+                disabled={this.props.submitting || this.props.invalid}
               >
                 Next
               </Button>
