@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Row, Col, Typography } from "antd";
 import PropTypes from "prop-types";
-import { bindActionCreators } from "redux";
+import { bindActionCreators , compose } from "redux";
 import { isEmpty } from "lodash";
-import { compose } from "redux";
+
 import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 
 import ViewApplicationStatusForm from "@/components/forms/ViewApplicationStatusForm";

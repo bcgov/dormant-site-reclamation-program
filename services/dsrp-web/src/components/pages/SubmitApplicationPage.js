@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { bindActionCreators } from "redux";
-import { compose } from "redux";
-import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
+import { bindActionCreators , compose } from "redux";
+
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Row, Col, Typography } from "antd";
+import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import { createApplication } from "@/actionCreators/applicationActionCreator";
 import ApplicationForm from "@/components/forms/ApplicationForm";
 
