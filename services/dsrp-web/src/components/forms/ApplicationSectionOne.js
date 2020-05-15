@@ -11,7 +11,7 @@ import OrgBookSearch from "@/components/common/OrgBookSearch";
 import { DOCUMENT, EXCEL } from "@/constants/fileTypes";
 import { ORGBOOK_URL } from "@/constants/routes";
 
-const { Text, Title, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
@@ -28,6 +28,16 @@ const defaultProps = {
 };
 
 class ApplicationSectionOne extends Component {
+  state = {
+    indigenous_participation: false,
+  };
+
+  componentDidMount() {
+    this.setState({
+      indigenous_participation: false,
+    });
+  }
+
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
@@ -59,6 +69,27 @@ class ApplicationSectionOne extends Component {
                 disabled={!this.props.isEditable}
                 format={null}
               />
+              <Field
+                id="indigenous_participation_ind"
+                name="indigenous_participation_ind"
+                label="Do you wish to self‑identify as including Indigenous participation in completing the work outlined within this application?"
+                component={renderConfig.CHECKBOX}
+                onChange={(event, v) => {
+                  this.setState({ indigenous_participation: v });
+                }}
+              />
+              {this.state.indigenous_participation && (
+                <>
+                  <Field
+                    id="indigenous_participation_descript"
+                    name="indigenous_participation_descript"
+                    label="If so, please describe:"
+                    component={renderConfig.AUTO_SIZE_FIELD}
+                    validate={[required]}
+                  />
+                  <hr style={{ width: "5px" }} />
+                </>
+              )}
               <Field
                 id="address_line_1"
                 name="address_line_1"

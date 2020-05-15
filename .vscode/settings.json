@@ -21,10 +21,10 @@
     "eslint.autoFixOnSave": true
   },
   "cSpell.words": ["idir"],
+  "workbench.colorTheme": "Default Dark+",
   "workbench.colorCustomizations": {
-    "activityBar.background": "#038052",
+    "activityBar.background": "#013220",
     "titleBar.activeBackground": "#013220",
     "titleBar.activeForeground": "#ffffff"
-  },
-  "window.titleBarStyle": "custom"
+  }
 }
