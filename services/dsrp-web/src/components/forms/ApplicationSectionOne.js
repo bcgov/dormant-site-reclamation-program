@@ -180,7 +180,7 @@ class ApplicationSectionOne extends Component {
                     placeholder="Ext. 1"
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
-                    validate={[maxLength(5)]}
+                    validate={[maxLength(6)]}
                   />
                 </Col>
               </Row>
@@ -206,7 +206,7 @@ class ApplicationSectionOne extends Component {
                     placeholder="Ext. 2"
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
-                    validate={[maxLength(5)]}
+                    validate={[maxLength(6)]}
                   />
                 </Col>
               </Row>
