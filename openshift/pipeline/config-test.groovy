@@ -238,6 +238,7 @@ environments {
         vars {
             DB_PVC_SIZE = '10Gi'
             DOCUMENT_PVC_SIZE = '5Gi'
+            BACKUP_VERIFICATION_PVC_SIZE = '2Gi'
             LOG_PVC_SIZE = '1Gi'
             METABASE_PVC_SIZE = '10Gi'
             git {

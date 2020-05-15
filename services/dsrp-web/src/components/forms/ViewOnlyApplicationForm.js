@@ -9,7 +9,9 @@ const ViewOnlyApplicationForm = (props) => (
     <Col className="steps-content">
       <ApplicationSectionOne isEditable={false} initialValues={props.initialValues} />
       <ApplicationSectionTwo isEditable={false} initialValues={props.initialValues} />
-      <ApplicationSectionThree isEditable={false} initialValues={props.initialValues} />
+      {!props.noRenderStep3 && (
+        <ApplicationSectionThree isEditable={false} initialValues={props.initialValues} />
+      )}
     </Col>
   </Row>
 );

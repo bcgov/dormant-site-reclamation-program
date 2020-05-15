@@ -83,16 +83,15 @@ export const CONTRACT_WORK_SECTIONS = [
   ]),
   section("Reclamation", "reclamation", [
     subSection("Reclamation Planning and Logistics", [
-      field("amount_0", "Contractor and sub-contractor procurement and scheduling"),
-      field("amount_1", "Mob/Demob to/from site and any site preparation"),
-      field("amount_2", "Camp or lodging accommodations for workers"),
+      field("amount_0", "Mob/Demob to/from site and any site preparation"),
+      field("amount_1", "Camp or lodging accommodations for workers"),
     ]),
     subSection("Reclamation Fieldwork", [
-      field("amount_3", "Surface re-contouring"),
-      field("amount_4", "Topsoil replacement and redistribution"),
-      field("amount_5", "Re-vegetation and monitoring"),
+      field("amount_2", "Surface re-contouring"),
+      field("amount_3", "Topsoil replacement and redistribution"),
+      field("amount_4", "Re-vegetation and monitoring"),
     ]),
-    subSection("Reporting", [field("amount_6", "Technical report writing and submission")]),
+    subSection("Reporting", [field("amount_5", "Technical report writing and submission")]),
   ]),
 ];
 

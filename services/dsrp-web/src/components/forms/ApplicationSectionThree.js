@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { reduxForm, Field, FormSection } from "redux-form";
 import PropTypes from "prop-types";
-import { Row, Col, Form, Button } from "antd";
+import { Row, Col, Form, Button, Typography } from "antd";
 import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
@@ -19,20 +19,28 @@ const defaultProps = {
   isEditable: true,
 };
 
+const { Title } = Typography;
+
 class ApplicationSectionThree extends Component {
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <FormSection name="review">
-          <Field
-            id="reviewed_and_verified"
-            name="reviewed_and_verified"
-            label="I have reviewed and verified that this application's information is correct."
-            component={renderConfig.CHECKBOX}
-            validate={[required]}
-            disabled={!this.props.isEditable}
-          />
+          <Title level={3}>Submit Application</Title>
+          <Row gutter={48}>
+            <Col span={24}>
+              <Field
+                id="reviewed_and_verified"
+                name="reviewed_and_verified"
+                label="I have reviewed and verified that this application's information is correct."
+                component={renderConfig.CHECKBOX}
+                validate={[required]}
+                disabled={!this.props.isEditable}
+              />
+            </Col>
+          </Row>
         </FormSection>
+
         {this.props.isEditable && (
           <Row className="steps-action">
             <Col>
