@@ -67,12 +67,7 @@ class ApplicationSectionThree extends Component {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  disabled={
-                    this.props.submitting ||
-                    this.props.invalid ||
-                    this.props.error ||
-                    this.props.pristine
-                  }
+                  disabled={this.props.submitting || this.props.invalid}
                 >
                   Submit
                 </Button>
