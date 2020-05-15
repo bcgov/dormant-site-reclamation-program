@@ -55,6 +55,7 @@ class ApplicationSectionThree extends Component {
     );
   }
 }
+
 ApplicationSectionThree.propTypes = propTypes;
 ApplicationSectionThree.defaultProps = defaultProps;
 
@@ -64,4 +65,5 @@ export default reduxForm({
   forceUnregisterOnUnmount: true,
   keepDirtyOnReinitialize: true,
   enableReinitialize: true,
+  updateUnregisteredFields: true,
 })(ApplicationSectionThree);

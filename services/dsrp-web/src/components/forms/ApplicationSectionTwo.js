@@ -389,5 +389,6 @@ export default compose(
     ],
     keepDirtyOnReinitialize: true,
     enableReinitialize: true,
+    updateUnregisteredFields: true,
   })
 )(ApplicationSectionTwo);

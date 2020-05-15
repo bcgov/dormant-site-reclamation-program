@@ -32,6 +32,7 @@ const defaultProps = {
 };
 
 class FileUpload extends React.Component {
+  state = { files: this.props.files };
   constructor(props) {
     super(props);
 
@@ -75,6 +76,7 @@ class FileUpload extends React.Component {
 
     return (
       <FilePond
+        ref={(ref) => (this.pond = ref)}
         server={this.server}
         name="file"
         allowRevert={this.props.allowRevert}
@@ -84,6 +86,15 @@ class FileUpload extends React.Component {
         allowFileTypeValidation={acceptedFileTypes.length > 0}
         acceptedFileTypes={acceptedFileTypes}
         fileValidateTypeLabelExpectedTypesMap={this.props.acceptedFileTypesMap}
+        files={this.state.files}
+        // {...this.props.input}
+        onupdatefiles={(fileItems) => {
+          console.log("REF", this.pond);
+          // Set currently active file objects to this.state
+          this.setState({
+            files: fileItems.map((fileItem) => fileItem.file),
+          });
+        }}
       />
     );
   }

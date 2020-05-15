@@ -256,6 +256,7 @@ class ApplicationSectionOne extends Component {
                       onRemoveFile={this.props.onRemoveFile}
                       allowRevert
                       allowMultiple={false}
+                      files={this.props.uploadedFiles}
                     />
                   </Form.Item>
                 </Col>
@@ -303,4 +304,5 @@ export default reduxForm({
   forceUnregisterOnUnmount: true,
   keepDirtyOnReinitialize: true,
   enableReinitialize: true,
+  updateUnregisteredFields: true,
 })(ApplicationSectionOne);

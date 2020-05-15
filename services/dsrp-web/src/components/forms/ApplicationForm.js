@@ -1,14 +1,12 @@
-/* eslint-disable */
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { isDirty } from "redux-form";
 import { Col, Row, Steps } from "antd";
-
 import PropTypes from "prop-types";
 import ApplicationSectionOne from "@/components/forms/ApplicationSectionOne";
 import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
 import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree";
-import {APPLICATION_FORM} from "@/constants/forms";
+import { APPLICATION_FORM } from "@/constants/forms";
 
 const { Step } = Steps;
 
@@ -17,6 +15,7 @@ const propTypes = {
   isDirty: PropTypes.bool.isRequired,
   onFileLoad: PropTypes.func.isRequired,
   onRemoveFile: PropTypes.func.isRequired,
+  initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 export class ApplicationForm extends Component {
@@ -32,35 +31,6 @@ export class ApplicationForm extends Component {
     this.setState({ current });
   };
 
-  steps = [
-    {
-      title: "Company Details",
-      content: (
-        <ApplicationSectionOne
-          onSubmit={this.nextFormStep}
-          onFileLoad={this.props.onFileLoad}
-          onRemoveFile={this.props.onRemoveFile}
-          initialValues={{ company_details: { province: "BC" } }}
-        />
-      ),
-    },
-    {
-      title: "Well Sites",
-      content: (
-        <ApplicationSectionTwo previousStep={this.previousFormStep} onSubmit={this.nextFormStep} />
-      ),
-    },
-    {
-      title: "Review",
-      content: (
-        <ApplicationSectionThree
-          previousStep={this.previousFormStep}
-          onSubmit={this.props.handleSubmit}
-        />
-      ),
-    },
-  ];
-
   componentDidUpdate = () => {
     if (this.props.isDirty) {
       window.onbeforeunload = () => true;
@@ -70,16 +40,51 @@ export class ApplicationForm extends Component {
   };
 
   render() {
+    const steps = [
+      {
+        title: "Company Details",
+        content: (
+          <ApplicationSectionOne
+            onSubmit={this.nextFormStep}
+            onFileLoad={this.props.onFileLoad}
+            onRemoveFile={this.props.onRemoveFile}
+            initialValues={this.props.initialValues}
+            uploadedFiles={this.props.uploadedFiles}
+          />
+        ),
+      },
+      {
+        title: "Well Sites",
+        content: (
+          <ApplicationSectionTwo
+            previousStep={this.previousFormStep}
+            onSubmit={this.nextFormStep}
+            initialValues={this.props.initialValues}
+          />
+        ),
+      },
+      {
+        title: "Review",
+        content: (
+          <ApplicationSectionThree
+            previousStep={this.previousFormStep}
+            onSubmit={this.props.handleSubmit}
+            initialValues={this.props.initialValues}
+          />
+        ),
+      },
+    ];
+
     return (
       <Row>
         <Col>
           <Steps current={this.state.current}>
-            {this.steps.map((item) => (
+            {steps.map((item) => (
               <Step key={item.title} title={item.title} />
             ))}
           </Steps>
           <Row className="steps-content">
-            <Col>{this.steps[this.state.current].content}</Col>
+            <Col>{steps[this.state.current].content}</Col>
           </Row>
         </Col>
       </Row>
