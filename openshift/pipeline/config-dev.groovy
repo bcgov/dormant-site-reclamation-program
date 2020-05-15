@@ -68,24 +68,24 @@ app {
                             'VOLUME_CAPACITY':"${vars.DB_PVC_SIZE}"
                     ]
                 ],
-                [
-                    'file':'openshift/templates/dbbackup.dc.json',
-                    'params':[
-                            'NAME':"dsrp-database-backup",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'VERSION':"${app.deployment.version}",
-                            'ENVIRONMENT_NAME':"${vars.deployment.namespace}",
-                            'ENVIRONMENT_FRIENDLY_NAME':"Dormant Site Reclamation Program (DEV)",
-                            'DATABASE_SERVICE_NAME':"dsrp-postgresql${vars.deployment.suffix}",
-                            'NFS_VOLUME_IDENTIFIER':"bk-eazios-dev-rz5el8sdtrii",
-                            'CPU_REQUEST':"${vars.resources.backup.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.backup.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.backup.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.backup.memory_limit}",
-                            'VERIFICATION_VOLUME_SIZE':"${vars.BACKUP_VERIFICATION_PVC_SIZE}",
-                            'FLYWAY_NAME':"dsrp-flyway-migration-client",
-                    ]
-                ],
+                // [
+                //     'file':'openshift/templates/dbbackup.dc.json',
+                //     'params':[
+                //             'NAME':"dsrp-database-backup",
+                //             'SUFFIX': "${vars.deployment.suffix}",
+                //             'VERSION':"${app.deployment.version}",
+                //             'ENVIRONMENT_NAME':"${vars.deployment.namespace}",
+                //             'ENVIRONMENT_FRIENDLY_NAME':"Dormant Site Reclamation Program (DEV)",
+                //             'DATABASE_SERVICE_NAME':"dsrp-postgresql${vars.deployment.suffix}",
+                //             'NFS_VOLUME_IDENTIFIER':"bk-eazios-dev-rz5el8sdtrii",
+                //             'CPU_REQUEST':"${vars.resources.backup.cpu_request}",
+                //             'CPU_LIMIT':"${vars.resources.backup.cpu_limit}",
+                //             'MEMORY_REQUEST':"${vars.resources.backup.memory_request}",
+                //             'MEMORY_LIMIT':"${vars.resources.backup.memory_limit}",
+                //             'VERIFICATION_VOLUME_SIZE':"${vars.BACKUP_VERIFICATION_PVC_SIZE}",
+                //             'FLYWAY_NAME':"dsrp-flyway-migration-client",
+                //     ]
+                // ],
                 [
                     'file':'openshift/templates/redis.dc.json',
                     'params':[
@@ -200,35 +200,35 @@ app {
                             'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/document-manager",
                     ]
                 ],
-                [
-                    'file':'openshift/templates/tools/metabase.dc.json',
-                    'params':[
-                            'NAME':"metabase",
-                            'NAME_DATABASE':"metabase-postgres",
-                            'VERSION':"${app.deployment.version}",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'METABASE_PVC_SIZE':"${vars.METABASE_PVC_SIZE}",
-                            'ENVIRONMENT_NAME':"${app.deployment.env.name}",
-                            'APPLICATION_DOMAIN': "${vars.modules.'metabase'.HOST}",
-                            'CPU_REQUEST':"${vars.resources.metabase.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.metabase.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.metabase.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.metabase.memory_limit}",
-                    ]
-                ],
-                [
-                    'file':'openshift/templates/tools/metabase-postgres.dc.json',
-                    'params':[
-                            'NAME':"metabase-postgres",
-                            'VERSION':"${app.deployment.version}",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'METABASE_PVC_SIZE':"${vars.METABASE_PVC_SIZE}",
-                            'CPU_REQUEST':"${vars.resources.metabase.db_cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.metabase.db_cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.metabase.db_memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.metabase.db_memory_limit}"
-                    ]
-                ]
+                // [
+                //     'file':'openshift/templates/tools/metabase.dc.json',
+                //     'params':[
+                //             'NAME':"metabase",
+                //             'NAME_DATABASE':"metabase-postgres",
+                //             'VERSION':"${app.deployment.version}",
+                //             'SUFFIX': "${vars.deployment.suffix}",
+                //             'METABASE_PVC_SIZE':"${vars.METABASE_PVC_SIZE}",
+                //             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
+                //             'APPLICATION_DOMAIN': "${vars.modules.'metabase'.HOST}",
+                //             'CPU_REQUEST':"${vars.resources.metabase.cpu_request}",
+                //             'CPU_LIMIT':"${vars.resources.metabase.cpu_limit}",
+                //             'MEMORY_REQUEST':"${vars.resources.metabase.memory_request}",
+                //             'MEMORY_LIMIT':"${vars.resources.metabase.memory_limit}",
+                //     ]
+                // ],
+                // [
+                //     'file':'openshift/templates/tools/metabase-postgres.dc.json',
+                //     'params':[
+                //             'NAME':"metabase-postgres",
+                //             'VERSION':"${app.deployment.version}",
+                //             'SUFFIX': "${vars.deployment.suffix}",
+                //             'METABASE_PVC_SIZE':"${vars.METABASE_PVC_SIZE}",
+                //             'CPU_REQUEST':"${vars.resources.metabase.db_cpu_request}",
+                //             'CPU_LIMIT':"${vars.resources.metabase.db_cpu_limit}",
+                //             'MEMORY_REQUEST':"${vars.resources.metabase.db_memory_request}",
+                //             'MEMORY_LIMIT':"${vars.resources.metabase.db_memory_limit}"
+                //     ]
+                // ]
         ]
     }
 }
