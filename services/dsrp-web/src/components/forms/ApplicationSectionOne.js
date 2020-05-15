@@ -1,7 +1,9 @@
 import React, { Component } from "react";
-import { reduxForm, Field, FormSection } from "redux-form";
+import { reduxForm, Field, FormSection, formValueSelector } from "redux-form";
 import { Row, Col, Typography, Form, Button } from "antd";
 import PropTypes from "prop-types";
+import { compose } from "redux";
+import { connect } from "react-redux";
 import { renderConfig } from "@/components/common/config";
 import { required, email, maxLength } from "@/utils/validate";
 import { phoneMask, postalCodeMask } from "@/utils/helpers";
@@ -20,6 +22,7 @@ const propTypes = {
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   extraActions: PropTypes.node,
   isEditable: PropTypes.bool,
+  indigenousParticipationCheckbox: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -28,16 +31,6 @@ const defaultProps = {
 };
 
 class ApplicationSectionOne extends Component {
-  state = {
-    indigenous_participation: false,
-  };
-
-  componentDidMount() {
-    this.setState({
-      indigenous_participation: false,
-    });
-  }
-
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
@@ -74,21 +67,15 @@ class ApplicationSectionOne extends Component {
                 name="indigenous_participation_ind"
                 label="Do you wish to self‑identify as including Indigenous participation in completing the work outlined within this application?"
                 component={renderConfig.CHECKBOX}
-                onChange={(event, v) => {
-                  this.setState({ indigenous_participation: v });
-                }}
               />
-              {this.state.indigenous_participation && (
-                <>
-                  <Field
-                    id="indigenous_participation_descript"
-                    name="indigenous_participation_descript"
-                    label="If so, please describe:"
-                    component={renderConfig.AUTO_SIZE_FIELD}
-                    validate={[required]}
-                  />
-                  <hr style={{ width: "5px" }} />
-                </>
+              {this.props.indigenousParticipationCheckbox && (
+                <Field
+                  id="indigenous_participation_descript"
+                  name="indigenous_participation_descript"
+                  label="If so, please describe:"
+                  component={renderConfig.AUTO_SIZE_FIELD}
+                  validate={[required]}
+                />
               )}
               <Field
                 id="address_line_1"
@@ -130,21 +117,7 @@ class ApplicationSectionOne extends Component {
                 validate={[required]}
                 format={null}
                 disabled
-                data={[
-                  { value: "AB", label: "Alberta" },
-                  { value: "BC", label: "British Columbia" },
-                  { value: "MB", label: "Manitoba" },
-                  { value: "NB", label: "New Brunswick" },
-                  { value: "NL", label: "Newfoundland and Labrador" },
-                  { value: "NS", label: "Nova Scotia" },
-                  { value: "ON", label: "Ontario" },
-                  { value: "PE", label: "Prince Edward Island" },
-                  { value: "QC", label: "Quebec" },
-                  { value: "SK", label: "Saskatchewan" },
-                  { value: "NT", label: "Northwest Territories" },
-                  { value: "NU", label: "Nunavut" },
-                  { value: "YT", label: "Yukon" },
-                ]}
+                data={[{ value: "BC", label: "British Columbia" }]}
               />
             </Col>
             <Col xs={24} sm={12}>
@@ -335,11 +308,20 @@ class ApplicationSectionOne extends Component {
 ApplicationSectionOne.propTypes = propTypes;
 ApplicationSectionOne.defaultProps = defaultProps;
 
-export default reduxForm({
-  form: FORM.APPLICATION_FORM,
-  destroyOnUnmount: false,
-  forceUnregisterOnUnmount: true,
-  keepDirtyOnReinitialize: true,
-  enableReinitialize: true,
-  updateUnregisteredFields: true,
-})(ApplicationSectionOne);
+const selector = formValueSelector(FORM.APPLICATION_FORM);
+
+const mapStateToProps = (state) => ({
+  indigenousParticipationCheckbox: selector(state, "company_details.indigenous_participation_ind"),
+});
+
+export default compose(
+  connect(mapStateToProps),
+  reduxForm({
+    form: FORM.APPLICATION_FORM,
+    destroyOnUnmount: false,
+    forceUnregisterOnUnmount: true,
+    keepDirtyOnReinitialize: true,
+    enableReinitialize: true,
+    updateUnregisteredFields: true,
+  })
+)(ApplicationSectionOne);
