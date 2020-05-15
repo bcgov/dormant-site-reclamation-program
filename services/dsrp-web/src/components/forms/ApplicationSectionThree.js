@@ -20,12 +20,12 @@ const defaultProps = {
   isEditable: true,
 };
 
-const { Paragraph, Text, Title } = Typography;
+const { Paragraph, Title } = Typography;
 
 class ApplicationSectionThree extends Component {
   render() {
     return (
-      <Form layout="vertical" onSubmit={this.props.handleSubmit}>
+      <>
         {this.props.isEditable && (
           <>
             <Title level={3}>Review Application</Title>
@@ -44,40 +44,47 @@ class ApplicationSectionThree extends Component {
           </>
         )}
 
-        <FormSection name="review">
-          <Title level={3}>Confirm and Submit</Title>
-          <Row gutter={48}>
-            <Col span={24}>
-              <Field
-                id="reviewed_and_verified"
-                name="reviewed_and_verified"
-                label="I have reviewed and verified that this application's information is correct."
-                component={renderConfig.CHECKBOX}
-                validate={[required]}
-                disabled={!this.props.isEditable}
-              />
-            </Col>
-          </Row>
-        </FormSection>
+        <Form layout="vertical" onSubmit={this.props.handleSubmit}>
+          <FormSection name="review">
+            <Title level={3}>Submit Application</Title>
+            <Row gutter={48}>
+              <Col span={24}>
+                <Field
+                  id="reviewed_and_verified"
+                  name="reviewed_and_verified"
+                  label="I have reviewed and verified that this application's information is correct."
+                  component={renderConfig.CHECKBOX}
+                  validate={[required]}
+                  disabled={!this.props.isEditable}
+                />
+              </Col>
+            </Row>
+          </FormSection>
 
-        {this.props.isEditable && (
-          <Row className="steps-action">
-            <Col>
-              <Button
-                type="primary"
-                htmlType="submit"
-                disabled={this.props.submitting || this.props.invalid}
-              >
-                Submit
-              </Button>
-              <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
-                Previous
-              </Button>
-              {this.props.extraActions}
-            </Col>
-          </Row>
-        )}
-      </Form>
+          {this.props.isEditable && (
+            <Row className="steps-action">
+              <Col>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  disabled={
+                    this.props.submitting ||
+                    this.props.invalid ||
+                    this.props.error ||
+                    this.props.pristine
+                  }
+                >
+                  Submit
+                </Button>
+                <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
+                  Previous
+                </Button>
+                {this.props.extraActions}
+              </Col>
+            </Row>
+          )}
+        </Form>
+      </>
     );
   }
 }
