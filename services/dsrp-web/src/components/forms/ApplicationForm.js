@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { isDirty, getFormValues, reset } from "redux-form";
-import { Col, Row, Steps } from "antd";
+import { Col, Row, Steps, Typography } from "antd";
 import PropTypes from "prop-types";
 import { isEqual } from "lodash";
+import { formatDateTimeFine } from "@/utils/helpers";
 import { createApplication } from "@/actionCreators/applicationActionCreator";
 import ApplicationSectionOne from "@/components/forms/ApplicationSectionOne";
 import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
@@ -12,11 +13,12 @@ import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree"
 import { APPLICATION_FORM } from "@/constants/forms";
 
 const { Step } = Steps;
+const { Text } = Typography;
 
 const propTypes = {
   createApplication: PropTypes.func.isRequired,
-  isDirty: PropTypes.bool.isRequired,
   formValues: PropTypes.objectOf(PropTypes.any),
+  isDirty: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -45,7 +47,10 @@ export class ApplicationForm extends Component {
   };
 
   saveFormData() {
-    if (isEqual(this.props.formValues, this.state.previouslySavedFormValues)) {
+    if (
+      !this.props.isDirty ||
+      isEqual(this.props.formValues, this.state.previouslySavedFormValues)
+    ) {
       return;
     }
 
@@ -60,19 +65,15 @@ export class ApplicationForm extends Component {
       saveTimestamp: data.saveTimestamp,
       previouslySavedFormValues: data.formValues,
     });
-
-    console.log("Saving form data:", data);
   }
 
   getSavedFormData() {
-    console.log("Get saved form data");
     const data = localStorage.getItem(APPLICATION_FORM);
     return data ? JSON.parse(data) : null;
   }
 
   emptySavedFormData() {
     localStorage.setItem(APPLICATION_FORM, null);
-    console.log("Emptying saved form data");
   }
 
   handleSubmit = (values, dispatch) => {
@@ -94,7 +95,6 @@ export class ApplicationForm extends Component {
   };
 
   onFileLoad = (document_name, document_manager_guid) => {
-    console.log("GETTING CALLED");
     this.setState((prevState) => ({
       uploadedFiles: [{ document_manager_guid, document_name }, ...prevState.uploadedFiles],
     }));
@@ -124,6 +124,7 @@ export class ApplicationForm extends Component {
 
   componentWillUnmount() {
     clearInterval(this.autoSaveForm);
+    this.saveFormData();
   }
 
   componentDidUpdate = () => {
@@ -135,6 +136,13 @@ export class ApplicationForm extends Component {
   };
 
   render() {
+    const extraActions = (this.state.saveTimestamp && (
+      <Text style={{ float: "right" }}>
+        Application progress automatically saved to this device on&nbsp;
+        <Text strong>{formatDateTimeFine(this.state.saveTimestamp)}</Text>.
+      </Text>
+    )) || <></>;
+
     const steps = [
       {
         title: "Company Details",
@@ -144,6 +152,7 @@ export class ApplicationForm extends Component {
             onFileLoad={this.onFileLoad}
             onRemoveFile={this.onRemoveFile}
             initialValues={this.state.initialValues}
+            extraActions={extraActions}
           />
         ),
       },
@@ -154,6 +163,7 @@ export class ApplicationForm extends Component {
             previousStep={this.previousFormStep}
             onSubmit={this.nextFormStep}
             initialValues={this.state.initialValues}
+            extraActions={extraActions}
           />
         ),
       },
@@ -164,6 +174,7 @@ export class ApplicationForm extends Component {
             previousStep={this.previousFormStep}
             onSubmit={this.handleSubmit}
             initialValues={this.state.initialValues}
+            extraActions={extraActions}
           />
         ),
       },

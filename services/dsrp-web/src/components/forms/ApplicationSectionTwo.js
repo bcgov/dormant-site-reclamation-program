@@ -21,10 +21,12 @@ const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  extraActions: PropTypes.node,
   isEditable: PropTypes.bool,
 };
 
 const defaultProps = {
+  extraActions: undefined,
   isEditable: true,
 };
 
@@ -363,6 +365,7 @@ class ApplicationSectionTwo extends Component {
               <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
                 Previous
               </Button>
+              {this.props.extraActions}
             </Col>
           </Row>
         )}

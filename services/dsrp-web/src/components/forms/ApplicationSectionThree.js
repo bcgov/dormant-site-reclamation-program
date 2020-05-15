@@ -10,10 +10,12 @@ const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  extraActions: PropTypes.node,
   isEditable: PropTypes.bool,
 };
 
 const defaultProps = {
+  extraActions: undefined,
   isEditable: true,
 };
 
@@ -34,16 +36,13 @@ class ApplicationSectionThree extends Component {
         {this.props.isEditable && (
           <Row className="steps-action">
             <Col>
-              <Button
-                type="primary"
-                htmlType="submit"
-                disabled={this.props.submitting || this.props.pristine}
-              >
+              <Button type="primary" htmlType="submit" disabled={this.props.submitting}>
                 Submit
               </Button>
               <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
                 Previous
               </Button>
+              {this.props.extraActions}
             </Col>
           </Row>
         )}

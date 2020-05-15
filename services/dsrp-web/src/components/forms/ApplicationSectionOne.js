@@ -18,10 +18,12 @@ const propTypes = {
   onFileLoad: PropTypes.func.isRequired,
   onRemoveFile: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  extraActions: PropTypes.node,
   isEditable: PropTypes.bool,
 };
 
 const defaultProps = {
+  extraActions: undefined,
   isEditable: true,
 };
 
@@ -281,6 +283,7 @@ class ApplicationSectionOne extends Component {
                 <Button type="primary" htmlType="submit">
                   Next
                 </Button>
+                {this.props.extraActions}
               </Col>
             </Row>
           </div>
