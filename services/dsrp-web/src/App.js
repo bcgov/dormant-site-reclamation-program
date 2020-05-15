@@ -13,6 +13,7 @@ import AuthenticationGuard from "@/hoc/AuthenticationGuard";
 import WarningBanner from "@/components/common/WarningBanner";
 import { detectIE } from "@/utils/environmentUtils";
 import configureStore from "./store/configureStore";
+import ScrollToTopWrapper from "@/components/common/wrappers/ScrollToTopWrapper";
 
 export const store = configureStore();
 
@@ -42,27 +43,29 @@ class App extends Component {
     const contentFull = 24;
     return (
       <BrowserRouter basename={process.env.BASE_PATH}>
-        <Layout>
-          <Header xs={xs} lg={lg} xl={xl} xxl={xxl} />
+        <ScrollToTopWrapper>
           <Layout>
-            <Content>
-              {this.state.isIE && <WarningBanner type="IE" onClose={this.handleBannerClose} />}
-              <MediaQuery maxWidth={500}>
-                {this.state.isMobile && (
-                  <WarningBanner type="mobile" onClose={this.handleMobileWarningClose} />
-                )}
-              </MediaQuery>
-              <Row type="flex" justify="center" align="top">
-                <Col xs={xs} lg={lg} xl={xl} xxl={contentFull}>
-                  <Routes />
-                </Col>
-              </Row>
-              <ModalWrapper />
-              <BackTop />
-            </Content>
+            <Header xs={xs} lg={lg} xl={xl} xxl={xxl} />
+            <Layout>
+              <Content>
+                {this.state.isIE && <WarningBanner type="IE" onClose={this.handleBannerClose} />}
+                <MediaQuery maxWidth={500}>
+                  {this.state.isMobile && (
+                    <WarningBanner type="mobile" onClose={this.handleMobileWarningClose} />
+                  )}
+                </MediaQuery>
+                <Row type="flex" justify="center" align="top">
+                  <Col xs={xs} lg={lg} xl={xl} xxl={contentFull}>
+                    <Routes />
+                  </Col>
+                </Row>
+                <ModalWrapper />
+                <BackTop />
+              </Content>
+            </Layout>
+            <Footer xs={xs} lg={lg} xl={xl} xxl={xxl} />
           </Layout>
-          <Footer xs={xs} lg={lg} xl={xl} xxl={xxl} />
-        </Layout>
+        </ScrollToTopWrapper>
       </BrowserRouter>
     );
   }
