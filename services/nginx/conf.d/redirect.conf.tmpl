@@ -1,0 +1,16 @@
+# ----------------------------------------------------------------------
+# | Redirect Prod Configuration                                        |
+# ----------------------------------------------------------------------
+
+# Forwards all traffic to landing page unless DSRP-Bypass is set to true
+
+set $prod 0;
+if ("${DSRP_DOMAIN}" = "dormant-site-reclamation.gov.bc.ca") {
+  set $prod 1;
+}
+if ($http_dsrp_bypass != "true") {
+  set $prod 0;
+}
+if ($prod = 1) {
+  return 301 https://www2.gov.bc.ca/gov/content/home;
+}
