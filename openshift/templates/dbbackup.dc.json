@@ -214,75 +214,74 @@
         }
       }
     }
-  }
-],
-"parameters": [
-  {
-    "name": "NAME",
-    "displayName": "Name",
-    "description": "The name assigned to all of the resources defined in this template.",
-    "required": true,
-    "value": "backup"
-  },
-  {
-    "name": "SUFFIX",
-    "displayName": "Name Suffix",
-    "description": "A suffix appended to all objects",
-    "required": true
-  },
-  {
-    "name": "VERSION",
-    "required": true
-  },
-  {
-    "name": "DATABASE_SERVICE_NAME",
-    "displayName": "Database Service Name",
-    "description": "The name of the database service.",
-    "required": true,
-    "value": "postgresql"
-  },
-  {
-    "name": "WEBHOOK_SECRET_NAME",
-    "value": "template.dsrp-rocket-chat-integrations"
-  },
-  {
-    "name": "NFS_VOLUME_IDENTIFIER",
-    "description": "Generated identifier of the NFS volume",
-    "required": true
-  },
-  {
-    "name": "ENVIRONMENT_NAME",
-    "displayName": "Environment Name (Environment Id)",
-    "description": "The name or Id of the environment.  This variable is used by the webhook integration to identify the environment in which the backup notifications originate.",
-    "required": false,
-    "value": "eaxios-dev"
-  },
-  {
-    "name": "ENVIRONMENT_FRIENDLY_NAME",
-    "value": "Dormant Site Reclamation Program (DEV)"
-  },
-  {
-    "name": "VERIFICATION_VOLUME_SIZE",
-    "displayName": "Persistent Volume Size",
-    "description": "The size of the persistent volume , e.g. 512Mi, 1Gi, 2Gi.",
-    "required": true,
-    "value": "1Gi"
-  },
-  {
-    "name": "CPU_REQUEST",
-    "value": "0"
-  },
-  {
-    "name": "CPU_LIMIT",
-    "value": "0"
-  },
-  {
-    "name": "MEMORY_REQUEST",
-    "value": "0"
-  },
-  {
-    "name": "MEMORY_LIMIT",
-    "value": "0"
-  }
-]
+  ],
+  "parameters": [
+    {
+      "name": "NAME",
+      "displayName": "Name",
+      "description": "The name assigned to all of the resources defined in this template.",
+      "required": true,
+      "value": "backup"
+    },
+    {
+      "name": "SUFFIX",
+      "displayName": "Name Suffix",
+      "description": "A suffix appended to all objects",
+      "required": true
+    },
+    {
+      "name": "VERSION",
+      "required": true
+    },
+    {
+      "name": "DATABASE_SERVICE_NAME",
+      "displayName": "Database Service Name",
+      "description": "The name of the database service.",
+      "required": true,
+      "value": "postgresql"
+    },
+    {
+      "name": "WEBHOOK_SECRET_NAME",
+      "value": "template.dsrp-rocket-chat-integrations"
+    },
+    {
+      "name": "NFS_VOLUME_IDENTIFIER",
+      "description": "Generated identifier of the NFS volume",
+      "required": true
+    },
+    {
+      "name": "ENVIRONMENT_NAME",
+      "displayName": "Environment Name (Environment Id)",
+      "description": "The name or Id of the environment.  This variable is used by the webhook integration to identify the environment in which the backup notifications originate.",
+      "required": false,
+      "value": "eaxios-dev"
+    },
+    {
+      "name": "ENVIRONMENT_FRIENDLY_NAME",
+      "value": "Dormant Site Reclamation Program (DEV)"
+    },
+    {
+      "name": "VERIFICATION_VOLUME_SIZE",
+      "displayName": "Persistent Volume Size",
+      "description": "The size of the persistent volume , e.g. 512Mi, 1Gi, 2Gi.",
+      "required": true,
+      "value": "1Gi"
+    },
+    {
+      "name": "CPU_REQUEST",
+      "value": "0"
+    },
+    {
+      "name": "CPU_LIMIT",
+      "value": "0"
+    },
+    {
+      "name": "MEMORY_REQUEST",
+      "value": "0"
+    },
+    {
+      "name": "MEMORY_LIMIT",
+      "value": "0"
+    }
+  ]
 }
