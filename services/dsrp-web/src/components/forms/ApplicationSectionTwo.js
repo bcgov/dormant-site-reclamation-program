@@ -150,9 +150,7 @@ const asyncValidateWell = async (values, field) => {
 };
 
 const asyncValidate = (values, dispatch, props, field) => {
-  if (!field) return Promise.resolve();
-
-  if (field === "contract_details.operator_id") {
+  if (!field || field === "contract_details.operator_id") {
     return Promise.all(
       values.well_sites.map((well, index) =>
         asyncValidateWell(
@@ -320,7 +318,7 @@ class ApplicationSectionTwo extends Component {
                 placeholder="Search for permit holder for whom this work will be performed"
                 component={PermitHolderSelect}
                 disabled={!this.props.isEditable}
-                // validate={[required]}
+                validate={[required]}
               />
             </Col>
           </Row>

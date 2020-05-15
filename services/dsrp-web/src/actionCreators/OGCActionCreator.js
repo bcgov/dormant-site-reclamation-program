@@ -33,6 +33,20 @@ export const fetchWells = (params = {}) => (dispatch) => {
     .finally(() => dispatch(hideLoading()));
 };
 
+export const fetchSelectedWell = (params = {}) => (dispatch) => {
+  dispatch(request(reducerTypes.FETCH_SELECTED_WELL));
+  dispatch(showLoading());
+  return CustomAxios()
+    .get(ENVIRONMENT.apiUrl + API.WELL(params), createRequestHeader())
+    .then((response) => {
+      dispatch(success(reducerTypes.FETCH_SELECTED_WELL));
+      if (response.data.records.length > 0)
+        dispatch(OGCActions.storeSelectedWell(response.data.records[0]));
+    })
+    .catch(() => dispatch(error(reducerTypes.FETCH_SELECTED_WELL)))
+    .finally(() => dispatch(hideLoading()));
+};
+
 export const fetchLiabilities = () => (dispatch) => {
   dispatch(request(reducerTypes.FETCH_LIABILITIES));
   dispatch(showLoading());
