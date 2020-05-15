@@ -69,6 +69,24 @@ app {
                     ]
                 ],
                 [
+                    'file':'openshift/templates/dbbackup.dc.json',
+                    'params':[
+                            'NAME':"dsrp-database-backup",
+                            'SUFFIX': "${vars.deployment.suffix}",
+                            'VERSION':"${app.deployment.version}",
+                            'ENVIRONMENT_NAME':"${vars.deployment.namespace}",
+                            'ENVIRONMENT_FRIENDLY_NAME':"Dormant Site Reclamation Program (TEST)",
+                            'DATABASE_SERVICE_NAME':"dsrp-postgresql${vars.deployment.suffix}",
+                            'NFS_VOLUME_IDENTIFIER':"bk-eazios-test-7ty3vusrx8u5",
+                            'CPU_REQUEST':"${vars.resources.backup.cpu_request}",
+                            'CPU_LIMIT':"${vars.resources.backup.cpu_limit}",
+                            'MEMORY_REQUEST':"${vars.resources.backup.memory_request}",
+                            'MEMORY_LIMIT':"${vars.resources.backup.memory_limit}",
+                            'VERIFICATION_VOLUME_SIZE':"${vars.BACKUP_VERIFICATION_PVC_SIZE}",
+                            'FLYWAY_NAME':"dsrp-flyway-migration-client",
+                    ]
+                ],
+                [
                     'file':'openshift/templates/redis.dc.json',
                     'params':[
                             'NAME':"dsrp-redis",
@@ -196,10 +214,19 @@ app {
                             'CPU_LIMIT':"${vars.resources.metabase.cpu_limit}",
                             'MEMORY_REQUEST':"${vars.resources.metabase.memory_request}",
                             'MEMORY_LIMIT':"${vars.resources.metabase.memory_limit}",
-                            'DB_CPU_REQUEST':"${vars.resources.metabase.db_cpu_request}",
-                            'DB_CPU_LIMIT':"${vars.resources.metabase.db_cpu_limit}",
-                            'DB_MEMORY_REQUEST':"${vars.resources.metabase.db_memory_request}",
-                            'DB_MEMORY_LIMIT':"${vars.resources.metabase.db_memory_limit}"
+                    ]
+                ],
+                [
+                    'file':'openshift/templates/tools/metabase-postgres.dc.json',
+                    'params':[
+                            'NAME':"metabase-postgres",
+                            'VERSION':"${app.deployment.version}",
+                            'SUFFIX': "${vars.deployment.suffix}",
+                            'METABASE_PVC_SIZE':"${vars.METABASE_PVC_SIZE}",
+                            'CPU_REQUEST':"${vars.resources.metabase.db_cpu_request}",
+                            'CPU_LIMIT':"${vars.resources.metabase.db_cpu_limit}",
+                            'MEMORY_REQUEST':"${vars.resources.metabase.db_memory_request}",
+                            'MEMORY_LIMIT':"${vars.resources.metabase.db_memory_limit}"
                     ]
                 ]
         ]
@@ -272,6 +299,12 @@ environments {
                     cpu_limit = "50m"
                     memory_request = "64Mi"
                     memory_limit = "256Mi"
+                }
+                backup {
+                    cpu_request = "10m"
+                    cpu_limit = "200m"
+                    memory_request = "512Mi"
+                    memory_limit = "1Gi"
                 }
                 metabase {
                     cpu_request = "10m"

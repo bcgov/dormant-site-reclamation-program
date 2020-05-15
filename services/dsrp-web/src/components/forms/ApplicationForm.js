@@ -145,7 +145,7 @@ export class ApplicationForm extends Component {
 
     const steps = [
       {
-        title: "Company Details",
+        title: "Company Info",
         content: (
           <ApplicationSectionOne
             onSubmit={this.nextFormStep}

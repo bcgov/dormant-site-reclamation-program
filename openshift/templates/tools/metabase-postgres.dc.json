@@ -1,0 +1,250 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "dsrp-metabase-postgres-dc"
+    },
+    "parameters": [
+        {
+            "name": "CPU_LIMIT",
+            "value": "100m"
+        },
+        {
+            "name": "MEMORY_LIMIT",
+            "value": "1Gi"
+        },
+        {
+            "name": "CPU_REQUEST",
+            "value": "50m"
+        },
+        {
+            "name": "MEMORY_REQUEST",
+            "value": "512Mi"
+        },
+        {
+            "name": "NAME",
+            "displayName": "Object names",
+            "description": "The name of the OpenShift objects.",
+            "value": "metabase-postgres",
+            "required": true
+        },
+        {
+            "name": "SUFFIX",
+            "displayName": "Name Suffix",
+            "description": "A suffix appended to all objects",
+            "required": true
+        },
+        {
+            "name": "VERSION",
+            "required": true
+        },
+        {
+            "name": "METABASE_PVC_SIZE",
+            "required": true
+        },
+        {
+            "name": "METABASE_SECRET_NAME",
+            "value": "template.dsrp-metabase-key"
+        }
+    ],
+    "objects": [
+        {
+            "apiVersion": "v1",
+            "kind": "Service",
+            "metadata": {
+                "annotations": {
+                    "template.openshift.io/expose-uri": "postgres://{.spec.clusterIP}:{.spec.ports[?(.name==\"postgresql\")].port}"
+                },
+                "name": "${NAME}${SUFFIX}"
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "postgresql",
+                        "port": 5432,
+                        "protocol": "TCP",
+                        "targetPort": 5432
+                    }
+                ],
+                "selector": {
+                    "name": "${NAME}${SUFFIX}"
+                },
+                "sessionAffinity": "None",
+                "type": "ClusterIP"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "PersistentVolumeClaim",
+            "metadata": {
+                "name": "${NAME}${SUFFIX}",
+                "annotations": {
+                    "volume.beta.kubernetes.io/storage-provisioner": "netapp.io/trident"
+                }
+            },
+            "spec": {
+                "accessModes": [
+                    "ReadWriteOnce"
+                ],
+                "resources": {
+                    "requests": {
+                        "storage": "${METABASE_PVC_SIZE}"
+                    }
+                }
+            }
+        },
+        {
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${NAME}",
+                "creationTimestamp": null,
+                "labels": {
+                    "shared": "true"
+                }
+            },
+            "spec": {
+                "lookupPolicy": {
+                    "local": false
+                },
+                "tags": []
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${NAME}${SUFFIX}"
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Recreate",
+                    "maxSurge": "50%",
+                    "maxUnavailable": 0
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "${NAME}"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "${NAME}:${VERSION}"
+                            }
+                        }
+                    }
+                ],
+                "replicas": 1,
+                "selector": {
+                    "name": "${NAME}${SUFFIX}"
+                },
+                "template": {
+                    "metadata": {
+                        "name": "${NAME}${SUFFIX}",
+                        "labels": {
+                            "name": "${NAME}${SUFFIX}"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "${NAME}",
+                                "image": " ",
+                                "ports": [
+                                    {
+                                        "containerPort": 5432,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "POSTGRESQL_USER",
+                                        "value": "metabase"
+                                    },
+                                    {
+                                        "name": "POSTGRESQL_DATABASE",
+                                        "value": "metabase"
+                                    },
+                                    {
+                                        "name": "POSTGRESQL_PASSWORD",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "name": "${METABASE_SECRET_NAME}",
+                                                "key": "postgres-password"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "POSTGRESQL_ADMIN_PASSWORD",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "name": "${METABASE_SECRET_NAME}",
+                                                "key": "postgres-admin-password"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "readinessProbe": {
+                                    "exec": {
+                                        "command": [
+                                            "/bin/bash",
+                                            "-c",
+                                            "pg_isready -h localhost -p 5432"
+                                        ]
+                                    },
+                                    "initialDelaySeconds": 20,
+                                    "timeoutSeconds": 15
+                                },
+                                "livenessProbe": {
+                                    "initialDelaySeconds": 30,
+                                    "tcpSocket": {
+                                        "port": 5432
+                                    },
+                                    "timeoutSeconds": 10
+                                },
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/var/lib/pgsql/data",
+                                        "name": "${NAME}${SUFFIX}-data"
+                                    }
+                                ],
+                                "resources": {
+                                    "requests": {
+                                        "cpu": "${CPU_REQUEST}",
+                                        "memory": "${MEMORY_REQUEST}"
+                                    },
+                                    "limits": {
+                                        "cpu": "${CPU_LIMIT}",
+                                        "memory": "${MEMORY_LIMIT}"
+                                    }
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "imagePullPolicy": "IfNotPresent",
+                                "capabilities": {}
+                            }
+                        ],
+                        "volumes": [
+                            {
+                                "name": "${NAME}${SUFFIX}-data",
+                                "persistentVolumeClaim": {
+                                    "claimName": "${NAME}${SUFFIX}"
+                                }
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "dnsPolicy": "ClusterFirst"
+                    }
+                }
+            }
+        }
+    ]
+}
