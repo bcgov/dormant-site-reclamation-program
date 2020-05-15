@@ -4,6 +4,7 @@ export const {
   isAuthenticated,
   getUserInfo,
   getRedirect,
-  getIsAdmim,
+  getIsAdmin,
   getUserRoles,
+  getIsViewOnly,
 } = authenticationReducer;

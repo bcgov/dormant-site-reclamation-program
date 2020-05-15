@@ -2,8 +2,10 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Row, Col, Typography } from "antd";
 import PropTypes from "prop-types";
-import { bindActionCreators } from "redux";
+import { bindActionCreators, compose } from "redux";
 import { isEmpty } from "lodash";
+
+import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 
 import ViewApplicationStatusForm from "@/components/forms/ViewApplicationStatusForm";
 import ApplicationStatusCard from "@/components/pages/ApplicationStatusCard";
@@ -89,4 +91,8 @@ const mapDispatchToProps = (dispatch) =>
     dispatch
   );
 
-export default connect(mapStateToProps, mapDispatchToProps)(ViewApplicationStatusPage);
+// TO:DO WHEN LAUNCH - REMOVE AuthorizationGuard()
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  AuthorizationGuard()
+)(ViewApplicationStatusPage);

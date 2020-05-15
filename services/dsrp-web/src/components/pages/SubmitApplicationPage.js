@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Row, Col, Typography } from "antd";
+import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import ApplicationForm from "@/components/forms/ApplicationForm";
 
 const { Title, Paragraph } = Typography;
@@ -40,4 +41,5 @@ export class SubmitApplicationPage extends Component {
   }
 }
 
-export default SubmitApplicationPage;
+// TO:DO WHEN LAUNCH - REMOVE AuthorizationGuard()
+export default AuthorizationGuard()(SubmitApplicationPage);

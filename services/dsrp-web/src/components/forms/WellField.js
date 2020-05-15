@@ -3,10 +3,10 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Row, Col, Form, Select, Spin, Icon, Button, Descriptions } from "antd";
+import { throttle } from "lodash";
 import RenderField from "@/components/common/RenderField";
 import { fetchSelectedWell } from "@/actionCreators/OGCActionCreator";
 import { getSelectedWells } from "@/selectors/OGCSelectors";
-import { throttle } from "lodash";
 
 const propTypes = {
   fetchSelectedWell: PropTypes.func.isRequired,
