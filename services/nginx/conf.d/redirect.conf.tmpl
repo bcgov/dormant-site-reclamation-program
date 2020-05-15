@@ -15,5 +15,5 @@ if ($http_dsrp_bypass != true) {
   set $prod 0;
 }
 if ($prod = 1) {
-  return 301 https://www2.gov.bc.ca/gov/content/home;
+  rewrite ^/(.*)$ https://www2.gov.bc.ca/gov/content/home permanent last;
 }
