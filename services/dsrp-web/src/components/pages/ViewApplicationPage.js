@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { compose } from "redux";
+import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import { Row, Col, Typography, Icon } from "antd";
 import { reset } from "redux-form";
 import { fetchApplicationByID } from "@/actionCreators/applicationActionCreator";
@@ -97,4 +99,7 @@ const mapDispatchToProps = (dispatch) =>
 
 ViewApplicationPage.propTypes = propTypes;
 
-export default connect(mapStateToProps, mapDispatchToProps)(ViewApplicationPage);
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  AuthorizationGuard()
+)(ViewApplicationPage);

@@ -14,6 +14,7 @@ export class ReviewApplicationInfo extends Component {
   componentDidMount() {
     this.props.fetchApplications();
   }
+
   render() {
     return (
       <>

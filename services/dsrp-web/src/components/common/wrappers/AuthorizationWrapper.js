@@ -1,6 +1,6 @@
 import { PropTypes } from "prop-types";
 import { connect } from "react-redux";
-import { getIsAdmim } from "@/selectors/authenticationSelectors";
+import { getIsAdmin } from "@/selectors/authenticationSelectors";
 import { detectDevelopmentEnvironment, detectProdEnvironment } from "@/utils/environmentUtils";
 
 /**
@@ -49,7 +49,7 @@ export const AuthorizationWrapper = (props) =>
   props.children;
 
 const mapStateToProps = (state) => ({
-  isAdmin: getIsAdmim(state),
+  isAdmin: getIsAdmin(state),
 });
 
 AuthorizationWrapper.propTypes = propTypes;

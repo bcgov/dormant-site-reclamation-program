@@ -1,17 +1,10 @@
 import React from "react";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Row, Col, Button, Typography } from "antd";
-import PropTypes from "prop-types";
 import * as routes from "@/constants/routes";
-import { isAuthenticated } from "@/selectors/authenticationSelectors";
+import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 
 const { Paragraph, Text, Title } = Typography;
-
-const propTypes = {
-  isAuthenticated: PropTypes.bool.isRequired,
-};
 
 export const LandingPage = (props) => (
   <>
@@ -360,12 +353,4 @@ export const LandingPage = (props) => (
   </>
 );
 
-LandingPage.propTypes = propTypes;
-
-const mapStateToProps = (state) => ({
-  isAuthenticated: isAuthenticated(state),
-});
-
-const mapDispatchToProps = (dispatch) => bindActionCreators({}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(LandingPage);
+export default AuthorizationGuard()(LandingPage);

@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as ENV from "@/constants/environment";
-import { getIsAdmim } from "@/selectors/authenticationSelectors";
+import { getIsAdmin } from "@/selectors/authenticationSelectors";
 
 const propTypes = {
   isAdmin: PropTypes.bool.isRequired,
@@ -22,7 +22,7 @@ export const AdminLogin = (props) => (
 );
 
 const mapStateToProps = (state) => ({
-  isAdmin: getIsAdmim(state),
+  isAdmin: getIsAdmin(state),
 });
 
 AdminLogin.propTypes = propTypes;

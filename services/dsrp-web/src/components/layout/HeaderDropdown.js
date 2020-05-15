@@ -6,12 +6,13 @@ import MediaQuery from "react-responsive";
 import PropTypes from "prop-types";
 import * as routes from "@/constants/routes";
 import { signOutFromSiteMinder } from "@/utils/authenticationHelpers";
-import { isAuthenticated, getUserInfo } from "@/selectors/authenticationSelectors";
+import { isAuthenticated, getUserInfo, getIsViewOnly } from "@/selectors/authenticationSelectors";
 import { MENU } from "@/constants/assets";
 import AuthorizationWrapper from "@/components/common/wrappers/AuthorizationWrapper";
 
 const propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
   location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
   userInfo: PropTypes.objectOf(PropTypes.string),
 };
@@ -39,7 +40,7 @@ export class HeaderDropdown extends Component {
     );
     const dropdownMenuMobile = (
       <Menu className="header-dropdown-menu">
-        {!this.props.isAuthenticated && (
+        {this.props.isViewOnly && (
           <>
             <Menu.Item key="submit-application">
               <Button className="header-dropdown-item-button">
@@ -84,7 +85,7 @@ export class HeaderDropdown extends Component {
       <>
         <MediaQuery minWidth={smallestDesktopWidth}>
           <span>
-            {!this.props.isAuthenticated ? (
+            {this.props.isViewOnly && (
               <>
                 <Link
                   to={routes.SUBMIT_APPLICATION.route}
@@ -99,7 +100,8 @@ export class HeaderDropdown extends Component {
                   Status
                 </Link>
               </>
-            ) : (
+            )}
+            {this.props.isAuthenticated && (
               <Dropdown overlay={dropdownMenuDesktop}>
                 <Button className="header-dropdown-button">
                   {this.props.userInfo.email}
@@ -123,6 +125,7 @@ export class HeaderDropdown extends Component {
 
 const mapStateToProps = (state) => ({
   userInfo: getUserInfo(state),
+  isViewOnly: getIsViewOnly(state),
   isAuthenticated: isAuthenticated(state),
 });
 

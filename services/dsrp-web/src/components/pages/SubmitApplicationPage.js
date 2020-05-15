@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { bindActionCreators } from "redux";
+import { compose } from "redux";
+import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Row, Col, Typography } from "antd";
@@ -85,4 +87,7 @@ const mapDispatchToProps = (dispatch) =>
 
 SubmitApplicationPage.propTypes = propTypes;
 
-export default connect(mapStateToProps, mapDispatchToProps)(SubmitApplicationPage);
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  AuthorizationGuard()
+)(SubmitApplicationPage);
