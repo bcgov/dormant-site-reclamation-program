@@ -31,7 +31,6 @@ const defaultInitialValues = { company_details: { province: "BC" } };
 export class ApplicationForm extends Component {
   state = {
     currentStep: 0,
-    uploadedFiles: [],
     initialValues: defaultInitialValues,
     previouslySavedFormValues: null,
     saveTimestamp: null,
@@ -80,14 +79,13 @@ export class ApplicationForm extends Component {
   }
 
   handleSubmit = (values, dispatch) => {
-    const application = { json: values, documents: this.state.uploadedFiles };
+    const application = { json: values };
     this.props.createApplication(application).then(() => {
       this.setState(
         {
           initialValues: defaultInitialValues,
           previouslySavedFormValues: null,
           saveTimestamp: null,
-          uploadedFiles: [],
         },
         () => {
           this.emptySavedFormData();
@@ -95,20 +93,6 @@ export class ApplicationForm extends Component {
         }
       );
     });
-  };
-
-  onFileLoad = (document_name, document_manager_guid) => {
-    this.setState((prevState) => ({
-      uploadedFiles: [{ document_manager_guid, document_name }, ...prevState.uploadedFiles],
-    }));
-  };
-
-  onRemoveFile = (error, file) => {
-    this.setState((prevState) => ({
-      uploadedFiles: prevState.uploadedFiles.filter(
-        (doc) => doc.document_manager_guid !== file.serverId
-      ),
-    }));
   };
 
   componentDidMount() {
@@ -152,8 +136,6 @@ export class ApplicationForm extends Component {
         content: (
           <ApplicationSectionOne
             onSubmit={this.nextFormStep}
-            onFileLoad={this.onFileLoad}
-            onRemoveFile={this.onRemoveFile}
             initialValues={this.state.initialValues}
             extraActions={extraActions}
           />

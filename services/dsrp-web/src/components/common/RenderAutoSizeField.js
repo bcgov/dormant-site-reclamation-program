@@ -22,28 +22,30 @@ const defaultProps = {
 };
 
 const { TextArea } = Input;
-const RenderAutoSizeField = (props) => (
-  <Form.Item
-    label={props.label}
-    placeholder={props.placeholder}
-    validateStatus={
-      props.meta.touched ? (props.meta.error && "error") || (props.meta.warning && "warning") : ""
-    }
-    help={
-      props.meta.touched &&
-      ((props.meta.error && <span>{props.meta.error}</span>) ||
-        (props.meta.warning && <span>{props.meta.warning}</span>))
-    }
-  >
-    <TextArea
-      disabled={props.disabled}
-      id={props.id}
-      {...props.input}
-      autoSize
+const RenderAutoSizeField = (props) => {
+  return (
+    <Form.Item
+      label={props.label}
       placeholder={props.placeholder}
-    />
-  </Form.Item>
-);
+      validateStatus={
+        props.meta.touched ? (props.meta.error && "error") || (props.meta.warning && "warning") : ""
+      }
+      help={
+        props.meta.touched &&
+        ((props.meta.error && <span>{props.meta.error}</span>) ||
+          (props.meta.warning && <span>{props.meta.warning}</span>))
+      }
+    >
+      <TextArea
+        disabled={props.disabled}
+        id={props.id}
+        {...props.input}
+        autoSize={{ minRows: 4 }}
+        placeholder={props.placeholder}
+      />
+    </Form.Item>
+  );
+};
 
 RenderAutoSizeField.propTypes = propTypes;
 RenderAutoSizeField.defaultProps = defaultProps;
