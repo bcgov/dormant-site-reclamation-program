@@ -39,16 +39,20 @@ export class HeaderDropdown extends Component {
     );
     const dropdownMenuMobile = (
       <Menu className="header-dropdown-menu">
-        <Menu.Item key="submit-application">
-          <Button className="header-dropdown-item-button">
-            <Link to={routes.SUBMIT_APPLICATION.route}>Apply</Link>
-          </Button>
-        </Menu.Item>
-        <Menu.Item key="view-application-status">
-          <Button className="header-dropdown-item-button">
-            <Link to={routes.VIEW_APPLICATION_STATUS.route}>Status</Link>
-          </Button>
-        </Menu.Item>
+        {!this.props.isAuthenticated && (
+          <>
+            <Menu.Item key="submit-application">
+              <Button className="header-dropdown-item-button">
+                <Link to={routes.SUBMIT_APPLICATION.route}>Apply</Link>
+              </Button>
+            </Menu.Item>
+            <Menu.Item key="view-application-status">
+              <Button className="header-dropdown-item-button">
+                <Link to={routes.VIEW_APPLICATION_STATUS.route}>Status</Link>
+              </Button>
+            </Menu.Item>
+          </>
+        )}
         <AuthorizationWrapper>
           <Divider className="bg-color-table-seperator" style={{ margin: 0 }} />
           <Menu.Item key="review-applications" className="custom-menu-item">
@@ -80,19 +84,22 @@ export class HeaderDropdown extends Component {
       <>
         <MediaQuery minWidth={smallestDesktopWidth}>
           <span>
-            <Link
-              to={routes.SUBMIT_APPLICATION.route}
-              className={this.setActiveLink(routes.SUBMIT_APPLICATION.route)}
-            >
-              Apply
-            </Link>
-            <Link
-              to={routes.VIEW_APPLICATION_STATUS.route}
-              className={this.setActiveLink(routes.VIEW_APPLICATION_STATUS.route)}
-            >
-              Status
-            </Link>
-            {this.props.isAuthenticated && (
+            {!this.props.isAuthenticated ? (
+              <>
+                <Link
+                  to={routes.SUBMIT_APPLICATION.route}
+                  className={this.setActiveLink(routes.SUBMIT_APPLICATION.route)}
+                >
+                  Apply
+                </Link>
+                <Link
+                  to={routes.VIEW_APPLICATION_STATUS.route}
+                  className={this.setActiveLink(routes.VIEW_APPLICATION_STATUS.route)}
+                >
+                  Status
+                </Link>
+              </>
+            ) : (
               <Dropdown overlay={dropdownMenuDesktop}>
                 <Button className="header-dropdown-button">
                   {this.props.userInfo.email}
