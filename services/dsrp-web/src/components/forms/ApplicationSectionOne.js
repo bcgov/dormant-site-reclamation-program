@@ -32,7 +32,7 @@ class ApplicationSectionOne extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <FormSection name="company_details">
-          <Title level={2}>Company Details</Title>
+          <Title level={3}>Company Details</Title>
           <Row gutter={48}>
             <Col span={24}>
               <Field
@@ -132,7 +132,7 @@ class ApplicationSectionOne extends Component {
         </FormSection>
 
         <FormSection name="company_contact">
-          <Title level={2}>Company Contact</Title>
+          <Title level={3}>Company Contact</Title>
           <Row gutter={48}>
             <Col span={12}>
               <Field
@@ -240,7 +240,7 @@ class ApplicationSectionOne extends Component {
         {this.props.isEditable && (
           <div>
             <FormSection name="good_standing_reports">
-              <Title level={2}>Good Standing Report</Title>
+              <Title level={3}>Good Standing Report</Title>
               <Row gutter={48}>
                 <Col span={24}>
                   <Form.Item label="Upload Good Standing Report">
@@ -280,7 +280,13 @@ class ApplicationSectionOne extends Component {
             </FormSection>
             <Row className="steps-action">
               <Col>
-                <Button type="primary" htmlType="submit">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  onClick={() => {
+                    window.scrollTo(0, 0);
+                  }}
+                >
                   Next
                 </Button>
                 {this.props.extraActions}
