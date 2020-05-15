@@ -6,12 +6,13 @@ import MediaQuery from "react-responsive";
 import PropTypes from "prop-types";
 import * as routes from "@/constants/routes";
 import { signOutFromSiteMinder } from "@/utils/authenticationHelpers";
-import { isAuthenticated, getUserInfo } from "@/selectors/authenticationSelectors";
+import { isAuthenticated, getUserInfo, getIsViewOnly } from "@/selectors/authenticationSelectors";
 import { MENU } from "@/constants/assets";
 import AuthorizationWrapper from "@/components/common/wrappers/AuthorizationWrapper";
 
 const propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
   location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
   userInfo: PropTypes.objectOf(PropTypes.string),
 };
@@ -38,18 +39,23 @@ export class HeaderDropdown extends Component {
       </Menu.Item>
     );
 
+    // TO:DO WHEN LAUNCH - REPLACE `isViewOnly` with `!isAuthenticated`
     const dropdownMenuMobile = (
       <Menu className="header-dropdown-menu">
-        <Menu.Item key="submit-application">
-          <Button className="header-dropdown-item-button">
-            <Link to={routes.SUBMIT_APPLICATION.route}>Apply</Link>
-          </Button>
-        </Menu.Item>
-        <Menu.Item key="view-application-status">
-          <Button className="header-dropdown-item-button">
-            <Link to={routes.VIEW_APPLICATION_STATUS.route}>Status</Link>
-          </Button>
-        </Menu.Item>
+        {this.props.isViewOnly && (
+          <>
+            <Menu.Item key="submit-application">
+              <Button className="header-dropdown-item-button">
+                <Link to={routes.SUBMIT_APPLICATION.route}>Apply</Link>
+              </Button>
+            </Menu.Item>
+            <Menu.Item key="view-application-status">
+              <Button className="header-dropdown-item-button">
+                <Link to={routes.VIEW_APPLICATION_STATUS.route}>Status</Link>
+              </Button>
+            </Menu.Item>
+          </>
+        )}
         <AuthorizationWrapper>
           <Divider className="bg-color-table-seperator" style={{ margin: 0 }} />
           <Menu.Item key="review-applications" className="custom-menu-item">
@@ -82,21 +88,26 @@ export class HeaderDropdown extends Component {
 
     const smallestDesktopWidth = 1280;
     return (
+      // TO:DO WHEN LAUNCH - REPLACE `isViewOnly` with `!isAuthenticated`
       <>
         <MediaQuery minWidth={smallestDesktopWidth}>
           <span>
-            <Link
-              to={routes.SUBMIT_APPLICATION.route}
-              className={this.setActiveLink(routes.SUBMIT_APPLICATION.route)}
-            >
-              Apply
-            </Link>
-            <Link
-              to={routes.VIEW_APPLICATION_STATUS.route}
-              className={this.setActiveLink(routes.VIEW_APPLICATION_STATUS.route)}
-            >
-              Status
-            </Link>
+            {this.props.isViewOnly && (
+              <>
+                <Link
+                  to={routes.SUBMIT_APPLICATION.route}
+                  className={this.setActiveLink(routes.SUBMIT_APPLICATION.route)}
+                >
+                  Apply
+                </Link>
+                <Link
+                  to={routes.VIEW_APPLICATION_STATUS.route}
+                  className={this.setActiveLink(routes.VIEW_APPLICATION_STATUS.route)}
+                >
+                  Status
+                </Link>
+              </>
+            )}
             {this.props.isAuthenticated && (
               <Dropdown overlay={dropdownMenuDesktop}>
                 <Button className="header-dropdown-button">
@@ -121,6 +132,7 @@ export class HeaderDropdown extends Component {
 
 const mapStateToProps = (state) => ({
   userInfo: getUserInfo(state),
+  isViewOnly: getIsViewOnly(state),
   isAuthenticated: isAuthenticated(state),
 });
 

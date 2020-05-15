@@ -39,11 +39,13 @@ export class ApplicationForm extends Component {
   nextFormStep = () => {
     const currentStep = this.state.currentStep + 1;
     this.setState({ currentStep });
+    window.scrollTo(0, 0);
   };
 
   previousFormStep = () => {
     const currentStep = this.state.currentStep - 1;
     this.setState({ currentStep });
+    window.scrollTo(0, 0);
   };
 
   saveFormData() {

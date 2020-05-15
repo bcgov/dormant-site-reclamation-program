@@ -128,24 +128,24 @@ const asyncValidateWell = async (values, field) => {
     if (response.data.records.length === 0)
       asyncValidateError(
         field,
-        "This number does not match any registered well authorization number. If you believe this is in error, please contact us."
+        "No match found. Enter another number or use the Look up well link to find the correct Authorization Number."
       );
     if (response.data.records.length === 1) {
       if (!values.contract_details.operator_id)
         asyncValidateError(
           field,
-          "Please select the valid permit holder for this well authorization number."
+          "Please select the valid Permit Holder above for this Authorization Number."
         );
       if (response.data.records[0].operator_id !== values.contract_details.operator_id)
         asyncValidateError(
           field,
-          "This well authorization number does not belong to the selected permit holder. If you believe this is in error, please contact us."
+          "This Authorization Number does not belong to the selected Permit Holder. Enter another number or use the Look up well link to find the correct Authorization Number."
         );
     }
     if (response.data.records.length > 1)
       asyncValidateError(
         field,
-        "Cannot confirm this well authorization number. Please contact us for further assistance."
+        "Multiple results for this Authorization Number. Please contact us for further assistance."
       );
   });
 };
@@ -247,6 +247,21 @@ class ApplicationSectionTwo extends Component {
                       component={WellField}
                       validate={[required, number]}
                       disabled={!this.props.isEditable}
+                      label={
+                        <>
+                          Authorization Number
+                          {this.props.isEditable && (
+                            <a
+                              style={{ float: "right" }}
+                              href={`https://reports.bcogc.ca/ogc/f?p=200:81:16594283755468`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Look up well
+                            </a>
+                          )}
+                        </>
+                      }
                     />
                   </Col>
                 </Row>
@@ -309,7 +324,7 @@ class ApplicationSectionTwo extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <FormSection name="contract_details">
-          <Title level={2}>Contract Information</Title>
+          <Title level={3}>Contract Information</Title>
           <Row gutter={48}>
             <Col>
               <Field
@@ -325,7 +340,7 @@ class ApplicationSectionTwo extends Component {
           </Row>
         </FormSection>
 
-        <Title level={2}>Well Sites</Title>
+        <Title level={3}>Well Sites</Title>
         <Row gutter={[48, 48]}>
           <Col>
             <FieldArray name="well_sites" component={this.renderWells} />
@@ -357,7 +372,13 @@ class ApplicationSectionTwo extends Component {
         {this.props.isEditable && (
           <Row className="steps-action">
             <Col>
-              <Button type="primary" htmlType="submit">
+              <Button
+                type="primary"
+                htmlType="submit"
+                onClick={() => {
+                  window.scrollTo(0, 0);
+                }}
+              >
                 Next
               </Button>
               <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
