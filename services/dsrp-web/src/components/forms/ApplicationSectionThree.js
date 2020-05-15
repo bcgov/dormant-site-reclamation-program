@@ -5,6 +5,7 @@ import { Row, Col, Form, Button } from "antd";
 import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
+import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm";
 
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
@@ -33,6 +34,13 @@ class ApplicationSectionThree extends Component {
             disabled={!this.props.isEditable}
           />
         </FormSection>
+
+        <ViewOnlyApplicationForm
+          isEditable={false}
+          initialValues={this.props.values}
+          noRenderStep3
+        />
+
         {this.props.isEditable && (
           <Row className="steps-action">
             <Col>
