@@ -31,6 +31,12 @@ const defaultProps = {
 };
 
 class ApplicationSectionOne extends Component {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps !== this.props) {
+      console.log("ApplicationSectionOne nextProps:", nextProps);
+    }
+  }
+
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
@@ -67,6 +73,7 @@ class ApplicationSectionOne extends Component {
                 name="indigenous_participation_ind"
                 label="Do you wish to self‑identify as including Indigenous participation in completing the work outlined within this application?"
                 component={renderConfig.CHECKBOX}
+                disabled={!this.props.isEditable}
               />
               {this.props.indigenousParticipationCheckbox && (
                 <Field
@@ -75,6 +82,7 @@ class ApplicationSectionOne extends Component {
                   label="If so, please describe:"
                   component={renderConfig.AUTO_SIZE_FIELD}
                   validate={[required]}
+                  disabled={!this.props.isEditable}
                 />
               )}
               <Field
@@ -116,7 +124,6 @@ class ApplicationSectionOne extends Component {
                 component={renderConfig.SELECT}
                 validate={[required]}
                 format={null}
-                disabled
                 data={[{ value: "BC", label: "British Columbia" }]}
               />
             </Col>

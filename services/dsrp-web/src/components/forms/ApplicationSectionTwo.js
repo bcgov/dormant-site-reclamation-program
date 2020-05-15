@@ -173,6 +173,9 @@ class ApplicationSectionTwo extends Component {
   };
 
   componentWillReceiveProps = (nextProps) => {
+    if (nextProps !== this.props) {
+      console.log("ApplicationSectionTwo nextProps:", nextProps);
+    }
     if (nextProps.formValues !== this.props.formValues) {
       this.calculateContractWorkTotals(nextProps.formValues);
     }

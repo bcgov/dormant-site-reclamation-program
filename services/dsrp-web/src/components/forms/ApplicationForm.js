@@ -26,7 +26,7 @@ const defaultProps = {
   formValues: null,
 };
 
-const defaultInitialValues = { company_details: { province: "BC" } };
+const defaultInitialValues = {};
 
 export class ApplicationForm extends Component {
   state = {
@@ -129,6 +129,8 @@ export class ApplicationForm extends Component {
         <Text strong>{formatDateTimeFine(this.state.saveTimestamp)}</Text>.
       </Text>
     )) || <></>;
+
+    console.log("ApplicationForm render this.props.formValues:", this.props.formValues);
 
     const steps = [
       {
