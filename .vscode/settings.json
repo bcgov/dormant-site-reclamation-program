@@ -22,8 +22,6 @@
   },
   "cSpell.words": ["idir"],
   "workbench.colorCustomizations": {
-    "activityBar.background": "#013220",
-    "titleBar.activeBackground": "#013220",
-    "titleBar.activeForeground": "#ffffff"
+    "activityBar.background": "#013220"
   }
 }
