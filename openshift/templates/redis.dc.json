@@ -19,7 +19,7 @@
       "kind": "Secret",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${DATABASE_SERVICE_NAME}",
+        "name": "${NAME}${SUFFIX}",
         "annotations": {
           "template.openshift.io/expose-password": "{.data['database-password']}",
           "as-copy-of": "template.${NAME}-secret"
@@ -33,7 +33,7 @@
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${DATABASE_SERVICE_NAME}",
+        "name": "${NAME}${SUFFIX}",
         "annotations": {
           "template.openshift.io/expose-uri": "redis://{.spec.clusterIP}:{.spec.ports[?(.name==\"redis\")].port}"
         }
@@ -49,7 +49,7 @@
           }
         ],
         "selector": {
-          "name": "${DATABASE_SERVICE_NAME}"
+          "name": "${NAME}${SUFFIX}"
         },
         "type": "ClusterIP",
         "sessionAffinity": "None"
@@ -59,7 +59,7 @@
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${DATABASE_SERVICE_NAME}",
+        "name": "${NAME}${SUFFIX}",
         "annotations": {
           "template.alpha.openshift.io/wait-for-ready": "true"
         }
@@ -75,7 +75,9 @@
             "type": "ImageChange",
             "imageChangeParams": {
               "automatic": true,
-              "containerNames": ["redis"],
+              "containerNames": [
+                "redis"
+              ],
               "from": {
                 "kind": "ImageStreamTag",
                 "name": "redis:${REDIS_VERSION}",
@@ -90,12 +92,12 @@
         ],
         "replicas": 1,
         "selector": {
-          "name": "${DATABASE_SERVICE_NAME}"
+          "name": "${NAME}${SUFFIX}"
         },
         "template": {
           "metadata": {
             "labels": {
-              "name": "${DATABASE_SERVICE_NAME}"
+              "name": "${NAME}${SUFFIX}"
             }
           },
           "spec": {
@@ -133,7 +135,7 @@
                     "name": "REDIS_PASSWORD",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${DATABASE_SERVICE_NAME}",
+                        "name": "${NAME}${SUFFIX}",
                         "key": "database-password"
                       }
                     }
@@ -182,13 +184,6 @@
       "name": "NAME",
       "displayName": "Object names",
       "description": "The name of the OpenShift objects.",
-      "value": "redis",
-      "required": true
-    },
-    {
-      "name": "DATABASE_SERVICE_NAME",
-      "displayName": "Database Service Name",
-      "description": "The name of the OpenShift Service exposed for the database.",
       "value": "redis",
       "required": true
     },
