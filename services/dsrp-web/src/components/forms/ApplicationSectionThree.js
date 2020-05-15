@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { reduxForm, Field, FormSection } from "redux-form";
 import PropTypes from "prop-types";
-import { Row, Col, Form, Button } from "antd";
+import { Row, Col, Form, Button, Typography } from "antd";
 import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
@@ -20,10 +20,23 @@ const defaultProps = {
   isEditable: true,
 };
 
+const { Text, Title } = Typography;
+
 class ApplicationSectionThree extends Component {
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
+        <Title level={3}>Review Application</Title>
+        <Row gutter={48}>
+          <Col>
+            <ViewOnlyApplicationForm
+              isEditable={false}
+              initialValues={this.props.values}
+              noRenderStep3
+            />
+          </Col>
+        </Row>
+
         <FormSection name="review">
           <Field
             id="reviewed_and_verified"
@@ -34,12 +47,6 @@ class ApplicationSectionThree extends Component {
             disabled={!this.props.isEditable}
           />
         </FormSection>
-
-        <ViewOnlyApplicationForm
-          isEditable={false}
-          initialValues={this.props.values}
-          noRenderStep3
-        />
 
         {this.props.isEditable && (
           <Row className="steps-action">
