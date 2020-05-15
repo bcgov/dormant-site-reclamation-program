@@ -312,6 +312,12 @@ environments {
                     db_memory_request = "256Mi"
                     db_memory_limit = "1Gi"
                 }
+                backup {
+                    cpu_request = "10m"
+                    cpu_limit = "200m"
+                    memory_request = "512Mi"
+                    memory_limit = "1Gi"
+                }
             }
             deployment {
                 env {

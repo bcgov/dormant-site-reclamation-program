@@ -300,6 +300,12 @@ environments {
                     memory_request = "64Mi"
                     memory_limit = "256Mi"
                 }
+                backup {
+                    cpu_request = "10m"
+                    cpu_limit = "200m"
+                    memory_request = "512Mi"
+                    memory_limit = "1Gi"
+                }
                 metabase {
                     cpu_request = "10m"
                     cpu_limit = "200m"

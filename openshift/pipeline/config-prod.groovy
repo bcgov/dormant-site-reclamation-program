@@ -293,10 +293,10 @@ environments {
                     memory_limit = "512Mi"
                 }
                 backup {
-                    cpu_request = "0"
-                    cpu_limit = "0"
-                    memory_request = "0"
-                    memory_limit = "0"
+                    cpu_request = "10m"
+                    cpu_limit = "200m"
+                    memory_request = "512Mi"
+                    memory_limit = "1Gi"
                 }
                 metabase {
                     cpu_request = "50m"
