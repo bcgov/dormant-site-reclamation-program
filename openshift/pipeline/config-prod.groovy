@@ -213,10 +213,19 @@ app {
                             'CPU_LIMIT':"${vars.resources.metabase.cpu_limit}",
                             'MEMORY_REQUEST':"${vars.resources.metabase.memory_request}",
                             'MEMORY_LIMIT':"${vars.resources.metabase.memory_limit}",
-                            'DB_CPU_REQUEST':"${vars.resources.metabase.db_cpu_request}",
-                            'DB_CPU_LIMIT':"${vars.resources.metabase.db_cpu_limit}",
-                            'DB_MEMORY_REQUEST':"${vars.resources.metabase.db_memory_request}",
-                            'DB_MEMORY_LIMIT':"${vars.resources.metabase.db_memory_limit}"
+                    ]
+                ],
+                [
+                    'file':'openshift/templates/tools/metabase-postgres.dc.json',
+                    'params':[
+                            'NAME':"metabase-postgres",
+                            'VERSION':"${app.deployment.version}",
+                            'SUFFIX': "${vars.deployment.suffix}",
+                            'METABASE_PVC_SIZE':"${vars.METABASE_PVC_SIZE}",
+                            'CPU_REQUEST':"${vars.resources.metabase.db_cpu_request}",
+                            'CPU_LIMIT':"${vars.resources.metabase.db_cpu_limit}",
+                            'MEMORY_REQUEST':"${vars.resources.metabase.db_memory_request}",
+                            'MEMORY_LIMIT':"${vars.resources.metabase.db_memory_limit}"
                     ]
                 ]
         ]

@@ -112,6 +112,13 @@ app {
                             'SOURCE_CONTEXT_DIR': "openshift/docker-images/metabase",
                             'SOURCE_REPOSITORY_URL': "${app.git.uri}"
                     ]
+                ],
+                [
+                    'file':'openshift/templates/tools/metabase-postgres.bc.json',
+                    'params':[
+                            'NAME':"metabase-postgres",
+                            'VERSION':"${app.build.version}",
+                    ]
                 ]
         ]
     }
