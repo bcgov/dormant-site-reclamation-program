@@ -253,7 +253,7 @@ class ApplicationSectionTwo extends Component {
                           {this.props.isEditable && (
                             <a
                               style={{ float: "right" }}
-                              href={`https://reports.bcogc.ca/ogc/f?p=200:81:16594283755468`}
+                              href="https://reports.bcogc.ca/ogc/f?p=200:81:16594283755468"
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -375,9 +375,7 @@ class ApplicationSectionTwo extends Component {
               <Button
                 type="primary"
                 htmlType="submit"
-                onClick={() => {
-                  window.scrollTo(0, 0);
-                }}
+                disabled={this.props.submitting || this.props.invalid}
               >
                 Next
               </Button>

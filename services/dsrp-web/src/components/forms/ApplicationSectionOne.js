@@ -232,11 +232,10 @@ class ApplicationSectionOne extends Component {
               <Field
                 id="fax"
                 name="fax"
-                label="Fax"
-                placeholder="Fax"
+                label="Fax (Optional)"
+                placeholder="Fax (Optional)"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
-                validate={[required]}
                 {...phoneMask}
               />
             </Col>
@@ -289,9 +288,7 @@ class ApplicationSectionOne extends Component {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  onClick={() => {
-                    window.scrollTo(0, 0);
-                  }}
+                  disabled={this.props.submitting || this.props.invalid}
                 >
                   Next
                 </Button>
