@@ -1,9 +1,11 @@
 import React, { Component } from "react";
-import { bindActionCreators } from "redux";
+import { bindActionCreators , compose } from "redux";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+
 import { Row, Col, Typography, Icon } from "antd";
 import { reset } from "redux-form";
+import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import { fetchApplicationById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/selectors/applicationSelectors";
 import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm";
@@ -95,4 +97,7 @@ const mapDispatchToProps = (dispatch) =>
 ViewApplicationPage.propTypes = propTypes;
 ViewApplicationPage.defaultProps = defaultProps;
 
-export default connect(mapStateToProps, mapDispatchToProps)(ViewApplicationPage);
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  AuthorizationGuard()
+)(ViewApplicationPage);
