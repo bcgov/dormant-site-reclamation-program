@@ -66,16 +66,16 @@ class ApplicationSectionOne extends Component {
                 placeholder="Address Line 1"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
-                // validate={[required]}
+                validate={[required, maxLength(1024)]}
               />
               <Field
                 id="address_line_2"
                 name="address_line_2"
-                label="Address Line 2"
-                placeholder="Address Line 2"
+                label="Address Line 2 (Optional)"
+                placeholder="Address Line 2 (Optional)"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
-                // validate={[required]}
+                validate={[maxLength(1024)]}
               />
               <Field
                 id="city"
@@ -84,12 +84,12 @@ class ApplicationSectionOne extends Component {
                 placeholder="City"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
-                // validate={[required]}
+                validate={[required, maxLength(1024)]}
               />
             </Col>
           </Row>
           <Row gutter={48}>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Field
                 id="province"
                 name="province"
@@ -116,7 +116,7 @@ class ApplicationSectionOne extends Component {
                 ]}
               />
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Field
                 id="postal_code"
                 name="postal_code"
@@ -124,7 +124,7 @@ class ApplicationSectionOne extends Component {
                 placeholder="Postal Code"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
-                // validate={[required]}
+                validate={[required]}
                 {...postalCodeMask}
               />
             </Col>
@@ -134,7 +134,7 @@ class ApplicationSectionOne extends Component {
         <FormSection name="company_contact">
           <Title level={2}>Company Contact</Title>
           <Row gutter={48}>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Field
                 id="first_name"
                 name="first_name"
@@ -142,10 +142,10 @@ class ApplicationSectionOne extends Component {
                 placeholder="First Name"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
-                // validate={[required]}
+                validate={[required, maxLength(1024)]}
               />
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Field
                 id="last_name"
                 name="last_name"
@@ -153,14 +153,14 @@ class ApplicationSectionOne extends Component {
                 placeholder="Last Name"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
-                // validate={[required]}
+                validate={[required, maxLength(1024)]}
               />
             </Col>
           </Row>
           <Row gutter={48}>
-            <Col span={12}>
+            <Col sm={24} md={12}>
               <Row gutter={48}>
-                <Col span={16}>
+                <Col sm={24} md={14}>
                   <Field
                     id="phone_number_1"
                     name="phone_number_1"
@@ -168,16 +168,16 @@ class ApplicationSectionOne extends Component {
                     placeholder="Phone Number 1"
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
-                    // validate={[required]}
+                    validate={[required]}
                     {...phoneMask}
                   />
                 </Col>
-                <Col span={8}>
+                <Col sm={24} md={10}>
                   <Field
                     id="phone_ext_1"
                     name="phone_ext_1"
-                    label="Ext. 1"
-                    placeholder="Ext. 1"
+                    label="Ext. 1 (Optional)"
+                    placeholder="Ext. 1  (Optional)"
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
                     validate={[maxLength(6)]}
@@ -185,25 +185,25 @@ class ApplicationSectionOne extends Component {
                 </Col>
               </Row>
             </Col>
-            <Col span={12}>
+            <Col sm={24} md={12}>
               <Row gutter={48}>
-                <Col span={16}>
+                <Col sm={24} md={14}>
                   <Field
                     id="phone_number_2"
                     name="phone_number_2"
-                    label="Phone Number 2"
-                    placeholder="Phone Number 2"
+                    label="Phone Number 2 (Optional)"
+                    placeholder="Phone Number 2 (Optional)"
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
                     {...phoneMask}
                   />
                 </Col>
-                <Col span={8}>
+                <Col sm={24} md={10}>
                   <Field
                     id="phone_ext_2"
                     name="phone_ext_2"
-                    label="Ext. 2"
-                    placeholder="Ext. 2"
+                    label="Ext. 2 (Optional)"
+                    placeholder="Ext. 2 (Optional)"
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
                     validate={[maxLength(6)]}
@@ -213,7 +213,7 @@ class ApplicationSectionOne extends Component {
             </Col>
           </Row>
           <Row gutter={48}>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Field
                 id="email"
                 name="email"
@@ -221,10 +221,10 @@ class ApplicationSectionOne extends Component {
                 placeholder="Email"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
-                validate={[required, email]}
+                validate={[required, email, maxLength(1024)]}
               />
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Field
                 id="fax"
                 name="fax"
@@ -232,7 +232,7 @@ class ApplicationSectionOne extends Component {
                 placeholder="Fax"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
-                // validate={[required]}
+                validate={[required]}
                 {...phoneMask}
               />
             </Col>
