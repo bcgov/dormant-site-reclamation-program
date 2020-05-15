@@ -77,7 +77,7 @@ app {
                             'ENVIRONMENT_NAME':"${vars.deployment.namespace}",
                             'ENVIRONMENT_FRIENDLY_NAME':"Dormant Site Reclamation Program (DEV)",
                             'DATABASE_SERVICE_NAME':"dsrp-postgresql${vars.deployment.suffix}",
-                            'NFS_VOLUME_IDENTIFIER':"bk-eazios-prod-x7ux0bwhqnsa",
+                            'NFS_VOLUME_IDENTIFIER':"bk-eazios-dev-rz5el8sdtrii",
                             'CPU_REQUEST':"${vars.resources.backup.cpu_request}",
                             'CPU_LIMIT':"${vars.resources.backup.cpu_limit}",
                             'MEMORY_REQUEST':"${vars.resources.backup.memory_request}",
