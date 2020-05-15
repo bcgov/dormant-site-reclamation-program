@@ -1,10 +1,9 @@
-/* eslint-disable */
 import React, { Component } from "react";
 import { reduxForm, Field, FormSection } from "redux-form";
 import { Row, Col, Typography, Form, Button } from "antd";
 import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
-import { required } from "@/utils/validate";
+import { required, email, maxLength } from "@/utils/validate";
 import { phoneMask, postalCodeMask } from "@/utils/helpers";
 import { APPLICATION } from "@/constants/api";
 import * as FORM from "@/constants/forms";
@@ -15,17 +14,16 @@ import { ORGBOOK_URL } from "@/constants/routes";
 const { Text, Title, Paragraph } = Typography;
 
 const propTypes = {
-  handleSubmit: PropTypes.func,
-  onFileLoad: PropTypes.func,
-  onRemoveFile: PropTypes.func,
+  handleSubmit: PropTypes.func.isRequired,
+  onFileLoad: PropTypes.func.isRequired,
+  onRemoveFile: PropTypes.func.isRequired,
+  initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  extraActions: PropTypes.node,
   isEditable: PropTypes.bool,
-  initialValues: PropTypes.objectOf(PropTypes.strings).isRequired,
 };
 
 const defaultProps = {
-  handleSubmit: () => {},
-  onFileLoad: () => {},
-  onRemoveFile: () => {},
+  extraActions: undefined,
   isEditable: true,
 };
 
@@ -182,6 +180,7 @@ class ApplicationSectionOne extends Component {
                     placeholder="Ext. 1"
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
+                    validate={[maxLength(5)]}
                   />
                 </Col>
               </Row>
@@ -207,6 +206,7 @@ class ApplicationSectionOne extends Component {
                     placeholder="Ext. 2"
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
+                    validate={[maxLength(5)]}
                   />
                 </Col>
               </Row>
@@ -221,7 +221,7 @@ class ApplicationSectionOne extends Component {
                 placeholder="Email"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
-                validate={[required]}
+                validate={[required, email]}
               />
             </Col>
             <Col span={12}>
@@ -254,8 +254,8 @@ class ApplicationSectionOne extends Component {
                       acceptedFileTypesMap={{ ...DOCUMENT, ...EXCEL }}
                       onFileLoad={this.props.onFileLoad}
                       onRemoveFile={this.props.onRemoveFile}
-                      allowRevert
                       allowMultiple={false}
+                      allowRevert
                     />
                   </Form.Item>
                 </Col>
@@ -285,6 +285,7 @@ class ApplicationSectionOne extends Component {
                 <Button type="primary" htmlType="submit">
                   Next
                 </Button>
+                {this.props.extraActions}
               </Col>
             </Row>
           </div>
@@ -303,4 +304,5 @@ export default reduxForm({
   forceUnregisterOnUnmount: true,
   keepDirtyOnReinitialize: true,
   enableReinitialize: true,
+  updateUnregisteredFields: true,
 })(ApplicationSectionOne);

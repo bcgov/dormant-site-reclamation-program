@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Form, Input } from "antd";
+import { Form, Input, Icon } from "antd";
 
 /**
  * @constant RenderField - Ant Design `Input` component for redux-form.
@@ -56,6 +56,11 @@ const RenderField = (props) => {
           id={props.id}
           placeholder={props.placeholder}
           allowClear={props.allowClear}
+          suffix={
+            <div className={props.meta.asyncValidating ? "" : "hidden"}>
+              <Icon type="sync" spin />
+            </div>
+          }
           {...props.input}
         />
       </div>

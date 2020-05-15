@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Row, Col, Typography } from "antd";
 import PropTypes from "prop-types";
-import { bindActionCreators , compose } from "redux";
+import { bindActionCreators, compose } from "redux";
 import { isEmpty } from "lodash";
 
 import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
@@ -10,13 +10,13 @@ import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import ViewApplicationStatusForm from "@/components/forms/ViewApplicationStatusForm";
 import ApplicationStatusCard from "@/components/pages/ApplicationStatusCard";
 
-import { fetchApplicationByID } from "@/actionCreators/applicationActionCreator";
+import { fetchApplicationById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
 
 const { Paragraph, Title } = Typography;
 
 const propTypes = {
-  fetchApplicationByID: PropTypes.func.isRequired,
+  fetchApplicationById: PropTypes.func.isRequired,
   loadedApplication: PropTypes.shape({
     guid: PropTypes.string,
     application_status_code: PropTypes.string,
@@ -27,7 +27,7 @@ const propTypes = {
 
 export class ViewApplicationStatusPage extends Component {
   onFormSubmit = (values) => {
-    this.props.fetchApplicationByID(values.guid);
+    this.props.fetchApplicationById(values.guid);
   };
 
   render() {
@@ -86,7 +86,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      fetchApplicationByID,
+      fetchApplicationById,
     },
     dispatch
   );

@@ -2,23 +2,21 @@ import React, { Component } from "react";
 import { reduxForm, Field, FormSection } from "redux-form";
 import PropTypes from "prop-types";
 import { Row, Col, Form, Button } from "antd";
-
 import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 
 const propTypes = {
-  previousStep: PropTypes.func,
-  onSubmit: PropTypes.func,
+  handleSubmit: PropTypes.func.isRequired,
+  previousStep: PropTypes.func.isRequired,
+  initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  extraActions: PropTypes.node,
   isEditable: PropTypes.bool,
-  initialValues: PropTypes.objectOf(PropTypes.strings),
 };
 
 const defaultProps = {
-  previousStep: () => {},
-  onSubmit: () => {},
+  extraActions: undefined,
   isEditable: true,
-  initialValues: {},
 };
 
 class ApplicationSectionThree extends Component {
@@ -38,16 +36,13 @@ class ApplicationSectionThree extends Component {
         {this.props.isEditable && (
           <Row className="steps-action">
             <Col>
-              <Button
-                type="primary"
-                htmlType="submit"
-                disabled={this.props.submitting || this.props.pristine}
-              >
+              <Button type="primary" htmlType="submit" disabled={this.props.submitting}>
                 Submit
               </Button>
               <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
                 Previous
               </Button>
+              {this.props.extraActions}
             </Col>
           </Row>
         )}
@@ -55,6 +50,7 @@ class ApplicationSectionThree extends Component {
     );
   }
 }
+
 ApplicationSectionThree.propTypes = propTypes;
 ApplicationSectionThree.defaultProps = defaultProps;
 
@@ -64,4 +60,5 @@ export default reduxForm({
   forceUnregisterOnUnmount: true,
   keepDirtyOnReinitialize: true,
   enableReinitialize: true,
+  updateUnregisteredFields: true,
 })(ApplicationSectionThree);

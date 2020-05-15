@@ -38,6 +38,7 @@ export class HeaderDropdown extends Component {
         </Button>
       </Menu.Item>
     );
+
     const dropdownMenuMobile = (
       <Menu className="header-dropdown-menu">
         {this.props.isViewOnly && (
@@ -62,8 +63,12 @@ export class HeaderDropdown extends Component {
             </Button>
           </Menu.Item>
         </AuthorizationWrapper>
-        <Divider className="bg-color-table-seperator" style={{ margin: 0 }} />
-        {this.props.isAuthenticated && menuItemLogout}
+        {this.props.isAuthenticated && (
+          <>
+            <Divider className="bg-color-table-seperator" style={{ margin: 0 }} />
+            {menuItemLogout}
+          </>
+        )}
       </Menu>
     );
 

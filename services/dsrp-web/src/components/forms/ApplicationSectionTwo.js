@@ -3,9 +3,8 @@ import { reduxForm, FieldArray, getFormValues, Field, FormSection } from "redux-
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { compose } from "redux";
-import { Row, Col, Typography, Form, Divider, Button, Collapse, Descriptions, Icon } from "antd";
-
-import { sum, flatten, union, merge, get, set } from "lodash";
+import { Row, Col, Typography, Form, Button, Collapse } from "antd";
+import { sum, get, set } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import { required, number } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
@@ -19,17 +18,16 @@ const { Text, Paragraph, Title } = Typography;
 const { Panel } = Collapse;
 
 const propTypes = {
-  previousStep: PropTypes.func,
-  onSubmit: PropTypes.func,
+  handleSubmit: PropTypes.func.isRequired,
+  previousStep: PropTypes.func.isRequired,
+  initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  extraActions: PropTypes.node,
   isEditable: PropTypes.bool,
-  initialValues: PropTypes.objectOf(PropTypes.strings),
 };
 
 const defaultProps = {
-  previousStep: () => {},
-  onSubmit: () => {},
+  extraActions: undefined,
   isEditable: true,
-  initialValues: {},
 };
 
 const createMemberName = (member, name) => `${member}.${name}`;
@@ -58,7 +56,10 @@ const renderMoneyTotal = (label, amount) => (
 );
 
 const renderContractWorkPanel = (contractWorkSection, wellSectionTotal, isEditable) => (
-  <Panel header={<Title level={4}>{contractWorkSection.sectionHeader}</Title>}>
+  <Panel
+    key={contractWorkSection.sectionHeader}
+    header={<Title level={4}>{contractWorkSection.sectionHeader}</Title>}
+  >
     <FormSection name={contractWorkSection.formSectionName}>
       <Form.Item
         label={
@@ -150,9 +151,7 @@ const asyncValidateWell = async (values, field) => {
 };
 
 const asyncValidate = (values, dispatch, props, field) => {
-  if (!field) return Promise.resolve();
-
-  if (field === "contract_details.operator_id") {
+  if (!field || field === "contract_details.operator_id") {
     return Promise.all(
       values.well_sites.map((well, index) =>
         asyncValidateWell(
@@ -320,7 +319,7 @@ class ApplicationSectionTwo extends Component {
                 placeholder="Search for permit holder for whom this work will be performed"
                 component={PermitHolderSelect}
                 disabled={!this.props.isEditable}
-                // validate={[required]}
+                validate={[required]}
               />
             </Col>
           </Row>
@@ -339,7 +338,7 @@ class ApplicationSectionTwo extends Component {
           <Row gutter={16} type="flex">
             <Col style={{ textAlign: "right" }}>
               {wellTotalsValues.map((wellTotal, index) => (
-                <Paragraph className="color-primary" strong>
+                <Paragraph key={index} className="color-primary" strong>
                   {`Well Site #${index + 1} total:`}&nbsp;
                 </Paragraph>
               ))}
@@ -348,8 +347,8 @@ class ApplicationSectionTwo extends Component {
               </Paragraph>
             </Col>
             <Col style={{ textAlign: "right" }}>
-              {wellTotalsValues.map((wellTotal) => (
-                <Paragraph>{formatMoney(wellTotal.wellTotal || 0)}</Paragraph>
+              {wellTotalsValues.map((wellTotal, index) => (
+                <Paragraph key={index}>{formatMoney(wellTotal.wellTotal || 0)}</Paragraph>
               ))}
               <Paragraph>{formatMoney(this.state.contractedWorkTotals.grandTotal || 0)}</Paragraph>
             </Col>
@@ -364,6 +363,7 @@ class ApplicationSectionTwo extends Component {
               <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
                 Previous
               </Button>
+              {this.props.extraActions}
             </Col>
           </Row>
         )}
@@ -371,6 +371,7 @@ class ApplicationSectionTwo extends Component {
     );
   }
 }
+
 ApplicationSectionTwo.propTypes = propTypes;
 ApplicationSectionTwo.defaultProps = defaultProps;
 
@@ -389,5 +390,6 @@ export default compose(
     ],
     keepDirtyOnReinitialize: true,
     enableReinitialize: true,
+    updateUnregisteredFields: true,
   })
 )(ApplicationSectionTwo);

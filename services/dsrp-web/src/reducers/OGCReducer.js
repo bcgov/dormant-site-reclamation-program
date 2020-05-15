@@ -4,6 +4,7 @@ import { OGC } from "../constants/reducerTypes";
 const initialState = {
   permitHolders: [],
   wells: [],
+  selectedWells: [],
   liabilities: [],
 };
 
@@ -19,6 +20,15 @@ export const OGCReducer = (state = initialState, action) => {
         ...state,
         wells: action.payload.records,
       };
+    case actionTypes.STORE_SELECTED_WELL:
+      return {
+        ...state,
+        selectedWells: {
+          ...state.selectedWells,
+          [action.payload.well_auth_number]: { ...action.payload },
+        },
+      };
+
     case actionTypes.STORE_LIABILITIES:
       return {
         ...state,
@@ -35,6 +45,7 @@ const OGCReducerObject = {
 
 export const getPermitHolders = (state) => state[OGC].permitHolders;
 export const getWells = (state) => state[OGC].wells;
+export const getSelectedWells = (state) => state[OGC].selectedWells;
 export const getLiabilities = (state) => state[OGC].liabilities;
 
 export default OGCReducerObject;

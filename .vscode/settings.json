@@ -20,6 +20,5 @@
     "source.fixAll.eslint": true,
     "eslint.autoFixOnSave": true
   },
-  "cSpell.words": ["idir"],
-  "workbench.colorTheme": "Material Dark Theme"
+  "cSpell.words": ["idir"]
 }

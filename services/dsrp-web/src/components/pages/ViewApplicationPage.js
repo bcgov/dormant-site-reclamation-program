@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import PropTypes from "prop-types";
@@ -7,7 +6,7 @@ import { compose } from "redux";
 import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import { Row, Col, Typography, Icon } from "antd";
 import { reset } from "redux-form";
-import { fetchApplicationByID } from "@/actionCreators/applicationActionCreator";
+import { fetchApplicationById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/selectors/applicationSelectors";
 import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm";
 import LinkButton from "@/components/common/LinkButton";
@@ -18,8 +17,8 @@ const propTypes = {
       id: PropTypes.string,
     },
   }).isRequired,
-  fetchApplicationByID: PropTypes.func.isRequired,
-  application: PropTypes.any.isRequired,
+  fetchApplicationById: PropTypes.func.isRequired,
+  application: PropTypes.any,
 };
 
 const defaultProps = {
@@ -33,7 +32,7 @@ export class ViewApplicationPage extends Component {
 
   componentDidMount() {
     const { id } = this.props.match.params;
-    this.props.fetchApplicationByID(id).then(() => {
+    this.props.fetchApplicationById(id).then(() => {
       this.setState({ isLoaded: true });
     });
   }
@@ -45,7 +44,7 @@ export class ViewApplicationPage extends Component {
   render() {
     return (
       <>
-        {this.state.isLoaded ? (
+        {(this.state.isLoaded && (
           <>
             <Row
               type="flex"
@@ -76,9 +75,7 @@ export class ViewApplicationPage extends Component {
               </Col>
             </Row>
           </>
-        ) : (
-          <div>Loading...</div>
-        )}
+        )) || <div>Loading...</div>}
       </>
     );
   }
@@ -91,13 +88,14 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      fetchApplicationByID,
+      fetchApplicationById,
       reset,
     },
     dispatch
   );
 
 ViewApplicationPage.propTypes = propTypes;
+ViewApplicationPage.defaultProps = defaultProps;
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
