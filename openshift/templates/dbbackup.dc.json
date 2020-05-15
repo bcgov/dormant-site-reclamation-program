@@ -4,217 +4,6 @@
   "metadata": {
     "name": "dsrp-dbbackup-dc"
   },
-  "objects": [
-    {
-      "kind": "PersistentVolumeClaim",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "dsrp-db-backup-verification${SUFFIX}"
-      },
-      "spec": {
-        "accessModes": [
-          "ReadWriteOnce"
-        ],
-        "resources": {
-          "requests": {
-            "storage": "${VERIFICATION_VOLUME_SIZE}"
-          }
-        }
-      }
-    },
-    {
-      "kind": "ConfigMap",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "dsrp-db-backup-config${SUFFIX}"
-      },
-      "data": {
-        "backup.conf": "${DATABASE_SERVICE_NAME}/dsrp\n0 2 * * * default ./backup.sh -s\n"
-      }
-    },
-    {
-      "kind": "ImageStream",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "${NAME}",
-        "creationTimestamp": null,
-        "labels": {
-          "shared": "true"
-        },
-        "annotations": {}
-      },
-      "spec": {
-        "lookupPolicy": {
-          "local": false
-        }
-      }
-    },
-    {
-      "kind": "DeploymentConfig",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "${NAME}${SUFFIX}",
-        "annotations": {
-          "description": "Defines how to deploy the ${NAME} server"
-        }
-      },
-      "spec": {
-        "strategy": {
-          "type": "Recreate"
-        }
-      },
-      "triggers": [
-        {
-          "type": "ConfigChange"
-        },
-        {
-          "type": "ImageChange",
-          "imageChangeParams": {
-            "automatic": true,
-            "containerNames": [
-              "backup"
-            ],
-            "from": {
-              "kind": "ImageStreamTag",
-              "name": "${NAME}:${VERSION}"
-            }
-          }
-        }
-      ],
-      "replicas": 1,
-      "selector": {
-        "name": "${NAME}${SUFFIX}"
-      },
-      "template": {
-        "metadata": {
-          "name": "${NAME}${SUFFIX}",
-          "labels": {
-            "name": "${NAME}${SUFFIX}"
-          }
-        },
-        "spec": {
-          "volumes": [
-            {
-              "name": "dsrp-db-backup-data",
-              "persistentVolumeClaim": {
-                "claimName": "${NFS_VOLUME_IDENTIFIER}"
-              }
-            },
-            {
-              "name": "dsrp-db-backup-verification",
-              "persistentVolumeClaim": {
-                "claimName": "dsrp-db-backup-verification${SUFFIX}"
-              }
-            },
-            {
-              "name": "dsrp-db-backup-config-volume",
-              "configMap": {
-                "name": "dsrp-db-backup-config${SUFFIX}",
-                "items": [
-                  {
-                    "key": "backup.conf",
-                    "path": "backup.conf"
-                  }
-                ]
-              }
-            }
-          ],
-          "containers": [
-            {
-              "name": "backup",
-              "image": " ",
-              "env": [
-                {
-                  "name": "BACKUP_STRATEGY",
-                  "value": "rolling"
-                },
-                {
-                  "name": "BACKUP_DIR",
-                  "value": "/backups/"
-                },
-                {
-                  "name": "DAILY_BACKUPS",
-                  "value": "5"
-                },
-                {
-                  "name": "WEEKLY_BACKUPS",
-                  "value": "1"
-                },
-                {
-                  "name": "MONTHLY_BACKUPS",
-                  "value": "1"
-                },
-                {
-                  "name": "POSTGRESQL_USER",
-                  "valueFrom": {
-                    "secretKeyRef": {
-                      "name": "${DATABASE_SERVICE_NAME}",
-                      "key": "database-admin-user"
-                    }
-                  }
-                },
-                {
-                  "name": "POSTGRESQL_PASSWORD",
-                  "valueFrom": {
-                    "secretKeyRef": {
-                      "name": "${DATABASE_SERVICE_NAME}",
-                      "key": "database-admin-password"
-                    }
-                  }
-                },
-                {
-                  "name": "WEBHOOK_URL",
-                  "valueFrom": {
-                    "secretKeyRef": {
-                      "name": "${WEBHOOK_SECRET_NAME}",
-                      "key": "dsrp-chatops-db-backup"
-                    }
-                  }
-                },
-                {
-                  "name": "DATABASE_SERVER_TIMEOUT",
-                  "value": "600"
-                },
-                {
-                  "name": "ENVIRONMENT_NAME",
-                  "value": "${ENVIRONMENT_NAME}"
-                },
-                {
-                  "name": "ENVIRONMENT_FRIENDLY_NAME",
-                  "value": "${ENVIRONMENT_FRIENDLY_NAME}"
-                }
-              ],
-              "resources": {
-                "requests": {
-                  "cpu": "${CPU_REQUEST}",
-                  "memory": "${MEMORY_REQUEST}"
-                },
-                "limits": {
-                  "cpu": "${CPU_LIMIT}",
-                  "memory": "${MEMORY_LIMIT}"
-                }
-              },
-              "volumeMounts": [
-                {
-                  "name": "dsrp-db-backup-data",
-                  "mountPath": "/backups/"
-                },
-                {
-                  "name": "dsrp-db-backup-verification",
-                  "mountPath": "/var/lib/pgsql/data"
-                },
-                {
-                  "name": "dsrp-db-backup-config-volume",
-                  "mountPath": "/backup.conf",
-                  "subPath": "backup.conf"
-                }
-              ]
-            }
-          ]
-        }
-      }
-    }
-  ],
   "parameters": [
     {
       "name": "NAME",
@@ -282,6 +71,222 @@
     {
       "name": "MEMORY_LIMIT",
       "value": "0"
+    }
+  ],
+  "objects": [
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "dsrp-db-backup-verification${SUFFIX}"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "${VERIFICATION_VOLUME_SIZE}"
+          }
+        }
+      }
+    },
+    {
+      "kind": "ConfigMap",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "dsrp-db-backup-config${SUFFIX}"
+      },
+      "data": {
+        "backup.conf": "${DATABASE_SERVICE_NAME}/dsrp\n0 2 * * * default ./backup.sh -s\n"
+      }
+    },
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}",
+        "creationTimestamp": null,
+        "labels": {
+          "shared": "true"
+        },
+        "annotations": {}
+      },
+      "spec": {
+        "lookupPolicy": {
+          "local": false
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}${SUFFIX}",
+        "annotations": {
+          "description": "Defines how to deploy the ${NAME} server"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate",
+          "recreateParams": {
+            "maxSurge": "50%",
+            "maxUnavailable": 0,
+            "timeoutSeconds": 1200
+          }
+        },
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "backup"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "name": "${NAME}:${VERSION}"
+              }
+            }
+          }
+        ],
+        "replicas": 1,
+        "selector": {
+          "name": "${NAME}${SUFFIX}"
+        },
+        "template": {
+          "metadata": {
+            "name": "${NAME}${SUFFIX}",
+            "labels": {
+              "name": "${NAME}${SUFFIX}"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "dsrp-db-backup-data",
+                "persistentVolumeClaim": {
+                  "claimName": "${NFS_VOLUME_IDENTIFIER}"
+                }
+              },
+              {
+                "name": "dsrp-db-backup-verification",
+                "persistentVolumeClaim": {
+                  "claimName": "dsrp-db-backup-verification${SUFFIX}"
+                }
+              },
+              {
+                "name": "dsrp-db-backup-config-volume",
+                "configMap": {
+                  "name": "dsrp-db-backup-config${SUFFIX}",
+                  "items": [
+                    {
+                      "key": "backup.conf",
+                      "path": "backup.conf"
+                    }
+                  ]
+                }
+              }
+            ],
+            "containers": [
+              {
+                "name": "backup",
+                "image": " ",
+                "env": [
+                  {
+                    "name": "BACKUP_STRATEGY",
+                    "value": "rolling"
+                  },
+                  {
+                    "name": "BACKUP_DIR",
+                    "value": "/backups/"
+                  },
+                  {
+                    "name": "DAILY_BACKUPS",
+                    "value": "5"
+                  },
+                  {
+                    "name": "WEEKLY_BACKUPS",
+                    "value": "1"
+                  },
+                  {
+                    "name": "MONTHLY_BACKUPS",
+                    "value": "1"
+                  },
+                  {
+                    "name": "POSTGRESQL_USER",
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "name": "${DATABASE_SERVICE_NAME}",
+                        "key": "database-admin-user"
+                      }
+                    }
+                  },
+                  {
+                    "name": "POSTGRESQL_PASSWORD",
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "name": "${DATABASE_SERVICE_NAME}",
+                        "key": "database-admin-password"
+                      }
+                    }
+                  },
+                  {
+                    "name": "WEBHOOK_URL",
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "name": "${WEBHOOK_SECRET_NAME}",
+                        "key": "dsrp-chatops-db-backup"
+                      }
+                    }
+                  },
+                  {
+                    "name": "DATABASE_SERVER_TIMEOUT",
+                    "value": "600"
+                  },
+                  {
+                    "name": "ENVIRONMENT_NAME",
+                    "value": "${ENVIRONMENT_NAME}"
+                  },
+                  {
+                    "name": "ENVIRONMENT_FRIENDLY_NAME",
+                    "value": "${ENVIRONMENT_FRIENDLY_NAME}"
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "cpu": "${CPU_REQUEST}",
+                    "memory": "${MEMORY_REQUEST}"
+                  },
+                  "limits": {
+                    "cpu": "${CPU_LIMIT}",
+                    "memory": "${MEMORY_LIMIT}"
+                  }
+                },
+                "volumeMounts": [
+                  {
+                    "name": "dsrp-db-backup-data",
+                    "mountPath": "/backups/"
+                  },
+                  {
+                    "name": "dsrp-db-backup-verification",
+                    "mountPath": "/var/lib/pgsql/data"
+                  },
+                  {
+                    "name": "dsrp-db-backup-config-volume",
+                    "mountPath": "/backup.conf",
+                    "subPath": "backup.conf"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
     }
   ]
 }
