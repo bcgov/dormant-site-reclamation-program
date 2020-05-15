@@ -10,6 +10,11 @@ export const storeWells = (payload) => ({
   payload,
 });
 
+export const storeSelectedWell = (payload) => ({
+  type: ActionTypes.STORE_SELECTED_WELL,
+  payload,
+});
+
 export const storeLiabilities = (payload) => ({
   type: ActionTypes.STORE_LIABILITIES,
   payload,

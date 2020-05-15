@@ -15,10 +15,13 @@
   margin-top: $padding-lg;
   border-radius: 5px;
   background-color: $card-bg;
-  min-height: 200px;
   padding: $padding-lg;
 }
 
 .steps-action {
   margin-top: $padding-lg * 2;
+}
+
+.hidden {
+  display: none;
 }
