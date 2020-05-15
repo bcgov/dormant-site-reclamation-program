@@ -228,8 +228,8 @@ class ApplicationSectionOne extends Component {
               <Field
                 id="fax"
                 name="fax"
-                label="Fax"
-                placeholder="Fax"
+                label="Fax (Optional)"
+                placeholder="Fax (Optional)"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
                 {...phoneMask}
