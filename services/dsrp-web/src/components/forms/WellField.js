@@ -42,11 +42,14 @@ export class WellField extends Component {
           <Col>
             {this.props.selectedWells[this.props.input.value] && (
               <Descriptions column={1} title="Well Site Details">
-                <Descriptions.Item label="Name">
+                <Descriptions.Item label="Well Name">
                   {this.props.selectedWells[this.props.input.value].well_name}
                 </Descriptions.Item>
                 <Descriptions.Item label="Operator">
                   {this.props.selectedWells[this.props.input.value].operator_name}
+                </Descriptions.Item>
+                <Descriptions.Item label="Current Status">
+                  {this.props.selectedWells[this.props.input.value].current_status}
                 </Descriptions.Item>
                 <Descriptions.Item label="Location">
                   {this.props.selectedWells[this.props.input.value].surface_location}
