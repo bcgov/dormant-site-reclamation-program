@@ -23,7 +23,7 @@
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${DATABASE_NAME}",
+        "name": "${NAME}",
         "creationTimestamp": null,
         "labels": {
           "shared": "true"
