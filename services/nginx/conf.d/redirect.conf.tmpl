@@ -14,6 +14,8 @@ if ($domain = dsrp-dev.pathfinder.gov.bc.ca) {
 if ($http_dsrp_bypass != true) {
   set $prod 0;
 }
+add_header X-prod "$prod";
+
 if ($prod = 1) {
-  rewrite ^/(.*)$ https://www2.gov.bc.ca/gov/content/home permanent last;
+  rewrite ^/(.*)$ https://www2.gov.bc.ca/gov/content/home last;
 }
