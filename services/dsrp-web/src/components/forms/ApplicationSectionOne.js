@@ -116,6 +116,7 @@ class ApplicationSectionOne extends Component {
                 label="Province"
                 placeholder="Province"
                 component={renderConfig.SELECT}
+                disabled={!this.props.isEditable}
                 validate={[required]}
                 format={null}
                 data={[{ value: "BC", label: "British Columbia" }]}
