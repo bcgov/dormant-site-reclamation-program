@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { Component } from "react";
 import { reduxForm, Field, FormSection } from "redux-form";
 import { Row, Col, Typography, Form, Button } from "antd";
@@ -15,17 +14,16 @@ import { ORGBOOK_URL } from "@/constants/routes";
 const { Text, Title, Paragraph } = Typography;
 
 const propTypes = {
-  handleSubmit: PropTypes.func,
-  onFileLoad: PropTypes.func,
-  onRemoveFile: PropTypes.func,
+  handleSubmit: PropTypes.func.isRequired,
+  onFileLoad: PropTypes.func.isRequired,
+  onRemoveFile: PropTypes.func.isRequired,
+  initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  extraActions: PropTypes.node,
   isEditable: PropTypes.bool,
-  initialValues: PropTypes.objectOf(PropTypes.strings).isRequired,
 };
 
 const defaultProps = {
-  handleSubmit: () => {},
-  onFileLoad: () => {},
-  onRemoveFile: () => {},
+  extraActions: undefined,
   isEditable: true,
 };
 
@@ -254,8 +252,8 @@ class ApplicationSectionOne extends Component {
                       acceptedFileTypesMap={{ ...DOCUMENT, ...EXCEL }}
                       onFileLoad={this.props.onFileLoad}
                       onRemoveFile={this.props.onRemoveFile}
-                      allowRevert
                       allowMultiple={false}
+                      allowRevert
                     />
                   </Form.Item>
                 </Col>
@@ -285,6 +283,7 @@ class ApplicationSectionOne extends Component {
                 <Button type="primary" htmlType="submit">
                   Next
                 </Button>
+                {this.props.extraActions}
               </Col>
             </Row>
           </div>
@@ -303,4 +302,5 @@ export default reduxForm({
   forceUnregisterOnUnmount: true,
   keepDirtyOnReinitialize: true,
   enableReinitialize: true,
+  updateUnregisteredFields: true,
 })(ApplicationSectionOne);

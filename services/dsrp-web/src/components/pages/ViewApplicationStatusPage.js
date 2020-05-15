@@ -8,13 +8,13 @@ import { isEmpty } from "lodash";
 import ViewApplicationStatusForm from "@/components/forms/ViewApplicationStatusForm";
 import ApplicationStatusCard from "@/components/pages/ApplicationStatusCard";
 
-import { fetchApplicationByID } from "@/actionCreators/applicationActionCreator";
+import { fetchApplicationById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
 
 const { Paragraph, Title } = Typography;
 
 const propTypes = {
-  fetchApplicationByID: PropTypes.func.isRequired,
+  fetchApplicationById: PropTypes.func.isRequired,
   loadedApplication: PropTypes.shape({
     guid: PropTypes.string,
     application_status_code: PropTypes.string,
@@ -25,7 +25,7 @@ const propTypes = {
 
 export class ViewApplicationStatusPage extends Component {
   onFormSubmit = (values) => {
-    this.props.fetchApplicationByID(values.guid);
+    this.props.fetchApplicationById(values.guid);
   };
 
   render() {
@@ -84,7 +84,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      fetchApplicationByID,
+      fetchApplicationById,
     },
     dispatch
   );
