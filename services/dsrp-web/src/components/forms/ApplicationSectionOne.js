@@ -232,7 +232,6 @@ class ApplicationSectionOne extends Component {
                 placeholder="Fax"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
-                validate={[required]}
                 {...phoneMask}
               />
             </Col>
