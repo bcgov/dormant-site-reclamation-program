@@ -1,6 +1,7 @@
 import React from "react";
 import { Layout, Row, Col } from "antd";
 import { Link } from "react-router-dom";
+import MediaQuery from "react-responsive";
 import PropTypes from "prop-types";
 import HeaderDropdown from "@/components/layout/HeaderDropdown";
 import * as routes from "@/constants/routes";
@@ -13,6 +14,8 @@ const propTypes = {
   xxl: PropTypes.number.isRequired,
 };
 
+const smallestDesktopWidth = 640;
+
 export const Header = (props) => (
   <Layout.Header>
     <Row type="flex" justify="center" align="top">
@@ -24,7 +27,12 @@ export const Header = (props) => (
             </a>
           </span>
           <span className="header-title">
-            <Link to={routes.HOME.route}>Dormant Site Reclamation Program</Link>
+            <Link to={routes.HOME.route}>
+              <MediaQuery minWidth={smallestDesktopWidth}>
+                Dormant Site Reclamation Program
+              </MediaQuery>
+              <MediaQuery maxWidth={smallestDesktopWidth - 1}>DSRP</MediaQuery>
+            </Link>
           </span>
           <span className="header-menu">
             <HeaderDropdown />

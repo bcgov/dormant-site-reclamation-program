@@ -3,7 +3,7 @@ import { reduxForm, Field, FormSection } from "redux-form";
 import { Row, Col, Typography, Form, Button } from "antd";
 import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
-import { required } from "@/utils/validate";
+import { required, email, maxLength } from "@/utils/validate";
 import { phoneMask, postalCodeMask } from "@/utils/helpers";
 import { APPLICATION } from "@/constants/api";
 import * as FORM from "@/constants/forms";
@@ -180,6 +180,7 @@ class ApplicationSectionOne extends Component {
                     placeholder="Ext. 1"
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
+                    validate={[maxLength(6)]}
                   />
                 </Col>
               </Row>
@@ -205,6 +206,7 @@ class ApplicationSectionOne extends Component {
                     placeholder="Ext. 2"
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
+                    validate={[maxLength(6)]}
                   />
                 </Col>
               </Row>
@@ -219,7 +221,7 @@ class ApplicationSectionOne extends Component {
                 placeholder="Email"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
-                validate={[required]}
+                validate={[required, email]}
               />
             </Col>
             <Col span={12}>
