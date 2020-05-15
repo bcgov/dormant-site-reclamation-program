@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import { bindActionCreators } from "redux";
+import { bindActionCreators , compose } from "redux";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { compose } from "redux";
-import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
+
 import { Row, Col, Typography, Icon } from "antd";
 import { reset } from "redux-form";
+import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import { fetchApplicationById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/selectors/applicationSelectors";
 import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm";

@@ -39,6 +39,7 @@ export class HeaderDropdown extends Component {
       </Menu.Item>
     );
 
+    // TO:DO WHEN LAUNCH - REPLACE `isViewOnly` with `!isAuthenticated`
     const dropdownMenuMobile = (
       <Menu className="header-dropdown-menu">
         {this.props.isViewOnly && (
@@ -87,6 +88,7 @@ export class HeaderDropdown extends Component {
 
     const smallestDesktopWidth = 1280;
     return (
+      // TO:DO WHEN LAUNCH - REPLACE `isViewOnly` with `!isAuthenticated`
       <>
         <MediaQuery minWidth={smallestDesktopWidth}>
           <span>
