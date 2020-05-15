@@ -239,36 +239,16 @@ class ApplicationSectionOne extends Component {
         </FormSection>
 
         {this.props.isEditable && (
-          <div>
-            <FormSection name="good_standing_reports">
-              <Title level={3}>Good Standing Report</Title>
-              <Row gutter={48}>
-                <Col span={24}>
-                  <Form.Item label="Upload Good Standing Report">
-                    <Field
-                      id="good_standing_report"
-                      name="good_standing_report"
-                      component={renderConfig.FILE_UPLOAD}
-                      uploadUrl={`${APPLICATION}/documents`}
-                      acceptedFileTypesMap={{ ...DOCUMENT, ...EXCEL }}
-                      onFileLoad={this.props.onFileLoad}
-                      onRemoveFile={this.props.onRemoveFile}
-                      allowMultiple={false}
-                      allowRevert
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-            </FormSection>
-
+          <>
             <FormSection name="review_program_conditions">
-              <Paragraph>
-                <a href="#" target="_blank" rel="noopener noreferrer">
-                  Review program details and requirements
-                </a>
-              </Paragraph>
+              <Title level={3}>Review Program Requirements</Title>
               <Row gutter={48}>
                 <Col span={24}>
+                  <Paragraph>
+                    <a href="#" target="_blank" rel="noopener noreferrer">
+                      Review program details and requirements
+                    </a>
+                  </Paragraph>
                   <Field
                     id="accept_program_details_and_requirements"
                     name="accept_program_details_and_requirements"
@@ -279,6 +259,7 @@ class ApplicationSectionOne extends Component {
                 </Col>
               </Row>
             </FormSection>
+
             <Row className="steps-action">
               <Col>
                 <Button
@@ -291,7 +272,7 @@ class ApplicationSectionOne extends Component {
                 {this.props.extraActions}
               </Col>
             </Row>
-          </div>
+          </>
         )}
       </Form>
     );
