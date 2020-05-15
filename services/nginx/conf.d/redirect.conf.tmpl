@@ -5,13 +5,13 @@
 # Forwards all traffic to landing page unless DSRP-Bypass is set to true
 
 set $prod 0;
-set $domain "${DSRP_DOMAIN}";
+set $domain ${DSRP_DOMAIN};
 
-# if ($domain = "dormant-site-reclamation.gov.bc.ca") {
-if ($domain = "dsrp-dev.pathfinder.gov.bc.ca") {
+# if ($domain = dormant-site-reclamation.gov.bc.ca) {
+if ($domain = dsrp-dev.pathfinder.gov.bc.ca) {
   set $prod 1;
 }
-if ($http_dsrp_bypass != "true") {
+if ($http_dsrp_bypass != true) {
   set $prod 0;
 }
 if ($prod = 1) {
