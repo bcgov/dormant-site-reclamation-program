@@ -11,7 +11,7 @@ set $domain ${DSRP_DOMAIN};
 if ($domain = dsrp-dev.pathfinder.gov.bc.ca) {
   set $prod 1;
 }
-if ($http_dsrp_bypass != true) {
+if ($http_dsrp_bypass = true) {
   set $prod 0;
 }
 add_header X-prod "$prod";
