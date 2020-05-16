@@ -22,6 +22,7 @@ const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  isViewingSubmission: PropTypes.bool.isRequired,
   isEditable: PropTypes.bool,
 };
 
@@ -184,9 +185,6 @@ class ApplicationSectionTwo extends Component {
     if (nextProps.formValues !== this.props.formValues) {
       this.calculateContractWorkTotals(nextProps.formValues);
     }
-    if (nextProps.submitSucceeded) {
-      this.setState(defaultState);
-    }
   };
 
   componentWillMount = () => {
@@ -201,6 +199,7 @@ class ApplicationSectionTwo extends Component {
 
   calculateContractWorkTotals = (formValues) => {
     if (!formValues || !formValues.well_sites) {
+      this.setState(defaultState);
       return;
     }
 

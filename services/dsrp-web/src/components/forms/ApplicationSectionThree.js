@@ -13,6 +13,7 @@ const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  isViewingSubmission: PropTypes.bool.isRequired,
   isEditable: PropTypes.bool,
 };
 

@@ -71,7 +71,10 @@ export class ViewApplicationPage extends Component {
               className="landing-section"
             >
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-                <ViewOnlyApplicationForm initialValues={this.props.application.json} />
+                <ViewOnlyApplicationForm
+                  isViewingSubmission
+                  initialValues={this.props.application.json}
+                />
               </Col>
             </Row>
           </>

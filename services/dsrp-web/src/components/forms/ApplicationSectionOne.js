@@ -19,8 +19,9 @@ const propTypes = {
   onFileLoad: PropTypes.func.isRequired,
   onRemoveFile: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
-  isEditable: PropTypes.bool,
   indigenousParticipationCheckbox: PropTypes.bool.isRequired,
+  isViewingSubmission: PropTypes.bool.isRequired,
+  isEditable: PropTypes.bool,
 };
 
 const defaultProps = {

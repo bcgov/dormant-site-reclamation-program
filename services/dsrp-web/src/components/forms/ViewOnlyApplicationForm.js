@@ -8,28 +8,30 @@ import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree"
 const propTypes = {
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   noRenderStep3: PropTypes.bool,
+  isViewingSubmission: PropTypes.bool,
 };
 
 const defaultProps = {
   noRenderStep3: false,
+  isViewingSubmission: false,
 };
 
 const ViewOnlyApplicationForm = (props) => (
   <Row>
     <Col className="steps-content">
       <ApplicationSectionOne
-        isViewingSubmission
+        isViewingSubmission={props.isViewingSubmission}
         isEditable={false}
         initialValues={props.initialValues}
       />
       <ApplicationSectionTwo
-        isViewingSubmission
+        isViewingSubmission={props.isViewingSubmission}
         isEditable={false}
         initialValues={props.initialValues}
       />
       {!props.noRenderStep3 && (
         <ApplicationSectionThree
-          isViewingSubmission
+          isViewingSubmission={props.isViewingSubmission}
           isEditable={false}
           initialValues={props.initialValues}
         />
