@@ -86,3 +86,15 @@
     background-color: $table-seperator !important;
   }
 }
+
+.font-size {
+  &-small {
+    font-size: $font-size-sm;
+  }
+  &-base {
+    font-size: $font-size-base;
+  }
+  &-large {
+    font-size: $font-size-lg;
+  }
+}

@@ -158,7 +158,7 @@ export class ApplicationForm extends Component {
         title: "Review",
         content: (
           <>
-            <Title level={3}>Review Application</Title>
+            <Title level={2}>Review Application</Title>
             <Paragraph>
               Please review your application below and confirm that its information is correct.
             </Paragraph>

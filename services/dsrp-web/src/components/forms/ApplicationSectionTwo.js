@@ -66,7 +66,11 @@ const renderContractWorkPanel = (
 ) => (
   <Panel
     key={contractWorkSection.sectionHeader}
-    header={<Title level={4}>{contractWorkSection.sectionHeader}</Title>}
+    header={
+      <Text className="color-primary font-size-large" strong>
+        {contractWorkSection.sectionHeader}
+      </Text>
+    }
   >
     <FormSection name={contractWorkSection.formSectionName}>
       <Form.Item
@@ -295,7 +299,7 @@ class ApplicationSectionTwo extends Component {
               }
             >
               <FormSection name={createMemberName(member, "details")}>
-                <Title level={3}>Details</Title>
+                <Title level={4}>Details</Title>
                 <Row gutter={48}>
                   <Col span={24}>
                     <Field
@@ -327,7 +331,7 @@ class ApplicationSectionTwo extends Component {
               </FormSection>
 
               <FormSection name={createMemberName(member, "site_conditions")}>
-                <Title level={3}>Site Conditions</Title>
+                <Title level={4}>Site Conditions</Title>
                 <Paragraph>Reasons for site nomination (select all that apply):</Paragraph>
                 <Row gutter={48}>
                   <Col span={24}>
@@ -345,7 +349,7 @@ class ApplicationSectionTwo extends Component {
               </FormSection>
 
               <FormSection name={createMemberName(member, "contracted_work")}>
-                <Title level={3}>Contracted Work</Title>
+                <Title level={4}>Contracted Work</Title>
                 <Paragraph>
                   Enter the estimated cost of every work component your company will perform for
                   this contract.
@@ -387,7 +391,7 @@ class ApplicationSectionTwo extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="contract_details">
-          <Title level={3}>Contract Information</Title>
+          <Title level={2}>Contract Information</Title>
           <Row gutter={48}>
             <Col>
               <Field
@@ -408,7 +412,7 @@ class ApplicationSectionTwo extends Component {
           </Row>
         </FormSection>
 
-        <Title level={3}>Well Sites</Title>
+        <Title level={2}>Well Sites</Title>
         <Row gutter={[48, 48]}>
           <Col>
             <FieldArray name="well_sites" component={this.renderWells} />
@@ -416,7 +420,7 @@ class ApplicationSectionTwo extends Component {
         </Row>
 
         <br />
-        <Title level={3}>Estimated Expense Summary</Title>
+        <Title level={2}>Estimated Expense Summary</Title>
         {(wellTotalsValues.length > 0 && (
           <Row gutter={16} type="flex">
             <Col style={{ textAlign: "right" }}>
