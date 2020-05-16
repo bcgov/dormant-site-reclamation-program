@@ -70,6 +70,7 @@ class ApplicationSectionOne extends Component {
                 id="indigenous_participation_ind"
                 name="indigenous_participation_ind"
                 label="Do you wish to self‑identify as including Indigenous participation in completing the work outlined within this application?"
+                disabled={!this.props.isEditable}
                 component={renderConfig.CHECKBOX}
                 disabled={!this.props.isEditable}
               />
