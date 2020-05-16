@@ -331,3 +331,8 @@ tr.ant-table-expanded-row {
     background-color: #f0f6fd;
   }
 }
+
+// Steps
+.ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon {
+  color: $white;
+}
