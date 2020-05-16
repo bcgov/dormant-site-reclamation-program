@@ -167,20 +167,31 @@ const asyncValidate = (values, dispatch, props, field) => {
   }
 };
 
+const defaultState = {
+  contractedWorkTotals: { grandTotal: 0, wellTotals: {} },
+};
+
 class ApplicationSectionTwo extends Component {
-  state = {
-    contractedWorkTotals: { grandTotal: 0, wellTotals: {} },
-  };
+  state = defaultState;
 
   componentWillReceiveProps = (nextProps) => {
     if (nextProps.formValues !== this.props.formValues) {
       this.calculateContractWorkTotals(nextProps.formValues);
+    }
+    if (nextProps.submitSucceeded) {
+      this.setState(defaultState);
     }
   };
 
   componentWillMount = () => {
     this.calculateContractWorkTotals(this.props.formValues);
   };
+
+  componentWillUnmount() {
+    if (!this.props.isEditable) {
+      this.props.reset();
+    }
+  }
 
   calculateContractWorkTotals = (formValues) => {
     if (!formValues || !formValues.well_sites) {
@@ -391,24 +402,28 @@ class ApplicationSectionTwo extends Component {
   }
 }
 
+const mapStateToProps = (state) => ({
+  formValues: getFormValues(FORM.APPLICATION_FORM)(state),
+});
+
+const mapDispatchToProps = () => ({});
+
 ApplicationSectionTwo.propTypes = propTypes;
 ApplicationSectionTwo.defaultProps = defaultProps;
 
 export default compose(
-  connect((state) => ({
-    formValues: getFormValues(FORM.APPLICATION_FORM)(state),
-  })),
+  connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: FORM.APPLICATION_FORM,
     destroyOnUnmount: false,
     forceUnregisterOnUnmount: true,
+    keepDirtyOnReinitialize: true,
+    enableReinitialize: true,
+    updateUnregisteredFields: true,
     asyncValidate,
     asyncChangeFields: [
       "contract_details.operator_id",
       "well_sites[].details.well_authorization_number",
     ],
-    keepDirtyOnReinitialize: true,
-    enableReinitialize: true,
-    updateUnregisteredFields: true,
   })
 )(ApplicationSectionTwo);

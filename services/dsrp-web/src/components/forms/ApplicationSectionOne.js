@@ -7,10 +7,8 @@ import { connect } from "react-redux";
 import { renderConfig } from "@/components/common/config";
 import { required, email, maxLength } from "@/utils/validate";
 import { phoneMask, postalCodeMask } from "@/utils/helpers";
-import { APPLICATION } from "@/constants/api";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
-import { DOCUMENT, EXCEL } from "@/constants/fileTypes";
 import { ORGBOOK_URL } from "@/constants/routes";
 
 const { Title, Paragraph } = Typography;
@@ -31,6 +29,12 @@ const defaultProps = {
 };
 
 class ApplicationSectionOne extends Component {
+  componentWillUnmount() {
+    if (!this.props.isEditable) {
+      this.props.reset();
+    }
+  }
+
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
@@ -71,11 +75,11 @@ class ApplicationSectionOne extends Component {
               />
               {this.props.indigenousParticipationCheckbox && (
                 <Field
-                  id="indigenous_participation_descript"
-                  name="indigenous_participation_descript"
+                  id="indigenous_participation_description"
+                  name="indigenous_participation_description"
                   label="If so, please describe:"
                   component={renderConfig.AUTO_SIZE_FIELD}
-                  validate={[required]}
+                  validate={[required, maxLength(65536)]}
                   disabled={!this.props.isEditable}
                 />
               )}
@@ -285,17 +289,19 @@ class ApplicationSectionOne extends Component {
   }
 }
 
-ApplicationSectionOne.propTypes = propTypes;
-ApplicationSectionOne.defaultProps = defaultProps;
-
 const selector = formValueSelector(FORM.APPLICATION_FORM);
 
 const mapStateToProps = (state) => ({
   indigenousParticipationCheckbox: selector(state, "company_details.indigenous_participation_ind"),
 });
 
+const mapDispatchToProps = () => ({});
+
+ApplicationSectionOne.propTypes = propTypes;
+ApplicationSectionOne.defaultProps = defaultProps;
+
 export default compose(
-  connect(mapStateToProps),
+  connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: FORM.APPLICATION_FORM,
     destroyOnUnmount: false,

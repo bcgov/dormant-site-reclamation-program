@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { reduxForm, Field, FormSection } from "redux-form";
+import { compose } from "redux";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Row, Col, Form, Button, Typography } from "antd";
 import { renderConfig } from "@/components/common/config";
@@ -22,6 +24,12 @@ const defaultProps = {
 const { Title } = Typography;
 
 class ApplicationSectionThree extends Component {
+  componentWillUnmount() {
+    if (!this.props.isEditable) {
+      this.props.reset();
+    }
+  }
+
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
@@ -47,7 +55,7 @@ class ApplicationSectionThree extends Component {
               <Button
                 type="primary"
                 htmlType="submit"
-                disabled={this.props.submitting || this.props.invalid}
+                disabled={this.props.submitting || this.props.invalid || this.props.submitSucceeded}
               >
                 Submit
               </Button>
@@ -63,14 +71,21 @@ class ApplicationSectionThree extends Component {
   }
 }
 
+const mapStateToProps = () => ({});
+
+const mapDispatchToProps = () => ({});
+
 ApplicationSectionThree.propTypes = propTypes;
 ApplicationSectionThree.defaultProps = defaultProps;
 
-export default reduxForm({
-  form: FORM.APPLICATION_FORM,
-  destroyOnUnmount: false,
-  forceUnregisterOnUnmount: true,
-  keepDirtyOnReinitialize: true,
-  enableReinitialize: true,
-  updateUnregisteredFields: true,
-})(ApplicationSectionThree);
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  reduxForm({
+    form: FORM.APPLICATION_FORM,
+    destroyOnUnmount: false,
+    forceUnregisterOnUnmount: true,
+    keepDirtyOnReinitialize: true,
+    enableReinitialize: true,
+    updateUnregisteredFields: true,
+  })
+)(ApplicationSectionThree);
