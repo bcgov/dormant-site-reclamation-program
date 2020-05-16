@@ -383,15 +383,15 @@ class ApplicationSectionTwo extends Component {
         {this.props.isEditable && (
           <Row className="steps-action">
             <Col>
+              <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
+                Previous
+              </Button>
               <Button
                 type="primary"
                 htmlType="submit"
                 disabled={this.props.submitting || this.props.invalid}
               >
                 Next
-              </Button>
-              <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
-                Previous
               </Button>
               {this.props.extraActions}
             </Col>
