@@ -229,10 +229,6 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       createApplication,
-      resetFormData: () => {
-        dispatch(initialize(APPLICATION_FORM, {}));
-        dispatch(reset(APPLICATION_FORM));
-      },
     },
     dispatch
   );
