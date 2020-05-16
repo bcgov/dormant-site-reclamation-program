@@ -73,7 +73,9 @@ const renderContractWorkPanel = (
     header={
       <Row type="flex" align="middle" justify="space-between">
         <Col>
-          <Title level={4}>{contractWorkSection.sectionHeader}</Title>
+          <Text className="color-primary font-size-large" strong>
+            {contractWorkSection.sectionHeader}
+          </Text>
         </Col>
         <Col>
           {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, {
@@ -315,7 +317,7 @@ class ApplicationSectionTwo extends Component {
               }
             >
               <FormSection name={createMemberName(member, "details")}>
-                <Title level={3}>Details</Title>
+                <Title level={4}>Details</Title>
                 <Row gutter={48}>
                   <Col span={24}>
                     <Field
@@ -347,7 +349,7 @@ class ApplicationSectionTwo extends Component {
               </FormSection>
 
               <FormSection name={createMemberName(member, "site_conditions")}>
-                <Title level={3}>Site Conditions</Title>
+                <Title level={4}>Site Conditions</Title>
                 <Paragraph>Reasons for site nomination (select all that apply):</Paragraph>
                 <Row gutter={48}>
                   <Col span={24}>
@@ -365,7 +367,7 @@ class ApplicationSectionTwo extends Component {
               </FormSection>
 
               <FormSection name={createMemberName(member, "contracted_work")}>
-                <Title level={3}>Contracted Work</Title>
+                <Title level={4}>Contracted Work</Title>
                 <Paragraph>
                   Enter the estimated cost of every work component your company will perform for
                   this contract.
@@ -407,7 +409,7 @@ class ApplicationSectionTwo extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="contract_details">
-          <Title level={3}>Contract Information</Title>
+          <Title level={2}>Contract Information</Title>
           <Row gutter={48}>
             <Col>
               <Field
@@ -428,7 +430,7 @@ class ApplicationSectionTwo extends Component {
           </Row>
         </FormSection>
 
-        <Title level={3}>Well Sites</Title>
+        <Title level={2}>Well Sites</Title>
         <Row gutter={[48, 48]}>
           <Col>
             <FieldArray name="well_sites" component={this.renderWells} />
@@ -436,7 +438,7 @@ class ApplicationSectionTwo extends Component {
         </Row>
 
         <br />
-        <Title level={3}>Estimated Expense Summary</Title>
+        <Title level={2}>Estimated Cost Summary</Title>
         {(wellTotalsValues.length > 0 && (
           <Row gutter={16} type="flex" justify="end">
             <Col style={{ textAlign: "right" }}>
@@ -444,6 +446,7 @@ class ApplicationSectionTwo extends Component {
                 <Paragraph key={index} className="color-primary" strong>
                   {`Well Site #${index + 1} total:`}&nbsp;
                 </Paragraph>
+                {console.log(wellTotal)}
               ))}
               <Paragraph className="color-primary" strong>
                 Grand total:&nbsp;
@@ -456,7 +459,7 @@ class ApplicationSectionTwo extends Component {
               <Paragraph>{formatMoney(this.state.contractedWorkTotals.grandTotal || 0)}</Paragraph>
             </Col>
           </Row>
-        )) || <Paragraph>Add a well site to see your estimated expense summary.</Paragraph>}
+        )) || <Paragraph>Add a well site to see your estimated cost summary.</Paragraph>}
         {this.props.isEditable && (
           <Row className="steps-action">
             <Col>
