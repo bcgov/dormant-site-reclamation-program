@@ -4,6 +4,7 @@ import SubmitApplicationPage from "@/components/pages/SubmitApplicationPage";
 import ViewApplicationStatusPage from "@/components/pages/ViewApplicationStatusPage";
 import ReviewApplicationsPage from "@/components/pages/ReviewApplicationsPage";
 import ViewApplicationPage from "@/components/pages/ViewApplicationPage";
+import ApplicationSuccessPage from "@/components/pages/ApplicationSuccessPage";
 
 export const HOME = {
   route: "/",
@@ -23,6 +24,12 @@ export const SUBMIT_APPLICATION = {
 export const VIEW_APPLICATION_STATUS = {
   route: "/view-application-status",
   component: ViewApplicationStatusPage,
+};
+
+export const APPLICATION_SUCCESS = {
+  route: "/success/:id",
+  dynamicRoute: (guid) => `/success/${guid}`,
+  component: ApplicationSuccessPage,
 };
 
 export const REVIEW_APPLICATIONS = {
