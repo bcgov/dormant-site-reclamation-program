@@ -440,13 +440,24 @@ class ApplicationSectionTwo extends Component {
         <br />
         <Title level={2}>Estimated Cost Summary</Title>
         {(wellTotalsValues.length > 0 && (
-          <Row gutter={16} type="flex" justify="end">
+          <Row gutter={16} type="flex" justify="start" align="bottom">
             <Col style={{ textAlign: "right" }}>
               {wellTotalsValues.map((wellTotal, index) => (
-                <Paragraph key={index} className="color-primary" strong>
-                  {`Well Site #${index + 1} total:`}&nbsp;
-                </Paragraph>
-                {console.log(wellTotal)}
+                <>
+                  <Paragraph key={index} className="color-primary" strong>
+                    {`Well Site #${index + 1} total:`}&nbsp;
+                  </Paragraph>
+                  {wellTotal.sections &&
+                    CONTRACT_WORK_SECTIONS.filter(
+                      (section) =>
+                        wellTotal.sections[section.formSectionName] &&
+                        wellTotal.sections[section.formSectionName] > 0
+                    ).map((section) => (
+                      <Paragraph key={index} className="color-primary">
+                        {`${section.sectionHeader} total:`}&nbsp;
+                      </Paragraph>
+                    ))}
+                </>
               ))}
               <Paragraph className="color-primary" strong>
                 Grand total:&nbsp;
@@ -454,9 +465,23 @@ class ApplicationSectionTwo extends Component {
             </Col>
             <Col style={{ textAlign: "right" }}>
               {wellTotalsValues.map((wellTotal, index) => (
-                <Paragraph key={index}>{formatMoney(wellTotal.wellTotal || 0)}</Paragraph>
+                <>
+                  <Paragraph key={index}>{formatMoney(wellTotal.wellTotal || 0)}</Paragraph>
+                  {wellTotal.sections &&
+                    CONTRACT_WORK_SECTIONS.filter(
+                      (section) =>
+                        wellTotal.sections[section.formSectionName] &&
+                        wellTotal.sections[section.formSectionName] > 0
+                    ).map((section) => (
+                      <Paragraph key={index}>
+                        {formatMoney(wellTotal.sections[section.formSectionName] || 0)}
+                      </Paragraph>
+                    ))}
+                </>
               ))}
-              <Paragraph>{formatMoney(this.state.contractedWorkTotals.grandTotal || 0)}</Paragraph>
+              <Paragraph strong>
+                {formatMoney(this.state.contractedWorkTotals.grandTotal || 0)}
+              </Paragraph>
             </Col>
           </Row>
         )) || <Paragraph>Add a well site to see your estimated cost summary.</Paragraph>}
