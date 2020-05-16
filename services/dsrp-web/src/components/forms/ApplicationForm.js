@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { isPristine, getFormValues, reset, initialize } from "redux-form";
-import { Col, Row, Steps, Typography, Result } from "antd";
+import { Col, Row, Steps, Typography, Result, Icon } from "antd";
 import PropTypes from "prop-types";
 import { isEqual } from "lodash";
 import { formatDateTimeFine } from "@/utils/helpers";
@@ -24,6 +24,14 @@ const propTypes = {
 
 const defaultProps = {
   formValues: null,
+};
+
+const resetFormState = {
+  initialValues: {},
+  previouslySavedFormValues: null,
+  previouslySavedFormStep: 0,
+  saveTimestamp: null,
+  currentStep: 0,
 };
 
 export class ApplicationForm extends Component {
@@ -83,22 +91,16 @@ export class ApplicationForm extends Component {
   handleSubmit = (values, dispatch) => {
     const application = { json: values };
     this.props.createApplication(application).then(() => {
-      this.setState(
-        {
-          submitSuccess: true,
-          initialValues: {},
-          previouslySavedFormValues: null,
-          previouslySavedFormStep: 0,
-          saveTimestamp: null,
-          currentStep: 0,
-        },
-        () => {
-          dispatch(initialize(APPLICATION_FORM, {}));
-          dispatch(reset(APPLICATION_FORM));
-          this.emptySavedFormData();
-        }
-      );
+      this.setState({ submitSuccess: true, ...resetFormState }, () => {
+        dispatch(initialize(APPLICATION_FORM, {}));
+        dispatch(reset(APPLICATION_FORM));
+        this.emptySavedFormData();
+      });
     });
+  };
+
+  handleReset = () => {
+    this.setState(resetFormState, () => this.emptySavedFormData());
   };
 
   componentDidMount() {
@@ -130,21 +132,14 @@ export class ApplicationForm extends Component {
   };
 
   render() {
-    const extraActions = this.state.saveTimestamp && (
-      <Text style={{ float: "right" }}>
-        Application progress automatically saved to your browser's local storage on&nbsp;
-        <Text strong>{formatDateTimeFine(this.state.saveTimestamp)}</Text>.
-      </Text>
-    );
-
     const steps = [
       {
         title: "Company Info",
         content: (
           <ApplicationSectionOne
             onSubmit={this.nextFormStep}
+            handleReset={this.handleReset}
             initialValues={this.state.initialValues}
-            extraActions={extraActions}
           />
         ),
       },
@@ -154,8 +149,8 @@ export class ApplicationForm extends Component {
           <ApplicationSectionTwo
             previousStep={this.previousFormStep}
             onSubmit={this.nextFormStep}
+            handleReset={this.handleReset}
             initialValues={this.state.initialValues}
-            extraActions={extraActions}
           />
         ),
       },
@@ -179,8 +174,8 @@ export class ApplicationForm extends Component {
             <ApplicationSectionThree
               previousStep={this.previousFormStep}
               onSubmit={this.handleSubmit}
+              handleReset={this.handleReset}
               initialValues={this.state.initialValues}
-              extraActions={extraActions}
             />
           </>
         ),
@@ -203,6 +198,17 @@ export class ApplicationForm extends Component {
               <Row className="steps-content">
                 <Col>{steps[this.state.currentStep].content}</Col>
               </Row>
+              {this.state.saveTimestamp && (
+                <>
+                  <Icon
+                    type="info-circle"
+                    className="icon-lg color-primary"
+                    style={{ marginRight: 8, marginTop: 24, marginLeft: 24 }}
+                  />
+                  Application progress automatically saved to your browser on&nbsp;
+                  <Text strong>{formatDateTimeFine(this.state.saveTimestamp)}</Text>.
+                </>
+              )}
             </>
           )}
         </Col>
@@ -223,6 +229,10 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       createApplication,
+      resetFormData: () => {
+        dispatch(initialize(APPLICATION_FORM, {}));
+        dispatch(reset(APPLICATION_FORM));
+      },
     },
     dispatch
   );

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { reduxForm, Field, FormSection, formValueSelector } from "redux-form";
-import { Row, Col, Typography, Form, Button } from "antd";
+import { Row, Col, Typography, Form, Button, Popconfirm } from "antd";
 import PropTypes from "prop-types";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -9,6 +9,7 @@ import { required, email, maxLength } from "@/utils/validate";
 import { phoneMask, postalCodeMask } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
+import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import { ORGBOOK_URL } from "@/constants/routes";
 
 const { Title, Paragraph } = Typography;
@@ -18,26 +19,29 @@ const propTypes = {
   onFileLoad: PropTypes.func.isRequired,
   onRemoveFile: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
-  extraActions: PropTypes.node,
   isEditable: PropTypes.bool,
   indigenousParticipationCheckbox: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
-  extraActions: undefined,
   isEditable: true,
 };
 
 class ApplicationSectionOne extends Component {
+  handleReset = () => {
+    this.props.initialize();
+    this.props.handleReset();
+  };
+
   componentWillUnmount() {
-    if (!this.props.isEditable) {
+    if (this.props.isViewingSubmission) {
       this.props.reset();
     }
   }
 
   render() {
     return (
-      <Form layout="vertical" onSubmit={this.props.handleSubmit}>
+      <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="company_details">
           <Title level={3}>Company Details</Title>
           <Row gutter={48}>
@@ -280,7 +284,7 @@ class ApplicationSectionOne extends Component {
                 >
                   Next
                 </Button>
-                {this.props.extraActions}
+                <ApplicationFormReset onConfirm={this.handleReset} />
               </Col>
             </Row>
           </>

@@ -352,5 +352,5 @@ export const LandingPage = (props) => (
     </Row>
   </>
 );
-// TO:DO WHEN LAUNCH - REMOVE AuthorizationGuard()
+// TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
 export default AuthorizationGuard()(LandingPage);

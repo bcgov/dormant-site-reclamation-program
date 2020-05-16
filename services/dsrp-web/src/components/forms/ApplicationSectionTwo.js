@@ -11,6 +11,7 @@ import * as FORM from "@/constants/forms";
 import { currencyMask, formatMoney } from "@/utils/helpers";
 import CONTRACT_WORK_SECTIONS from "@/constants/contract_work_sections";
 import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
+import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import WellField from "@/components/forms/WellField";
 import { validateWell } from "@/actionCreators/OGCActionCreator";
 
@@ -21,12 +22,10 @@ const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
-  extraActions: PropTypes.node,
   isEditable: PropTypes.bool,
 };
 
 const defaultProps = {
-  extraActions: undefined,
   isEditable: true,
 };
 
@@ -91,6 +90,7 @@ const renderContractWorkPanel = (contractWorkSection, wellSectionTotal, isEditab
       </Form.Item>
       {contractWorkSection.subSections.map((subSection) => (
         <Form.Item
+          key={subSection.subSectionHeader}
           label={
             <Text className="color-primary" strong>
               {subSection.subSectionHeader}
@@ -99,6 +99,7 @@ const renderContractWorkPanel = (contractWorkSection, wellSectionTotal, isEditab
         >
           {subSection.amountFields.map((amountField) => (
             <Field
+              key={amountField.fieldName}
               name={amountField.fieldName}
               label={amountField.fieldLabel}
               placeholder="$0.00"
@@ -174,6 +175,11 @@ const defaultState = {
 class ApplicationSectionTwo extends Component {
   state = defaultState;
 
+  handleReset = () => {
+    this.props.initialize();
+    this.props.handleReset();
+  };
+
   componentWillReceiveProps = (nextProps) => {
     if (nextProps.formValues !== this.props.formValues) {
       this.calculateContractWorkTotals(nextProps.formValues);
@@ -188,7 +194,7 @@ class ApplicationSectionTwo extends Component {
   };
 
   componentWillUnmount() {
-    if (!this.props.isEditable) {
+    if (this.props.isViewingSubmission) {
       this.props.reset();
     }
   }
@@ -285,6 +291,7 @@ class ApplicationSectionTwo extends Component {
                   <Col span={24}>
                     {wellSiteConditions.map((condition, index) => (
                       <Field
+                        key={index}
                         name={`site_condition_${index}`}
                         label={condition}
                         disabled={!this.props.isEditable}
@@ -333,7 +340,7 @@ class ApplicationSectionTwo extends Component {
     const wellTotalsValues = Object.values(this.state.contractedWorkTotals.wellTotals);
 
     return (
-      <Form layout="vertical" onSubmit={this.props.handleSubmit}>
+      <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="contract_details">
           <Title level={3}>Contract Information</Title>
           <Row gutter={48}>
@@ -383,17 +390,16 @@ class ApplicationSectionTwo extends Component {
         {this.props.isEditable && (
           <Row className="steps-action">
             <Col>
-              <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
-                Previous
-              </Button>
+              <Button onClick={this.props.previousStep}>Previous</Button>
               <Button
                 type="primary"
                 htmlType="submit"
                 disabled={this.props.submitting || this.props.invalid}
+                style={{ marginLeft: 8, marginRight: 8 }}
               >
                 Next
               </Button>
-              {this.props.extraActions}
+              <ApplicationFormReset onConfirm={this.handleReset} />
             </Col>
           </Row>
         )}

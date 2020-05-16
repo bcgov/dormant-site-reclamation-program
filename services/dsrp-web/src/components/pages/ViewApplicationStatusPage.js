@@ -91,7 +91,7 @@ const mapDispatchToProps = (dispatch) =>
     dispatch
   );
 
-// TO:DO WHEN LAUNCH - REMOVE AuthorizationGuard()
+// TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   AuthorizationGuard()

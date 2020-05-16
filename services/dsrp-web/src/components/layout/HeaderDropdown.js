@@ -12,13 +12,14 @@ import AuthorizationWrapper from "@/components/common/wrappers/AuthorizationWrap
 
 const propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
-  isAdmin: PropTypes.bool.isRequired,
   location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
   userInfo: PropTypes.objectOf(PropTypes.string),
+  isAdmin: PropTypes.bool,
 };
 
 const defaultProps = {
   userInfo: {},
+  isAdmin: false,
 };
 
 export class HeaderDropdown extends Component {
@@ -32,24 +33,24 @@ export class HeaderDropdown extends Component {
 
   render() {
     const menuItemLogout = (
-      <Menu.Item key="logout">
+      <Menu.Item key="logout" className="custom-menu-item">
         <Button className="header-dropdown-item-button" onClick={this.handleLogout}>
           Log out
         </Button>
       </Menu.Item>
     );
 
-    // TO:DO WHEN LAUNCH - REPLACE `isViewOnly` with `!isAuthenticated`
+    // TODO: WHEN LAUNCH - REPLACE `isViewOnly` with `!isAuthenticated`
     const dropdownMenuMobile = (
       <Menu className="header-dropdown-menu">
         {this.props.isViewOnly && (
           <>
-            <Menu.Item key="submit-application">
+            <Menu.Item key="submit-application" className="custom-menu-item">
               <Button className="header-dropdown-item-button">
                 <Link to={routes.SUBMIT_APPLICATION.route}>Apply</Link>
               </Button>
             </Menu.Item>
-            <Menu.Item key="view-application-status">
+            <Menu.Item key="view-application-status" className="custom-menu-item">
               <Button className="header-dropdown-item-button">
                 <Link to={routes.VIEW_APPLICATION_STATUS.route}>Status</Link>
               </Button>
@@ -88,7 +89,7 @@ export class HeaderDropdown extends Component {
 
     const smallestDesktopWidth = 1280;
     return (
-      // TO:DO WHEN LAUNCH - REPLACE `isViewOnly` with `!isAuthenticated`
+      // TODO: WHEN LAUNCH - REPLACE `isViewOnly` with `!isAuthenticated`
       <>
         <MediaQuery minWidth={smallestDesktopWidth}>
           <span>
