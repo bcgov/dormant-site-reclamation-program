@@ -7,13 +7,7 @@ const { Paragraph, Title } = Typography;
 
 export const ReviewApplicationsPage = () => (
   <>
-    <Row
-      type="flex"
-      justify="center"
-      align="top"
-      className="landing-header"
-      gutter={[{ sm: 0, xl: 64 }]}
-    >
+    <Row type="flex" justify="center" align="top" className="landing-header">
       <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
         <Title>Review Applications</Title>
         <Paragraph>
@@ -23,13 +17,7 @@ export const ReviewApplicationsPage = () => (
         </Paragraph>
       </Col>
     </Row>
-    <Row
-      gutter={[{ sm: 0, xl: 64 }]}
-      type="flex"
-      justify="center"
-      align="top"
-      className="landing-section"
-    >
+    <Row type="flex" justify="center" align="top" className="landing-section">
       <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
         <ReviewApplicationInfo />
       </Col>

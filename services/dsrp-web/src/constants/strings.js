@@ -13,9 +13,11 @@ export const DATE_FORMAT = "YYYY-MM-DD";
 export const DEFAULT_PAGE = "1";
 export const DEFAULT_PER_PAGE = "25";
 export const MAX_PER_PAGE = 1000000000;
-export const HELP_EMAIL = "ducklord@duckz.com";
+export const HELP_EMAIL = "<help email goes here>";
 export const RETURN_PAGE_TYPE = {
   LOGIN: "login",
   SITEMINDER_LOGOUT: "smlogout",
   LOGOUT: "logout",
 };
+export const PROGRAM_START_DATE = "2020-05-25";
+export const PROGRAM_END_DATE = "2022-03-31";

@@ -1,38 +1,51 @@
 import React, { Component } from "react";
-import { reduxForm, Field, FormSection } from "redux-form";
-import { Row, Col, Typography, Form, Button } from "antd";
+import { reduxForm, Field, FormSection, formValueSelector } from "redux-form";
+import { Row, Col, Typography, Form, Button, Popconfirm } from "antd";
 import PropTypes from "prop-types";
+import { compose } from "redux";
+import { connect } from "react-redux";
 import { renderConfig } from "@/components/common/config";
 import { required, email, maxLength } from "@/utils/validate";
 import { phoneMask, postalCodeMask } from "@/utils/helpers";
-import { APPLICATION } from "@/constants/api";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
-import { DOCUMENT, EXCEL } from "@/constants/fileTypes";
+import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
+import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import { ORGBOOK_URL } from "@/constants/routes";
 
-const { Text, Title, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   onFileLoad: PropTypes.func.isRequired,
   onRemoveFile: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
-  extraActions: PropTypes.node,
+  indigenousParticipationCheckbox: PropTypes.bool.isRequired,
+  isViewingSubmission: PropTypes.bool.isRequired,
   isEditable: PropTypes.bool,
 };
 
 const defaultProps = {
-  extraActions: undefined,
   isEditable: true,
 };
 
 class ApplicationSectionOne extends Component {
+  handleReset = () => {
+    this.props.initialize();
+    this.props.handleReset();
+  };
+
+  componentWillUnmount() {
+    if (this.props.isViewingSubmission) {
+      this.props.reset();
+    }
+  }
+
   render() {
     return (
-      <Form layout="vertical" onSubmit={this.props.handleSubmit}>
+      <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="company_details">
-          <Title level={3}>Company Details</Title>
+          <Title level={2}>Company Details</Title>
           <Row gutter={48}>
             <Col span={24}>
               <Field
@@ -41,6 +54,22 @@ class ApplicationSectionOne extends Component {
                 label={
                   <>
                     Company Name
+                    <ApplicationFormTooltip
+                      content={
+                        <>
+                          Enter your business name as recorded with BC Registries. Your company must
+                          be registered with BC Registries to qualify.&nbsp;
+                          <a
+                            href="#"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="color-white"
+                          >
+                            Register now
+                          </a>
+                        </>
+                      }
+                    />
                     {this.props.isEditable && (
                       <a
                         style={{ float: "right" }}
@@ -59,6 +88,24 @@ class ApplicationSectionOne extends Component {
                 disabled={!this.props.isEditable}
                 format={null}
               />
+              <Field
+                id="indigenous_participation_ind"
+                name="indigenous_participation_ind"
+                label="Do you wish to self‑identify as including Indigenous participation in completing the work outlined within this application?"
+                disabled={!this.props.isEditable}
+                component={renderConfig.CHECKBOX}
+                disabled={!this.props.isEditable}
+              />
+              {this.props.indigenousParticipationCheckbox && (
+                <Field
+                  id="indigenous_participation_description"
+                  name="indigenous_participation_description"
+                  label="If so, please describe:"
+                  component={renderConfig.AUTO_SIZE_FIELD}
+                  validate={[required, maxLength(65536)]}
+                  disabled={!this.props.isEditable}
+                />
+              )}
               <Field
                 id="address_line_1"
                 name="address_line_1"
@@ -96,24 +143,10 @@ class ApplicationSectionOne extends Component {
                 label="Province"
                 placeholder="Province"
                 component={renderConfig.SELECT}
+                disabled={!this.props.isEditable}
                 validate={[required]}
                 format={null}
-                disabled
-                data={[
-                  { value: "AB", label: "Alberta" },
-                  { value: "BC", label: "British Columbia" },
-                  { value: "MB", label: "Manitoba" },
-                  { value: "NB", label: "New Brunswick" },
-                  { value: "NL", label: "Newfoundland and Labrador" },
-                  { value: "NS", label: "Nova Scotia" },
-                  { value: "ON", label: "Ontario" },
-                  { value: "PE", label: "Prince Edward Island" },
-                  { value: "QC", label: "Quebec" },
-                  { value: "SK", label: "Saskatchewan" },
-                  { value: "NT", label: "Northwest Territories" },
-                  { value: "NU", label: "Nunavut" },
-                  { value: "YT", label: "Yukon" },
-                ]}
+                data={[{ value: "BC", label: "British Columbia" }]}
               />
             </Col>
             <Col xs={24} sm={12}>
@@ -132,7 +165,7 @@ class ApplicationSectionOne extends Component {
         </FormSection>
 
         <FormSection name="company_contact">
-          <Title level={3}>Company Contact</Title>
+          <Title level={2}>Company Contact</Title>
           <Row gutter={48}>
             <Col xs={24} sm={12}>
               <Field
@@ -228,8 +261,8 @@ class ApplicationSectionOne extends Component {
               <Field
                 id="fax"
                 name="fax"
-                label="Fax"
-                placeholder="Fax"
+                label="Fax (Optional)"
+                placeholder="Fax (Optional)"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
                 {...phoneMask}
@@ -239,36 +272,16 @@ class ApplicationSectionOne extends Component {
         </FormSection>
 
         {this.props.isEditable && (
-          <div>
-            <FormSection name="good_standing_reports">
-              <Title level={3}>Good Standing Report</Title>
-              <Row gutter={48}>
-                <Col span={24}>
-                  <Form.Item label="Upload Good Standing Report">
-                    <Field
-                      id="good_standing_report"
-                      name="good_standing_report"
-                      component={renderConfig.FILE_UPLOAD}
-                      uploadUrl={`${APPLICATION}/documents`}
-                      acceptedFileTypesMap={{ ...DOCUMENT, ...EXCEL }}
-                      onFileLoad={this.props.onFileLoad}
-                      onRemoveFile={this.props.onRemoveFile}
-                      allowMultiple={false}
-                      allowRevert
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-            </FormSection>
-
+          <>
             <FormSection name="review_program_conditions">
-              <Paragraph>
-                <a href="#" target="_blank" rel="noopener noreferrer">
-                  Review program details and requirements
-                </a>
-              </Paragraph>
+              <Title level={2}>Review Program Requirements</Title>
               <Row gutter={48}>
                 <Col span={24}>
+                  <Paragraph>
+                    <a href="#" target="_blank" rel="noopener noreferrer">
+                      Review program details and requirements
+                    </a>
+                  </Paragraph>
                   <Field
                     id="accept_program_details_and_requirements"
                     name="accept_program_details_and_requirements"
@@ -279,6 +292,7 @@ class ApplicationSectionOne extends Component {
                 </Col>
               </Row>
             </FormSection>
+
             <Row className="steps-action">
               <Col>
                 <Button
@@ -288,24 +302,35 @@ class ApplicationSectionOne extends Component {
                 >
                   Next
                 </Button>
-                {this.props.extraActions}
+                <ApplicationFormReset onConfirm={this.handleReset} />
               </Col>
             </Row>
-          </div>
+          </>
         )}
       </Form>
     );
   }
 }
 
+const selector = formValueSelector(FORM.APPLICATION_FORM);
+
+const mapStateToProps = (state) => ({
+  indigenousParticipationCheckbox: selector(state, "company_details.indigenous_participation_ind"),
+});
+
+const mapDispatchToProps = () => ({});
+
 ApplicationSectionOne.propTypes = propTypes;
 ApplicationSectionOne.defaultProps = defaultProps;
 
-export default reduxForm({
-  form: FORM.APPLICATION_FORM,
-  destroyOnUnmount: false,
-  forceUnregisterOnUnmount: true,
-  keepDirtyOnReinitialize: true,
-  enableReinitialize: true,
-  updateUnregisteredFields: true,
-})(ApplicationSectionOne);
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  reduxForm({
+    form: FORM.APPLICATION_FORM,
+    destroyOnUnmount: false,
+    forceUnregisterOnUnmount: true,
+    keepDirtyOnReinitialize: true,
+    enableReinitialize: true,
+    updateUnregisteredFields: true,
+  })
+)(ApplicationSectionOne);

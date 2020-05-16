@@ -29,7 +29,7 @@ export const Header = (props) => (
           <span className="header-title">
             <Link to={routes.HOME.route}>
               <MediaQuery minWidth={smallestDesktopWidth}>
-                Dormant Site Reclamation Program
+                Dormant Sites Reclamation Program
               </MediaQuery>
               <MediaQuery maxWidth={smallestDesktopWidth - 1}>DSRP</MediaQuery>
             </Link>
