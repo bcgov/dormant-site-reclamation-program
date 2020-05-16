@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { bindActionCreators , compose } from "redux";
+import { bindActionCreators, compose } from "redux";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
@@ -46,13 +46,7 @@ export class ViewApplicationPage extends Component {
       <>
         {(this.state.isLoaded && (
           <>
-            <Row
-              type="flex"
-              justify="center"
-              align="top"
-              className="landing-header"
-              gutter={[{ sm: 0, xl: 64 }]}
-            >
+            <Row type="flex" justify="center" align="top" className="landing-header">
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
                 <LinkButton onClick={this.goBack}>
                   <Icon type="arrow-left" style={{ paddingRight: "5px" }} />
@@ -63,13 +57,7 @@ export class ViewApplicationPage extends Component {
                 <Title>Application ID: {this.props.application.id}</Title>
               </Col>
             </Row>
-            <Row
-              gutter={[{ sm: 0, xl: 64 }]}
-              type="flex"
-              justify="center"
-              align="top"
-              className="landing-section"
-            >
+            <Row type="flex" justify="center" align="top" className="landing-section">
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
                 <ViewOnlyApplicationForm initialValues={this.props.application.json} />
               </Col>
