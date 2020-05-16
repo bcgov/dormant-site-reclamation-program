@@ -41,5 +41,5 @@ export class SubmitApplicationPage extends Component {
   }
 }
 
-// TO:DO WHEN LAUNCH - REMOVE AuthorizationGuard()
+// TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
 export default AuthorizationGuard()(SubmitApplicationPage);

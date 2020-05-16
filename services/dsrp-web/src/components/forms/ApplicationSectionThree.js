@@ -4,6 +4,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Row, Col, Form, Button, Typography } from "antd";
+import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
@@ -12,27 +13,30 @@ const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
-  extraActions: PropTypes.node,
   isEditable: PropTypes.bool,
 };
 
 const defaultProps = {
-  extraActions: undefined,
   isEditable: true,
 };
 
 const { Title } = Typography;
 
 class ApplicationSectionThree extends Component {
+  handleReset = () => {
+    this.props.initialize();
+    this.props.handleReset();
+  };
+
   componentWillUnmount() {
-    if (!this.props.isEditable) {
+    if (this.props.isViewingSubmission) {
       this.props.reset();
     }
   }
 
   render() {
     return (
-      <Form layout="vertical" onSubmit={this.props.handleSubmit}>
+      <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="review">
           <Title level={3}>Submit Application</Title>
           <Row gutter={48}>
@@ -52,17 +56,16 @@ class ApplicationSectionThree extends Component {
         {this.props.isEditable && (
           <Row className="steps-action">
             <Col>
-              <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
-                Previous
-              </Button>
+              <Button onClick={this.props.previousStep}>Previous</Button>
               <Button
                 type="primary"
                 htmlType="submit"
                 disabled={this.props.submitting || this.props.invalid || this.props.submitSucceeded}
+                style={{ marginLeft: 8, marginRight: 8 }}
               >
                 Submit
               </Button>
-              {this.props.extraActions}
+              <ApplicationFormReset onConfirm={this.handleReset} />
             </Col>
           </Row>
         )}

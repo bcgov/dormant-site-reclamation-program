@@ -17,10 +17,22 @@ const defaultProps = {
 const ViewOnlyApplicationForm = (props) => (
   <Row>
     <Col className="steps-content">
-      <ApplicationSectionOne isEditable={false} initialValues={props.initialValues} />
-      <ApplicationSectionTwo isEditable={false} initialValues={props.initialValues} />
+      <ApplicationSectionOne
+        isViewingSubmission
+        isEditable={false}
+        initialValues={props.initialValues}
+      />
+      <ApplicationSectionTwo
+        isViewingSubmission
+        isEditable={false}
+        initialValues={props.initialValues}
+      />
       {!props.noRenderStep3 && (
-        <ApplicationSectionThree isEditable={false} initialValues={props.initialValues} />
+        <ApplicationSectionThree
+          isViewingSubmission
+          isEditable={false}
+          initialValues={props.initialValues}
+        />
       )}
     </Col>
   </Row>
