@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { isDirty, getFormValues, reset } from "redux-form";
-import { Col, Row, Steps, Typography } from "antd";
+import { isPristine, getFormValues, reset, initialize } from "redux-form";
+import { Col, Row, Steps, Typography, Result } from "antd";
 import PropTypes from "prop-types";
 import { isEqual } from "lodash";
 import { formatDateTimeFine } from "@/utils/helpers";
@@ -18,40 +18,40 @@ const { Text, Title, Paragraph } = Typography;
 
 const propTypes = {
   createApplication: PropTypes.func.isRequired,
+  isPristine: PropTypes.bool.isRequired,
   formValues: PropTypes.objectOf(PropTypes.any),
-  isDirty: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
   formValues: null,
 };
 
-const defaultInitialValues = { company_details: { province: "BC" } };
-
 export class ApplicationForm extends Component {
   state = {
     currentStep: 0,
-    initialValues: defaultInitialValues,
+    initialValues: {},
     previouslySavedFormValues: null,
+    previouslySavedFormStep: 0,
     saveTimestamp: null,
   };
 
   nextFormStep = () => {
     const currentStep = this.state.currentStep + 1;
-    this.setState({ currentStep });
+    this.setState({ currentStep }, () => this.saveFormData());
     window.scrollTo(0, 0);
   };
 
   previousFormStep = () => {
     const currentStep = this.state.currentStep - 1;
-    this.setState({ currentStep });
+    this.setState({ currentStep }, () => this.saveFormData());
     window.scrollTo(0, 0);
   };
 
   saveFormData() {
     if (
-      !this.props.isDirty ||
-      isEqual(this.props.formValues, this.state.previouslySavedFormValues)
+      (this.props.isPristine ||
+        isEqual(this.props.formValues, this.state.previouslySavedFormValues)) &&
+      this.state.currentStep === this.state.previouslySavedFormStep
     ) {
       return;
     }
@@ -59,6 +59,7 @@ export class ApplicationForm extends Component {
     const data = {
       formValues: this.props.formValues,
       saveTimestamp: new Date().getTime(),
+      currentStep: this.state.currentStep,
     };
 
     localStorage.setItem(APPLICATION_FORM, JSON.stringify(data));
@@ -66,6 +67,7 @@ export class ApplicationForm extends Component {
     this.setState({
       saveTimestamp: data.saveTimestamp,
       previouslySavedFormValues: data.formValues,
+      previouslySavedFormStep: data.currentStep,
     });
   }
 
@@ -83,13 +85,17 @@ export class ApplicationForm extends Component {
     this.props.createApplication(application).then(() => {
       this.setState(
         {
-          initialValues: defaultInitialValues,
+          submitSuccess: true,
+          initialValues: {},
           previouslySavedFormValues: null,
+          previouslySavedFormStep: 0,
           saveTimestamp: null,
+          currentStep: 0,
         },
         () => {
-          this.emptySavedFormData();
+          dispatch(initialize(APPLICATION_FORM, {}));
           dispatch(reset(APPLICATION_FORM));
+          this.emptySavedFormData();
         }
       );
     });
@@ -105,6 +111,7 @@ export class ApplicationForm extends Component {
       this.setState({
         initialValues: data.formValues,
         saveTimestamp: data.saveTimestamp,
+        currentStep: data.currentStep,
       });
     }
   }
@@ -115,7 +122,7 @@ export class ApplicationForm extends Component {
   }
 
   componentDidUpdate = () => {
-    if (this.props.isDirty) {
+    if (!this.props.isPristine) {
       window.onbeforeunload = () => true;
     } else {
       window.onbeforeunload = undefined;
@@ -123,12 +130,12 @@ export class ApplicationForm extends Component {
   };
 
   render() {
-    const extraActions = (this.state.saveTimestamp && (
+    const extraActions = this.state.saveTimestamp && (
       <Text style={{ float: "right" }}>
-        Application progress automatically saved to this device on&nbsp;
+        Application progress automatically saved to your browser's local storage on&nbsp;
         <Text strong>{formatDateTimeFine(this.state.saveTimestamp)}</Text>.
       </Text>
-    )) || <></>;
+    );
 
     const steps = [
       {
@@ -183,14 +190,21 @@ export class ApplicationForm extends Component {
     return (
       <Row>
         <Col>
-          <Steps current={this.state.currentStep}>
-            {steps.map((item) => (
-              <Step key={item.title} title={item.title} />
-            ))}
-          </Steps>
-          <Row className="steps-content">
-            <Col>{steps[this.state.currentStep].content}</Col>
-          </Row>
+          {/* // TODO: Render application submission success (or other) feedback here. */}
+          {(this.state.submitSuccess && (
+            <Result status="success" title="Successfully Submitted Application!" />
+          )) || (
+            <>
+              <Steps current={this.state.currentStep}>
+                {steps.map((item) => (
+                  <Step key={item.title} title={item.title} />
+                ))}
+              </Steps>
+              <Row className="steps-content">
+                <Col>{steps[this.state.currentStep].content}</Col>
+              </Row>
+            </>
+          )}
         </Col>
       </Row>
     );
@@ -202,7 +216,7 @@ ApplicationForm.defaultProps = defaultProps;
 
 const mapStateToProps = (state) => ({
   formValues: getFormValues(APPLICATION_FORM)(state),
-  isDirty: isDirty(APPLICATION_FORM)(state),
+  isPristine: isPristine(APPLICATION_FORM)(state),
 });
 
 const mapDispatchToProps = (dispatch) =>

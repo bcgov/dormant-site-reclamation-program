@@ -52,8 +52,7 @@ export const formatTime = (timeStamp) => timeStamp && moment(timeStamp).format("
 
 export const formatDateTime = (dateTime) => dateTime && moment(dateTime).format("lll");
 
-export const formatDateTimeFine = (dateTime) =>
-  dateTime && moment(dateTime).format("ll, h:mm:ss a");
+export const formatDateTimeFine = (dateTime) => dateTime && moment(dateTime).format("ll h:mm:ss a");
 
 export const formatPostalCode = (code) => code && code.replace(/.{3}$/, " $&");
 
