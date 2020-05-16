@@ -64,25 +64,25 @@ const renderContractWorkPanel = (contractWorkSection, wellSectionTotal, isEditab
       <Form.Item
         label={
           <Text className="color-primary" strong>
-            Contract Work Start and End Dates
+            Contract Work Planned Start and End Dates
           </Text>
         }
       >
         <Row gutter={48}>
           <Col span={12}>
             <Field
-              name="work_start_date"
-              label="Work Start Date"
-              placeholder="Select work start date"
+              name="planned_work_end_date"
+              label="Planned Start Date"
+              placeholder="Select planned start date"
               component={renderConfig.DATE}
               disabled={!isEditable}
             />
           </Col>
           <Col span={12}>
             <Field
-              name="work_end_date"
-              label="Work End Date"
-              placeholder="Select work end date"
+              name="planned_work_end_date"
+              label="Planned End Date"
+              placeholder="Select planned end date"
               component={renderConfig.DATE}
               disabled={!isEditable}
             />

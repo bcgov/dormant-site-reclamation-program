@@ -132,7 +132,7 @@ export class ApplicationForm extends Component {
   render() {
     const extraActions = this.state.saveTimestamp && (
       <Text style={{ float: "right" }}>
-        Application progress automatically saved to this device on&nbsp;
+        Application progress automatically saved to your browser's local storage on&nbsp;
         <Text strong>{formatDateTimeFine(this.state.saveTimestamp)}</Text>.
       </Text>
     );
