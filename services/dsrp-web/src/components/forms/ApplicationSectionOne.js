@@ -9,6 +9,7 @@ import { required, email, maxLength } from "@/utils/validate";
 import { phoneMask, postalCodeMask } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
+import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import { ORGBOOK_URL } from "@/constants/routes";
 
@@ -53,6 +54,22 @@ class ApplicationSectionOne extends Component {
                 label={
                   <>
                     Company Name
+                    <ApplicationFormTooltip
+                      content={
+                        <>
+                          Enter your business name as recorded with BC Registries. Your company must
+                          be registered with BC Registries to qualify.&nbsp;
+                          <a
+                            href="#"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="color-white"
+                          >
+                            Register now
+                          </a>
+                        </>
+                      }
+                    />
                     {this.props.isEditable && (
                       <a
                         style={{ float: "right" }}

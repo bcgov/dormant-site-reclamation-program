@@ -15,6 +15,7 @@ import CONTRACT_WORK_SECTIONS from "@/constants/contract_work_sections";
 import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import WellField from "@/components/forms/WellField";
+import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
 import { validateWell } from "@/actionCreators/OGCActionCreator";
 
 const { Text, Paragraph, Title } = Typography;
@@ -307,6 +308,7 @@ class ApplicationSectionTwo extends Component {
                       label={
                         <>
                           Authorization Number
+                          <ApplicationFormTooltip content="Only wells that are classfied as Dormant with the Oil and Gas Commission can be entered." />
                           {this.props.isEditable && (
                             <a
                               style={{ float: "right" }}
@@ -391,7 +393,12 @@ class ApplicationSectionTwo extends Component {
               <Field
                 id="operator_id"
                 name="operator_id"
-                label="Permit Holder"
+                label={
+                  <>
+                    Permit Holder
+                    <ApplicationFormTooltip content="Only businesses with permits for dormant wells can be entered." />
+                  </>
+                }
                 placeholder="Search for permit holder for whom this work will be performed"
                 component={PermitHolderSelect}
                 disabled={!this.props.isEditable}
