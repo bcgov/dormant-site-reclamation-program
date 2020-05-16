@@ -3,11 +3,13 @@ import { reduxForm, FieldArray, getFormValues, Field, FormSection } from "redux-
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { compose } from "redux";
+import moment from "moment";
 import { Row, Col, Typography, Form, Button, Collapse } from "antd";
 import { sum, get, set } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import { required, number } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
+import { PROGRAM_START_DATE, PROGRAM_END_DATE } from "@/constants/strings";
 import { currencyMask, formatMoney } from "@/utils/helpers";
 import CONTRACT_WORK_SECTIONS from "@/constants/contract_work_sections";
 import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
@@ -55,7 +57,12 @@ const renderMoneyTotal = (label, amount) => (
   </Paragraph>
 );
 
-const renderContractWorkPanel = (contractWorkSection, wellSectionTotal, isEditable) => (
+const renderContractWorkPanel = (
+  contractWorkSection,
+  wellSectionTotal,
+  isEditable,
+  wellSiteFormValues
+) => (
   <Panel
     key={contractWorkSection.sectionHeader}
     header={<Title level={4}>{contractWorkSection.sectionHeader}</Title>}
@@ -64,27 +71,61 @@ const renderContractWorkPanel = (contractWorkSection, wellSectionTotal, isEditab
       <Form.Item
         label={
           <Text className="color-primary" strong>
-            Contract Work Planned Start and End Dates
+            Planned Start and End Dates
           </Text>
         }
       >
         <Row gutter={48}>
           <Col span={12}>
             <Field
-              name="planned_work_end_date"
+              name="planned_start_date"
               label="Planned Start Date"
-              placeholder="Select planned start date"
+              placeholder="Select Planned Start Date"
               component={renderConfig.DATE}
               disabled={!isEditable}
+              disabledDate={(date) => {
+                const selectedDate = date ? moment(date) : null;
+                const contractWorkValues = wellSiteFormValues.contracted_work;
+                const sectionValues = contractWorkValues
+                  ? contractWorkValues[contractWorkSection.formSectionName]
+                  : null;
+                const endDate =
+                  sectionValues && sectionValues.planned_end_date
+                    ? moment(sectionValues.planned_end_date)
+                    : null;
+                return (
+                  selectedDate &&
+                  (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
+                    selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD") ||
+                    (endDate && selectedDate > endDate))
+                );
+              }}
             />
           </Col>
           <Col span={12}>
             <Field
-              name="planned_work_end_date"
+              name="planned_end_date"
               label="Planned End Date"
-              placeholder="Select planned end date"
+              placeholder="Select Planned End Date"
               component={renderConfig.DATE}
               disabled={!isEditable}
+              disabledDate={(date) => {
+                const selectedDate = date ? moment(date) : null;
+                const contractWorkValues = wellSiteFormValues.contracted_work;
+                const sectionValues = contractWorkValues
+                  ? contractWorkValues[contractWorkSection.formSectionName]
+                  : null;
+                const startDate =
+                  sectionValues && sectionValues.planned_start_date
+                    ? moment(sectionValues.planned_start_date)
+                    : null;
+                return (
+                  selectedDate &&
+                  (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
+                    selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD") ||
+                    (startDate && selectedDate < startDate))
+                );
+              }}
             />
           </Col>
         </Row>
@@ -314,7 +355,10 @@ class ApplicationSectionTwo extends Component {
                         renderContractWorkPanel(
                           contractWorkSection,
                           wellSectionTotals[contractWorkSection.formSectionName],
-                          this.props.isEditable
+                          this.props.isEditable,
+                          this.props.formValues && this.props.formValues.well_sites
+                            ? this.props.formValues.well_sites[index]
+                            : null
                         )
                       )}
                     </Collapse>

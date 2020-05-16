@@ -19,3 +19,5 @@ export const RETURN_PAGE_TYPE = {
   SITEMINDER_LOGOUT: "smlogout",
   LOGOUT: "logout",
 };
+export const PROGRAM_START_DATE = "2020-05-25";
+export const PROGRAM_END_DATE = "2022-03-31";
