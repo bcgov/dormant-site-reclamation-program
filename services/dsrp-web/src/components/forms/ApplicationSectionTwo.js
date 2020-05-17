@@ -17,6 +17,7 @@ import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import WellField from "@/components/forms/WellField";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
 import { validateWell } from "@/actionCreators/OGCActionCreator";
+import { getSelectedWells } from "@/selectors/OGCSelectors";
 
 const { Text, Paragraph, Title } = Typography;
 const { Panel } = Collapse;
@@ -26,10 +27,12 @@ const propTypes = {
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   isViewingSubmission: PropTypes.bool.isRequired,
+  selectedWells: PropTypes.arrayOf(PropTypes.any),
   isEditable: PropTypes.bool,
 };
 
 const defaultProps = {
+  selectedWells: [],
   isEditable: true,
 };
 
@@ -293,6 +296,19 @@ class ApplicationSectionTwo extends Component {
     this.setState({ contractedWorkTotals });
   };
 
+  getWellName(wellNumber) {
+    const wellAuthNumber =
+      this.props.formValues &&
+      this.props.formValues.well_sites &&
+      this.props.formValues.well_sites[wellNumber] &&
+      this.props.formValues.well_sites[wellNumber].details
+        ? this.props.formValues.well_sites[wellNumber].details.well_authorization_number
+        : null;
+    return wellAuthNumber && this.props.selectedWells && this.props.selectedWells[wellAuthNumber]
+      ? this.props.selectedWells[wellAuthNumber].well_name
+      : null;
+  }
+
   renderWells = ({ fields }) => (
     <>
       <Collapse bordered={false} accordion>
@@ -300,7 +316,11 @@ class ApplicationSectionTwo extends Component {
           const wellTotals = this.state.contractedWorkTotals.wellTotals[index];
           const wellSectionTotals = wellTotals ? wellTotals.sections : {};
           const wellTotal = wellTotals ? wellTotals.wellTotal : 0;
-          const wellName = `Well Site #${index + 1}`;
+
+          const actualName = this.getWellName(index);
+          let wellName = `Well Site #${index + 1}`;
+          wellName += actualName ? ` (${actualName})` : "";
+
           return (
             <Panel
               key={index}
@@ -386,7 +406,7 @@ class ApplicationSectionTwo extends Component {
                         )
                       )}
                     </Collapse>
-                    {renderMoneyTotal(wellName, wellTotal, { marginRight: 40, marginTop: 8 })}
+                    {renderMoneyTotal("Well", wellTotal, { marginRight: 40, marginTop: 8 })}
                   </Col>
                 </Row>
               </FormSection>
@@ -442,23 +462,28 @@ class ApplicationSectionTwo extends Component {
         {(wellTotalsValues.length > 0 && (
           <Row gutter={16} type="flex" justify="start" align="bottom">
             <Col style={{ textAlign: "right" }}>
-              {wellTotalsValues.map((wellTotal, index) => (
-                <>
-                  <Paragraph key={index} className="color-primary" strong>
-                    {`Well Site #${index + 1} total:`}&nbsp;
-                  </Paragraph>
-                  {wellTotal.sections &&
-                    CONTRACT_WORK_SECTIONS.filter(
-                      (section) =>
-                        wellTotal.sections[section.formSectionName] &&
-                        wellTotal.sections[section.formSectionName] > 0
-                    ).map((section) => (
-                      <Paragraph key={index} className="color-primary">
-                        {`${section.sectionHeader} total:`}&nbsp;
-                      </Paragraph>
-                    ))}
-                </>
-              ))}
+              {wellTotalsValues.map((wellTotal, index) => {
+                const actualName = this.getWellName(index);
+                let wellName = `Well Site #${index + 1}`;
+                wellName += actualName ? ` (${actualName})` : "";
+                return (
+                  <>
+                    <Paragraph key={index} className="color-primary" strong>
+                      {`${wellName} total:`}&nbsp;
+                    </Paragraph>
+                    {wellTotal.sections &&
+                      CONTRACT_WORK_SECTIONS.filter(
+                        (section) =>
+                          wellTotal.sections[section.formSectionName] &&
+                          wellTotal.sections[section.formSectionName] > 0
+                      ).map((section) => (
+                        <Paragraph key={index} className="color-primary">
+                          {`${section.sectionHeader} total:`}&nbsp;
+                        </Paragraph>
+                      ))}
+                  </>
+                );
+              })}
               <Paragraph className="color-primary" strong>
                 Grand total:&nbsp;
               </Paragraph>
@@ -508,6 +533,7 @@ class ApplicationSectionTwo extends Component {
 
 const mapStateToProps = (state) => ({
   formValues: getFormValues(FORM.APPLICATION_FORM)(state),
+  selectedWells: getSelectedWells(state),
 });
 
 const mapDispatchToProps = () => ({});

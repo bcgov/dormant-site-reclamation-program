@@ -65,7 +65,6 @@ export class WellField extends Component {
     );
   };
 }
-// if (isNaN(get(values, field))) {
 
 const mapStateToProps = (state) => ({
   selectedWells: getSelectedWells(state),
