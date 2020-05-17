@@ -3,7 +3,7 @@ import { bindActionCreators, compose } from "redux";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import { Row, Col, Typography, Icon, Result, Descriptions } from "antd";
+import { Row, Col, Typography, Icon, Result } from "antd";
 
 const propTypes = {
   match: PropTypes.shape({
@@ -20,13 +20,7 @@ const { Paragraph, Title, Text } = Typography;
 export class ApplicationSuccessPage extends Component {
   render() {
     return (
-      <Row
-        type="flex"
-        justify="center"
-        align="top"
-        className="landing-header"
-        gutter={[{ sm: 0, xl: 64 }]}
-      >
+      <Row type="flex" justify="center" align="top" className="landing-header">
         <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
           <Result
             icon={<Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" />}
@@ -65,5 +59,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({}, dispatch);
 ApplicationSuccessPage.propTypes = propTypes;
 ApplicationSuccessPage.defaultProps = defaultProps;
 
-// TO:DO WHEN LAUNCH - REMOVE AuthorizationGuard()
+// TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
 export default compose(connect(mapStateToProps, mapDispatchToProps))(ApplicationSuccessPage);

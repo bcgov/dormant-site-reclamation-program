@@ -60,10 +60,9 @@ export class ApplicationForm extends Component {
 
   saveFormData() {
     if (
-      ((this.props.isPristine ||
+      (this.props.isPristine ||
         isEqual(this.props.formValues, this.state.previouslySavedFormValues)) &&
-        this.state.currentStep === this.state.previouslySavedFormStep) ||
-      0
+      this.state.currentStep === this.state.previouslySavedFormStep
     ) {
       return;
     }

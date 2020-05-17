@@ -54,31 +54,33 @@ class ApplicationSectionOne extends Component {
                 label={
                   <>
                     Company Name
-                    <ApplicationFormTooltip
-                      content={
-                        <>
-                          Enter your business name as recorded with BC Registries. Your company must
-                          be registered with BC Registries to qualify.&nbsp;
-                          <a
-                            href="#"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="color-white"
-                          >
-                            Register now
-                          </a>
-                        </>
-                      }
-                    />
                     {this.props.isEditable && (
-                      <a
-                        style={{ float: "right" }}
-                        href={ORGBOOK_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Search BC Registries for your company
-                      </a>
+                      <>
+                        <ApplicationFormTooltip
+                          content={
+                            <>
+                              Enter your business name as recorded with BC Registries. Your company
+                              must be registered with BC Registries to qualify.&nbsp;
+                              <a
+                                href="#"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="color-white"
+                              >
+                                Register now
+                              </a>
+                            </>
+                          }
+                        />
+                        <a
+                          style={{ float: "right" }}
+                          href={ORGBOOK_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Search BC Registries for your company
+                        </a>
+                      </>
                     )}
                   </>
                 }

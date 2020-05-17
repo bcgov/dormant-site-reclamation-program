@@ -330,16 +330,18 @@ class ApplicationSectionTwo extends Component {
                       label={
                         <>
                           Authorization Number
-                          <ApplicationFormTooltip content="Only wells that are classfied as Dormant with the Oil and Gas Commission can be entered." />
                           {this.props.isEditable && (
-                            <a
-                              style={{ float: "right" }}
-                              href="https://reports.bcogc.ca/ogc/f?p=200:81:16594283755468"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              Look up well
-                            </a>
+                            <>
+                              <ApplicationFormTooltip content="Only wells that are classfied as Dormant with the Oil and Gas Commission can be entered." />
+                              <a
+                                style={{ float: "right" }}
+                                href="https://reports.bcogc.ca/ogc/f?p=200:81:16594283755468"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                Look up well
+                              </a>
+                            </>
                           )}
                         </>
                       }
@@ -418,7 +420,9 @@ class ApplicationSectionTwo extends Component {
                 label={
                   <>
                     Permit Holder
-                    <ApplicationFormTooltip content="Only businesses with permits for dormant wells can be entered." />
+                    {this.props.isEditable && (
+                      <ApplicationFormTooltip content="Only businesses with permits for dormant wells can be entered." />
+                    )}
                   </>
                 }
                 placeholder="Search for permit holder for whom this work will be performed"
