@@ -49,13 +49,17 @@ const wellSiteConditions = [
   "Drilled or abandoned prior to 1997",
 ];
 
-const renderMoneyTotal = (label, amount) => (
-  <Paragraph>
-    <Text className="color-primary" strong>
-      {label}:&nbsp;
-    </Text>
-    <Text>{formatMoney(amount || 0)}</Text>
-  </Paragraph>
+const renderMoneyTotal = (label, amount, style) => (
+  <Row type="flex" justify="end" gutter={16} style={style}>
+    <Col>
+      <Text className="color-primary" strong>
+        {label} total:&nbsp;
+      </Text>
+    </Col>
+    <Col style={{ textAlign: "right" }}>
+      <Text>{formatMoney(amount || 0)}</Text>
+    </Col>
+  </Row>
 );
 
 const renderContractWorkPanel = (
@@ -67,9 +71,18 @@ const renderContractWorkPanel = (
   <Panel
     key={contractWorkSection.sectionHeader}
     header={
-      <Text className="color-primary font-size-large" strong>
-        {contractWorkSection.sectionHeader}
-      </Text>
+      <Row type="flex" align="middle" justify="space-between">
+        <Col>
+          <Text className="color-primary font-size-large" strong>
+            {contractWorkSection.sectionHeader}
+          </Text>
+        </Col>
+        <Col>
+          {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, {
+            marginRight: 24,
+          })}
+        </Col>
+      </Row>
     }
   >
     <FormSection name={contractWorkSection.formSectionName}>
@@ -149,6 +162,10 @@ const renderContractWorkPanel = (
               key={amountField.fieldName}
               name={amountField.fieldName}
               label={amountField.fieldLabel}
+              labelAlign="left"
+              labelCol={{ md: { span: 14 } }}
+              wrapperCol={{ md: { span: 8, offset: 2 } }}
+              inputStyle={{ textAlign: "right" }}
               placeholder="$0.00"
               component={renderConfig.FIELD}
               disabled={!isEditable}
@@ -157,7 +174,7 @@ const renderContractWorkPanel = (
           ))}
         </Form.Item>
       ))}
-      {renderMoneyTotal("Section total", wellSectionTotal)}
+      {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, { marginRight: 24 })}
     </FormSection>
   </Panel>
 );
@@ -283,13 +300,14 @@ class ApplicationSectionTwo extends Component {
           const wellTotals = this.state.contractedWorkTotals.wellTotals[index];
           const wellSectionTotals = wellTotals ? wellTotals.sections : {};
           const wellTotal = wellTotals ? wellTotals.wellTotal : 0;
+          const wellName = `Well Site #${index + 1}`;
           return (
             <Panel
               key={index}
               header={
                 <Title level={3}>
                   {/* NOTE: Could update name with the well's name when it is retrieved. */}
-                  Well Site #{index + 1}
+                  {wellName}
                   {this.props.isEditable && (
                     <Button style={{ float: "right" }} onClick={() => fields.remove(index)}>
                       Remove
@@ -368,7 +386,7 @@ class ApplicationSectionTwo extends Component {
                         )
                       )}
                     </Collapse>
-                    {renderMoneyTotal("Well total", wellTotal)}
+                    {renderMoneyTotal(wellName, wellTotal, { marginRight: 40, marginTop: 8 })}
                   </Col>
                 </Row>
               </FormSection>
@@ -420,14 +438,26 @@ class ApplicationSectionTwo extends Component {
         </Row>
 
         <br />
-        <Title level={2}>Estimated Expense Summary</Title>
+        <Title level={2}>Estimated Cost Summary</Title>
         {(wellTotalsValues.length > 0 && (
-          <Row gutter={16} type="flex">
+          <Row gutter={16} type="flex" justify="start" align="bottom">
             <Col style={{ textAlign: "right" }}>
               {wellTotalsValues.map((wellTotal, index) => (
-                <Paragraph key={index} className="color-primary" strong>
-                  {`Well Site #${index + 1} total:`}&nbsp;
-                </Paragraph>
+                <>
+                  <Paragraph key={index} className="color-primary" strong>
+                    {`Well Site #${index + 1} total:`}&nbsp;
+                  </Paragraph>
+                  {wellTotal.sections &&
+                    CONTRACT_WORK_SECTIONS.filter(
+                      (section) =>
+                        wellTotal.sections[section.formSectionName] &&
+                        wellTotal.sections[section.formSectionName] > 0
+                    ).map((section) => (
+                      <Paragraph key={index} className="color-primary">
+                        {`${section.sectionHeader} total:`}&nbsp;
+                      </Paragraph>
+                    ))}
+                </>
               ))}
               <Paragraph className="color-primary" strong>
                 Grand total:&nbsp;
@@ -435,12 +465,26 @@ class ApplicationSectionTwo extends Component {
             </Col>
             <Col style={{ textAlign: "right" }}>
               {wellTotalsValues.map((wellTotal, index) => (
-                <Paragraph key={index}>{formatMoney(wellTotal.wellTotal || 0)}</Paragraph>
+                <>
+                  <Paragraph key={index}>{formatMoney(wellTotal.wellTotal || 0)}</Paragraph>
+                  {wellTotal.sections &&
+                    CONTRACT_WORK_SECTIONS.filter(
+                      (section) =>
+                        wellTotal.sections[section.formSectionName] &&
+                        wellTotal.sections[section.formSectionName] > 0
+                    ).map((section) => (
+                      <Paragraph key={index}>
+                        {formatMoney(wellTotal.sections[section.formSectionName] || 0)}
+                      </Paragraph>
+                    ))}
+                </>
               ))}
-              <Paragraph>{formatMoney(this.state.contractedWorkTotals.grandTotal || 0)}</Paragraph>
+              <Paragraph strong>
+                {formatMoney(this.state.contractedWorkTotals.grandTotal || 0)}
+              </Paragraph>
             </Col>
           </Row>
-        )) || <Paragraph>Add a well site to see your estimated expense summary.</Paragraph>}
+        )) || <Paragraph>Add a well site to see your estimated cost summary.</Paragraph>}
         {this.props.isEditable && (
           <Row className="steps-action">
             <Col>

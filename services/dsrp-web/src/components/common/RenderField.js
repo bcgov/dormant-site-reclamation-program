@@ -12,19 +12,21 @@ const propTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string,
   meta: PropTypes.objectOf(PropTypes.any).isRequired,
-  inlineLabel: PropTypes.string,
   disabled: PropTypes.bool,
   defaultValue: PropTypes.string,
   allowClear: PropTypes.bool,
+  labelCol: PropTypes.object,
+  wrapperCol: PropTypes.object,
 };
 
 const defaultProps = {
   label: "",
   placeholder: "",
-  inlineLabel: "",
   disabled: false,
   defaultValue: "",
   allowClear: false,
+  labelCol: {},
+  wrapperCol: {},
 };
 
 const RenderField = (props) => {
@@ -39,31 +41,25 @@ const RenderField = (props) => {
         ((props.meta.error && <span>{props.meta.error}</span>) ||
           (props.meta.warning && <span>{props.meta.warning}</span>))
       }
+      labelCol={props.labelCol}
+      wrapperCol={props.wrapperCol}
+      labelAlign={props.labelAlign}
+      style={props.style}
     >
-      <div className="inline-flex">
-        {props.inlineLabel && (
-          <label
-            htmlFor={props.id}
-            className="nowrap"
-            style={{ paddingRight: "10px", fontSize: "20px" }}
-          >
-            {props.inlineLabel}
-          </label>
-        )}
-        <Input
-          disabled={props.disabled}
-          defaultValue={props.defaultValue}
-          id={props.id}
-          placeholder={props.placeholder}
-          allowClear={props.allowClear}
-          suffix={
-            <div className={props.meta.asyncValidating ? "" : "hidden"}>
-              <Icon type="sync" spin />
-            </div>
-          }
-          {...props.input}
-        />
-      </div>
+      <Input
+        id={props.id}
+        disabled={props.disabled}
+        defaultValue={props.defaultValue}
+        placeholder={props.placeholder}
+        allowClear={props.allowClear}
+        suffix={
+          <div className={props.meta.asyncValidating ? "" : "hidden"}>
+            <Icon type="sync" spin />
+          </div>
+        }
+        style={props.inputStyle}
+        {...props.input}
+      />
     </Form.Item>
   );
 };
