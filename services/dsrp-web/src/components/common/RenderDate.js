@@ -36,20 +36,18 @@ const RenderDate = (props) => (
         (props.meta.warning && <span>{props.meta.warning}</span>))
     }
   >
-    <div className="inline-flex">
-      <DatePicker
-        disabled={props.disabled}
-        id={props.id}
-        {...props.input}
-        placeholder={props.placeholder}
-        disabledDate={props.disabledDate}
-        onChange={(date, dateString) => props.input.onChange(dateString || null)}
-        value={props.input.value ? moment(props.input.value) : null}
-        showTime={props.showTime && { format: "HH:mm" }}
-        format={props.showTime && "YYYY-MM-DD HH:mm"}
-        style={{ width: "100%" }}
-      />
-    </div>
+    <DatePicker
+      disabled={props.disabled}
+      id={props.id}
+      {...props.input}
+      placeholder={props.placeholder}
+      disabledDate={props.disabledDate}
+      onChange={(date, dateString) => props.input.onChange(dateString || null)}
+      value={props.input.value ? moment(props.input.value) : null}
+      showTime={props.showTime && { format: "HH:mm" }}
+      format={props.showTime && "YYYY-MM-DD HH:mm"}
+      style={{ width: "100%" }}
+    />
   </Form.Item>
 );
 

@@ -12,7 +12,6 @@ const propTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string,
   meta: PropTypes.objectOf(PropTypes.any).isRequired,
-  inlineLabel: PropTypes.string,
   disabled: PropTypes.bool,
   defaultValue: PropTypes.string,
   allowClear: PropTypes.bool,
@@ -23,7 +22,6 @@ const propTypes = {
 const defaultProps = {
   label: "",
   placeholder: "",
-  inlineLabel: "",
   disabled: false,
   defaultValue: "",
   allowClear: false,
