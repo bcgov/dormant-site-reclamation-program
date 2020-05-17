@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 import { isPristine, getFormValues, reset, initialize } from "redux-form";
 import { Col, Row, Steps, Typography, Result, Icon } from "antd";
 import PropTypes from "prop-types";
@@ -12,11 +13,13 @@ import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
 import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree";
 import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm";
 import { APPLICATION_FORM } from "@/constants/forms";
+import * as router from "@/constants/routes";
 
 const { Step } = Steps;
 const { Text, Title, Paragraph } = Typography;
 
 const propTypes = {
+  history: PropTypes.shape({ push: PropTypes.func }).isRequired,
   createApplication: PropTypes.func.isRequired,
   isPristine: PropTypes.bool.isRequired,
   formValues: PropTypes.objectOf(PropTypes.any),
@@ -57,9 +60,10 @@ export class ApplicationForm extends Component {
 
   saveFormData() {
     if (
-      (this.props.isPristine ||
+      ((this.props.isPristine ||
         isEqual(this.props.formValues, this.state.previouslySavedFormValues)) &&
-      this.state.currentStep === this.state.previouslySavedFormStep
+        this.state.currentStep === this.state.previouslySavedFormStep) ||
+      0
     ) {
       return;
     }
@@ -67,7 +71,7 @@ export class ApplicationForm extends Component {
     const data = {
       formValues: this.props.formValues,
       saveTimestamp: new Date().getTime(),
-      currentStep: this.state.currentStep,
+      currentStep: this.state.currentStep || 0,
     };
 
     localStorage.setItem(APPLICATION_FORM, JSON.stringify(data));
@@ -75,7 +79,7 @@ export class ApplicationForm extends Component {
     this.setState({
       saveTimestamp: data.saveTimestamp,
       previouslySavedFormValues: data.formValues,
-      previouslySavedFormStep: data.currentStep,
+      previouslySavedFormStep: data.currentStep || 0,
     });
   }
 
@@ -90,13 +94,14 @@ export class ApplicationForm extends Component {
 
   handleSubmit = (values, dispatch) => {
     const application = { json: values };
-    this.props.createApplication(application).then(() => {
-      this.setState({ submitSuccess: true, ...resetFormState }, () => {
+    this.props.createApplication(application).then((response) =>
+      this.setState({ ...resetFormState }, () => {
         dispatch(initialize(APPLICATION_FORM, {}));
         dispatch(reset(APPLICATION_FORM));
         this.emptySavedFormData();
-      });
-    });
+        this.props.history.push(router.APPLICATION_SUCCESS.dynamicRoute(response.data.guid));
+      })
+    );
   };
 
   handleReset = () => {
@@ -104,18 +109,15 @@ export class ApplicationForm extends Component {
   };
 
   componentDidMount() {
-    this.autoSaveForm = setInterval(() => this.saveFormData(), 1000);
-  }
-
-  componentWillMount() {
     const data = this.getSavedFormData();
     if (data) {
       this.setState({
         initialValues: data.formValues,
         saveTimestamp: data.saveTimestamp,
-        currentStep: data.currentStep,
+        currentStep: data.currentStep || 0,
       });
     }
+    this.autoSaveForm = setInterval(() => this.saveFormData(), 1000);
   }
 
   componentWillUnmount() {
@@ -185,32 +187,27 @@ export class ApplicationForm extends Component {
     return (
       <Row>
         <Col>
-          {/* // TODO: Render application submission success (or other) feedback here. */}
-          {(this.state.submitSuccess && (
-            <Result status="success" title="Successfully Submitted Application!" />
-          )) || (
-            <>
-              <Steps current={this.state.currentStep}>
-                {steps.map((item) => (
-                  <Step key={item.title} title={item.title} />
-                ))}
-              </Steps>
-              <Row className="steps-content">
-                <Col>{steps[this.state.currentStep].content}</Col>
-              </Row>
-              {this.state.saveTimestamp && (
-                <>
-                  <Icon
-                    type="info-circle"
-                    className="icon-lg color-primary"
-                    style={{ marginRight: 8, marginTop: 24, marginLeft: 24 }}
-                  />
-                  Application progress automatically saved to your browser on&nbsp;
-                  <Text strong>{formatDateTimeFine(this.state.saveTimestamp)}</Text>.
-                </>
-              )}
-            </>
-          )}
+          <>
+            <Steps current={this.state.currentStep}>
+              {steps.map((item) => (
+                <Step key={item.title} title={item.title} />
+              ))}
+            </Steps>
+            <Row className="steps-content">
+              <Col>{steps[this.state.currentStep || 0].content}</Col>
+            </Row>
+            {this.state.saveTimestamp && (
+              <>
+                <Icon
+                  type="info-circle"
+                  className="icon-lg color-primary"
+                  style={{ marginRight: 8, marginTop: 24, marginLeft: 24 }}
+                />
+                Application progress automatically saved to your browser on&nbsp;
+                <Text strong>{formatDateTimeFine(this.state.saveTimestamp)}</Text>.
+              </>
+            )}
+          </>
         </Col>
       </Row>
     );
@@ -233,4 +230,4 @@ const mapDispatchToProps = (dispatch) =>
     dispatch
   );
 
-export default connect(mapStateToProps, mapDispatchToProps)(ApplicationForm);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ApplicationForm));

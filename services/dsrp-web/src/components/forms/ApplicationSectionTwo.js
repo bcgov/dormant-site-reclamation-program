@@ -250,7 +250,7 @@ class ApplicationSectionTwo extends Component {
     }
   };
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     this.calculateContractWorkTotals(this.props.formValues);
   };
 
