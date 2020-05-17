@@ -3,7 +3,7 @@ import { bindActionCreators, compose } from "redux";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import { Row, Col, Typography, Icon, Result } from "antd";
+import { Row, Col, Typography, Icon, Result, Descriptions } from "antd";
 
 const propTypes = {
   match: PropTypes.shape({
@@ -28,14 +28,30 @@ export class ApplicationSuccessPage extends Component {
         gutter={[{ sm: 0, xl: 64 }]}
       >
         <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-          <div>
-            <Result
-              icon={<Icon type="like" />}
-              title="Your application has been successfully submitted."
-              subTitle="You will recieve a confirmation email shorty."
-            />
-            <Title>{this.props.match.params.id}</Title>
-          </div>
+          <Result
+            icon={<Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" />}
+            title="Your application has been successfully submitted."
+          />
+
+          <Typography>
+            <Title level={4}>Your reference code is: {this.props.match.params.id}</Title>
+
+            <Paragraph>
+              Please <Text strong>write this code down</Text> for future reference and to check the
+              status of your application.
+            </Paragraph>
+            <Title level={4}>What happens next</Title>
+            <Paragraph>
+              If your application is approved, you will need to submit the following:
+              <ul>
+                <li>Contract with Permit Holder</li>
+                <li>Criminal Records Check</li>
+                <li>Certificate of Insurance</li>
+              </ul>
+              You will also be sent Shared Cost Arrangement (Schedule A) to sign and return before
+              first payment can be processed.
+            </Paragraph>
+          </Typography>
         </Col>
       </Row>
     );
