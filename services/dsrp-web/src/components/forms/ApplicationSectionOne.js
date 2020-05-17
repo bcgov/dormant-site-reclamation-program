@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { reduxForm, Field, FormSection, formValueSelector } from "redux-form";
-import { Row, Col, Typography, Form, Button, Popconfirm } from "antd";
+import { Row, Col, Typography, Form, Button } from "antd";
 import PropTypes from "prop-types";
 import { compose } from "redux";
 import { connect } from "react-redux";

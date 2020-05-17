@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { reduxForm, Field, FormSection } from "redux-form";
+import { reduxForm, Field, FormSection, getFormValues } from "redux-form";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -13,6 +13,7 @@ const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  formValues: PropTypes.objectOf(PropTypes.any).isRequired,
   isViewingSubmission: PropTypes.bool.isRequired,
   isEditable: PropTypes.bool,
 };
@@ -61,7 +62,14 @@ class ApplicationSectionThree extends Component {
               <Button
                 type="primary"
                 htmlType="submit"
-                disabled={this.props.submitting || this.props.invalid || this.props.submitSucceeded}
+                disabled={
+                  this.props.submitting ||
+                  this.props.invalid ||
+                  // NOTE: This is a workaround due to a bug in Redux Forms.
+                  (this.props.formValues &&
+                    this.props.formValues.review &&
+                    !this.props.formValues.review.reviewed_and_verified)
+                }
                 style={{ marginLeft: 8, marginRight: 8 }}
               >
                 Submit
@@ -75,7 +83,9 @@ class ApplicationSectionThree extends Component {
   }
 }
 
-const mapStateToProps = () => ({});
+const mapStateToProps = (state) => ({
+  formValues: getFormValues(FORM.APPLICATION_FORM)(state),
+});
 
 const mapDispatchToProps = () => ({});
 
