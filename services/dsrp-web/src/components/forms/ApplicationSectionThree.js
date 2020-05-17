@@ -62,14 +62,7 @@ class ApplicationSectionThree extends Component {
               <Button
                 type="primary"
                 htmlType="submit"
-                disabled={
-                  this.props.submitting ||
-                  this.props.invalid ||
-                  // NOTE: This is a workaround due to a bug in Redux Forms.
-                  (this.props.formValues &&
-                    this.props.formValues.review &&
-                    !this.props.formValues.review.reviewed_and_verified)
-                }
+                disabled={this.props.submitting || this.props.invalid}
                 style={{ marginLeft: 8, marginRight: 8 }}
               >
                 Submit
@@ -84,6 +77,8 @@ class ApplicationSectionThree extends Component {
 }
 
 const mapStateToProps = (state) => ({
+  // NOTE: Even though this currently isn't being referenced, the mere fact that
+  // it is included fixes a bug with redux forms where validation won't always run.
   formValues: getFormValues(FORM.APPLICATION_FORM)(state),
 });
 
