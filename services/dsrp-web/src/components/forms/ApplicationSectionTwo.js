@@ -27,13 +27,14 @@ const propTypes = {
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   formValues: PropTypes.objectOf(PropTypes.any).isRequired,
-  isViewingSubmission: PropTypes.bool.isRequired,
   selectedWells: PropTypes.arrayOf(PropTypes.any),
+  isViewingSubmission: PropTypes.bool,
   isEditable: PropTypes.bool,
 };
 
 const defaultProps = {
   selectedWells: [],
+  isViewingSubmission: false,
   isEditable: true,
 };
 
