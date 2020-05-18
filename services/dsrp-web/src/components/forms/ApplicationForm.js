@@ -165,11 +165,7 @@ export class ApplicationForm extends Component {
             </Paragraph>
             <Row gutter={48} style={{ marginTop: "-40px" }}>
               <Col>
-                <ViewOnlyApplicationForm
-                  isEditable={false}
-                  initialValues={this.props.formValues}
-                  noRenderStep3
-                />
+                <ViewOnlyApplicationForm isEditable={false} noRenderStep3 />
               </Col>
             </Row>
             <ApplicationSectionThree

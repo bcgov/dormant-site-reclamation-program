@@ -6,12 +6,13 @@ import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
 import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree";
 
 const propTypes = {
-  initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  initialValues: PropTypes.objectOf(PropTypes.any),
   noRenderStep3: PropTypes.bool,
   isViewingSubmission: PropTypes.bool,
 };
 
 const defaultProps = {
+  initialValues: undefined,
   noRenderStep3: false,
   isViewingSubmission: false,
 };
