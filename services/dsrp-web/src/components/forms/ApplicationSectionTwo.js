@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { compose } from "redux";
 import moment from "moment";
 import { Row, Col, Typography, Form, Button, Collapse } from "antd";
-import { sum, get, set } from "lodash";
+import { sum, get, set, isEmpty } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import { required, number } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
@@ -237,6 +237,13 @@ const asyncValidate = (values, dispatch, props, field) => {
   }
 };
 
+const validateWellSites = (value) => {
+  if (isEmpty(value)) {
+    return "Your application must contain at least one well site.";
+  }
+  return undefined;
+};
+
 const defaultState = {
   contractedWorkTotals: { grandTotal: 0, wellTotals: {} },
 };
@@ -311,8 +318,11 @@ class ApplicationSectionTwo extends Component {
       : null;
   }
 
-  renderWells = ({ fields }) => (
+  renderWells = ({ fields, meta }) => (
     <>
+      {this.props.anyTouched &&
+        ((meta.error && <span className="color-error">{meta.error}</span>) ||
+          (meta.warning && <span className="color-warning">{meta.warning}</span>))}
       <Collapse bordered={false} accordion>
         {fields.map((member, index) => {
           const wellTotals = this.state.contractedWorkTotals.wellTotals[index];
@@ -467,7 +477,11 @@ class ApplicationSectionTwo extends Component {
         </Title>
         <Row gutter={[48, 48]}>
           <Col>
-            <FieldArray name="well_sites" component={this.renderWells} />
+            <FieldArray
+              name="well_sites"
+              validate={validateWellSites}
+              component={this.renderWells}
+            />
           </Col>
         </Row>
 
