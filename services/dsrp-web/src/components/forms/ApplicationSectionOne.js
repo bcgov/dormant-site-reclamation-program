@@ -6,7 +6,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { renderConfig } from "@/components/common/config";
 import { required, email, maxLength } from "@/utils/validate";
-import { phoneMask, postalCodeMask } from "@/utils/helpers";
+import { phoneMask, postalCodeMask, scrollToFirstError } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
@@ -44,7 +44,9 @@ class ApplicationSectionOne extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="company_details">
-          <Title level={2}>Company Details</Title>
+          <Title level={2} className="application-section">
+            Company Details
+          </Title>
           <Row gutter={48}>
             <Col span={24}>
               <Field
@@ -166,7 +168,9 @@ class ApplicationSectionOne extends Component {
         </FormSection>
 
         <FormSection name="company_contact">
-          <Title level={2}>Company Contact</Title>
+          <Title level={2} className="application-section">
+            Company Contact
+          </Title>
           <Row gutter={48}>
             <Col xs={24} sm={12}>
               <Field
@@ -275,7 +279,9 @@ class ApplicationSectionOne extends Component {
         {this.props.isEditable && (
           <>
             <FormSection name="review_program_conditions">
-              <Title level={2}>Review Program Requirements</Title>
+              <Title level={2} className="application-section">
+                Review Program Requirements
+              </Title>
               <Row gutter={48}>
                 <Col span={24}>
                   <Paragraph>
@@ -296,11 +302,7 @@ class ApplicationSectionOne extends Component {
 
             <Row className="steps-action">
               <Col>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  disabled={this.props.submitting || this.props.invalid}
-                >
+                <Button type="primary" htmlType="submit" disabled={this.props.submitting}>
                   Next
                 </Button>
                 <ApplicationFormReset onConfirm={this.handleReset} />
@@ -333,5 +335,6 @@ export default compose(
     keepDirtyOnReinitialize: true,
     enableReinitialize: true,
     updateUnregisteredFields: true,
+    onSubmitFail: (errors) => scrollToFirstError(errors),
   })
 )(ApplicationSectionOne);

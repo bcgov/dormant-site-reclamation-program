@@ -2,6 +2,7 @@
 import moment from "moment";
 import { reset } from "redux-form";
 import { createNumberMask, createTextMask } from "redux-form-input-masks";
+import { notification } from "antd";
 
 /**
  * Helper function to clear redux form after submission
@@ -311,3 +312,49 @@ export const formatMoney = (value) => {
     ? null
     : number.toLocaleString("en-US", { style: "currency", currency: "USD" });
 };
+
+// Scroll to error helper for redux forms
+export const scrollToFirstError = (errors) => {
+  notification.warning({
+    message: "Application contains errors. Please correct any issues and try again.",
+    duration: 10,
+  });
+  console.log(JSON.stringify(errors));
+  const errorEls = [];
+  const collectErrEls = function collectErrElsRec(fieldPrefix, target, errEls) {
+    Object.keys(target).forEach((innerKey) => {
+      if (typeof target[innerKey] === "string") {
+        const nameVal = `${fieldPrefix}${innerKey}`;
+        const selectorStr = `input[name="${nameVal}"], select[name="${nameVal}"]`;
+        const elem = document.querySelector(selectorStr);
+        if (elem) {
+          errEls.push(elem);
+        }
+      } else if (!isNaN(innerKey)) {
+        const prefixPre =
+          fieldPrefix === "" ? "" : `${fieldPrefix.substring(0, fieldPrefix.length - 1)}[`;
+        collectErrElsRec(`${prefixPre}${innerKey}]`, target[innerKey], errorEls);
+      } else {
+        const prefixPre = fieldPrefix === "" ? "" : `${fieldPrefix}.`;
+        collectErrElsRec(`${prefixPre}${innerKey}.`, target[innerKey], errorEls);
+      }
+    });
+  };
+
+  collectErrEls("", errors, errorEls);
+  const firstErrElement = errorEls.reduce((firstErrEl, errEl) => {
+    if (firstErrEl === null || nodeBefore(errEl, firstErrEl)) {
+      return errEl;
+    }
+    return firstErrEl;
+  });
+
+  if (firstErrElement) {
+    firstErrElement.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+    return true;
+  }
+  return false;
+};
+
+const nodeBefore = (errEl, firstErrEl) =>
+  firstErrEl.compareDocumentPosition(errEl) === Node.DOCUMENT_POSITION_PRECEDING;
