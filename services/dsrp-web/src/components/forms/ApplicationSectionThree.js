@@ -14,11 +14,12 @@ const propTypes = {
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   formValues: PropTypes.objectOf(PropTypes.any).isRequired,
-  isViewingSubmission: PropTypes.bool.isRequired,
+  isViewingSubmission: PropTypes.bool,
   isEditable: PropTypes.bool,
 };
 
 const defaultProps = {
+  isViewingSubmission: false,
   isEditable: true,
 };
 

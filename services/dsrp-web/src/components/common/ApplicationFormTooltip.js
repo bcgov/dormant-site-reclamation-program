@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 const propTypes = {
   content: PropTypes.any.isRequired,
-  iconPosition: PropTypes.oneOf("left", "right"),
+  iconPosition: PropTypes.oneOf(["left", "right"]),
 };
 
 const defaultProps = {

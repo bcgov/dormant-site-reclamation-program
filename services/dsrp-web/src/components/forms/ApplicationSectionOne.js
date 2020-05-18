@@ -17,15 +17,14 @@ const { Title, Paragraph } = Typography;
 
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
-  onFileLoad: PropTypes.func.isRequired,
-  onRemoveFile: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   indigenousParticipationCheckbox: PropTypes.bool.isRequired,
-  isViewingSubmission: PropTypes.bool.isRequired,
+  isViewingSubmission: PropTypes.bool,
   isEditable: PropTypes.bool,
 };
 
 const defaultProps = {
+  isViewingSubmission: false,
   isEditable: true,
 };
 

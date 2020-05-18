@@ -32,9 +32,7 @@ export class OrgBookSearch extends Component {
 
   state = {
     options: [],
-    credential: null,
     isSearching: false,
-    isAssociating: false,
   };
 
   handleChange = () => {
@@ -45,9 +43,7 @@ export class OrgBookSearch extends Component {
 
   handleSelect = (value) => {
     const credentialId = value.key;
-    this.props.fetchOrgBookCredential(credentialId).then(() => {
-      this.setState({ credential: this.props.orgBookCredential });
-    });
+    this.props.fetchOrgBookCredential(credentialId);
   };
 
   handleSearch(search) {
@@ -57,7 +53,7 @@ export class OrgBookSearch extends Component {
 
     this.lastFetchId += 1;
     const fetchId = this.lastFetchId;
-    this.setState({ options: [], isSearching: true, credential: null });
+    this.setState({ options: [], isSearching: true });
 
     this.props.searchOrgBook(search).then(() => {
       if (fetchId !== this.lastFetchId) {
@@ -74,9 +70,17 @@ export class OrgBookSearch extends Component {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.input.value !== this.props.input.value) {
+      if (isEmpty(nextProps.orgBookCredential) && !isEmpty(nextProps.input.value)) {
+        this.handleSelect(nextProps.input.value);
+      }
+    }
+  }
+
   render() {
-    const hasOrgBookCredential = !isEmpty(this.state.credential);
-    const isInputDisabled = this.state.isAssociating || this.props.disabled;
+    const hasOrgBookCredential = !isEmpty(this.props.orgBookCredential);
+    const isInputDisabled = this.props.disabled;
 
     return (
       <Row>
@@ -155,7 +159,7 @@ export class OrgBookSearch extends Component {
                       type="primary"
                       href={
                         hasOrgBookCredential
-                          ? ORGBOOK_ENTITY_URL(this.state.credential.topic.source_id)
+                          ? ORGBOOK_ENTITY_URL(this.props.orgBookCredential.topic.source_id)
                           : null
                       }
                       target="_blank"
