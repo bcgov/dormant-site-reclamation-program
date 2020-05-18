@@ -94,9 +94,8 @@ export class ApplicationForm extends Component {
   handleSubmit = (values, dispatch) => {
     const application = { json: values };
     this.props.createApplication(application).then((response) =>
-      this.setState({ ...resetFormState }, () => {
-        dispatch(initialize(APPLICATION_FORM, {}));
-        dispatch(reset(APPLICATION_FORM));
+      this.setState(resetFormState, () => {
+        dispatch(initialize(APPLICATION_FORM));
         this.emptySavedFormData();
         this.props.history.push(router.APPLICATION_SUCCESS.dynamicRoute(response.data.guid));
       })
