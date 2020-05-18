@@ -10,7 +10,7 @@ import { renderConfig } from "@/components/common/config";
 import { required, number } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 import { PROGRAM_START_DATE, PROGRAM_END_DATE } from "@/constants/strings";
-import { currencyMask, formatMoney } from "@/utils/helpers";
+import { currencyMask, formatMoney, scrollToFirstError } from "@/utils/helpers";
 import CONTRACT_WORK_SECTIONS from "@/constants/contract_work_sections";
 import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
@@ -372,10 +372,12 @@ class ApplicationSectionTwo extends Component {
               </FormSection>
 
               <FormSection name={createMemberName(member, "site_conditions")}>
-                <Title level={4}>Site Conditions</Title>
+                <Title level={4} className="application-subsection">
+                  Site Conditions
+                </Title>
                 <Paragraph>Reasons for site nomination (select all that apply):</Paragraph>
                 <Row gutter={48}>
-                  <Col span={24}>
+                  <Col span={24} className="application-checkbox-section">
                     {wellSiteConditions.map((condition, index) => (
                       <Field
                         key={index}
@@ -390,7 +392,9 @@ class ApplicationSectionTwo extends Component {
               </FormSection>
 
               <FormSection name={createMemberName(member, "contracted_work")}>
-                <Title level={4}>Contracted Work</Title>
+                <Title level={4} className="application-subsection">
+                  Contracted Work
+                </Title>
                 <Paragraph>
                   Enter the estimated cost of every work component your company will perform for
                   this contract.
@@ -432,7 +436,9 @@ class ApplicationSectionTwo extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="contract_details">
-          <Title level={2}>Contract Information</Title>
+          <Title level={2} className="application-section">
+            Contract Information
+          </Title>
           <Row gutter={48}>
             <Col>
               <Field
@@ -455,7 +461,9 @@ class ApplicationSectionTwo extends Component {
           </Row>
         </FormSection>
 
-        <Title level={2}>Well Sites</Title>
+        <Title level={2} className="application-section">
+          Well Sites
+        </Title>
         <Row gutter={[48, 48]}>
           <Col>
             <FieldArray name="well_sites" component={this.renderWells} />
@@ -463,7 +471,9 @@ class ApplicationSectionTwo extends Component {
         </Row>
 
         <br />
-        <Title level={2}>Estimated Cost Summary</Title>
+        <Title level={2} className="application-section">
+          Estimated Cost Summary
+        </Title>
         {(wellTotalsValues.length > 0 && (
           <Row gutter={16} type="flex" justify="start" align="bottom">
             <Col style={{ textAlign: "right" }}>
@@ -522,7 +532,7 @@ class ApplicationSectionTwo extends Component {
               <Button
                 type="primary"
                 htmlType="submit"
-                disabled={this.props.submitting || this.props.invalid}
+                disabled={this.props.submitting}
                 style={{ marginLeft: 8, marginRight: 8 }}
               >
                 Next
@@ -560,5 +570,6 @@ export default compose(
       "contract_details.operator_id",
       "well_sites[].details.well_authorization_number",
     ],
+    onSubmitFail: (errors) => scrollToFirstError(errors),
   })
 )(ApplicationSectionTwo);

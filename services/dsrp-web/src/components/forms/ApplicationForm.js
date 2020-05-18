@@ -163,7 +163,7 @@ export class ApplicationForm extends Component {
             <Paragraph>
               Please review your application below and confirm that its information is correct.
             </Paragraph>
-            <Row gutter={48}>
+            <Row gutter={48} style={{ marginTop: "-40px" }}>
               <Col>
                 <ViewOnlyApplicationForm
                   isEditable={false}
@@ -185,8 +185,8 @@ export class ApplicationForm extends Component {
 
     return (
       <Row>
-        <Col>
-          <>
+        <Col span={24}>
+          <div style={{ minWidth: "90vw" }}>
             <Steps current={this.state.currentStep}>
               {steps.map((item) => (
                 <Step key={item.title} title={item.title} />
@@ -206,7 +206,7 @@ export class ApplicationForm extends Component {
                 <Text strong>{formatDateTimeFine(this.state.saveTimestamp)}</Text>.
               </>
             )}
-          </>
+          </div>
         </Col>
       </Row>
     );
