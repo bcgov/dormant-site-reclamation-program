@@ -2,7 +2,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { Table, Icon, Tooltip, Pagination } from "antd";
+import { Table, Icon, Tooltip, Pagination, Menu, Dropdown } from "antd";
 import { formatDateTime, formatDate, formatMoney, formatDateTimeFine } from "@/utils/helpers";
 import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
@@ -10,6 +10,14 @@ import * as route from "@/constants/routes";
 const propTypes = {
   applications: PropTypes.any.isRequired,
 };
+
+const menu = (statusArr) => (
+  <Menu>
+    {statusArr.map(({ label, value }) => {
+      <Menu.Item key="value">label</Menu.Item>;
+    })}
+  </Menu>
+);
 
 const columns = [
   {
@@ -65,7 +73,17 @@ const columns = [
     title: "Status",
     key: "application_status_code",
     dataIndex: "application_status_code",
-    render: (text) => <div title="Status">{text || Strings.DASH}</div>,
+    render: (text) => (
+      <div title="Status">
+        {
+          <Dropdown overlay={menu([])}>
+            <a onClick={(e) => e.preventDefault()}>
+              {text} <Icon type="down" className="icon-lg" />
+            </a>
+          </Dropdown>
+        }
+      </div>
+    ),
   },
   {
     key: "operations",
