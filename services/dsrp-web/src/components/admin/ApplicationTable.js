@@ -96,6 +96,11 @@ const nestedColumns = [
     render: (text) => <div title="Well Auth No.">{text || Strings.DASH}</div>,
   },
   {
+    title: "Location",
+    dataIndex: "location",
+    render: (text) => <div title="Location">{formatDate(text) || Strings.DASH}</div>,
+  },
+  {
     title: "Completion Date",
     dataIndex: "completion_date",
     render: (text) => <div title="Completion Date">{formatDate(text) || Strings.DASH}</div>,
