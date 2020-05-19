@@ -12,10 +12,9 @@ from app.api.constants import TIMEOUT_60_MINUTES, STATIC_CONTENT_KEY
 from app.api.exports.response_models import STATIC_CONTENT
 
 from app.api.application.models.application_status import ApplicationStatus
+from app.api.contracted_work.models.contracted_work_status import ContractedWorkStatus
 
-MODELS_GET_ACTIVE = [
-    ApplicationStatus,
-]
+MODELS_GET_ACTIVE = [ApplicationStatus, ContractedWorkStatus]
 
 
 def generate_static_content_dict():

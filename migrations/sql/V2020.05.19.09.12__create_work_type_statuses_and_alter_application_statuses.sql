@@ -22,9 +22,9 @@ UPDATE application SET application_status_code = 'COMPLETE' WHERE application_st
 -- Delete the old status values (rather than set active indicator) as they haven't made it into production.
 DELETE FROM application_status WHERE application_status_code IN ('SUBMITTED', 'UNDER_REVIEW', 'APPROVED', 'REJECTED');
 
--- Create the work type status code table.
-CREATE TABLE work_type_status (
-    work_type_status_code            varchar                                NOT NULL PRIMARY KEY,
+-- Create the contracted work status code table.
+CREATE TABLE contracted_work_status (
+    contracted_work_status_code            varchar                                NOT NULL PRIMARY KEY,
     description                      varchar                                NOT NULL            ,
     active                           boolean                  DEFAULT true  NOT NULL            ,
     create_user                      varchar                                NOT NULL            ,
@@ -32,11 +32,11 @@ CREATE TABLE work_type_status (
     update_user                      varchar                                NOT NULL            ,
     update_timestamp                 timestamp with time zone DEFAULT now() NOT NULL
 );
-ALTER TABLE work_type_status OWNER TO dsrp;
+ALTER TABLE contracted_work_status OWNER TO dsrp;
 
--- Add the work type status codes.
-INSERT INTO work_type_status (
-    work_type_status_code,
+-- Add the contracted work status codes.
+INSERT INTO contracted_work_status (
+    contracted_work_status_code,
     description,
     create_user,
     update_user
