@@ -28,6 +28,7 @@ export const getWorkTypes = createSelector([getApplications], (applications) => 
               est_shared_cost: "",
               LRM: "",
               status: "",
+              OGC_status: "",
               location: "",
             };
             wellArray.push(workTypes);
