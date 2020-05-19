@@ -45,3 +45,9 @@
   }
   margin-bottom: 20px;
 }
+
+.table-headers-center {
+  .ant-table-thead > tr > th {
+    text-align: center;
+  }
+}
