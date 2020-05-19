@@ -350,23 +350,20 @@ class ApplicationSectionTwo extends Component {
                 <Title level={3} style={{ margin: 0, marginLeft: 8 }}>
                   {wellName}
                   {this.props.isEditable && (
-                    // <Popconfirm
-                    //   title="Are you sure you want to remove this well site?"
-                    //   onConfirm={() => fields.remove(index)}
-                    //   okText="Yes"
-                    //   cancelText="No"
-                    //   placement="topRight"
-                    //   arrowPointAtCenter
-                    // >
-                    <Button
-                      type="link"
-                      className="color-primary"
-                      style={{ float: "right" }}
-                      onClick={() => fields.remove(index)}
-                    >
-                      <Icon type="close" className="icon-lg" />
-                    </Button>
-                    // </Popconfirm>
+                    <span onClick={(e) => e.stopPropagation()}>
+                      <Popconfirm
+                        title="Are you sure you want to remove this well site?"
+                        onConfirm={(e) => fields.remove(index)}
+                        okText="Yes"
+                        cancelText="No"
+                        placement="topRight"
+                        arrowPointAtCenter
+                      >
+                        <Button type="link" className="color-primary" style={{ float: "right" }}>
+                          <Icon type="delete" theme="filled" className="icon-lg" />
+                        </Button>
+                      </Popconfirm>
+                    </span>
                   )}
                 </Title>
               }
