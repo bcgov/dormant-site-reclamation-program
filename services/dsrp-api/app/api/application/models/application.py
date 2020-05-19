@@ -11,6 +11,21 @@ from app.api.utils.field_template import FieldTemplate
 
 from .application_status import ApplicationStatus
 
+condition_description_map = {
+    'site_condition_0': "Within 1000 m of a stream (defined in WSA and includes all water bodies)",
+    'site_condition_1': "Within 500 m of a groundwater drinking well",
+    'site_condition_2': "Sensitive habitat",
+    'site_condition_3': "Suspected or known to have offsite contamination",
+    'site_condition_4': "Within 1500 m of a school or residence",
+    'site_condition_5':
+    "On Traditional Lands Entitlement, cultural lands and/or First Nations critical area",
+    'site_condition_6': "On Agricultural Land Reserve",
+    'site_condition_7': "On range tenure, trapping licence, guide outfitting, and/or hunting area",
+    'site_condition_8': "Winter only access",
+    'site_condition_9': "On Private land",
+    'site_condition_10': "Drilled or abandoned prior to 1997",
+}
+
 
 class Application(Base, AuditMixin):
     __tablename__ = 'application'
@@ -47,21 +62,25 @@ class Application(Base, AuditMixin):
     def _doc_gen_json(self):
         result = self.json
         #CREATE SOME FORMATTED MEMBERS FOR DOCUMENT_GENERATION
-        addr1 = self.json.get('company_details', {}).get('address_line_1')
-        #TODO addr2 = self.json.get('company_details', {}).get('address_line_2')
-        city = self.json.get('company_details', {}).get('city')
-        post_cd = self.json.get('company_details', {}).get('postal_code')
-        prov = self.json.get('company_details', {}).get('province')
+        _company_details = self.json.get('company_details')
+        addr1 = _company_details.get('address_line_1')
+        #TODO addr2 = _company_details.get('address_line_2')
+        city = _company_details.get('city')
+        post_cd = _company_details.get('postal_code')
+        prov = _company_details.get('province')
         result['formatted_address'] = f'{addr1}\n{post_cd}\n{city}, {prov}'
+
+        well_sites = self.json.get('well_sites', {})
+        result['formatted_well_sites'] = ""
+        for ws in well_sites:
+            site_details = ws.get('details', {})
+            wan = site_details.get('well_authorization_number')
+            site = f'Well Authorization Number: {wan}\nConditions:\n'
+            for condition, value in ws.get('site_conditions', []).items():
+                if value:
+                    site += '-' + condition_description_map[condition] + '\n'
+            result['formatted_well_sites'] += site
         return result
-
-    @hybrid_property
-    def submitter_email(self):
-        return self.json.get('company_contact', {}).get('email')
-
-    @hybrid_property
-    def submitter_email(self):
-        return self.json.get('company_contact', {}).get('email')
 
     @hybrid_property
     def submitter_email(self):
