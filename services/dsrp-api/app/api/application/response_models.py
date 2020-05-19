@@ -7,7 +7,8 @@ APPLICATION = api.model(
         'guid': fields.String,
         'application_status_code': fields.String,
         'submission_date': fields.DateTime,
-        'json': fields.Raw
+        'json': fields.Raw,
+        'review_json': fields.Raw
     })
 
 PAGINATED_LIST = api.model(
