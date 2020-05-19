@@ -12,7 +12,7 @@ export const createApplication = (application) => (dispatch) => {
   dispatch(request(reducerTypes.CREATE_APPLICATION));
   const payload = { application };
   return CustomAxios()
-    .post(ENVIRONMENT.apiUrl + API.APPLICATION, payload, createRequestHeader())
+    .post(ENVIRONMENT.apiUrl + API.APPLICATION(), payload, createRequestHeader())
     .then((response) => {
       notification.success({
         message: `Application submitted`,
@@ -24,10 +24,11 @@ export const createApplication = (application) => (dispatch) => {
     .catch(() => dispatch(error(reducerTypes.CREATE_APPLICATION)));
 };
 
-export const fetchApplications = () => (dispatch) => {
+export const fetchApplications = (page, per_page) => (dispatch) => {
+  const params = page ? { page, per_page } : {};
   dispatch(request(reducerTypes.GET_APPLICATIONS));
   return CustomAxios()
-    .get(ENVIRONMENT.apiUrl + API.APPLICATION, createRequestHeader())
+    .get(ENVIRONMENT.apiUrl + API.APPLICATION(params), createRequestHeader())
     .then((response) => {
       dispatch(success(reducerTypes.GET_APPLICATIONS));
       dispatch(applicationActions.storeApplications(response.data));

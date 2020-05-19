@@ -2,7 +2,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { Table, Icon, Tooltip } from "antd";
+import { Table, Icon, Tooltip, Pagination } from "antd";
 import { formatDateTime, formatDate, formatMoney, formatDateTimeFine } from "@/utils/helpers";
 import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
@@ -29,7 +29,7 @@ const columns = [
     key: "submission_date",
     dataIndex: "submission_date",
     sortField: "submission_date",
-    sorter: true,
+    // sorter: true,
     render: (text) => (
       <div title={`Received On: ${formatDateTimeFine(text)}`}>{formatDateTime(text)}</div>
     ),
@@ -210,7 +210,7 @@ export class ApplicationTable extends Component {
       <>
         <Table
           columns={columns}
-          pagination={true}
+          pagination={false}
           dataSource={this.transformRowData(this.props.applications)}
           onChange={this.onChange}
           expandIcon={this.renderTableExpandIcon}
@@ -219,6 +219,14 @@ export class ApplicationTable extends Component {
           expandedRowKeys={this.state.expandedRowKeys}
           onExpand={this.onExpand}
         />
+        <div className="center">
+          <Pagination
+            // hideOnSinglePage
+            defaultCurrent={this.props.pageData.current_page}
+            total={this.props.pageData.total}
+            // onChange={(page, per_page) => this.props.fetchApplications(page, per_page)}
+          />
+        </div>
       </>
     );
   }

@@ -2,7 +2,7 @@ import { startCase, camelCase } from "lodash";
 import { createSelector } from "reselect";
 import * as applicationReducer from "../reducers/applicationReducer";
 
-export const { getApplications, getApplication } = applicationReducer;
+export const { getApplications, getApplication, getPageData } = applicationReducer;
 
 // return an array of contracted_work on well sites
 export const getWorkTypes = createSelector([getApplications], (applications) => {
