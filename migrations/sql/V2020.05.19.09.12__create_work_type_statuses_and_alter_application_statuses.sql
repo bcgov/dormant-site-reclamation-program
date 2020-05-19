@@ -49,4 +49,4 @@ VALUES
 ON CONFLICT DO NOTHING;
 
 -- Add a new column for application review JSON.
--- ALTER TABLE application ADD COLUMN review_json jsonb;
+ALTER TABLE application ADD COLUMN review_json jsonb;
