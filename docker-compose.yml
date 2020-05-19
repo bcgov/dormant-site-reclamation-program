@@ -88,37 +88,46 @@ services:
       - dsrp
 
   ####################### DOCUMENT_MANAGER_BACKEND Definition #######################
-  document_manager_backend:
-    restart: always
-    container_name: document_manager_backend
+  tusd:
+    container_name: tusd
     build:
-      context: services/document-manager/backend
-    ports:
-      - 5001:5001
-    volumes:
-      - ./services/document-manager/backend/:/app/
-    depends_on:
-      - flyway
-      - redis
-      - document_manager_migrate
-    env_file: ./services/document-manager/backend/.env
-    networks:
-      - dsrp
+      context: services/tusd
+    ports: 
+      - 1800:1800
+      env_file: ./services/tusd/.env
+    command: ["--hooks-dir","/srv/tusd-hooks", "-s3-bucket=nrs.objectstore.gov.bc.ca/awlvru"]
 
-  document_manager_migrate:
-    restart: on-failure
-    container_name: document_manager_migrate
-    build:
-      context: services/document-manager/backend
-    volumes:
-      - ./services/document-manager/backend/:/app/
-    depends_on:
-      - flyway
-      - redis
-    command: flask db upgrade
-    env_file: ./services/document-manager/backend/.env
-    networks:
-      - dsrp
+  # document_manager_backend:
+  #   restart: always
+  #   container_name: document_manager_backend
+  #   build:
+  #     context: services/document-manager/backend
+  #   ports:
+  #     - 5001:5001
+  #   volumes:
+  #     - ./services/document-manager/backend/:/app/
+  #   depends_on:
+  #     - flyway
+  #     - redis
+  #     - document_manager_migrate
+  #   env_file: ./services/document-manager/backend/.env
+  #   networks:
+  #     - dsrp
+
+  # document_manager_migrate:
+  #   restart: on-failure
+  #   container_name: document_manager_migrate
+  #   build:
+  #     context: services/document-manager/backend
+  #   volumes:
+  #     - ./services/document-manager/backend/:/app/
+  #   depends_on:
+  #     - flyway
+  #     - redis
+  #   command: flask db upgrade
+  #   env_file: ./services/document-manager/backend/.env
+  #   networks:
+  #     - dsrp
 
   ####################### DOCUMENT_GENERATION Definition #######################
   docgen-api:

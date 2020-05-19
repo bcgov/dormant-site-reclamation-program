@@ -9,6 +9,9 @@ export const DOCUMENT_MANAGER_FILE_GET_URL = (token = {}) =>
 export const DOCUMENT_MANAGER_TOKEN_GET_URL = (documentManagerGuid) =>
   `/download-token/${documentManagerGuid}`;
 
+export const APPLICATION_DOCUMENT = (applicationGuid) => `/applications/${mineGuid}`;
+
+
 // OrgBook
 export const ORGBOOK_SEARCH = (search) => `/orgbook/search?${queryString.stringify({ search })}`;
 export const ORGBOOK_CREDENTIAL = (credentialId) => `/orgbook/credential/${credentialId}`;
