@@ -236,6 +236,24 @@
                     }
                   },
                   {
+                    "name": "${DATABASE_SERVICE_NAME}_USER",
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "name": "${DATABASE_SERVICE_NAME}",
+                        "key": "database-admin-user"
+                      }
+                    }
+                  },
+                  {
+                    "name": "${DATABASE_SERVICE_NAME}_PASSWORD",
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "name": "${DATABASE_SERVICE_NAME}",
+                        "key": "database-admin-password"
+                      }
+                    }
+                  },
+                  {
                     "name": "WEBHOOK_URL",
                     "valueFrom": {
                       "secretKeyRef": {
