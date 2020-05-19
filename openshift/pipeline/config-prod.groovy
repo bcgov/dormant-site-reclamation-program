@@ -76,7 +76,7 @@ app {
                             'ENVIRONMENT_NAME':"${vars.deployment.namespace}",
                             'ENVIRONMENT_FRIENDLY_NAME':"Dormant Site Reclamation Program (PROD)",
                             'DATABASE_SERVICE_NAME':"dsrp-postgresql${vars.deployment.suffix}",
-                            'NFS_VOLUME_IDENTIFIER':"#TODO: FILLME",
+                            'NFS_VOLUME_IDENTIFIER':"bk-eazios-prod-5bnkhh28q45l",
                             'CPU_REQUEST':"${vars.resources.backup.cpu_request}",
                             'CPU_LIMIT':"${vars.resources.backup.cpu_limit}",
                             'MEMORY_REQUEST':"${vars.resources.backup.memory_request}",
@@ -89,7 +89,7 @@ app {
                     'file':'openshift/templates/redis.dc.json',
                     'params':[
                             'NAME':"dsrp-redis",
-                            'DATABASE_SERVICE_NAME':"dsrp-redis${vars.deployment.suffix}",
+                            'SUFFIX': "${vars.deployment.suffix}",
                             'CPU_REQUEST':"${vars.resources.redis.cpu_request}",
                             'CPU_LIMIT':"${vars.resources.redis.cpu_limit}",
                             'MEMORY_REQUEST':"${vars.resources.redis.memory_request}",
