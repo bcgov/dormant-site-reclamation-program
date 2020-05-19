@@ -1,9 +1,10 @@
-import React, { Fragment, Component } from "react";
-import { compose } from "redux";
+import React, { Component } from "react";
+import { compose, bindActionCreators } from "redux";
+import { connect } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
-// eslint-disable-next-line
 import { hot } from "react-hot-loader";
 import { Layout, BackTop, Row, Col, Spin, Icon } from "antd";
+import PropTypes from "prop-types";
 import MediaQuery from "react-responsive";
 import Routes from "./routes/Routes";
 import { Header } from "@/components/layout/Header";
@@ -14,16 +15,24 @@ import WarningBanner from "@/components/common/WarningBanner";
 import { detectIE } from "@/utils/environmentUtils";
 import configureStore from "./store/configureStore";
 import ScrollToTopWrapper from "@/components/common/wrappers/ScrollToTopWrapper";
+import { loadBulkStaticContent } from "@/actionCreators/staticContentActionCreator";
+import { getStaticContentLoadingIsComplete } from "@/selectors/staticContentSelectors";
 
 export const store = configureStore();
 
 Spin.setDefaultIndicator(<Icon type="loading" style={{ fontSize: 40 }} />);
+
+const propTypes = {
+  loadBulkStaticContent: PropTypes.func.isRequired,
+  getStaticContentLoadingIsComplete: PropTypes.func.isRequired,
+};
 
 class App extends Component {
   state = { isIE: true, isMobile: true };
 
   componentDidMount() {
     this.setState({ isIE: detectIE() });
+    this.props.loadBulkStaticContent();
   }
 
   handleMobileWarningClose = () => {
@@ -71,4 +80,22 @@ class App extends Component {
   }
 }
 
-export default compose(hot(module), AuthenticationGuard(true))(App);
+const mapStateToProps = (state) => ({
+  staticContentLoadingIsComplete: getStaticContentLoadingIsComplete(state),
+});
+
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      loadBulkStaticContent,
+    },
+    dispatch
+  );
+
+App.propTypes = propTypes;
+
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  hot(module),
+  AuthenticationGuard(true)
+)(App);

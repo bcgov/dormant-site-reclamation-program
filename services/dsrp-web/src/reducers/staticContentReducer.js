@@ -6,7 +6,9 @@ import { STATIC_CONTENT } from "../constants/reducerTypes";
  * all data associated with static content to populate form inputs is handled within this reducer.
  */
 
-const initialState = {};
+const initialState = {
+  applicationStatusOptions: [],
+};
 
 export const staticContentReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -20,6 +22,9 @@ export const staticContentReducer = (state = initialState, action) => {
 const staticContentReducerObject = {
   [STATIC_CONTENT]: staticContentReducer,
 };
+
+export const getApplicationStatusOptions = (state) =>
+  state[STATIC_CONTENT].applicationStatusOptions;
 
 const isStaticContentLoaded = (state) =>
   Object.keys(state)
