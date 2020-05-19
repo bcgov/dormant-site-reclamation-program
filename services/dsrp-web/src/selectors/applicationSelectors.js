@@ -10,7 +10,7 @@ export const getWorkTypes = createSelector([getApplications], (applications) => 
   applications.map((application) => {
     if (application.json.well_sites) {
       application.json.well_sites.map((site) => {
-        const contractedWork = Object.keys(site.contracted_work);
+        const contractedWork = site.contracted_work !== {} ? Object.keys(site.contracted_work) : [];
         if (contractedWork.length >= 1) {
           contractedWork.map((work) => {
             const priorityCriteria =
