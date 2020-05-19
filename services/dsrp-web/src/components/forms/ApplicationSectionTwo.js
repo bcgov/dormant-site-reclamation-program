@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { compose } from "redux";
 import moment from "moment";
 import { Row, Col, Typography, Form, Button, Collapse, Icon, Popconfirm } from "antd";
-import { sum, get, set, isEmpty } from "lodash";
+import { sum, get, set, isEmpty, isEqual } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import { required, number } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
@@ -257,12 +257,12 @@ class ApplicationSectionTwo extends Component {
   };
 
   componentWillReceiveProps = (nextProps) => {
-    if (nextProps.formValues !== this.props.formValues) {
+    if (!isEqual(nextProps.formValues, this.props.formValues)) {
       this.calculateContractWorkTotals(nextProps.formValues);
     }
   };
 
-  componentDidMount = () => {
+  componentWillMount = () => {
     this.calculateContractWorkTotals(this.props.formValues);
   };
 
