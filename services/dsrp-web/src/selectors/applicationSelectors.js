@@ -24,7 +24,7 @@ export const getWorkTypes = createSelector([getApplications], (applications) => 
               well_no: site.details.well_authorization_number,
               work_type: startCase(camelCase(work)),
               priority_criteria: priorityCriteria,
-              completion_date: site.contracted_work[work].work_end_date,
+              completion_date: site.contracted_work[work].planned_end_date,
               est_cost: estimatedCost,
               est_shared_cost: "",
               LRM: "",

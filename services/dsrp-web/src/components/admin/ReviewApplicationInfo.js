@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { getApplications, getWorkTypes, getPageData } from "@/selectors/applicationSelectors";
-import { fetchApplications } from "@/actionCreators/applicationActionCreator";
+import { fetchApplications, updateApplication } from "@/actionCreators/applicationActionCreator";
 import ApplicationTable from "@/components/admin/ApplicationTable";
 
 const propTypes = {
@@ -14,6 +14,11 @@ export class ReviewApplicationInfo extends Component {
   componentDidMount() {
     this.props.fetchApplications();
   }
+
+  handleApplicationStatusChange = (guid, status) => {
+    console.log(guid);
+    console.log(status);
+  };
 
   render() {
     return (
@@ -39,6 +44,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchApplications,
+      updateApplication,
     },
     dispatch
   );

@@ -50,3 +50,15 @@ export const fetchApplicationById = (guid) => (dispatch) => {
     .catch(() => dispatch(error(reducerTypes.GET_APPLICATION)))
     .finally(() => dispatch(hideLoading()));
 };
+
+export const updateApplication = (guid) => (dispatch) => {
+  dispatch(request(reducerTypes.UPDATE_APPLICATION));
+  return CustomAxios()
+    .put(ENVIRONMENT.apiUrl + API.APPLICATION_BY_ID(guid), createRequestHeader())
+    .then((response) => {
+      dispatch(success(reducerTypes.UPDATE_APPLICATION));
+      return response;
+    })
+    .catch(() => dispatch(error(reducerTypes.UPDATE_APPLICATION)))
+    .finally(() => dispatch(hideLoading()));
+};
