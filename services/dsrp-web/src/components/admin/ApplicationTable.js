@@ -236,6 +236,7 @@ export class ApplicationTable extends Component {
           expandedRowRender={this.wells}
           expandedRowKeys={this.state.expandedRowKeys}
           onExpand={this.onExpand}
+          className="table-headers-center"
         />
         <div className="center">
           <Pagination

@@ -1,4 +1,4 @@
-import { startCase, camelCase } from "lodash";
+import { startCase, camelCase, isNil } from "lodash";
 import { createSelector } from "reselect";
 import * as applicationReducer from "../reducers/applicationReducer";
 
@@ -10,11 +10,12 @@ export const getWorkTypes = createSelector([getApplications], (applications) => 
   applications.map((application) => {
     if (application.json.well_sites) {
       application.json.well_sites.map((site) => {
-        const contractedWork = site.contracted_work !== {} ? Object.keys(site.contracted_work) : [];
+        const contractedWork = isNil(site.contracted_work) ? [] : Object.keys(site.contracted_work);
         if (contractedWork.length >= 1) {
           contractedWork.map((work) => {
-            const priorityCriteria =
-              site.site_conditions !== {} ? Object.values(site.site_conditions).length : 0;
+            const priorityCriteria = isNil(site.site_conditions)
+              ? 0
+              : Object.values(site.site_conditions).length;
             const estimatedCostArray = Object.values(site.contracted_work[work]).filter(
               (v) => !isNaN(v)
             );
