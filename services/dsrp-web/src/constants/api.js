@@ -1,7 +1,7 @@
 import queryString from "query-string";
 
 // Static Content
-export const CORE_STATIC_CONTENT = "/exports/core-static-content";
+export const STATIC_CONTENT = "/exports/static-content";
 
 // Document Manager
 export const DOCUMENT_MANAGER_FILE_GET_URL = (token = {}) =>
