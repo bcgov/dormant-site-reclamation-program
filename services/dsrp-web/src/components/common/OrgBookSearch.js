@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Row, Col, Form, Select, Spin, Icon, Button, Descriptions } from "antd";
-import debounce, { isEmpty } from "lodash";
+import { isEmpty, debounce } from "lodash";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { searchOrgBook, fetchOrgBookCredential } from "@/actionCreators/orgbookActionCreator";
@@ -26,15 +26,12 @@ const defaultProps = {
 export class OrgBookSearch extends Component {
   constructor(props) {
     super(props);
-    this.lastFetchId = 0;
-    this.handleSearchDebounced = (value) => debounce(this.handleSearch(value), 1000);
+    this.searchOrgBookDebounced = debounce(this.props.searchOrgBook, 300);
   }
 
   state = {
     options: [],
-    credential: null,
     isSearching: false,
-    isAssociating: false,
   };
 
   handleChange = () => {
@@ -45,9 +42,7 @@ export class OrgBookSearch extends Component {
 
   handleSelect = (value) => {
     const credentialId = value.key;
-    this.props.fetchOrgBookCredential(credentialId).then(() => {
-      this.setState({ credential: this.props.orgBookCredential });
-    });
+    this.props.fetchOrgBookCredential(credentialId);
   };
 
   handleSearch(search) {
@@ -55,28 +50,38 @@ export class OrgBookSearch extends Component {
       return;
     }
 
-    this.lastFetchId += 1;
-    const fetchId = this.lastFetchId;
-    this.setState({ options: [], isSearching: true, credential: null });
+    this.setState({
+      options: [],
+      isSearching: true,
+    });
 
-    this.props.searchOrgBook(search).then(() => {
-      if (fetchId !== this.lastFetchId) {
-        return;
-      }
+    this.searchOrgBookDebounced(search);
+  }
 
-      const selectOptions = this.props.searchOrgBookResults
+  componentWillReceiveProps(nextProps) {
+    if (
+      nextProps.input.value !== this.props.input.value &&
+      isEmpty(nextProps.orgBookCredential) &&
+      !isEmpty(nextProps.input.value)
+    ) {
+      this.handleSelect(nextProps.input.value);
+    }
+
+    if (nextProps.searchOrgBookResults !== this.props.searchOrgBookResults) {
+      const selectOptions = nextProps.searchOrgBookResults
         .filter((result) => result.names && result.names.length > 0)
         .map((result) => ({
           text: result.names[0].text,
           value: result.names[0].credential_id,
         }));
       this.setState({ options: selectOptions, isSearching: false });
-    });
+    }
   }
 
   render() {
-    const hasOrgBookCredential = !isEmpty(this.state.credential);
-    const isInputDisabled = this.state.isAssociating || this.props.disabled;
+    const hasOrgBookCredential =
+      !isEmpty(this.props.orgBookCredential) && !isEmpty(this.props.input.value);
+    const isInputDisabled = this.props.disabled;
 
     return (
       <Row>
@@ -105,7 +110,7 @@ export class OrgBookSearch extends Component {
               }
               labelInValue
               filterOption={false}
-              onSearch={this.handleSearchDebounced}
+              onSearch={(value) => this.handleSearch(value)}
               onChange={this.handleChange}
               onSelect={this.handleSelect}
               disabled={isInputDisabled}
@@ -155,7 +160,7 @@ export class OrgBookSearch extends Component {
                       type="primary"
                       href={
                         hasOrgBookCredential
-                          ? ORGBOOK_ENTITY_URL(this.state.credential.topic.source_id)
+                          ? ORGBOOK_ENTITY_URL(this.props.orgBookCredential.topic.source_id)
                           : null
                       }
                       target="_blank"

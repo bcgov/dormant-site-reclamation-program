@@ -22,23 +22,6 @@
   },
   "cSpell.words": ["idir"],
   "workbench.colorCustomizations": {
-    "activityBar.background": "#038052",
-    "titleBar.activeBackground": "#024e32",
-    "titleBar.activeForeground": "#e7e7e7",
-    "activityBar.activeBackground": "#038052",
-    "activityBar.activeBorder": "#64049c",
-    "activityBar.foreground": "#e7e7e7",
-    "activityBar.inactiveForeground": "#e7e7e799",
-    "activityBarBadge.background": "#64049c",
-    "activityBarBadge.foreground": "#e7e7e7",
-    "statusBar.background": "#024e32",
-    "statusBar.border": "#024e32",
-    "statusBar.foreground": "#e7e7e7",
-    "statusBarItem.hoverBackground": "#038052",
-    "titleBar.border": "#024e32",
-    "titleBar.inactiveBackground": "#024e3299",
-    "titleBar.inactiveForeground": "#e7e7e799"
-  },
-  "window.titleBarStyle": "custom",
-  "peacock.color": "#024e32"
+    "activityBar.background": "#013220"
+  }
 }

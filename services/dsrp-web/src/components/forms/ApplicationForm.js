@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { isDirty, getFormValues, reset } from "redux-form";
-import { Col, Row, Steps, Typography } from "antd";
+import { withRouter } from "react-router-dom";
+import { isPristine, getFormValues, reset, initialize } from "redux-form";
+import { Col, Row, Steps, Typography, Result, Icon } from "antd";
 import PropTypes from "prop-types";
 import { isEqual } from "lodash";
 import { formatDateTimeFine } from "@/utils/helpers";
@@ -10,48 +11,58 @@ import { createApplication } from "@/actionCreators/applicationActionCreator";
 import ApplicationSectionOne from "@/components/forms/ApplicationSectionOne";
 import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
 import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree";
+import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm";
 import { APPLICATION_FORM } from "@/constants/forms";
+import * as router from "@/constants/routes";
 
 const { Step } = Steps;
-const { Text } = Typography;
+const { Text, Title, Paragraph } = Typography;
 
 const propTypes = {
+  history: PropTypes.shape({ push: PropTypes.func }).isRequired,
   createApplication: PropTypes.func.isRequired,
+  isPristine: PropTypes.bool.isRequired,
   formValues: PropTypes.objectOf(PropTypes.any),
-  isDirty: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
   formValues: null,
 };
 
-const defaultInitialValues = { company_details: { province: "BC" } };
+const resetFormState = {
+  initialValues: {},
+  previouslySavedFormValues: null,
+  previouslySavedFormStep: 0,
+  saveTimestamp: null,
+  currentStep: 0,
+};
 
 export class ApplicationForm extends Component {
   state = {
     currentStep: 0,
-    uploadedFiles: [],
-    initialValues: defaultInitialValues,
+    initialValues: {},
     previouslySavedFormValues: null,
+    previouslySavedFormStep: 0,
     saveTimestamp: null,
   };
 
   nextFormStep = () => {
     const currentStep = this.state.currentStep + 1;
-    this.setState({ currentStep });
+    this.setState({ currentStep }, () => this.saveFormData());
     window.scrollTo(0, 0);
   };
 
   previousFormStep = () => {
     const currentStep = this.state.currentStep - 1;
-    this.setState({ currentStep });
+    this.setState({ currentStep }, () => this.saveFormData());
     window.scrollTo(0, 0);
   };
 
   saveFormData() {
     if (
-      !this.props.isDirty ||
-      isEqual(this.props.formValues, this.state.previouslySavedFormValues)
+      (this.props.isPristine ||
+        isEqual(this.props.formValues, this.state.previouslySavedFormValues)) &&
+      this.state.currentStep === this.state.previouslySavedFormStep
     ) {
       return;
     }
@@ -59,6 +70,7 @@ export class ApplicationForm extends Component {
     const data = {
       formValues: this.props.formValues,
       saveTimestamp: new Date().getTime(),
+      currentStep: this.state.currentStep || 0,
     };
 
     localStorage.setItem(APPLICATION_FORM, JSON.stringify(data));
@@ -66,6 +78,7 @@ export class ApplicationForm extends Component {
     this.setState({
       saveTimestamp: data.saveTimestamp,
       previouslySavedFormValues: data.formValues,
+      previouslySavedFormStep: data.currentStep || 0,
     });
   }
 
@@ -79,49 +92,29 @@ export class ApplicationForm extends Component {
   }
 
   handleSubmit = (values, dispatch) => {
-    const application = { json: values, documents: this.state.uploadedFiles };
-    this.props.createApplication(application).then(() => {
-      this.setState(
-        {
-          initialValues: defaultInitialValues,
-          previouslySavedFormValues: null,
-          saveTimestamp: null,
-          uploadedFiles: [],
-        },
-        () => {
-          this.emptySavedFormData();
-          dispatch(reset(APPLICATION_FORM));
-        }
-      );
+    const application = { json: values };
+    this.props.createApplication(application).then((response) => {
+      this.setState(resetFormState);
+      dispatch(initialize(APPLICATION_FORM));
+      this.emptySavedFormData();
+      this.props.history.push(router.APPLICATION_SUCCESS.dynamicRoute(response.data.guid));
     });
   };
 
-  onFileLoad = (document_name, document_manager_guid) => {
-    this.setState((prevState) => ({
-      uploadedFiles: [{ document_manager_guid, document_name }, ...prevState.uploadedFiles],
-    }));
-  };
-
-  onRemoveFile = (error, file) => {
-    this.setState((prevState) => ({
-      uploadedFiles: prevState.uploadedFiles.filter(
-        (doc) => doc.document_manager_guid !== file.serverId
-      ),
-    }));
+  handleReset = () => {
+    this.setState(resetFormState, () => this.emptySavedFormData());
   };
 
   componentDidMount() {
-    this.autoSaveForm = setInterval(() => this.saveFormData(), 1000);
-  }
-
-  componentWillMount() {
     const data = this.getSavedFormData();
     if (data) {
       this.setState({
         initialValues: data.formValues,
         saveTimestamp: data.saveTimestamp,
+        currentStep: data.currentStep || 0,
       });
     }
+    this.autoSaveForm = setInterval(() => this.saveFormData(), 1000);
   }
 
   componentWillUnmount() {
@@ -130,7 +123,7 @@ export class ApplicationForm extends Component {
   }
 
   componentDidUpdate = () => {
-    if (this.props.isDirty) {
+    if (!this.props.isPristine) {
       window.onbeforeunload = () => true;
     } else {
       window.onbeforeunload = undefined;
@@ -138,23 +131,14 @@ export class ApplicationForm extends Component {
   };
 
   render() {
-    const extraActions = (this.state.saveTimestamp && (
-      <Text style={{ float: "right" }}>
-        Application progress automatically saved to this device on&nbsp;
-        <Text strong>{formatDateTimeFine(this.state.saveTimestamp)}</Text>.
-      </Text>
-    )) || <></>;
-
     const steps = [
       {
         title: "Company Info",
         content: (
           <ApplicationSectionOne
             onSubmit={this.nextFormStep}
-            onFileLoad={this.onFileLoad}
-            onRemoveFile={this.onRemoveFile}
+            handleReset={this.handleReset}
             initialValues={this.state.initialValues}
-            extraActions={extraActions}
           />
         ),
       },
@@ -164,20 +148,31 @@ export class ApplicationForm extends Component {
           <ApplicationSectionTwo
             previousStep={this.previousFormStep}
             onSubmit={this.nextFormStep}
+            handleReset={this.handleReset}
             initialValues={this.state.initialValues}
-            extraActions={extraActions}
           />
         ),
       },
       {
         title: "Review",
         content: (
-          <ApplicationSectionThree
-            previousStep={this.previousFormStep}
-            onSubmit={this.handleSubmit}
-            initialValues={this.state.initialValues}
-            extraActions={extraActions}
-          />
+          <>
+            <Title level={2}>Review Application</Title>
+            <Paragraph>
+              Please review your application below and confirm that its information is correct.
+            </Paragraph>
+            <Row gutter={48} style={{ marginTop: "-40px" }}>
+              <Col>
+                <ViewOnlyApplicationForm isEditable={false} noRenderStep3 />
+              </Col>
+            </Row>
+            <ApplicationSectionThree
+              previousStep={this.previousFormStep}
+              onSubmit={this.handleSubmit}
+              handleReset={this.handleReset}
+              initialValues={this.state.initialValues}
+            />
+          </>
         ),
       },
     ];
@@ -185,14 +180,27 @@ export class ApplicationForm extends Component {
     return (
       <Row>
         <Col>
-          <Steps current={this.state.currentStep}>
-            {steps.map((item) => (
-              <Step key={item.title} title={item.title} />
-            ))}
-          </Steps>
-          <Row className="steps-content">
-            <Col>{steps[this.state.currentStep].content}</Col>
-          </Row>
+          <div style={{ minWidth: "90vw" }}>
+            <Steps current={this.state.currentStep}>
+              {steps.map((item) => (
+                <Step key={item.title} title={item.title} />
+              ))}
+            </Steps>
+            <Row className="steps-content">
+              <Col>{steps[this.state.currentStep || 0].content}</Col>
+            </Row>
+            {this.state.saveTimestamp && (
+              <>
+                <Icon
+                  type="info-circle"
+                  className="icon-lg color-primary"
+                  style={{ marginRight: 8, marginTop: 24, marginLeft: 24 }}
+                />
+                Application progress automatically saved to your browser on&nbsp;
+                <Text strong>{formatDateTimeFine(this.state.saveTimestamp)}</Text>.
+              </>
+            )}
+          </div>
         </Col>
       </Row>
     );
@@ -204,7 +212,7 @@ ApplicationForm.defaultProps = defaultProps;
 
 const mapStateToProps = (state) => ({
   formValues: getFormValues(APPLICATION_FORM)(state),
-  isDirty: isDirty(APPLICATION_FORM)(state),
+  isPristine: isPristine(APPLICATION_FORM)(state),
 });
 
 const mapDispatchToProps = (dispatch) =>
@@ -215,4 +223,4 @@ const mapDispatchToProps = (dispatch) =>
     dispatch
   );
 
-export default connect(mapStateToProps, mapDispatchToProps)(ApplicationForm);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ApplicationForm));

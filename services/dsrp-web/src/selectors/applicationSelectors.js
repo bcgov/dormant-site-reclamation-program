@@ -1,12 +1,12 @@
-import * as applicationReducer from "../reducers/applicationReducer";
 import { startCase, camelCase } from "lodash";
 import { createSelector } from "reselect";
+import * as applicationReducer from "../reducers/applicationReducer";
 
 export const { getApplications, getApplication } = applicationReducer;
 
 // return an array of contracted_work on well sites
 export const getWorkTypes = createSelector([getApplications], (applications) => {
-  let wellArray = [];
+  const wellArray = [];
   applications.map((application) => {
     if (application.json.well_sites) {
       application.json.well_sites.map((site) => {

@@ -21,6 +21,11 @@ const Routes = () => (
       path={routes.VIEW_APPLICATION_STATUS.route}
       component={routes.VIEW_APPLICATION_STATUS.component}
     />
+    <Route
+      exact
+      path={routes.APPLICATION_SUCCESS.route}
+      component={routes.APPLICATION_SUCCESS.component}
+    />
 
     {/* PRIVATE ROUTES */}
     <Route

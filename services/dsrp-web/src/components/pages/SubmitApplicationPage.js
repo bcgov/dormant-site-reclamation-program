@@ -9,13 +9,7 @@ export class SubmitApplicationPage extends Component {
   render() {
     return (
       <>
-        <Row
-          type="flex"
-          justify="center"
-          align="top"
-          className="landing-header"
-          gutter={[{ sm: 0, xl: 64 }]}
-        >
+        <Row type="flex" justify="center" align="top" className="landing-header">
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
             <Title>Submit Application</Title>
             <Paragraph>
@@ -25,13 +19,7 @@ export class SubmitApplicationPage extends Component {
             </Paragraph>
           </Col>
         </Row>
-        <Row
-          gutter={[{ sm: 0, xl: 64 }]}
-          type="flex"
-          justify="center"
-          align="top"
-          className="landing-section"
-        >
+        <Row type="flex" justify="center" align="top" className="landing-section">
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
             <ApplicationForm />
           </Col>
@@ -41,5 +29,5 @@ export class SubmitApplicationPage extends Component {
   }
 }
 
-// TO:DO WHEN LAUNCH - REMOVE AuthorizationGuard()
+// TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
 export default AuthorizationGuard()(SubmitApplicationPage);

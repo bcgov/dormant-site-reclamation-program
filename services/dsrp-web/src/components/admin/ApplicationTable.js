@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { Table, Icon, Tooltip } from "antd";
-import { formatDateTime, formatDate, formatMoney } from "@/utils/helpers";
+import { formatDateTime, formatDate, formatMoney, formatDateTimeFine } from "@/utils/helpers";
 import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
 
@@ -14,28 +14,35 @@ const propTypes = {
 const columns = [
   {
     title: "Application ID",
+    key: "id",
     dataIndex: "id",
     render: (text) => <div title="id">{text || Strings.DASH}</div>,
   },
   {
     title: "Company",
+    key: "company_name",
     dataIndex: "company_name",
     render: (text) => <div title="Company">{text || Strings.DASH}</div>,
   },
   {
     title: "Received On",
+    key: "submission_date",
     dataIndex: "submission_date",
     sortField: "submission_date",
     sorter: true,
-    render: (text) => <div title="Received On">{formatDateTime(text)}</div>,
+    render: (text) => (
+      <div title={`Received On: ${formatDateTimeFine(text)}`}>{formatDateTime(text)}</div>
+    ),
   },
   {
     title: "Permit Holder",
+    key: "permit_holder",
     dataIndex: "permit_holder",
     render: (text) => <div title="Permit Holder">{text || Strings.DASH}</div>,
   },
   {
     title: "No. of Well Sites",
+    key: "wells",
     dataIndex: "wells",
     render: (text) => <div title="No. of Well Sites">{text || Strings.DASH}</div>,
   },
@@ -56,18 +63,16 @@ const columns = [
   },
   {
     title: "Status",
+    key: "application_status_code",
     dataIndex: "application_status_code",
     render: (text) => <div title="Status">{text || Strings.DASH}</div>,
   },
   {
-    title: "",
-    dataIndex: "",
-    sortField: "",
+    key: "operations",
     render: (text, record) => (
       <div title="View">
         <Link to={route.VIEW_APPLICATION.dynamicRoute(record.key)}>
-          {" "}
-          <Icon type="eye" />
+          <Icon type="eye" className="icon-lg" />
         </Link>
       </div>
     ),
