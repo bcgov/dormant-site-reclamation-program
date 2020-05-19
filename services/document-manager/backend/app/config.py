@@ -19,7 +19,8 @@ class Config(object):
 
     JWT_OIDC_WELL_KNOWN_CONFIG = os.environ.get(
         'JWT_OIDC_WELL_KNOWN_CONFIG',
-        'https://sso-test.pathfinder.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration')
+        'https://sso-test.pathfinder.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration'
+    )
     JWT_OIDC_AUDIENCE = os.environ.get('JWT_OIDC_AUDIENCE', 'account')
     JWT_OIDC_ALGORITHMS = os.environ.get('JWT_OIDC_ALGORITHMS', 'RS256')
 
@@ -56,13 +57,18 @@ class TestConfig(Config):
     # Dummy Private Keys for testing purposes, can replace these keys with any other generated key.
     JWT_OIDC_TEST_KEYS = {
         "keys": [{
-            "kid": "flask-jwt-oidc-test-client",
-            "kty": "RSA",
-            "alg": "RS256",
-            "use": "sig",
+            "kid":
+            "flask-jwt-oidc-test-client",
+            "kty":
+            "RSA",
+            "alg":
+            "RS256",
+            "use":
+            "sig",
             "n":
             "AN-fWcpCyE5KPzHDjigLaSUVZI0uYrcGcc40InVtl-rQRDmAh-C2W8H4_Hxhr5VLc6crsJ2LiJTV_E72S03pzpOOaaYV6-TzAjCou2GYJIXev7f6Hh512PuG5wyxda_TlBSsI-gvphRTPsKCnPutrbiukCYrnPuWxX5_cES9eStR",
-            "e": "AQAB"
+            "e":
+            "AQAB"
         }]
     }
     # Dummy Private Keys for testing purposes.
