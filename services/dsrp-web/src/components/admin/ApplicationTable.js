@@ -181,11 +181,11 @@ export class ApplicationTable extends Component {
     >
       {rowProps.expanded ? (
         <Tooltip title="Click to hide." placement="right" mouseEnterDelay={1}>
-          <Icon type="minus-square" theme="filled" className="icon-lg--grey" />
+          <Icon type="minus-square" theme="filled" className="icon-lg" />
         </Tooltip>
       ) : (
         <Tooltip title="Click to view." placement="right" mouseEnterDelay={1}>
-          <Icon type="plus-square" theme="filled" className="icon-lg--grey" />
+          <Icon type="plus-square" theme="filled" className="icon-lg" />
         </Tooltip>
       )}
     </a>
