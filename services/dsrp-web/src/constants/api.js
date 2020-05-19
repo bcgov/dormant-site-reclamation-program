@@ -14,7 +14,9 @@ export const ORGBOOK_SEARCH = (search) => `/orgbook/search?${queryString.stringi
 export const ORGBOOK_CREDENTIAL = (credentialId) => `/orgbook/credential/${credentialId}`;
 
 // Application
-export const APPLICATION = "/application";
+// export const APPLICATION = "/application";
+export const APPLICATION = (params) =>
+  params ? `/application?${queryString.stringify(params)}` : "/application";
 export const APPLICATION_BY_ID = (guid) => `/application/${guid}`;
 
 // OGC
