@@ -114,7 +114,7 @@ class ApplicationResource(Resource, UserMixin):
 class ApplicationReviewResource(Resource, UserMixin):
     @api.doc(description='Update the review data of an application')
     # @requires_role_admin
-    @api.expect(Application)
+    # @api.expect(Application)
     @api.marshal_with(APPLICATION, code=200)
     def put(self, application_guid):
         application = Application.find_by_guid(application_guid)
