@@ -21,7 +21,10 @@ export const createApplication = (application) => (dispatch) => {
       dispatch(success(reducerTypes.CREATE_APPLICATION));
       return response;
     })
-    .catch(() => dispatch(error(reducerTypes.CREATE_APPLICATION)));
+    .catch((error) => {
+      dispatch(error(reducerTypes.CREATE_APPLICATION));
+      throw new Error(error);
+    });
 };
 
 export const fetchApplications = (page, per_page) => (dispatch) => {
@@ -34,7 +37,10 @@ export const fetchApplications = (page, per_page) => (dispatch) => {
       dispatch(applicationActions.storeApplications(response.data));
       return response;
     })
-    .catch(() => dispatch(error(reducerTypes.GET_APPLICATIONS)))
+    .catch((error) => {
+      dispatch(error(reducerTypes.GET_APPLICATIONS));
+      throw new Error(error);
+    })
     .finally(() => dispatch(hideLoading()));
 };
 
@@ -47,6 +53,9 @@ export const fetchApplicationById = (guid) => (dispatch) => {
       dispatch(applicationActions.storeApplication(response.data));
       return response;
     })
-    .catch(() => dispatch(error(reducerTypes.GET_APPLICATION)))
+    .catch((error) => {
+      dispatch(error(reducerTypes.GET_APPLICATION));
+      throw new Error(error);
+    })
     .finally(() => dispatch(hideLoading()));
 };

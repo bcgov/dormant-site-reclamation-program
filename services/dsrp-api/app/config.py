@@ -88,6 +88,8 @@ class Config(object):
 
     SMTP_CRED = {'host': SMTP_CRED_HOST, 'port': 25, 'user': None, 'pwrd': None}
 
+    URL = os.environ.get('URL', 'http://dormant-site-reclamation.gov.bc.ca/')
+
 
 class TestConfig(Config):
     # The following configs are for testing purposes and all variables and keys are generated using dummy data.
@@ -105,13 +107,18 @@ class TestConfig(Config):
 
     JWT_OIDC_TEST_KEYS = {
         "keys": [{
-            "kid": "flask-jwt-oidc-test-client",
-            "kty": "RSA",
-            "alg": "RS256",
-            "use": "sig",
+            "kid":
+            "flask-jwt-oidc-test-client",
+            "kty":
+            "RSA",
+            "alg":
+            "RS256",
+            "use":
+            "sig",
             "n":
             "AN-fWcpCyE5KPzHDjigLaSUVZI0uYrcGcc40InVtl-rQRDmAh-C2W8H4_Hxhr5VLc6crsJ2LiJTV_E72S03pzpOOaaYV6-TzAjCou2GYJIXev7f6Hh512PuG5wyxda_TlBSsI-gvphRTPsKCnPutrbiukCYrnPuWxX5_cES9eStR",
-            "e": "AQAB"
+            "e":
+            "AQAB"
         }]
     }
     # Dummy Private Keys for testing purposes.

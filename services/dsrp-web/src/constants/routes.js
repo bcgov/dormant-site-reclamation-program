@@ -21,6 +21,12 @@ export const SUBMIT_APPLICATION = {
   component: SubmitApplicationPage,
 };
 
+export const VIEW_APPLICATION_STATUS_LINK = {
+  route: "/view-application-status/:id",
+  dynamicRoute: (guid) => `/view-application-status/${guid}`,
+  component: ViewApplicationStatusPage,
+};
+
 export const VIEW_APPLICATION_STATUS = {
   route: "/view-application-status",
   component: ViewApplicationStatusPage,
