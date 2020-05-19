@@ -31,7 +31,7 @@ class GenerateApplicationDocumentResource(Resource, UserMixin):
             raise Exception('template file not found')
 
         docgen_resp = DocumentGeneratorService.generate_document_and_stream_response(
-            template_path, application.json)
+            template_path, application._doc_gen_json)
         # Return the generated document
         current_app.logger.info(docgen_resp.headers)
 

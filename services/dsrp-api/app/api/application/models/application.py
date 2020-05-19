@@ -44,8 +44,28 @@ class Application(Base, AuditMixin):
         return cls.query.filter_by(guid=guid).first()
 
     @hybrid_property
+    def _doc_gen_json(self):
+        result = self.json
+        #CREATE SOME FORMATTED MEMBERS FOR DOCUMENT_GENERATION
+        addr1 = self.json.get('company_details', {}).get('address_line_1')
+        #TODO addr2 = self.json.get('company_details', {}).get('address_line_2')
+        city = self.json.get('company_details', {}).get('city')
+        post_cd = self.json.get('company_details', {}).get('postal_code')
+        prov = self.json.get('company_details', {}).get('province')
+        result['formatted_address'] = f'{addr1}\n{post_cd}\n{city}, {prov}'
+        return result
+
+    @hybrid_property
     def submitter_email(self):
-        return self.json.get('company_contact', {'email': None}).get('email', None)
+        return self.json.get('company_contact', {}).get('email')
+
+    @hybrid_property
+    def submitter_email(self):
+        return self.json.get('company_contact', {}).get('email')
+
+    @hybrid_property
+    def submitter_email(self):
+        return self.json.get('company_contact', {}).get('email')
 
     def send_confirmation_email(self, email_service):
         if not self.submitter_email:
