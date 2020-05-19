@@ -117,7 +117,7 @@ const nestedColumns = [
   },
   {
     title: "LMR Value",
-    dataIndex: "LRM",
+    dataIndex: "LMR",
     render: (text) => <div title="LMR Value">{text || Strings.DASH}</div>,
   },
   {
