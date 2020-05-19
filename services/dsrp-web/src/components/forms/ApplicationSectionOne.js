@@ -48,7 +48,7 @@ class ApplicationSectionOne extends Component {
             Company Details
           </Title>
           <Row gutter={48}>
-            <Col span={24}>
+            <Col>
               <Field
                 id="company_name"
                 name="company_name"
@@ -283,7 +283,7 @@ class ApplicationSectionOne extends Component {
                 Review Program Requirements
               </Title>
               <Row gutter={48}>
-                <Col span={24}>
+                <Col>
                   <Paragraph>
                     <a href="#" target="_blank" rel="noopener noreferrer">
                       Review program details and requirements

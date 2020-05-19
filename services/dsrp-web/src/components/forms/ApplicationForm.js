@@ -179,7 +179,7 @@ export class ApplicationForm extends Component {
 
     return (
       <Row>
-        <Col span={24}>
+        <Col>
           <div style={{ minWidth: "90vw" }}>
             <Steps current={this.state.currentStep}>
               {steps.map((item) => (

@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { compose } from "redux";
 import moment from "moment";
-import { Row, Col, Typography, Form, Button, Collapse } from "antd";
+import { Row, Col, Typography, Form, Button, Collapse, Icon, Popconfirm } from "antd";
 import { sum, get, set, isEmpty } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import { required, number } from "@/utils/validate";
@@ -323,7 +323,17 @@ class ApplicationSectionTwo extends Component {
       {this.props.anyTouched &&
         ((meta.error && <span className="color-error">{meta.error}</span>) ||
           (meta.warning && <span className="color-warning">{meta.warning}</span>))}
-      <Collapse bordered={false} accordion>
+      <Collapse
+        bordered={false}
+        accordion
+        expandIcon={(panelProps) => (
+          <Icon
+            type={panelProps.isActive ? "minus-square" : "plus-square"}
+            theme="filled"
+            className="icon-lg"
+          />
+        )}
+      >
         {fields.map((member, index) => {
           const wellTotals = this.state.contractedWorkTotals.wellTotals[index];
           const wellSectionTotals = wellTotals ? wellTotals.sections : {};
@@ -337,13 +347,26 @@ class ApplicationSectionTwo extends Component {
             <Panel
               key={index}
               header={
-                <Title level={3}>
-                  {/* NOTE: Could update name with the well's name when it is retrieved. */}
+                <Title level={3} style={{ margin: 0, marginLeft: 8 }}>
                   {wellName}
                   {this.props.isEditable && (
-                    <Button style={{ float: "right" }} onClick={() => fields.remove(index)}>
-                      Remove
+                    // <Popconfirm
+                    //   title="Are you sure you want to remove this well site?"
+                    //   onConfirm={() => fields.remove(index)}
+                    //   okText="Yes"
+                    //   cancelText="No"
+                    //   placement="topRight"
+                    //   arrowPointAtCenter
+                    // >
+                    <Button
+                      type="link"
+                      className="color-primary"
+                      style={{ float: "right" }}
+                      onClick={() => fields.remove(index)}
+                    >
+                      <Icon type="close" className="icon-lg" />
                     </Button>
+                    // </Popconfirm>
                   )}
                 </Title>
               }
@@ -351,7 +374,7 @@ class ApplicationSectionTwo extends Component {
               <FormSection name={createMemberName(member, "details")}>
                 <Title level={4}>Details</Title>
                 <Row gutter={48}>
-                  <Col span={24}>
+                  <Col>
                     <Field
                       name="well_authorization_number"
                       label="Well Authorization Number"
@@ -388,7 +411,7 @@ class ApplicationSectionTwo extends Component {
                 </Title>
                 <Paragraph>Reasons for site nomination (select all that apply):</Paragraph>
                 <Row gutter={48}>
-                  <Col span={24} className="application-checkbox-section">
+                  <Col className="application-checkbox-section">
                     {wellSiteConditions.map((condition, index) => (
                       <Field
                         key={index}
@@ -411,8 +434,17 @@ class ApplicationSectionTwo extends Component {
                   this contract.
                 </Paragraph>
                 <Row gutter={48}>
-                  <Col span={24}>
-                    <Collapse bordered={false}>
+                  <Col>
+                    <Collapse
+                      bordered={false}
+                      expandIcon={(panelProps) => (
+                        <Icon
+                          type={panelProps.isActive ? "minus-square" : "plus-square"}
+                          theme="filled"
+                          className="icon-md"
+                        />
+                      )}
+                    >
                       {CONTRACT_WORK_SECTIONS.map((contractWorkSection) =>
                         renderContractWorkPanel(
                           contractWorkSection,

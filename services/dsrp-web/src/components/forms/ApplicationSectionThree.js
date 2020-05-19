@@ -45,7 +45,7 @@ class ApplicationSectionThree extends Component {
             Submit Application
           </Title>
           <Row gutter={48}>
-            <Col span={24}>
+            <Col>
               <Field
                 id="reviewed_and_verified"
                 name="reviewed_and_verified"
