@@ -44,7 +44,7 @@ class ApplicationSectionOne extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="company_details">
-          <Title level={2} className="application-section">
+          <Title level={3} className="application-section">
             Company Details
           </Title>
           <Row gutter={48}>
@@ -167,7 +167,7 @@ class ApplicationSectionOne extends Component {
         </FormSection>
 
         <FormSection name="company_contact">
-          <Title level={2} className="application-section">
+          <Title level={3} className="application-section">
             Company Contact
           </Title>
           <Row gutter={48}>
@@ -278,7 +278,7 @@ class ApplicationSectionOne extends Component {
         {this.props.isEditable && (
           <>
             <FormSection name="review_program_conditions">
-              <Title level={2} className="application-section">
+              <Title level={3} className="application-section">
                 Review Program Requirements
               </Title>
               <Row gutter={48}>

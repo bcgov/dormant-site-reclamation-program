@@ -41,7 +41,7 @@ class ApplicationSectionThree extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="review">
-          <Title level={2} className="application-section">
+          <Title level={3} className="application-section">
             Submit Application
           </Title>
           <Row gutter={48}>
