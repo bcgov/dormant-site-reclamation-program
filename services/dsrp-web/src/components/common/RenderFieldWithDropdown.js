@@ -14,7 +14,6 @@ const propTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string,
   meta: PropTypes.objectOf(PropTypes.any).isRequired,
-  inlineLabel: PropTypes.string,
   disabled: PropTypes.bool,
   defaultValue: PropTypes.string,
   data: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)),
@@ -24,7 +23,6 @@ const propTypes = {
 const defaultProps = {
   label: "",
   placeholder: "",
-  inlineLabel: "",
   disabled: false,
   defaultValue: "",
   data: [],
@@ -58,30 +56,19 @@ const RenderFieldWithDropdown = (props) => {
           (props[props.id].meta.warning && <span>{props[props.id].meta.warning}</span>))
       }
     >
-      <div className="inline-flex">
-        {props.inlineLabel && (
-          <label
-            htmlFor={props.id}
-            className="nowrap"
-            style={{ paddingRight: "10px", fontSize: "20px" }}
-          >
-            {props.inlineLabel}
-          </label>
+      <Input
+        disabled={props.disabled}
+        defaultValue={props.defaultValue}
+        id={props.id}
+        placeholder={props.placeholder}
+        {...props[props.id].input}
+        addonAfter={selectAfter(
+          props.data,
+          props.dropdownID,
+          props.disabled,
+          props[props.dropdownID].input
         )}
-        <Input
-          disabled={props.disabled}
-          defaultValue={props.defaultValue}
-          id={props.id}
-          placeholder={props.placeholder}
-          {...props[props.id].input}
-          addonAfter={selectAfter(
-            props.data,
-            props.dropdownID,
-            props.disabled,
-            props[props.dropdownID].input
-          )}
-        />
-      </div>
+      />
     </Form.Item>
   );
 };

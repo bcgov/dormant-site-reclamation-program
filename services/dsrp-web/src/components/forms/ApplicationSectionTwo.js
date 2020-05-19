@@ -3,16 +3,21 @@ import { reduxForm, FieldArray, getFormValues, Field, FormSection } from "redux-
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { compose } from "redux";
-import { Row, Col, Typography, Form, Button, Collapse } from "antd";
-import { sum, get, set } from "lodash";
+import moment from "moment";
+import { Row, Col, Typography, Form, Button, Collapse, Icon, Popconfirm } from "antd";
+import { sum, get, set, isEmpty } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import { required, number } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
-import { currencyMask, formatMoney } from "@/utils/helpers";
+import { PROGRAM_START_DATE, PROGRAM_END_DATE } from "@/constants/strings";
+import { currencyMask, formatMoney, scrollToFirstError } from "@/utils/helpers";
 import CONTRACT_WORK_SECTIONS from "@/constants/contract_work_sections";
 import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
+import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import WellField from "@/components/forms/WellField";
+import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
 import { validateWell } from "@/actionCreators/OGCActionCreator";
+import { getSelectedWells } from "@/selectors/OGCSelectors";
 
 const { Text, Paragraph, Title } = Typography;
 const { Panel } = Collapse;
@@ -21,12 +26,15 @@ const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
-  extraActions: PropTypes.node,
+  formValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  selectedWells: PropTypes.arrayOf(PropTypes.any),
+  isViewingSubmission: PropTypes.bool,
   isEditable: PropTypes.bool,
 };
 
 const defaultProps = {
-  extraActions: undefined,
+  selectedWells: [],
+  isViewingSubmission: false,
   isEditable: true,
 };
 
@@ -46,51 +54,108 @@ const wellSiteConditions = [
   "Drilled or abandoned prior to 1997",
 ];
 
-const renderMoneyTotal = (label, amount) => (
-  <Paragraph>
-    <Text className="color-primary" strong>
-      {label}:&nbsp;
-    </Text>
-    <Text>{formatMoney(amount || 0)}</Text>
-  </Paragraph>
+const renderMoneyTotal = (label, amount, style) => (
+  <Row type="flex" justify="end" gutter={16} style={style}>
+    <Col>
+      <Text className="color-primary" strong>
+        {label} total:&nbsp;
+      </Text>
+    </Col>
+    <Col style={{ textAlign: "right" }}>
+      <Text>{formatMoney(amount || 0)}</Text>
+    </Col>
+  </Row>
 );
 
-const renderContractWorkPanel = (contractWorkSection, wellSectionTotal, isEditable) => (
+const renderContractWorkPanel = (
+  contractWorkSection,
+  wellSectionTotal,
+  isEditable,
+  wellSiteFormValues
+) => (
   <Panel
     key={contractWorkSection.sectionHeader}
-    header={<Title level={4}>{contractWorkSection.sectionHeader}</Title>}
+    header={
+      <Row type="flex" align="middle" justify="space-between">
+        <Col>
+          <Text className="color-primary font-size-large" strong>
+            {contractWorkSection.sectionHeader}
+          </Text>
+        </Col>
+        <Col>
+          {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, {
+            marginRight: 24,
+          })}
+        </Col>
+      </Row>
+    }
   >
     <FormSection name={contractWorkSection.formSectionName}>
       <Form.Item
         label={
           <Text className="color-primary" strong>
-            Contract Work Start and End Dates
+            Planned Start and End Dates
           </Text>
         }
       >
         <Row gutter={48}>
           <Col span={12}>
             <Field
-              name="work_start_date"
-              label="Work Start Date"
-              placeholder="Select work start date"
+              name="planned_start_date"
+              label="Planned Start Date"
+              placeholder="Select Planned Start Date"
               component={renderConfig.DATE}
               disabled={!isEditable}
+              disabledDate={(date) => {
+                const selectedDate = date ? moment(date) : null;
+                const contractWorkValues = wellSiteFormValues.contracted_work;
+                const sectionValues = contractWorkValues
+                  ? contractWorkValues[contractWorkSection.formSectionName]
+                  : null;
+                const endDate =
+                  sectionValues && sectionValues.planned_end_date
+                    ? moment(sectionValues.planned_end_date)
+                    : null;
+                return (
+                  selectedDate &&
+                  (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
+                    selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD") ||
+                    (endDate && selectedDate > endDate))
+                );
+              }}
             />
           </Col>
           <Col span={12}>
             <Field
-              name="work_end_date"
-              label="Work End Date"
-              placeholder="Select work end date"
+              name="planned_end_date"
+              label="Planned End Date"
+              placeholder="Select Planned End Date"
               component={renderConfig.DATE}
               disabled={!isEditable}
+              disabledDate={(date) => {
+                const selectedDate = date ? moment(date) : null;
+                const contractWorkValues = wellSiteFormValues.contracted_work;
+                const sectionValues = contractWorkValues
+                  ? contractWorkValues[contractWorkSection.formSectionName]
+                  : null;
+                const startDate =
+                  sectionValues && sectionValues.planned_start_date
+                    ? moment(sectionValues.planned_start_date)
+                    : null;
+                return (
+                  selectedDate &&
+                  (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
+                    selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD") ||
+                    (startDate && selectedDate < startDate))
+                );
+              }}
             />
           </Col>
         </Row>
       </Form.Item>
       {contractWorkSection.subSections.map((subSection) => (
         <Form.Item
+          key={subSection.subSectionHeader}
           label={
             <Text className="color-primary" strong>
               {subSection.subSectionHeader}
@@ -99,8 +164,13 @@ const renderContractWorkPanel = (contractWorkSection, wellSectionTotal, isEditab
         >
           {subSection.amountFields.map((amountField) => (
             <Field
+              key={amountField.fieldName}
               name={amountField.fieldName}
               label={amountField.fieldLabel}
+              labelAlign="left"
+              labelCol={{ md: { span: 14 } }}
+              wrapperCol={{ md: { span: 8, offset: 2 } }}
+              inputStyle={{ textAlign: "right" }}
               placeholder="$0.00"
               component={renderConfig.FIELD}
               disabled={!isEditable}
@@ -109,7 +179,7 @@ const renderContractWorkPanel = (contractWorkSection, wellSectionTotal, isEditab
           ))}
         </Form.Item>
       ))}
-      {renderMoneyTotal("Section total", wellSectionTotal)}
+      {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, { marginRight: 24 })}
     </FormSection>
   </Panel>
 );
@@ -167,9 +237,23 @@ const asyncValidate = (values, dispatch, props, field) => {
   }
 };
 
+const validateWellSites = (value) => {
+  if (isEmpty(value)) {
+    return "Your application must contain at least one well site.";
+  }
+  return undefined;
+};
+
+const defaultState = {
+  contractedWorkTotals: { grandTotal: 0, wellTotals: {} },
+};
+
 class ApplicationSectionTwo extends Component {
-  state = {
-    contractedWorkTotals: { grandTotal: 0, wellTotals: {} },
+  state = defaultState;
+
+  handleReset = () => {
+    this.props.initialize();
+    this.props.handleReset();
   };
 
   componentWillReceiveProps = (nextProps) => {
@@ -178,12 +262,19 @@ class ApplicationSectionTwo extends Component {
     }
   };
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     this.calculateContractWorkTotals(this.props.formValues);
   };
 
+  componentWillUnmount() {
+    if (this.props.isViewingSubmission) {
+      this.props.reset();
+    }
+  }
+
   calculateContractWorkTotals = (formValues) => {
     if (!formValues || !formValues.well_sites) {
+      this.setState(defaultState);
       return;
     }
 
@@ -214,32 +305,73 @@ class ApplicationSectionTwo extends Component {
     this.setState({ contractedWorkTotals });
   };
 
-  renderWells = ({ fields }) => (
+  getWellName(wellNumber) {
+    const wellAuthNumber =
+      this.props.formValues &&
+      this.props.formValues.well_sites &&
+      this.props.formValues.well_sites[wellNumber] &&
+      this.props.formValues.well_sites[wellNumber].details
+        ? this.props.formValues.well_sites[wellNumber].details.well_authorization_number
+        : null;
+    return wellAuthNumber && this.props.selectedWells && this.props.selectedWells[wellAuthNumber]
+      ? this.props.selectedWells[wellAuthNumber].well_name
+      : null;
+  }
+
+  renderWells = ({ fields, meta }) => (
     <>
-      <Collapse bordered={false} accordion>
+      {this.props.anyTouched &&
+        ((meta.error && <span className="color-error">{meta.error}</span>) ||
+          (meta.warning && <span className="color-warning">{meta.warning}</span>))}
+      <Collapse
+        bordered={false}
+        accordion
+        expandIcon={(panelProps) => (
+          <Icon
+            type={panelProps.isActive ? "minus-square" : "plus-square"}
+            theme="filled"
+            className="icon-lg"
+          />
+        )}
+      >
         {fields.map((member, index) => {
           const wellTotals = this.state.contractedWorkTotals.wellTotals[index];
           const wellSectionTotals = wellTotals ? wellTotals.sections : {};
           const wellTotal = wellTotals ? wellTotals.wellTotal : 0;
+
+          const actualName = this.getWellName(index);
+          let wellName = `Well Site #${index + 1}`;
+          wellName += actualName ? ` (${actualName})` : "";
+
           return (
             <Panel
               key={index}
               header={
-                <Title level={3}>
-                  {/* NOTE: Could update name with the well's name when it is retrieved. */}
-                  Well Site #{index + 1}
+                <Title level={3} style={{ margin: 0, marginLeft: 8 }}>
+                  {wellName}
                   {this.props.isEditable && (
-                    <Button style={{ float: "right" }} onClick={() => fields.remove(index)}>
-                      Remove
-                    </Button>
+                    <span onClick={(e) => e.stopPropagation()}>
+                      <Popconfirm
+                        title="Are you sure you want to remove this well site?"
+                        onConfirm={(e) => fields.remove(index)}
+                        okText="Yes"
+                        cancelText="No"
+                        placement="topRight"
+                        arrowPointAtCenter
+                      >
+                        <Button type="link" className="color-primary" style={{ float: "right" }}>
+                          <Icon type="delete" theme="filled" className="icon-lg" />
+                        </Button>
+                      </Popconfirm>
+                    </span>
                   )}
                 </Title>
               }
             >
               <FormSection name={createMemberName(member, "details")}>
-                <Title level={3}>Details</Title>
+                <Title level={4}>Details</Title>
                 <Row gutter={48}>
-                  <Col span={24}>
+                  <Col>
                     <Field
                       name="well_authorization_number"
                       label="Well Authorization Number"
@@ -251,14 +383,17 @@ class ApplicationSectionTwo extends Component {
                         <>
                           Authorization Number
                           {this.props.isEditable && (
-                            <a
-                              style={{ float: "right" }}
-                              href="https://reports.bcogc.ca/ogc/f?p=200:81:16594283755468"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              Look up well
-                            </a>
+                            <>
+                              <ApplicationFormTooltip content="Only wells that are classfied as Dormant with the Oil and Gas Commission can be entered." />
+                              <a
+                                style={{ float: "right" }}
+                                href="https://reports.bcogc.ca/ogc/f?p=200:81:16594283755468"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                Look up well
+                              </a>
+                            </>
                           )}
                         </>
                       }
@@ -268,12 +403,15 @@ class ApplicationSectionTwo extends Component {
               </FormSection>
 
               <FormSection name={createMemberName(member, "site_conditions")}>
-                <Title level={3}>Site Conditions</Title>
+                <Title level={4} className="application-subsection">
+                  Site Conditions
+                </Title>
                 <Paragraph>Reasons for site nomination (select all that apply):</Paragraph>
                 <Row gutter={48}>
-                  <Col span={24}>
+                  <Col className="application-checkbox-section">
                     {wellSiteConditions.map((condition, index) => (
                       <Field
+                        key={index}
                         name={`site_condition_${index}`}
                         label={condition}
                         disabled={!this.props.isEditable}
@@ -285,23 +423,37 @@ class ApplicationSectionTwo extends Component {
               </FormSection>
 
               <FormSection name={createMemberName(member, "contracted_work")}>
-                <Title level={3}>Contracted Work</Title>
+                <Title level={4} className="application-subsection">
+                  Contracted Work
+                </Title>
                 <Paragraph>
                   Enter the estimated cost of every work component your company will perform for
                   this contract.
                 </Paragraph>
                 <Row gutter={48}>
-                  <Col span={24}>
-                    <Collapse bordered={false}>
+                  <Col>
+                    <Collapse
+                      bordered={false}
+                      expandIcon={(panelProps) => (
+                        <Icon
+                          type={panelProps.isActive ? "minus-square" : "plus-square"}
+                          theme="filled"
+                          className="icon-md"
+                        />
+                      )}
+                    >
                       {CONTRACT_WORK_SECTIONS.map((contractWorkSection) =>
                         renderContractWorkPanel(
                           contractWorkSection,
                           wellSectionTotals[contractWorkSection.formSectionName],
-                          this.props.isEditable
+                          this.props.isEditable,
+                          this.props.formValues && this.props.formValues.well_sites
+                            ? this.props.formValues.well_sites[index]
+                            : null
                         )
                       )}
                     </Collapse>
-                    {renderMoneyTotal("Well total", wellTotal)}
+                    {renderMoneyTotal("Well", wellTotal, { marginRight: 40, marginTop: 8 })}
                   </Col>
                 </Row>
               </FormSection>
@@ -322,15 +474,24 @@ class ApplicationSectionTwo extends Component {
     const wellTotalsValues = Object.values(this.state.contractedWorkTotals.wellTotals);
 
     return (
-      <Form layout="vertical" onSubmit={this.props.handleSubmit}>
+      <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="contract_details">
-          <Title level={3}>Contract Information</Title>
+          <Title level={2} className="application-section">
+            Contract Information
+          </Title>
           <Row gutter={48}>
             <Col>
               <Field
                 id="operator_id"
                 name="operator_id"
-                label="Permit Holder"
+                label={
+                  <>
+                    Permit Holder
+                    {this.props.isEditable && (
+                      <ApplicationFormTooltip content="Only businesses with permits for dormant wells can be entered." />
+                    )}
+                  </>
+                }
                 placeholder="Search for permit holder for whom this work will be performed"
                 component={PermitHolderSelect}
                 disabled={!this.props.isEditable}
@@ -340,49 +501,87 @@ class ApplicationSectionTwo extends Component {
           </Row>
         </FormSection>
 
-        <Title level={3}>Well Sites</Title>
+        <Title level={2} className="application-section">
+          Well Sites
+        </Title>
         <Row gutter={[48, 48]}>
           <Col>
-            <FieldArray name="well_sites" component={this.renderWells} />
+            <FieldArray
+              name="well_sites"
+              validate={validateWellSites}
+              component={this.renderWells}
+            />
           </Col>
         </Row>
 
         <br />
-        <Title level={3}>Estimated Expense Summary</Title>
+        <Title level={2} className="application-section">
+          Estimated Cost Summary
+        </Title>
         {(wellTotalsValues.length > 0 && (
-          <Row gutter={16} type="flex">
+          <Row gutter={16} type="flex" justify="start" align="bottom">
             <Col style={{ textAlign: "right" }}>
-              {wellTotalsValues.map((wellTotal, index) => (
-                <Paragraph key={index} className="color-primary" strong>
-                  {`Well Site #${index + 1} total:`}&nbsp;
-                </Paragraph>
-              ))}
+              {wellTotalsValues.map((wellTotal, index) => {
+                const actualName = this.getWellName(index);
+                let wellName = `Well Site #${index + 1}`;
+                wellName += actualName ? ` (${actualName})` : "";
+                return (
+                  <>
+                    <Paragraph key={index} className="color-primary" strong>
+                      {`${wellName} total:`}&nbsp;
+                    </Paragraph>
+                    {wellTotal.sections &&
+                      CONTRACT_WORK_SECTIONS.filter(
+                        (section) =>
+                          wellTotal.sections[section.formSectionName] &&
+                          wellTotal.sections[section.formSectionName] > 0
+                      ).map((section) => (
+                        <Paragraph key={index} className="color-primary">
+                          {`${section.sectionHeader} total:`}&nbsp;
+                        </Paragraph>
+                      ))}
+                  </>
+                );
+              })}
               <Paragraph className="color-primary" strong>
                 Grand total:&nbsp;
               </Paragraph>
             </Col>
             <Col style={{ textAlign: "right" }}>
               {wellTotalsValues.map((wellTotal, index) => (
-                <Paragraph key={index}>{formatMoney(wellTotal.wellTotal || 0)}</Paragraph>
+                <>
+                  <Paragraph key={index}>{formatMoney(wellTotal.wellTotal || 0)}</Paragraph>
+                  {wellTotal.sections &&
+                    CONTRACT_WORK_SECTIONS.filter(
+                      (section) =>
+                        wellTotal.sections[section.formSectionName] &&
+                        wellTotal.sections[section.formSectionName] > 0
+                    ).map((section) => (
+                      <Paragraph key={index}>
+                        {formatMoney(wellTotal.sections[section.formSectionName] || 0)}
+                      </Paragraph>
+                    ))}
+                </>
               ))}
-              <Paragraph>{formatMoney(this.state.contractedWorkTotals.grandTotal || 0)}</Paragraph>
+              <Paragraph strong>
+                {formatMoney(this.state.contractedWorkTotals.grandTotal || 0)}
+              </Paragraph>
             </Col>
           </Row>
-        )) || <Paragraph>Add a well site to see your estimated expense summary.</Paragraph>}
+        )) || <Paragraph>Add a well site to see your estimated cost summary.</Paragraph>}
         {this.props.isEditable && (
           <Row className="steps-action">
             <Col>
+              <Button onClick={this.props.previousStep}>Previous</Button>
               <Button
                 type="primary"
                 htmlType="submit"
-                disabled={this.props.submitting || this.props.invalid}
+                disabled={this.props.submitting}
+                style={{ marginLeft: 8, marginRight: 8 }}
               >
                 Next
               </Button>
-              <Button style={{ margin: "0 8px" }} onClick={this.props.previousStep}>
-                Previous
-              </Button>
-              {this.props.extraActions}
+              <ApplicationFormReset onConfirm={this.handleReset} />
             </Col>
           </Row>
         )}
@@ -391,24 +590,30 @@ class ApplicationSectionTwo extends Component {
   }
 }
 
+const mapStateToProps = (state) => ({
+  formValues: getFormValues(FORM.APPLICATION_FORM)(state),
+  selectedWells: getSelectedWells(state),
+});
+
+const mapDispatchToProps = () => ({});
+
 ApplicationSectionTwo.propTypes = propTypes;
 ApplicationSectionTwo.defaultProps = defaultProps;
 
 export default compose(
-  connect((state) => ({
-    formValues: getFormValues(FORM.APPLICATION_FORM)(state),
-  })),
+  connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: FORM.APPLICATION_FORM,
     destroyOnUnmount: false,
     forceUnregisterOnUnmount: true,
+    keepDirtyOnReinitialize: true,
+    enableReinitialize: true,
+    updateUnregisteredFields: true,
     asyncValidate,
     asyncChangeFields: [
       "contract_details.operator_id",
       "well_sites[].details.well_authorization_number",
     ],
-    keepDirtyOnReinitialize: true,
-    enableReinitialize: true,
-    updateUnregisteredFields: true,
+    onSubmitFail: (errors) => scrollToFirstError(errors),
   })
 )(ApplicationSectionTwo);

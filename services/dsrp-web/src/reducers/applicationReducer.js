@@ -4,6 +4,7 @@ import { APPLICATIONS } from "../constants/reducerTypes";
 const initialState = {
   applications: [],
   application: {},
+  pageData: {},
 };
 
 export const applicationReducer = (state = initialState, action) => {
@@ -12,6 +13,7 @@ export const applicationReducer = (state = initialState, action) => {
       return {
         ...state,
         applications: action.payload.records,
+        pageData: action.payload,
       };
     case actionTypes.STORE_APPLICATION:
       return {
@@ -29,5 +31,6 @@ const applicationReducerObject = {
 
 export const getApplications = (state) => state[APPLICATIONS].applications;
 export const getApplication = (state) => state[APPLICATIONS].application;
+export const getPageData = (state) => state[APPLICATIONS].pageData;
 
 export default applicationReducerObject;

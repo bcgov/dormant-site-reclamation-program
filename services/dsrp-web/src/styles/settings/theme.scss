@@ -85,10 +85,10 @@ $font-feature-settings-base: "tnum";
 $font-size-base: 16px; //14px;
 $font-size-lg: $font-size-base + 4; //$font-size-base + 2px;
 $font-size-sm: $font-size-base - 4; //12px;
-$heading-1-size: ceil($font-size-base * 2.71);
-$heading-2-size: ceil($font-size-base * 2.14);
-$heading-3-size: ceil($font-size-base * 1.71);
-$heading-4-size: ceil($font-size-base * 1.42);
+$heading-1-size: ceil($font-size-base * 2.25);
+$heading-2-size: ceil($font-size-base * 1.8);
+$heading-3-size: ceil($font-size-base * 1.4);
+$heading-4-size: ceil($font-size-base * 1.2);
 $line-height-base: 1.5715;
 $border-radius-base: 5px;
 $border-radius-sm: $border-radius-base;
@@ -631,7 +631,7 @@ $tabs-card-tab-active-border-top: none; //2px solid transparent;
 // BackTop
 // ---
 $back-top-color: $white; //#fff;
-$back-top-bg: $primary-color; //$text-color-secondary;
+$back-top-bg: $nav-blue; //$primary-color; //$text-color-secondary;
 $back-top-hover-bg: $primary-5; //$text-color;
 
 // Avatar

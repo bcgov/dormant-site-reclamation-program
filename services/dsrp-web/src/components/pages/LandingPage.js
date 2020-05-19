@@ -8,13 +8,7 @@ const { Paragraph, Text, Title } = Typography;
 
 export const LandingPage = (props) => (
   <>
-    <Row
-      type="flex"
-      justify="center"
-      align="top"
-      className="landing-header"
-      gutter={[{ sm: 0, xl: 64 }]}
-    >
+    <Row type="flex" justify="center" align="top" className="landing-header">
       <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
         <Title level={4}>What is the Dormant Sites Reclamation Program:</Title>
         <Paragraph>
@@ -352,5 +346,5 @@ export const LandingPage = (props) => (
     </Row>
   </>
 );
-// TO:DO WHEN LAUNCH - REMOVE AuthorizationGuard()
+// TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
 export default AuthorizationGuard()(LandingPage);

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
-import { getApplications } from "@/selectors/applicationSelectors";
+import { getApplications, getWorkTypes, getPageData } from "@/selectors/applicationSelectors";
 import { fetchApplications } from "@/actionCreators/applicationActionCreator";
 import ApplicationTable from "@/components/admin/ApplicationTable";
 
@@ -18,7 +18,12 @@ export class ReviewApplicationInfo extends Component {
   render() {
     return (
       <>
-        <ApplicationTable applications={this.props.applications} />
+        <ApplicationTable
+          applications={this.props.applications}
+          workTypes={this.props.workTypes}
+          pageData={this.props.pageData}
+          fetchApplications={this.props.fetchApplications}
+        />
       </>
     );
   }
@@ -26,6 +31,8 @@ export class ReviewApplicationInfo extends Component {
 
 const mapStateToProps = (state) => ({
   applications: getApplications(state),
+  workTypes: getWorkTypes(state),
+  pageData: getPageData(state),
 });
 
 const mapDispatchToProps = (dispatch) =>

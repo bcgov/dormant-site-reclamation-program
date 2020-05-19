@@ -22,7 +22,7 @@ class ViewApplicationStatusForm extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <Row gutter={48}>
-          <Col span={24}>
+          <Col>
             <Field
               id="guid"
               name="guid"
