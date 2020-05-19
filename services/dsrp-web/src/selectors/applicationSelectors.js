@@ -13,7 +13,8 @@ export const getWorkTypes = createSelector([getApplications], (applications) => 
         const contractedWork = Object.keys(site.contracted_work);
         if (contractedWork.length >= 1) {
           contractedWork.map((work) => {
-            const priorityCriteria = Object.values(site.site_conditions).length;
+            const priorityCriteria =
+              site.site_conditions !== {} ? Object.values(site.site_conditions).length : 0;
             const estimatedCostArray = Object.values(site.contracted_work[work]).filter(
               (v) => !isNaN(v)
             );
