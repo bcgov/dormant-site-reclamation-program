@@ -4,6 +4,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
 from marshmallow import fields, validate
 
+from app.config import Config
 from app.extensions import db
 from app.api.utils.models_mixins import Base, AuditMixin
 from app.api.utils.field_template import FieldTemplate
@@ -22,17 +23,17 @@ class Application(Base, AuditMixin):
 
     id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
     guid = db.Column(UUID(as_uuid=True), nullable=False, unique=True, server_default=FetchedValue())
-    application_status_code = db.Column(db.String,
-                                        db.ForeignKey('application_status.application_status_code'),
-                                        nullable=False,
-                                        server_default=FetchedValue())
+    application_status_code = db.Column(
+        db.String,
+        db.ForeignKey('application_status.application_status_code'),
+        nullable=False,
+        server_default=FetchedValue())
     submission_date = db.Column(db.DateTime, nullable=False, server_default=FetchedValue())
     json = db.Column(db.JSON, nullable=False)
     documents = db.relationship('ApplicationDocument', lazy='select')
 
     def __repr__(self):
         return f'<{self.__name__} {self.guid}>'
-
 
     @classmethod
     def get_all(cls):
@@ -44,19 +45,22 @@ class Application(Base, AuditMixin):
 
     @hybrid_property
     def submitter_email(self):
-        return self.json.get('company_contact', {'email':None}).get('email', None)
-
+        return self.json.get('company_contact', {'email': None}).get('email', None)
 
     def send_confirmation_email(self, email_service):
         if not self.submitter_email:
-            raise Exception('Application.json.company_contact.email is not set, must set before email can be sent')
+            raise Exception(
+                'Application.json.company_contact.email is not set, must set before email can be sent'
+            )
 
         html_body = f"""
             <p> 
                 We have successfully received your application in the BC Governments Dormant
                 Site Reclamation Program. Your reference number is {self.guid}, please keep this safe as you will
                 need it to carry your application forward in this process.
+
+                <a href='{Config.URL}/view-application-status/{self.guid}'>Click here to view the status of your application.</a>
             </p>
         """
-    
+
         email_service.send_email(self.submitter_email, 'Application Confirmation', html_body)
