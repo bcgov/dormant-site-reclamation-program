@@ -97,7 +97,6 @@ class ApplicationSectionOne extends Component {
                 label="Do you wish to self‑identify as including Indigenous participation in completing the work outlined within this application?"
                 disabled={!this.props.isEditable}
                 component={renderConfig.CHECKBOX}
-                disabled={!this.props.isEditable}
               />
               {this.props.indigenousParticipationCheckbox && (
                 <Field
