@@ -60,5 +60,18 @@ export const fetchLiabilities = () => (dispatch) => {
     .finally(() => dispatch(hideLoading()));
 };
 
+export const fetchLiabilitiesByApplicationID = (guid) => (dispatch) => {
+  dispatch(request(reducerTypes.FETCH_LIABILITIES));
+  dispatch(showLoading());
+  return CustomAxios()
+    .get(ENVIRONMENT.apiUrl + API.LIABILITY(guid), createRequestHeader())
+    .then((response) => {
+      dispatch(success(reducerTypes.FETCH_LIABILITIES));
+      dispatch(OGCActions.storeLiabilities(response.data));
+    })
+    .catch(() => dispatch(error(reducerTypes.FETCH_LIABILITIES)))
+    .finally(() => dispatch(hideLoading()));
+};
+
 export const validateWell = (params = {}) =>
   CustomAxios().get(ENVIRONMENT.apiUrl + API.WELL(params), createRequestHeader());
