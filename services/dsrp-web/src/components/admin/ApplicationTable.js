@@ -346,7 +346,6 @@ export class ApplicationTable extends Component {
           expandedRowRender={this.wellSitesContractedWorkTable}
           expandedRowKeys={this.state.expandedRowKeys}
           onExpand={this.onExpand}
-          className="table-headers-center"
         />
         <br />
         <div className="center">
