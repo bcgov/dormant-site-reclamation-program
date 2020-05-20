@@ -18,27 +18,25 @@ const defaultProps = {
 };
 
 const ViewOnlyApplicationForm = (props) => (
-  <Row>
-    <Col className="steps-content">
-      <ApplicationSectionOne
+  <React.Fragment>
+    <ApplicationSectionOne
+      isViewingSubmission={props.isViewingSubmission}
+      isEditable={false}
+      initialValues={props.initialValues}
+    />
+    <ApplicationSectionTwo
+      isViewingSubmission={props.isViewingSubmission}
+      isEditable={false}
+      initialValues={props.initialValues}
+    />
+    {!props.noRenderStep3 && (
+      <ApplicationSectionThree
         isViewingSubmission={props.isViewingSubmission}
         isEditable={false}
         initialValues={props.initialValues}
       />
-      <ApplicationSectionTwo
-        isViewingSubmission={props.isViewingSubmission}
-        isEditable={false}
-        initialValues={props.initialValues}
-      />
-      {!props.noRenderStep3 && (
-        <ApplicationSectionThree
-          isViewingSubmission={props.isViewingSubmission}
-          isEditable={false}
-          initialValues={props.initialValues}
-        />
-      )}
-    </Col>
-  </Row>
+    )}
+  </React.Fragment>
 );
 
 ViewOnlyApplicationForm.propTypes = propTypes;

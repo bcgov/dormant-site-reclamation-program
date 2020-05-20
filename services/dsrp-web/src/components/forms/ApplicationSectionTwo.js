@@ -483,7 +483,7 @@ class ApplicationSectionTwo extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="contract_details">
-          <Title level={2} className="application-section">
+          <Title level={3} className="application-section">
             Contract Information
           </Title>
           <Row gutter={48}>
@@ -508,7 +508,7 @@ class ApplicationSectionTwo extends Component {
           </Row>
         </FormSection>
 
-        <Title level={2} className="application-section">
+        <Title level={3} className="application-section">
           Well Sites
         </Title>
         <Row gutter={[48, 48]}>
@@ -518,7 +518,7 @@ class ApplicationSectionTwo extends Component {
         </Row>
 
         <br />
-        <Title level={2} className="application-section">
+        <Title level={3} className="application-section">
           Estimated Cost Summary
         </Title>
         {(wellTotalsValues.length > 0 && (

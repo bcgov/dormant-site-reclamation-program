@@ -58,12 +58,14 @@ export class HeaderDropdown extends Component {
           </>
         )}
         <AuthorizationWrapper>
-          <Divider className="bg-color-table-seperator" style={{ margin: 0 }} />
-          <Menu.Item key="review-applications" className="custom-menu-item">
-            <Button className="header-dropdown-item-button">
-              <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
-            </Button>
-          </Menu.Item>
+          <React.Fragment>
+            <Divider className="bg-color-table-seperator" style={{ margin: 0 }} />
+            <Menu.Item key="review-applications" className="custom-menu-item">
+              <Button className="header-dropdown-item-button">
+                <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
+              </Button>
+            </Menu.Item>
+          </React.Fragment>
         </AuthorizationWrapper>
         {this.props.isAuthenticated && (
           <>
@@ -77,7 +79,7 @@ export class HeaderDropdown extends Component {
     const dropdownMenuDesktop = (
       <Menu className="header-dropdown-menu">
         <AuthorizationWrapper>
-          <Menu.Item key="review-applications" className="custom-menu-item">
+          <Menu.Item key="review-applications" className="custom-menu-item" onItemHover={() => {}}>
             <Button className="header-dropdown-item-button">
               <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
             </Button>
