@@ -93,7 +93,7 @@ services:
     ports:
       - 1800:1800
     env_file: ./services/tusd/.env
-    command: ["--hooks-dir", "/srv/tusd-hooks", "-s3-bucket=nrs.objectstore.gov.bc.ca/awlvru"]
+    command: ["--hooks-dir", "/srv/tusd-hooks", "-s3-endpoint=nrs.objectstore.gov.bc.ca/awlvru"]
 
   ####################### DOCUMENT_GENERATION Definition #######################
   docgen-api:

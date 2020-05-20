@@ -1,7 +1,7 @@
 // environment config variables for test/dev/prod
 export const DEFAULT_ENVIRONMENT = {
   apiUrl: "http://localhost:5000",
-  docManUrl: "http://localhost:5001",
+  docManUrl: "http://localhost:1800",
   environment: "development",
   firstNationsLayerUrl: "https://delivery.apps.gov.bc.ca/ext/sgw/geo.allgov",
   keycloak_resource: "dormant-application-local",
