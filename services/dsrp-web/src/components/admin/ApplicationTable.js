@@ -11,12 +11,20 @@ const propTypes = {
   applications: PropTypes.any.isRequired,
 };
 
-const renderDropdownMenu = (option, onClick, record) => (
+const renderDropdownMenu = (option, onClick, record, currentStatus) => (
   <Menu onClick={(item) => onClick(item, record)}>
-    {option.map(({ label, value }) => (
-      <Menu.Item key={value}>{label}</Menu.Item>
-    ))}
+    {option
+      .filter(({ value }) => value !== currentStatus)
+      .map(({ label, value }) => (
+        <Menu.Item key={value}>{label}</Menu.Item>
+      ))}
   </Menu>
+);
+
+export const toolTip = (title) => (
+  <Tooltip title={title} placement="right" mouseEnterDelay={0.3}>
+    <Icon type="info-circle" />
+  </Tooltip>
 );
 
 export class ApplicationTable extends Component {
@@ -27,7 +35,11 @@ export class ApplicationTable extends Component {
       title: "Application ID",
       key: "id",
       dataIndex: "id",
-      render: (text) => <div title="id">{text || Strings.DASH}</div>,
+      render: (text) => (
+        <div style={{ textAlign: "right" }} title="id">
+          {text || Strings.DASH}
+        </div>
+      ),
     },
     {
       title: "Company",
@@ -55,25 +67,51 @@ export class ApplicationTable extends Component {
       title: "No. of Well Sites",
       key: "wells",
       dataIndex: "wells",
-      render: (text) => <div title="No. of Well Sites">{text || Strings.DASH}</div>,
+      render: (text) => (
+        <div style={{ textAlign: "right" }} title="No. of Well Sites">
+          {text || Strings.DASH}
+        </div>
+      ),
     },
     {
       title: "No. of Work Types",
       key: "work_types",
       dataIndex: "work_types",
-      render: (text) => <div title="No. of Work Types">{text || Strings.DASH}</div>,
+      render: (text) => (
+        <div style={{ textAlign: "right" }} title="No. of Work Types">
+          {text || Strings.DASH}
+        </div>
+      ),
     },
     {
       title: "Total Est. Cost",
       key: "est_cost",
       dataIndex: "est_cost",
-      render: (text) => <div title="Total Est. Cost">{formatMoney(text) || Strings.DASH}</div>,
+      render: (text) => (
+        <div style={{ textAlign: "right" }} title="Total Est. Cost">
+          {formatMoney(text) || Strings.DASH}
+        </div>
+      ),
     },
     {
       title: "Est. Shared Cost",
+      title: (
+        <>
+          Total Est. Shared Cost
+          {toolTip(
+            `Estimated Shared Cost:\nThis value is calculated as 50% of estimated cost of each work type or a maximum of ${formatMoney(
+              100000
+            )}`
+          )}
+        </>
+      ),
       key: "est_shared_cost",
       dataIndex: "est_shared_cost",
-      render: (text) => <div title="Est. Shared Cost">{formatMoney(text) || Strings.DASH}</div>,
+      render: (text) => (
+        <div style={{ textAlign: "right" }} title="Est. Shared Cost">
+          {formatMoney(text) || Strings.DASH}
+        </div>
+      ),
     },
     {
       title: "Status",
@@ -86,12 +124,13 @@ export class ApplicationTable extends Component {
               overlay={renderDropdownMenu(
                 this.props.applicationStatusDropdownOptions,
                 this.props.handleApplicationStatusChange,
-                record
+                record,
+                text
               )}
             >
               <a>
                 {this.props.applicationStatusOptionsHash[text] || Strings.ERROR}&nbsp;
-                <Icon type="down" className="icon-lg" />
+                <Icon type="down" />
               </a>
             </Dropdown>
           </span>
@@ -115,7 +154,11 @@ export class ApplicationTable extends Component {
       title: "Well Auth No.",
       key: "well_authorization_number",
       dataIndex: "well_authorization_number",
-      render: (text) => <div title="Well Auth No.">{text || Strings.DASH}</div>,
+      render: (text) => (
+        <div style={{ textAlign: "right" }} title="Well Auth No.">
+          {text || Strings.DASH}
+        </div>
+      ),
     },
     {
       title: "Work Type",
@@ -127,7 +170,11 @@ export class ApplicationTable extends Component {
       title: "Priority Criteria",
       key: "priority_criteria",
       dataIndex: "priority_criteria",
-      render: (text) => <div title="Well Auth No.">{text || Strings.DASH}</div>,
+      render: (text) => (
+        <div style={{ textAlign: "right" }} title="Well Auth No.">
+          {text || Strings.DASH}
+        </div>
+      ),
     },
     {
       title: "Location",
@@ -145,19 +192,31 @@ export class ApplicationTable extends Component {
       title: "Est. Cost",
       key: "est_cost",
       dataIndex: "est_cost",
-      render: (text) => <div title="Est. Cost">{formatMoney(text) || Strings.DASH}</div>,
+      render: (text) => (
+        <div style={{ textAlign: "right" }} title="Est. Cost">
+          {formatMoney(text) || Strings.DASH}
+        </div>
+      ),
     },
     {
       title: "Est. Shared Cost",
       key: "est_shared_cost",
       dataIndex: "est_shared_cost",
-      render: (text) => <div title="Est. Shared Cost">{formatMoney(text) || Strings.DASH}</div>,
+      render: (text) => (
+        <div style={{ textAlign: "right" }} title="Est. Shared Cost">
+          {formatMoney(text) || Strings.DASH}
+        </div>
+      ),
     },
     {
       title: "LMR Value",
       key: "LMR",
       dataIndex: "LMR",
-      render: (text) => <div title="LMR Value">{text || Strings.DASH}</div>,
+      render: (text) => (
+        <div style={{ textAlign: "right" }} title="LMR Value">
+          {text || Strings.DASH}
+        </div>
+      ),
     },
     {
       title: "OGC Status",
@@ -176,12 +235,13 @@ export class ApplicationTable extends Component {
               overlay={renderDropdownMenu(
                 this.props.contractedWorkStatusDropdownOptions,
                 this.props.handleContractedWorkStatusChange,
-                record
+                record,
+                text
               )}
             >
               <a>
                 {this.props.contractedWorkStatusOptionsHash[text] || Strings.ERROR}&nbsp;
-                <Icon type="down" className="icon-lg" />
+                <Icon type="down" />
               </a>
             </Dropdown>
           </span>
@@ -288,12 +348,13 @@ export class ApplicationTable extends Component {
           onExpand={this.onExpand}
           className="table-headers-center"
         />
+        <br />
         <div className="center">
           <Pagination
             // hideOnSinglePage
             defaultCurrent={this.props.pageData.current_page}
             total={this.props.pageData.total}
-            // onChange={(page, per_page) => this.props.fetchApplications(page, per_page)}
+            onChange={(page, per_page) => this.props.fetchApplications(page, per_page)}
           />
         </div>
       </>
