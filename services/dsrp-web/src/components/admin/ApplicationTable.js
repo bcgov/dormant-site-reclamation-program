@@ -351,7 +351,7 @@ export class ApplicationTable extends Component {
         <br />
         <div className="center">
           <Pagination
-            hideOnSinglePage
+            // hideOnSinglePage
             defaultCurrent={this.props.pageData.current_page}
             total={this.props.pageData.total}
             onChange={(page, per_page) => this.props.fetchApplications(page, per_page)}
