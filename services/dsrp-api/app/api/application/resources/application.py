@@ -7,7 +7,7 @@ from marshmallow.exceptions import MarshmallowError
 
 from app.extensions import api
 from app.api.services.email_service import EmailService
-from app.api.utils.access_decorators import requires_role_view_all
+from app.api.utils.access_decorators import requires_role_view_all, requires_role_admin
 from app.api.utils.resources_mixins import UserMixin
 from app.api.application.response_models import APPLICATION, APPLICATION_LIST
 from app.api.application.models.application import Application
@@ -21,7 +21,6 @@ class ApplicationListResource(Resource, UserMixin):
             'page': f'The page number of paginated records to return. Default: {PAGE_DEFAULT}',
             'per_page': f'The number of records to return per page. Default: {PER_PAGE_DEFAULT}',
         })
-    #@requires_role_view_all
     @api.marshal_with(APPLICATION_LIST, code=200)
     def get(self):
 
@@ -69,7 +68,6 @@ class ApplicationListResource(Resource, UserMixin):
         return apply_pagination(base_query, page_number, page_size)
 
     @api.doc(description='Create an application')
-    #@requires_role_view_all
     @api.expect(APPLICATION)
     @api.marshal_with(APPLICATION, code=201)
     def post(self):
@@ -87,7 +85,6 @@ class ApplicationListResource(Resource, UserMixin):
 
 class ApplicationResource(Resource, UserMixin):
     @api.doc(description='Get an application')
-    ##@requires_role_view_all
     @api.marshal_with(APPLICATION, code=200)
     def get(self, application_guid):
 
@@ -99,7 +96,7 @@ class ApplicationResource(Resource, UserMixin):
         return application
 
     @api.doc(description='Update an application')
-    #@requires_role_view_all
+    @requires_role_admin
     @api.expect(Application)
     @api.marshal_with(APPLICATION, code=200)
     def put(self, application_guid):
@@ -109,6 +106,26 @@ class ApplicationResource(Resource, UserMixin):
         except MarshmallowError as e:
             raise BadRequest(e)
 
+        application.save()
+
+        return application
+
+
+class ApplicationReviewResource(Resource, UserMixin):
+    @api.doc(description='Update the review data of an application')
+    @requires_role_admin
+    @api.marshal_with(APPLICATION, code=200)
+    def put(self, application_guid):
+        application = Application.find_by_guid(application_guid)
+        if application is None:
+            raise NotFound('No application was found with the guid provided.')
+
+        try:
+            review_json = request.json['review_json']
+        except Exception as e:
+            raise BadRequest(e)
+
+        application.review_json = review_json
         application.save()
 
         return application
