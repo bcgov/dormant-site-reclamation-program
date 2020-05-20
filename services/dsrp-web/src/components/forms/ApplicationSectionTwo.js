@@ -10,7 +10,12 @@ import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 import { PROGRAM_START_DATE, PROGRAM_END_DATE } from "@/constants/strings";
-import { currencyMask, formatMoney, scrollToFirstError } from "@/utils/helpers";
+import {
+  currencyMask,
+  formatMoney,
+  scrollToFirstError,
+  wellAuthorizationNumberMask,
+} from "@/utils/helpers";
 import CONTRACT_WORK_SECTIONS from "@/constants/contract_work_sections";
 import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
@@ -404,6 +409,7 @@ class ApplicationSectionTwo extends Component {
                           )}
                         </>
                       }
+                      {...wellAuthorizationNumberMask}
                     />
                   </Col>
                 </Row>
