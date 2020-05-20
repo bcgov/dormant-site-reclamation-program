@@ -20,5 +20,4 @@
     "source.fixAll.eslint": true,
     "eslint.autoFixOnSave": true
   },
-  "cSpell.words": ["idir"]
 }
