@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Typography } from "antd";
+import { Row, Col, Typography, Result, Icon } from "antd";
 import PropTypes from "prop-types";
 import { formatDateTime } from "@/utils/helpers";
 const { Paragraph, Title } = Typography;
@@ -14,11 +14,15 @@ const propTypes = {
 };
 
 export const ApplicationStatusCard = (props) => (
-  <Row>
+  <Row type="flex" justify="center" align="top" className="landing-header">
     <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-      <Paragraph>Identifier: {props.application.guid}</Paragraph>
-      <Paragraph>Status: {props.application.application_status_code}</Paragraph>
-      <Paragraph>Submission Date: {formatDateTime(props.application.submission_date)}</Paragraph>
+      <Result
+        icon={<Icon type="info-circle" theme="twoTone" />}
+        title={`Your application is ${props.application.application_status_code}`}
+      />
+      <Typography>
+        <Paragraph>Submission Date: {formatDateTime(props.application.submission_date)}</Paragraph>
+      </Typography>
     </Col>
   </Row>
 );
