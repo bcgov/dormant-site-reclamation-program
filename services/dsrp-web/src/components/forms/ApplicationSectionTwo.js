@@ -5,9 +5,9 @@ import PropTypes from "prop-types";
 import { compose } from "redux";
 import moment from "moment";
 import { Row, Col, Typography, Form, Button, Collapse, Icon, Popconfirm } from "antd";
-import { sum, get, set, isEmpty } from "lodash";
+import { sum, get, set, isEqual } from "lodash";
 import { renderConfig } from "@/components/common/config";
-import { required, number } from "@/utils/validate";
+import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 import { PROGRAM_START_DATE, PROGRAM_END_DATE } from "@/constants/strings";
 import { currencyMask, formatMoney, scrollToFirstError } from "@/utils/helpers";
@@ -237,11 +237,21 @@ const asyncValidate = (values, dispatch, props, field) => {
   }
 };
 
-const validateWellSites = (value) => {
-  if (isEmpty(value)) {
-    return "Your application must contain at least one well site.";
+// NOTE: We want to async validate ALWAYS for the three possible triggers. By default the submit trigger
+// only async validates if !pristine || !initialized, which we don't want, since we save and load form values.
+// https://redux-form.com/8.3.0/docs/api/reduxform.md/#-code-shouldasyncvalidate-params-boolean-code-optional-
+const shouldAsyncValidate = ({ trigger, syncValidationPasses }) => {
+  if (!syncValidationPasses) {
+    return false;
   }
-  return undefined;
+  switch (trigger) {
+    case "blur":
+    case "change":
+    case "submit":
+      return true;
+    default:
+      return false;
+  }
 };
 
 const defaultState = {
@@ -257,12 +267,12 @@ class ApplicationSectionTwo extends Component {
   };
 
   componentWillReceiveProps = (nextProps) => {
-    if (nextProps.formValues !== this.props.formValues) {
+    if (!isEqual(nextProps.formValues, this.props.formValues)) {
       this.calculateContractWorkTotals(nextProps.formValues);
     }
   };
 
-  componentDidMount = () => {
+  componentWillMount = () => {
     this.calculateContractWorkTotals(this.props.formValues);
   };
 
@@ -318,11 +328,8 @@ class ApplicationSectionTwo extends Component {
       : null;
   }
 
-  renderWells = ({ fields, meta }) => (
+  renderWells = ({ fields }) => (
     <>
-      {this.props.anyTouched &&
-        ((meta.error && <span className="color-error">{meta.error}</span>) ||
-          (meta.warning && <span className="color-warning">{meta.warning}</span>))}
       <Collapse
         bordered={false}
         accordion
@@ -334,13 +341,13 @@ class ApplicationSectionTwo extends Component {
           />
         )}
       >
-        {fields.map((member, index) => {
+        {(fields.length === 0 ? [{}] : fields).map((member, index) => {
           const wellTotals = this.state.contractedWorkTotals.wellTotals[index];
           const wellSectionTotals = wellTotals ? wellTotals.sections : {};
           const wellTotal = wellTotals ? wellTotals.wellTotal : 0;
 
           const actualName = this.getWellName(index);
-          let wellName = `Well Site #${index + 1}`;
+          let wellName = `Well Site ${index + 1}`;
           wellName += actualName ? ` (${actualName})` : "";
 
           return (
@@ -377,7 +384,7 @@ class ApplicationSectionTwo extends Component {
                       label="Well Authorization Number"
                       placeholder="Well Authorization Number"
                       component={WellField}
-                      validate={[required, number]}
+                      validate={[required]}
                       disabled={!this.props.isEditable}
                       label={
                         <>
@@ -476,7 +483,7 @@ class ApplicationSectionTwo extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="contract_details">
-          <Title level={2} className="application-section">
+          <Title level={3} className="application-section">
             Contract Information
           </Title>
           <Row gutter={48}>
@@ -501,21 +508,17 @@ class ApplicationSectionTwo extends Component {
           </Row>
         </FormSection>
 
-        <Title level={2} className="application-section">
+        <Title level={3} className="application-section">
           Well Sites
         </Title>
         <Row gutter={[48, 48]}>
           <Col>
-            <FieldArray
-              name="well_sites"
-              validate={validateWellSites}
-              component={this.renderWells}
-            />
+            <FieldArray name="well_sites" component={this.renderWells} />
           </Col>
         </Row>
 
         <br />
-        <Title level={2} className="application-section">
+        <Title level={3} className="application-section">
           Estimated Cost Summary
         </Title>
         {(wellTotalsValues.length > 0 && (
@@ -523,7 +526,7 @@ class ApplicationSectionTwo extends Component {
             <Col style={{ textAlign: "right" }}>
               {wellTotalsValues.map((wellTotal, index) => {
                 const actualName = this.getWellName(index);
-                let wellName = `Well Site #${index + 1}`;
+                let wellName = `Well Site ${index + 1}`;
                 wellName += actualName ? ` (${actualName})` : "";
                 return (
                   <>
@@ -609,6 +612,7 @@ export default compose(
     keepDirtyOnReinitialize: true,
     enableReinitialize: true,
     updateUnregisteredFields: true,
+    shouldAsyncValidate,
     asyncValidate,
     asyncChangeFields: [
       "contract_details.operator_id",

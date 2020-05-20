@@ -1,6 +1,6 @@
 import * as ActionTypes from "@/constants/actionTypes";
 import * as route from "@/constants/routes";
-import { AUTHENTICATION } from "../constants/reducerTypes";
+import { AUTHENTICATION, GET_USER_INFO } from "../constants/reducerTypes";
 
 /**
  * @file authenticationReducer.js
@@ -52,5 +52,7 @@ export const getRedirect = (state) => state[AUTHENTICATION].redirect;
 export const getUserRoles = (state) => state[AUTHENTICATION].userRoles;
 export const getIsAdmin = (state) => state[AUTHENTICATION].isAdmin;
 export const getIsViewOnly = (state) => state[AUTHENTICATION].isViewOnly;
+
+export const userLoading = (state) => state[GET_USER_INFO].isFetching;
 
 export default authenticationReducerObject;

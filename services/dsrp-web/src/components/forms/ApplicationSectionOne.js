@@ -44,7 +44,7 @@ class ApplicationSectionOne extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="company_details">
-          <Title level={2} className="application-section">
+          <Title level={3} className="application-section">
             Company Details
           </Title>
           <Row gutter={48}>
@@ -97,7 +97,6 @@ class ApplicationSectionOne extends Component {
                 label="Do you wish to self‑identify as including Indigenous participation in completing the work outlined within this application?"
                 disabled={!this.props.isEditable}
                 component={renderConfig.CHECKBOX}
-                disabled={!this.props.isEditable}
               />
               {this.props.indigenousParticipationCheckbox && (
                 <Field
@@ -122,7 +121,7 @@ class ApplicationSectionOne extends Component {
                 id="address_line_2"
                 name="address_line_2"
                 label="Address Line 2 (Optional)"
-                placeholder="Address Line 2 (Optional)"
+                placeholder={this.props.isEditable ? "Address Line 2 (Optional)" : ""}
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
                 validate={[maxLength(1024)]}
@@ -168,7 +167,7 @@ class ApplicationSectionOne extends Component {
         </FormSection>
 
         <FormSection name="company_contact">
-          <Title level={2} className="application-section">
+          <Title level={3} className="application-section">
             Company Contact
           </Title>
           <Row gutter={48}>
@@ -215,7 +214,7 @@ class ApplicationSectionOne extends Component {
                     id="phone_ext_1"
                     name="phone_ext_1"
                     label="Ext. 1 (Optional)"
-                    placeholder="Ext. 1  (Optional)"
+                    placeholder={this.props.isEditable ? "Ext. 1  (Optional)" : ""}
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
                     validate={[maxLength(6)]}
@@ -230,7 +229,7 @@ class ApplicationSectionOne extends Component {
                     id="phone_number_2"
                     name="phone_number_2"
                     label="Phone Number 2 (Optional)"
-                    placeholder="Phone Number 2 (Optional)"
+                    placeholder={this.props.isEditable ? "Phone Number 2 (Optional)" : ""}
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
                     {...phoneMask}
@@ -241,7 +240,7 @@ class ApplicationSectionOne extends Component {
                     id="phone_ext_2"
                     name="phone_ext_2"
                     label="Ext. 2 (Optional)"
-                    placeholder="Ext. 2 (Optional)"
+                    placeholder={this.props.isEditable ? "Ext. 2 (Optional)" : ""}
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
                     validate={[maxLength(6)]}
@@ -267,7 +266,7 @@ class ApplicationSectionOne extends Component {
                 id="fax"
                 name="fax"
                 label="Fax (Optional)"
-                placeholder="Fax (Optional)"
+                placeholder={this.props.isEditable ? "Fax (Optional)" : ""}
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
                 {...phoneMask}
@@ -279,7 +278,7 @@ class ApplicationSectionOne extends Component {
         {this.props.isEditable && (
           <>
             <FormSection name="review_program_conditions">
-              <Title level={2} className="application-section">
+              <Title level={3} className="application-section">
                 Review Program Requirements
               </Title>
               <Row gutter={48}>

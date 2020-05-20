@@ -118,6 +118,7 @@ h1.ant-typography,
 .ant-table {
   border: none !important;
   border-radius: 0 !important;
+  font-size: 13px;
 
   table {
     overflow-x: auto;
@@ -266,10 +267,11 @@ tr.ant-table-expanded-row {
 .ant-input-number-disabled,
 .ant-radio-disabled .ant-radio-inner,
 .ant-checkbox-disabled .ant-checkbox-inner {
-  color: #504f52;
-  border-color: $disabled-bg !important;
+  color: $font-colour;
+  background-color: $background;
+  border-color: $gov-grey-dark !important;
   &:hover {
-    border-color: $disabled-bg !important;
+    border-color: $gov-grey-dark !important;
   }
 }
 

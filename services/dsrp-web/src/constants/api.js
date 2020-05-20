@@ -1,7 +1,7 @@
 import queryString from "query-string";
 
 // Static Content
-export const CORE_STATIC_CONTENT = "/exports/core-static-content";
+export const STATIC_CONTENT = "/exports/static-content";
 
 // Document Manager
 export const DOCUMENT_MANAGER_FILE_GET_URL = (token = {}) =>
@@ -21,6 +21,7 @@ export const ORGBOOK_CREDENTIAL = (credentialId) => `/orgbook/credential/${crede
 export const APPLICATION = (params) =>
   params ? `/application?${queryString.stringify(params)}` : "/application";
 export const APPLICATION_BY_ID = (guid) => `/application/${guid}`;
+export const APPLICATION_REVIEW = (guid) => `${APPLICATION_BY_ID(guid)}/review`;
 
 // OGC
 export const PERMIT_HOLDER = () => "/permit_holder";

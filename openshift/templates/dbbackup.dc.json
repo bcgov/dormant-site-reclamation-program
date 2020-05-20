@@ -218,7 +218,7 @@
                     "value": "1"
                   },
                   {
-                    "name": "POSTGRESQL_USER",
+                    "name": "DATABASE_USER",
                     "valueFrom": {
                       "secretKeyRef": {
                         "name": "${DATABASE_SERVICE_NAME}",
@@ -227,25 +227,7 @@
                     }
                   },
                   {
-                    "name": "POSTGRESQL_PASSWORD",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DATABASE_SERVICE_NAME}",
-                        "key": "database-admin-password"
-                      }
-                    }
-                  },
-                  {
-                    "name": "${DATABASE_SERVICE_NAME}_USER",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DATABASE_SERVICE_NAME}",
-                        "key": "database-admin-user"
-                      }
-                    }
-                  },
-                  {
-                    "name": "${DATABASE_SERVICE_NAME}_PASSWORD",
+                    "name": "DATABASE_PASSWORD",
                     "valueFrom": {
                       "secretKeyRef": {
                         "name": "${DATABASE_SERVICE_NAME}",
