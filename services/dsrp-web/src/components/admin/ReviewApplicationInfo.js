@@ -7,7 +7,6 @@ import { fetchApplications, updateApplication } from "@/actionCreators/applicati
 import {
   getApplicationStatusOptionsHash,
   getDropdownApplicationStatusOptions,
-  getApplicationStatusOptions,
 } from "@/selectors/staticContentSelectors";
 import ApplicationTable from "@/components/admin/ApplicationTable";
 
@@ -21,11 +20,9 @@ export class ReviewApplicationInfo extends Component {
   }
 
   handleApplicationStatusChange = (e, application) => {
-    console.log(application);
-    console.log(e.key);
     const payload = {
-      application_status_code: "UNDER_REVIEW",
       ...application,
+      application_status_code: e.key,
     };
     this.props.updateApplication(application.guid, payload).then(() => {
       this.props.fetchApplications();
@@ -33,7 +30,6 @@ export class ReviewApplicationInfo extends Component {
   };
 
   render() {
-    console.log(this.props.applicationStatusOptions);
     return (
       <>
         <ApplicationTable
