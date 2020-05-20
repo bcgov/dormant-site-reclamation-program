@@ -49,6 +49,11 @@ export const getApplicationsWellSitesContractedWork = createSelector(
             (value) => !isNaN(value)
           );
 
+          const maxSharedCost = 100000;
+          const calculatedSharedCost = (sum(estimatedCostArray) / 2).toFixed(2);
+          const sharedCost =
+            calculatedSharedCost > maxSharedCost ? maxSharedCost : calculatedSharedCost;
+
           const contractedWorkStatusCode = get(
             reviewJsonWellSite,
             `contracted_work.${type}.contracted_work_status_code`,
@@ -64,7 +69,7 @@ export const getApplicationsWellSitesContractedWork = createSelector(
             priority_criteria: priorityCriteria,
             completion_date: contractedWork[type].planned_end_date || null,
             est_cost: sum(estimatedCostArray),
-            est_shared_cost: null,
+            est_shared_cost: sharedCost,
             LMR: null,
             status: null,
             OGC_status: null,
