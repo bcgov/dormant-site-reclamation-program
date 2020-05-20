@@ -254,13 +254,6 @@ const shouldAsyncValidate = ({ trigger, syncValidationPasses }) => {
   }
 };
 
-const validateWellSites = (value) => {
-  if (isEmpty(value)) {
-    return "Your application must contain at least one well site.";
-  }
-  return undefined;
-};
-
 const defaultState = {
   contractedWorkTotals: { grandTotal: 0, wellTotals: {} },
 };
@@ -523,11 +516,7 @@ class ApplicationSectionTwo extends Component {
         </Title>
         <Row gutter={[48, 48]}>
           <Col>
-            <FieldArray
-              name="well_sites"
-              validate={validateWellSites}
-              component={this.renderWells}
-            />
+            <FieldArray name="well_sites" component={this.renderWells} />
           </Col>
         </Row>
 
