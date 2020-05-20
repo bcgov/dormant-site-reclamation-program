@@ -21,7 +21,10 @@ export const createApplication = (application) => (dispatch) => {
       dispatch(success(reducerTypes.CREATE_APPLICATION));
       return response;
     })
-    .catch(() => dispatch(error(reducerTypes.CREATE_APPLICATION)));
+    .catch((error) => {
+      dispatch(error(reducerTypes.CREATE_APPLICATION));
+      throw new Error(error);
+    });
 };
 
 export const fetchApplications = (page, per_page) => (dispatch) => {
@@ -34,7 +37,10 @@ export const fetchApplications = (page, per_page) => (dispatch) => {
       dispatch(applicationActions.storeApplications(response.data));
       return response;
     })
-    .catch(() => dispatch(error(reducerTypes.GET_APPLICATIONS)))
+    .catch((error) => {
+      dispatch(error(reducerTypes.GET_APPLICATIONS));
+      throw new Error(error);
+    })
     .finally(() => dispatch(hideLoading()));
 };
 
@@ -47,6 +53,39 @@ export const fetchApplicationById = (guid) => (dispatch) => {
       dispatch(applicationActions.storeApplication(response.data));
       return response;
     })
-    .catch(() => dispatch(error(reducerTypes.GET_APPLICATION)))
+    .catch((error) => {
+      dispatch(error(reducerTypes.GET_APPLICATION));
+      throw new Error(error);
+    })
+    .finally(() => dispatch(hideLoading()));
+};
+
+export const updateApplication = (guid, payload) => (dispatch) => {
+  dispatch(request(reducerTypes.UPDATE_APPLICATION));
+  return CustomAxios()
+    .put(ENVIRONMENT.apiUrl + API.APPLICATION_BY_ID(guid), payload, createRequestHeader())
+    .then((response) => {
+      dispatch(success(reducerTypes.UPDATE_APPLICATION));
+      return response;
+    })
+    .catch((error) => {
+      dispatch(error(reducerTypes.UPDATE_APPLICATION));
+      throw new Error(error);
+    })
+    .finally(() => dispatch(hideLoading()));
+};
+
+export const updateApplicationReview = (guid, payload) => (dispatch) => {
+  dispatch(request(reducerTypes.UPDATE_APPLICATION_REVIEW));
+  return CustomAxios()
+    .put(ENVIRONMENT.apiUrl + API.APPLICATION_REVIEW(guid), payload, createRequestHeader())
+    .then((response) => {
+      dispatch(success(reducerTypes.UPDATE_APPLICATION_REVIEW));
+      return response;
+    })
+    .catch((error) => {
+      dispatch(error(reducerTypes.UPDATE_APPLICATION_REVIEW));
+      throw new Error(error);
+    })
     .finally(() => dispatch(hideLoading()));
 };

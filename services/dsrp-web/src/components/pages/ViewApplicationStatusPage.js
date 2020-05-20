@@ -23,9 +23,33 @@ const propTypes = {
     submission_date: PropTypes.string,
     json: PropTypes.any,
   }).isRequired,
+  match: PropTypes.shape({
+    params: {
+      id: PropTypes.string,
+    },
+  }).isRequired,
+};
+
+const isGuid = (input) => {
+  if (input[0] === "{") {
+    input = input.substring(1, input.length - 1);
+  }
+  var regexGuid = /^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/gi;
+  return regexGuid.test(input);
 };
 
 export class ViewApplicationStatusPage extends Component {
+  componentDidMount = () => {
+    console.log(JSON.stringify(this.props));
+    if (
+      this.props.match &&
+      this.props.match.params &&
+      this.props.match.params.id &&
+      isGuid(this.props.match.params.id)
+    )
+      this.props.fetchApplicationById(this.props.match.params.id);
+  };
+
   onFormSubmit = (values) => {
     this.props.fetchApplicationById(values.guid);
   };
@@ -36,10 +60,7 @@ export class ViewApplicationStatusPage extends Component {
         <Row type="flex" justify="center" align="top" className="landing-header">
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
             <Title>View Application Status</Title>
-            <Paragraph>
-              Morbi dignissim eget elit ac ornare. Aliquam rhoncus condimentum condimentum. Aenean
-              sed diam non elit rutrum sollicitudin. Sed non leo odio.
-            </Paragraph>
+            <Paragraph></Paragraph>
           </Col>
         </Row>
         <Row type="flex" justify="center" align="top" className="landing-section">
@@ -50,6 +71,7 @@ export class ViewApplicationStatusPage extends Component {
         {!isEmpty(this.props.loadedApplication) && (
           <Row type="flex" justify="center" align="top" className="landing-section">
             <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
+              Your application was recieved on: Your review status is:
               <ApplicationStatusCard application={this.props.loadedApplication} />
             </Col>
           </Row>

@@ -12,6 +12,7 @@ from flask_jwt_oidc.exceptions import AuthError
 from werkzeug.exceptions import Forbidden, BadRequest
 
 from app.api.application.namespace import api as application_api
+from app.api.exports.namespace import api as exports_api
 from app.api.permit_holder.namespace import api as permit_holder_api
 from app.api.well.namespace import api as well_api
 from app.api.liability.namespace import api as liability_api
@@ -44,7 +45,7 @@ def create_app(test_config=None):
     with app.app_context():
         from sqlalchemy.orm import configure_mappers
         configure_mappers()
-        
+
     return app
 
 
@@ -72,6 +73,7 @@ def register_routes(app):
     # Set URL rules for resources
     app.add_url_rule('/', endpoint='index')
 
+    api.add_namespace(exports_api)
     api.add_namespace(application_api)
     api.add_namespace(permit_holder_api)
     api.add_namespace(well_api)

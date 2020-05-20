@@ -13,6 +13,7 @@ TIMEOUT_12_HOURS = 43140
 TIMEOUT_1_YEAR = 31540000
 
 # Cache Keys
+STATIC_CONTENT_KEY = "dsrp:static_content"
 PERMIT_HOLDER_CACHE = "dsrp:ogc_data:permit_holders"
 DORMANT_WELLS_CACHE = "dsrp:ogc_data:dormant_wells"
 LIABILITY_PER_WELL_CACHE = "dsrp:ogc_data:liability_per_well"
