@@ -215,7 +215,7 @@ const asyncValidateWell = async (values, field) => {
     if (response.data.records.length > 1)
       asyncValidateError(
         field,
-        "Multiple results for this Authorization Number. Please contact us for further assistance."
+        "Multiple results for this Authorization Number. Please contact us for further assistance at DormantSiteReclamation@gov.bc.ca"
       );
   });
 };
@@ -537,7 +537,7 @@ class ApplicationSectionTwo extends Component {
                 wellName += actualName ? ` (${actualName})` : "";
                 return (
                   <>
-                    <Paragraph key={index} className="color-primary" strong>
+                    <Paragraph key={`${wellName}.${index}`} className="color-primary" strong>
                       {`${wellName} total:`}&nbsp;
                     </Paragraph>
                     {wellTotal.sections &&
@@ -546,7 +546,10 @@ class ApplicationSectionTwo extends Component {
                           wellTotal.sections[section.formSectionName] &&
                           wellTotal.sections[section.formSectionName] > 0
                       ).map((section) => (
-                        <Paragraph key={index} className="color-primary">
+                        <Paragraph
+                          key={`${section.sectionHeader}.${index}`}
+                          className="color-primary"
+                        >
                           {`${section.sectionHeader} total:`}&nbsp;
                         </Paragraph>
                       ))}
@@ -560,14 +563,16 @@ class ApplicationSectionTwo extends Component {
             <Col style={{ textAlign: "right" }}>
               {wellTotalsValues.map((wellTotal, index) => (
                 <>
-                  <Paragraph key={index}>{formatMoney(wellTotal.wellTotal || 0)}</Paragraph>
+                  <Paragraph key={`well-total.${index}`}>
+                    {formatMoney(wellTotal.wellTotal || 0)}
+                  </Paragraph>
                   {wellTotal.sections &&
                     CONTRACT_WORK_SECTIONS.filter(
                       (section) =>
                         wellTotal.sections[section.formSectionName] &&
                         wellTotal.sections[section.formSectionName] > 0
                     ).map((section) => (
-                      <Paragraph key={index}>
+                      <Paragraph key={`${section.formSectionName}.${index}`}>
                         {formatMoney(wellTotal.sections[section.formSectionName] || 0)}
                       </Paragraph>
                     ))}
