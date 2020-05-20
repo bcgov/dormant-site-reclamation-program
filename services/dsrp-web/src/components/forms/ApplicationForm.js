@@ -156,12 +156,17 @@ export class ApplicationForm extends Component {
       {
         title: "Review",
         content: (
-          <>
-            <Title level={2}>Review Application</Title>
-            <Paragraph>
-              Please review your application below and confirm that its information is correct.
-            </Paragraph>
-            <Row gutter={48} style={{ marginTop: "-40px" }}>
+          <React.Fragment>
+            <Row>
+              <Col>
+                <Title level={3}>Review Application</Title>
+                <Paragraph>
+                  Please review your application below and confirm that its information is correct.
+                </Paragraph>
+              </Col>
+            </Row>
+            <hr />
+            <Row>
               <Col>
                 <ViewOnlyApplicationForm isEditable={false} noRenderStep3 />
               </Col>
@@ -172,7 +177,7 @@ export class ApplicationForm extends Component {
               handleReset={this.handleReset}
               initialValues={this.state.initialValues}
             />
-          </>
+          </React.Fragment>
         ),
       },
     ];
@@ -180,7 +185,7 @@ export class ApplicationForm extends Component {
     return (
       <Row>
         <Col>
-          <div style={{ minWidth: "90vw" }}>
+          <div>
             <Steps current={this.state.currentStep}>
               {steps.map((item) => (
                 <Step key={item.title} title={item.title} />

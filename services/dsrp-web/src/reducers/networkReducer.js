@@ -1,5 +1,4 @@
 import { REQUEST, SUCCESS, ERROR } from "../constants/actionTypes";
-import { NETWORK } from "../constants/reducerTypes";
 
 /**
  * @file networkReducer.js
@@ -45,8 +44,4 @@ export const networkReducer = (state = initialState, action) => {
   }
 };
 
-const networkReducerObject = {
-  [NETWORK]: networkReducer,
-};
-
-export default networkReducerObject;
+export default networkReducer;

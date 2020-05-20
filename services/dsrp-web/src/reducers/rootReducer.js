@@ -1,12 +1,14 @@
 import { combineReducers } from "redux";
 import { reducer as formReducer } from "redux-form";
 import { loadingBarReducer } from "react-redux-loading-bar";
+import * as reducerTypes from "../constants/reducerTypes";
+import networkReducer from "./networkReducer";
+
 import {
   staticContentReducer,
   modalReducer,
   orgbookReducer,
   authenticationReducer,
-  networkReducer,
   OGCReducer,
   applicationReducer,
 } from "@/reducers";
@@ -29,6 +31,7 @@ export const reducerObject = {
   ...networkReducer,
   ...OGCReducer,
   ...applicationReducer,
+  [reducerTypes.GET_USER_INFO]: createReducer(networkReducer, reducerTypes.GET_USER_INFO),
 };
 
 export const rootReducer = combineReducers(reducerObject);
