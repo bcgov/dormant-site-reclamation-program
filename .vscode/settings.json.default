@@ -20,8 +20,4 @@
     "source.fixAll.eslint": true,
     "eslint.autoFixOnSave": true
   },
-  "cSpell.words": ["idir"],
-  "workbench.colorCustomizations": {
-    "activityBar.background": "#013220"
-  }
 }
