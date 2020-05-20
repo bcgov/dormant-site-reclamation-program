@@ -171,12 +171,56 @@ export class ApplicationForm extends Component {
           <React.Fragment>
             <Row>
               <Col>
-                <Title level={3}>Review Application</Title>
+                <Title level={4}>Before you submit</Title>
                 <Paragraph>
-                  Please review your application below and confirm that its information is correct.
+                  Review your application details below to make sure all information provided is
+                  accurate.
+                  <ul>
+                    <li>
+                      Applications can be approved in part or in their entirety Any work on well
+                      sites that does not qualify or contains errors will be rejected
+                    </li>
+                    <li>
+                      Any work on well sites that does not qualify or contains errors will be
+                      rejected
+                    </li>
+                    <li>You must re-apply for any rejected work in order to be considered again</li>
+                  </ul>
+                </Paragraph>
+                <Title level={4}>What happens next?</Title>
+                <Paragraph>Make sure the email address provided is correct!</Paragraph>
+                <Paragraph>
+                  After completing your application, you will be given a unique confirmation number
+                  you can use to check the status of your application at any time.
+                </Paragraph>
+                <Paragraph>
+                  If any of the work applied for is approved, you will need to upload the following
+                  files to your application when requested:
+                  <ul>
+                    <li>Contract with the Permit Holder identified in the application</li>
+                    <li>A criminal record check</li>
+                    <li>A certificate of insurance</li>
+                    <li>
+                      A signed copy of the agreement between your company and the Province of
+                      British Columbia
+                    </li>
+                    <li>Record of Good Standing for the Permit Holder named in your application</li>
+                  </ul>
+                </Paragraph>
+                <Paragraph>
+                  When this is completed, you will be approved to begin work and receive the initial
+                  10% payment.
+                </Paragraph>
+                <Paragraph>
+                  Once approved work begins, you will be required to submit regular reports and
+                  invoices documenting contributions of employees who are residents of British
+                  Columbia. This information will be used to process the payments that follow.
+                  Application Review
                 </Paragraph>
               </Col>
             </Row>
+            <br />
+            <Title level={3}>Review Application</Title>
             <hr />
             <Row>
               <Col>
