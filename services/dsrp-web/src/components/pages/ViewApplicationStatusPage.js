@@ -34,7 +34,7 @@ const isGuid = (input) => {
   if (input[0] === "{") {
     input = input.substring(1, input.length - 1);
   }
-  var regexGuid = /^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/gi;
+  const regexGuid = /^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/gi;
   return regexGuid.test(input);
 };
 
@@ -60,7 +60,7 @@ export class ViewApplicationStatusPage extends Component {
         <Row type="flex" justify="center" align="top" className="landing-header">
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
             <Title>View Application Status</Title>
-            <Paragraph></Paragraph>
+            <Paragraph />
           </Col>
         </Row>
         <Row type="flex" justify="center" align="top" className="landing-section">
