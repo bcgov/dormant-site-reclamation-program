@@ -73,7 +73,8 @@ const renderContractWorkPanel = (
   wellSectionTotal,
   isEditable,
   wellSiteFormValues,
-  props
+  props,
+  wellNumber
 ) => (
   <Panel
     key={contractWorkSection.sectionHeader}
@@ -107,6 +108,7 @@ const renderContractWorkPanel = (
               label="Planned Start Date"
               placeholder="Select Planned Start Date"
               component={renderConfig.DATE}
+              meta={get(props.formMeta, "")}
               disabled={!isEditable}
               disabledDate={(date) => {
                 const selectedDate = date ? moment(date) : null;
@@ -571,7 +573,8 @@ class ApplicationSectionTwo extends Component {
                             this.props.formValues && this.props.formValues.well_sites
                               ? this.props.formValues.well_sites[index]
                               : null,
-                            this.props
+                            this.props,
+                            index
                           )
                         )}
                       </Collapse>
