@@ -112,6 +112,13 @@ export const guidMask = createTextMask({
   // onCompletePattern: value => {},
 });
 
+export const wellAuthorizationNumberMask = createTextMask({
+  pattern: "99999",
+  guide: false,
+  stripMask: true,
+  allowEmpty: true,
+});
+
 export const dateSorter = (key) => (a, b) => {
   if (a[key] === b[key]) {
     return 0;
