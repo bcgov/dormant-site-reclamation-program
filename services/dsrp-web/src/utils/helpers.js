@@ -315,11 +315,12 @@ export const formatMoney = (value) => {
 
 // Scroll to error helper for redux forms
 export const scrollToFirstError = (errors) => {
+  console.log("scrollToFirstError errors", errors);
   notification.warning({
     message: "Application contains errors. Please correct any issues and try again.",
     duration: 10,
   });
-  console.log(JSON.stringify(errors));
+  // console.log(JSON.stringify(errors));
   const errorEls = [];
   const collectErrEls = function collectErrElsRec(fieldPrefix, target, errEls) {
     Object.keys(target).forEach((innerKey) => {

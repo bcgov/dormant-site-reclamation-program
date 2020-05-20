@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { reduxForm, FieldArray, getFormValues, Field, FormSection } from "redux-form";
+import { reduxForm, FieldArray, getFormValues, Field, FormSection, getFormMeta } from "redux-form";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { compose } from "redux";
@@ -27,6 +27,7 @@ const propTypes = {
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   formValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  formMeta: PropTypes.objectOf(PropTypes.any).isRequired,
   selectedWells: PropTypes.arrayOf(PropTypes.any),
   isViewingSubmission: PropTypes.bool,
   isEditable: PropTypes.bool,
@@ -71,7 +72,8 @@ const renderContractWorkPanel = (
   contractWorkSection,
   wellSectionTotal,
   isEditable,
-  wellSiteFormValues
+  wellSiteFormValues,
+  props
 ) => (
   <Panel
     key={contractWorkSection.sectionHeader}
@@ -246,7 +248,7 @@ const validateWellSites = (wellSites, formValues, props) => {
   }
 
   wellSites.map((wellSite, index) => {
-    // Check that the well authorization number.
+    // Check that the well authorization number is valid.
     const validateRequired = required(get(wellSite, "details.well_authorization_number", null));
     if (validateRequired) {
       set(errors, `well_sites[${index}].details.well_authorization_number`, validateRequired);
@@ -264,16 +266,64 @@ const validateWellSites = (wellSites, formValues, props) => {
       );
     }
 
-    // Ensure that at least contracted work type is valid.
-    const contractedWorkErrors = {};
-    const emptySectionsCount = 0;
+    // Check that at least one contracted work section is valid.
+    let emptySectionsCount = 0;
+    let validSectionsCount = 0;
     CONTRACT_WORK_SECTIONS.map((section) => {
-      const name = section.formSectionName;
-      const values = get(wellSite, `contracted_work.${name}`, null);
-      if (isEmpty(values)) {
+      const sectionValues = get(wellSite, `contracted_work.${section.formSectionName}`, null);
+      if (!isObjectLike(sectionValues) || isEmpty(sectionValues)) {
         emptySectionsCount++;
+        return;
+      }
+
+      const requiredMessage = "This is a required field";
+      const path = `well_sites[${index}].contracted_work.${section.formSectionName}`;
+      const costSum = sum(Object.values(sectionValues).filter((value) => !isNaN(value)));
+      const startDate = sectionValues.planned_start_date;
+      const endDate = sectionValues.planned_end_date;
+
+      // If this is a blank section.
+      if (!costSum && !startDate && !endDate) {
+        emptySectionsCount++;
+        return;
+      }
+
+      let sectionErrorCount = 0;
+
+      // Start date is required if end date is provided or the cost sum is valid.
+      if (!startDate && (endDate || costSum)) {
+        set(errors, `${path}.planned_start_date`, requiredMessage);
+        sectionErrorCount++;
+      }
+
+      // End date is required if start date is provided or the cost sum is valid.
+      if (!endDate && (startDate || costSum)) {
+        set(errors, `${path}.planned_end_date`, requiredMessage);
+        sectionErrorCount++;
+      }
+
+      // The sum of the estimated work can't be 0/invalid if either of the dates are provided.
+      if (!costSum && (startDate || endDate)) {
+        set(
+          errors,
+          `${path}.error`,
+          "The sum of the estimated cost of work can't be 0 if either of the date fields are provided."
+        );
+        sectionErrorCount++;
+      }
+
+      if (sectionErrorCount === 0) {
+        validSectionsCount++;
       }
     });
+
+    if (emptySectionsCount === CONTRACT_WORK_SECTIONS.length || validSectionsCount === 0) {
+      set(
+        errors,
+        `well_sites[${index}].contracted_work.error`,
+        "This well site must contain at least one valid and completed contracted work section."
+      );
+    }
   });
 
   console.log("validateWellSites errors", errors);
@@ -313,6 +363,7 @@ class ApplicationSectionTwo extends Component {
     if (!isEqual(nextProps.formValues, this.props.formValues)) {
       this.calculateContractWorkTotals(nextProps.formValues);
     }
+    console.log("FORM META", nextProps.formMeta);
   };
 
   componentWillMount = () => {
@@ -477,9 +528,9 @@ class ApplicationSectionTwo extends Component {
                           component={renderConfig.CHECKBOX}
                         />
                       ))}
-                      {wellSiteErrors &&
-                        wellSiteErrors.site_conditions &&
-                        this.props.anyTouched && (
+                      {this.props.anyTouched &&
+                        wellSiteErrors &&
+                        wellSiteErrors.site_conditions && (
                           <span className="color-error">{wellSiteErrors.site_conditions}</span>
                         )}
                     </Col>
@@ -494,6 +545,12 @@ class ApplicationSectionTwo extends Component {
                     Enter the estimated cost of every work component your company will perform for
                     this contract.
                   </Paragraph>
+                  {this.props.anyTouched &&
+                    wellSiteErrors &&
+                    wellSiteErrors.contracted_work &&
+                    wellSiteErrors.contracted_work.error && (
+                      <span className="color-error">{wellSiteErrors.contracted_work.error}</span>
+                    )}
                   <Row gutter={48}>
                     <Col>
                       <Collapse
@@ -513,7 +570,8 @@ class ApplicationSectionTwo extends Component {
                             this.props.isEditable,
                             this.props.formValues && this.props.formValues.well_sites
                               ? this.props.formValues.well_sites[index]
-                              : null
+                              : null,
+                            this.props
                           )
                         )}
                       </Collapse>
@@ -662,6 +720,7 @@ class ApplicationSectionTwo extends Component {
 
 const mapStateToProps = (state) => ({
   formValues: getFormValues(FORM.APPLICATION_FORM)(state),
+  formMeta: getFormMeta(FORM.APPLICATION_FORM)(state),
   selectedWells: getSelectedWells(state),
 });
 
