@@ -350,7 +350,7 @@ class ApplicationSectionTwo extends Component {
           const wellTotal = wellTotals ? wellTotals.wellTotal : 0;
 
           const actualName = this.getWellName(index);
-          let wellName = `Well Site #${index + 1}`;
+          let wellName = `Well Site ${index + 1}`;
           wellName += actualName ? ` (${actualName})` : "";
 
           return (
@@ -529,7 +529,7 @@ class ApplicationSectionTwo extends Component {
             <Col style={{ textAlign: "right" }}>
               {wellTotalsValues.map((wellTotal, index) => {
                 const actualName = this.getWellName(index);
-                let wellName = `Well Site #${index + 1}`;
+                let wellName = `Well Site ${index + 1}`;
                 wellName += actualName ? ` (${actualName})` : "";
                 return (
                   <>
