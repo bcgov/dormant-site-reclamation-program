@@ -53,15 +53,14 @@ class Application(Base, AuditMixin):
                 'Application.json.company_contact.email is not set, must set before email can be sent'
             )
 
-        html_body = f"""<div class="WordSection1">
-  <p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
-  <table class="MsoNormalTable" border="0" cellspacing="0" cellpadding="0" width="518"
-    style="width:388.65pt; background:#003366; border-collapse:collapse">
+        html_body = f"""<div class="WordSection1" style="margin:0;">
+  <table class="MsoNormalTable" border="0" cellspacing="0" cellpadding="0" width="100%"
+    style="background:#003366; border-collapse:collapse">
     <tbody>
       <tr>
         <td width="217" colspan="2" valign="top"
           style="width:163.05pt; border-top:none; border-left:solid windowtext 1.0pt; border-bottom:solid #FCBA19 3.0pt; border-right:none; padding:3mm 0mm 3mm 3mm">
-          <img src="https://www2.gov.bc.ca/StaticWebResources/static/gov3/images/gov_bc_logo.svg"
+          <img src="http://news.gov.bc.ca/Content/Images/Gov/gov3_bc_logo.png"
             alt="Government of B.C." title="Government of B.C.">
         </td>
         <td width="207" colspan="2"
@@ -85,15 +84,17 @@ class Application(Base, AuditMixin):
         </td>
         <td width="184" colspan="2" valign="top"
           style="width:138.25pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:13.6pt">
-          <p class="MsoNormal" style="margin-bottom:0cm; margin-bottom:.0001pt; line-height:normal">
-            <span style="font-size:12.0pt; color:#595959">&nbsp;</span></p>
+		  <br/>
+		  <br/>
+		  <br/>
           <p class="MsoNormal" style="margin-bottom:0cm; margin-bottom:.0001pt; line-height:normal">
             <span style="font-size:12.0pt; color:#595959">Confirmation Number</span></p>
         </td>
         <td width="232" colspan="2" valign="top"
           style="width:173.8pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:13.6pt">
-          <p class="MsoNormal" style="margin-bottom:0cm; margin-bottom:.0001pt; line-height:normal">
-            <b><span style="font-size:12.0pt; color:#595959">&nbsp;</span></b></p>
+		  <br/>
+		  <br/>
+		  <br/>
           <p class="MsoNormal" style="margin-bottom:0cm; margin-bottom:.0001pt; line-height:normal">
             <b><span style="font-size:12.0pt; color:#595959">{self.guid}</span></b></p>
         </td>
@@ -132,10 +133,14 @@ class Application(Base, AuditMixin):
                 We have successfully received your application in the BC Governments Dormant
                 Site Reclamation Program. Please keep your reference number safe as you will
                 need it to carry your application forward in this process.
-
+				<br />
+				<br />
                 <a href='{Config.URL}/view-application-status/{self.guid}'>Click here to view the status of your application.</a>
                 <br/>
                 <br/>
+		  <br/>
+		  <br/>
+		  <br/>
           </p>
         </td>
         <td width="55" valign="top"
