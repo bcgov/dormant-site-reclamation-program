@@ -46,7 +46,7 @@ class ObjectStoreStorageService():
 
         buffer = io.BytesIO()
         self._client.download_fileobj(Config.OBJECT_STORE_BUCKET, path, buffer)
-
+        #TODO avoid full buffered transfer, stream response instead
         buffer.seek(0)
         return send_file(buffer, attachment_filename=display_name, as_attachment=as_attachment)
 
