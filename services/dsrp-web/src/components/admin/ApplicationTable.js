@@ -79,17 +79,19 @@ export class ApplicationTable extends Component {
       render: (text, record) => (
         <div title="Status">
           {
-            <Dropdown
-              overlay={menu(
-                this.props.applicationStatusOptions,
-                this.props.handleApplicationStatusChange,
-                record
-              )}
-            >
-              <a onClick={(e) => e.preventDefault()}>
-                {text} <Icon type="down" className="icon-lg" />
-              </a>
-            </Dropdown>
+            <span onClick={(e) => e.stopPropagation()}>
+              <Dropdown
+                overlay={menu(
+                  this.props.applicationStatusOptions,
+                  this.props.handleApplicationStatusChange,
+                  record
+                )}
+              >
+                <a>
+                  {text} <Icon type="down" className="icon-lg" />
+                </a>
+              </Dropdown>
+            </span>
           }
         </div>
       ),
