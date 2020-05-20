@@ -38,7 +38,7 @@ class FileUpload extends React.Component {
     this.server = {
       process: (fieldName, file, metadata, load, error, progress, abort) => {
         const upload = new tus.Upload(file, {
-          endpoint: ENVIRONMENT.apiUrl + this.props.uploadUrl,
+          endpoint: ENVIRONMENT.docManUrl + this.props.uploadUrl,
           retryDelays: [100, 1000, 3000],
           removeFingerprintOnSuccess: true,
           chunkSize: this.props.chunkSize,
