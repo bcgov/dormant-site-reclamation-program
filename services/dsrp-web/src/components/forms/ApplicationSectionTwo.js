@@ -215,7 +215,7 @@ const asyncValidateWell = async (values, field) => {
     if (response.data.records.length > 1)
       asyncValidateError(
         field,
-        "Multiple results for this Authorization Number. Please contact us for further assistance."
+        "Multiple results for this Authorization Number. Please contact us for further assistance at DormantSiteReclamation@gov.bc.ca"
       );
   });
 };
