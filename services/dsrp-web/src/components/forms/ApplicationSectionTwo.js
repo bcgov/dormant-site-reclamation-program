@@ -215,7 +215,7 @@ const asyncValidateWell = async (values, field) => {
     if (response.data.records.length > 1)
       asyncValidateError(
         field,
-        "Multiple results for this Authorization Number. Please contact us for further assistance."
+        "Multiple results for this Authorization Number. Please contact us for further assistance at DormantSiteReclamation@gov.bc.ca"
       );
   });
 };
@@ -328,154 +328,161 @@ class ApplicationSectionTwo extends Component {
       : null;
   }
 
-  renderWells = ({ fields }) => (
-    <>
-      <Collapse
-        bordered={false}
-        accordion
-        expandIcon={(panelProps) => (
-          <Icon
-            type={panelProps.isActive ? "minus-square" : "plus-square"}
-            theme="filled"
-            className="icon-lg"
-          />
-        )}
-      >
-        {(fields.length === 0 ? [{}] : fields).map((member, index) => {
-          const wellTotals = this.state.contractedWorkTotals.wellTotals[index];
-          const wellSectionTotals = wellTotals ? wellTotals.sections : {};
-          const wellTotal = wellTotals ? wellTotals.wellTotal : 0;
+  renderWells = ({ fields }) => {
+    // Ensure that there is always at least one well site.
+    if (fields.length === 0) {
+      fields.push({});
+    }
 
-          const actualName = this.getWellName(index);
-          let wellName = `Well Site ${index + 1}`;
-          wellName += actualName ? ` (${actualName})` : "";
+    return (
+      <>
+        <Collapse
+          bordered={false}
+          accordion
+          expandIcon={(panelProps) => (
+            <Icon
+              type={panelProps.isActive ? "minus-square" : "plus-square"}
+              theme="filled"
+              className="icon-lg"
+            />
+          )}
+        >
+          {fields.map((member, index) => {
+            const wellTotals = this.state.contractedWorkTotals.wellTotals[index];
+            const wellSectionTotals = wellTotals ? wellTotals.sections : {};
+            const wellTotal = wellTotals ? wellTotals.wellTotal : 0;
 
-          return (
-            <Panel
-              key={index}
-              header={
-                <Title level={3} style={{ margin: 0, marginLeft: 8 }}>
-                  {wellName}
-                  {this.props.isEditable && (
-                    <span onClick={(e) => e.stopPropagation()}>
-                      <Popconfirm
-                        title="Are you sure you want to remove this well site?"
-                        onConfirm={(e) => fields.remove(index)}
-                        okText="Yes"
-                        cancelText="No"
-                        placement="topRight"
-                        arrowPointAtCenter
-                      >
-                        <Button type="link" className="color-primary" style={{ float: "right" }}>
-                          <Icon type="delete" theme="filled" className="icon-lg" />
-                        </Button>
-                      </Popconfirm>
-                    </span>
-                  )}
-                </Title>
-              }
-            >
-              <FormSection name={createMemberName(member, "details")}>
-                <Title level={4}>Details</Title>
-                <Row gutter={48}>
-                  <Col>
-                    <Field
-                      name="well_authorization_number"
-                      label="Well Authorization Number"
-                      placeholder="Well Authorization Number"
-                      component={WellField}
-                      validate={[required]}
-                      disabled={!this.props.isEditable}
-                      label={
-                        <>
-                          Authorization Number
-                          {this.props.isEditable && (
-                            <>
-                              <ApplicationFormTooltip content="Only wells that are classfied as Dormant with the Oil and Gas Commission can be entered." />
-                              <a
-                                style={{ float: "right" }}
-                                href="https://reports.bcogc.ca/ogc/f?p=200:81:16594283755468"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                Look up well
-                              </a>
-                            </>
-                          )}
-                        </>
-                      }
-                    />
-                  </Col>
-                </Row>
-              </FormSection>
+            const actualName = this.getWellName(index);
+            let wellName = `Well Site ${index + 1}`;
+            wellName += actualName ? ` (${actualName})` : "";
 
-              <FormSection name={createMemberName(member, "site_conditions")}>
-                <Title level={4} className="application-subsection">
-                  Site Conditions
-                </Title>
-                <Paragraph>Reasons for site nomination (select all that apply):</Paragraph>
-                <Row gutter={48}>
-                  <Col className="application-checkbox-section">
-                    {wellSiteConditions.map((condition, index) => (
+            return (
+              <Panel
+                key={index}
+                header={
+                  <Title level={3} style={{ margin: 0, marginLeft: 8 }}>
+                    {wellName}
+                    {this.props.isEditable && (
+                      <span onClick={(e) => e.stopPropagation()}>
+                        <Popconfirm
+                          title="Are you sure you want to remove this well site?"
+                          onConfirm={(e) => fields.remove(index)}
+                          okText="Yes"
+                          cancelText="No"
+                          placement="topRight"
+                          arrowPointAtCenter
+                        >
+                          <Button type="link" className="color-primary" style={{ float: "right" }}>
+                            <Icon type="delete" theme="filled" className="icon-lg" />
+                          </Button>
+                        </Popconfirm>
+                      </span>
+                    )}
+                  </Title>
+                }
+              >
+                <FormSection name={createMemberName(member, "details")}>
+                  <Title level={4}>Details</Title>
+                  <Row gutter={48}>
+                    <Col>
                       <Field
-                        key={index}
-                        name={`site_condition_${index}`}
-                        label={condition}
+                        name="well_authorization_number"
+                        label="Well Authorization Number"
+                        placeholder="Well Authorization Number"
+                        component={WellField}
+                        validate={[required]}
                         disabled={!this.props.isEditable}
-                        component={renderConfig.CHECKBOX}
+                        label={
+                          <>
+                            Authorization Number
+                            {this.props.isEditable && (
+                              <>
+                                <ApplicationFormTooltip content="Only wells that are classfied as Dormant with the Oil and Gas Commission can be entered." />
+                                <a
+                                  style={{ float: "right" }}
+                                  href="https://reports.bcogc.ca/ogc/f?p=200:81:16594283755468"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  Look up well
+                                </a>
+                              </>
+                            )}
+                          </>
+                        }
                       />
-                    ))}
-                  </Col>
-                </Row>
-              </FormSection>
+                    </Col>
+                  </Row>
+                </FormSection>
 
-              <FormSection name={createMemberName(member, "contracted_work")}>
-                <Title level={4} className="application-subsection">
-                  Contracted Work
-                </Title>
-                <Paragraph>
-                  Enter the estimated cost of every work component your company will perform for
-                  this contract.
-                </Paragraph>
-                <Row gutter={48}>
-                  <Col>
-                    <Collapse
-                      bordered={false}
-                      expandIcon={(panelProps) => (
-                        <Icon
-                          type={panelProps.isActive ? "minus-square" : "plus-square"}
-                          theme="filled"
-                          className="icon-md"
+                <FormSection name={createMemberName(member, "site_conditions")}>
+                  <Title level={4} className="application-subsection">
+                    Site Conditions
+                  </Title>
+                  <Paragraph>Reasons for site nomination (select all that apply):</Paragraph>
+                  <Row gutter={48}>
+                    <Col className="application-checkbox-section">
+                      {wellSiteConditions.map((condition, index) => (
+                        <Field
+                          key={index}
+                          name={`site_condition_${index}`}
+                          label={condition}
+                          disabled={!this.props.isEditable}
+                          component={renderConfig.CHECKBOX}
                         />
-                      )}
-                    >
-                      {CONTRACT_WORK_SECTIONS.map((contractWorkSection) =>
-                        renderContractWorkPanel(
-                          contractWorkSection,
-                          wellSectionTotals[contractWorkSection.formSectionName],
-                          this.props.isEditable,
-                          this.props.formValues && this.props.formValues.well_sites
-                            ? this.props.formValues.well_sites[index]
-                            : null
-                        )
-                      )}
-                    </Collapse>
-                    {renderMoneyTotal("Well", wellTotal, { marginRight: 40, marginTop: 8 })}
-                  </Col>
-                </Row>
-              </FormSection>
-            </Panel>
-          );
-        })}
-      </Collapse>
-      <br />
-      {this.props.isEditable && (
-        <Button type="primary" onClick={() => fields.push({})}>
-          Add Well Site
-        </Button>
-      )}
-    </>
-  );
+                      ))}
+                    </Col>
+                  </Row>
+                </FormSection>
+
+                <FormSection name={createMemberName(member, "contracted_work")}>
+                  <Title level={4} className="application-subsection">
+                    Contracted Work
+                  </Title>
+                  <Paragraph>
+                    Enter the estimated cost of every work component your company will perform for
+                    this contract.
+                  </Paragraph>
+                  <Row gutter={48}>
+                    <Col>
+                      <Collapse
+                        bordered={false}
+                        expandIcon={(panelProps) => (
+                          <Icon
+                            type={panelProps.isActive ? "minus-square" : "plus-square"}
+                            theme="filled"
+                            className="icon-md"
+                          />
+                        )}
+                      >
+                        {CONTRACT_WORK_SECTIONS.map((contractWorkSection) =>
+                          renderContractWorkPanel(
+                            contractWorkSection,
+                            wellSectionTotals[contractWorkSection.formSectionName],
+                            this.props.isEditable,
+                            this.props.formValues && this.props.formValues.well_sites
+                              ? this.props.formValues.well_sites[index]
+                              : null
+                          )
+                        )}
+                      </Collapse>
+                      {renderMoneyTotal("Well", wellTotal, { marginRight: 40, marginTop: 8 })}
+                    </Col>
+                  </Row>
+                </FormSection>
+              </Panel>
+            );
+          })}
+        </Collapse>
+        <br />
+        {this.props.isEditable && (
+          <Button type="primary" onClick={() => fields.push({})}>
+            Add Well Site
+          </Button>
+        )}
+      </>
+    );
+  };
 
   render() {
     const wellTotalsValues = Object.values(this.state.contractedWorkTotals.wellTotals);
@@ -530,7 +537,7 @@ class ApplicationSectionTwo extends Component {
                 wellName += actualName ? ` (${actualName})` : "";
                 return (
                   <>
-                    <Paragraph key={index} className="color-primary" strong>
+                    <Paragraph key={`${wellName}.${index}`} className="color-primary" strong>
                       {`${wellName} total:`}&nbsp;
                     </Paragraph>
                     {wellTotal.sections &&
@@ -539,7 +546,10 @@ class ApplicationSectionTwo extends Component {
                           wellTotal.sections[section.formSectionName] &&
                           wellTotal.sections[section.formSectionName] > 0
                       ).map((section) => (
-                        <Paragraph key={index} className="color-primary">
+                        <Paragraph
+                          key={`${section.sectionHeader}.${index}`}
+                          className="color-primary"
+                        >
                           {`${section.sectionHeader} total:`}&nbsp;
                         </Paragraph>
                       ))}
@@ -553,14 +563,16 @@ class ApplicationSectionTwo extends Component {
             <Col style={{ textAlign: "right" }}>
               {wellTotalsValues.map((wellTotal, index) => (
                 <>
-                  <Paragraph key={index}>{formatMoney(wellTotal.wellTotal || 0)}</Paragraph>
+                  <Paragraph key={`well-total.${index}`}>
+                    {formatMoney(wellTotal.wellTotal || 0)}
+                  </Paragraph>
                   {wellTotal.sections &&
                     CONTRACT_WORK_SECTIONS.filter(
                       (section) =>
                         wellTotal.sections[section.formSectionName] &&
                         wellTotal.sections[section.formSectionName] > 0
                     ).map((section) => (
-                      <Paragraph key={index}>
+                      <Paragraph key={`${section.formSectionName}.${index}`}>
                         {formatMoney(wellTotal.sections[section.formSectionName] || 0)}
                       </Paragraph>
                     ))}

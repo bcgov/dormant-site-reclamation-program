@@ -54,8 +54,8 @@ export class ViewApplicationStatusPage extends Component {
     this.props.fetchApplicationById(values.guid);
   };
 
-  render() {
-    return (
+  render = () =>
+    isEmpty(this.props.loadedApplication) ? (
       <>
         <Row type="flex" justify="center" align="top" className="landing-header">
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
@@ -68,17 +68,14 @@ export class ViewApplicationStatusPage extends Component {
             <ViewApplicationStatusForm onSubmit={this.onFormSubmit} />
           </Col>
         </Row>
-        {!isEmpty(this.props.loadedApplication) && (
-          <Row type="flex" justify="center" align="top" className="landing-section">
-            <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-              Your application was recieved on: Your review status is:
-              <ApplicationStatusCard application={this.props.loadedApplication} />
-            </Col>
-          </Row>
-        )}
       </>
+    ) : (
+      <Row type="flex" justify="center" align="top" className="landing-section">
+        <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
+          <ApplicationStatusCard application={this.props.loadedApplication} />
+        </Col>
+      </Row>
     );
-  }
 }
 
 ViewApplicationStatusPage.propTypes = propTypes;
