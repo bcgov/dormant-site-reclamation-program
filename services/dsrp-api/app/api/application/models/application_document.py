@@ -18,7 +18,6 @@ class ApplicationDocument(AuditMixin, Base):
     __tablename__ = 'application_document'
 
     class _ModelSchema(Base._ModelSchema):
-        application_document_id = fields.Integer(dump_only=True)
         application_document_guid = fields.String(dump_only=True)
 
     application_document_guid = db.Column(
@@ -30,12 +29,14 @@ class ApplicationDocument(AuditMixin, Base):
     upload_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
     active_ind = db.Column(db.Boolean, nullable=False, server_default=FetchedValue())
 
+    application = db.relationship("Application")
+
     @classmethod
     def find_by_application_guid(cls, application_guid):
         return cls.query.filter_by(application_guid=application_guid).filter_by(
             active_ind=True).all()
 
     @classmethod
-    def find_by_application_document_guid(cls, application_document_guid):
+    def find_by_guid(cls, application_document_guid):
         return cls.query.filter_by(application_document_guid=application_document_guid).filter_by(
             active_ind=True).first()

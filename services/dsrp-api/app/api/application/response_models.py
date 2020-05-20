@@ -14,12 +14,11 @@ APPLICATION_STATUS = api.model('ApplicationStatus', {
     'description': fields.String
 })
 
-APPLICATION_DOCUMENT = api.model(
-    "ApplicationDocument", {
-        'application_document_guid': fields.String,
-        'document_name': fields.String,
-        'upload_date': fields.Date,
-    })
+APPLICATION_DOCUMENT = api.model("ApplicationDocument", {
+    'guid': fields.String,
+    'document_name': fields.String,
+    'upload_date': fields.Date,
+})
 
 APPLICATION = api.model(
     'Application', {
