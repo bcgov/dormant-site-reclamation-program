@@ -12,7 +12,7 @@ const propTypes = {
 };
 
 const renderDropdownMenu = (option, onClick, record) => (
-  <Menu onClick={(e) => onClick(e, record)}>
+  <Menu onClick={(item) => onClick(item, record)}>
     {option.map(({ label, value }) => (
       <Menu.Item key={value}>{label}</Menu.Item>
     ))}
@@ -59,16 +59,19 @@ export class ApplicationTable extends Component {
     },
     {
       title: "No. of Work Types",
+      key: "work_types",
       dataIndex: "work_types",
       render: (text) => <div title="No. of Work Types">{text || Strings.DASH}</div>,
     },
     {
       title: "Total Est. Cost",
+      key: "est_cost",
       dataIndex: "est_cost",
       render: (text) => <div title="Total Est. Cost">{formatMoney(text) || Strings.DASH}</div>,
     },
     {
       title: "Est. Shared Cost",
+      key: "est_shared_cost",
       dataIndex: "est_shared_cost",
       render: (text) => <div title="Est. Shared Cost">{formatMoney(text) || Strings.DASH}</div>,
     },
@@ -87,7 +90,8 @@ export class ApplicationTable extends Component {
               )}
             >
               <a>
-                {text} <Icon type="down" className="icon-lg" />
+                {this.props.applicationStatusOptionsHash[text] || Strings.ERROR}&nbsp;
+                <Icon type="down" className="icon-lg" />
               </a>
             </Dropdown>
           </span>
@@ -98,7 +102,7 @@ export class ApplicationTable extends Component {
       key: "operations",
       render: (text, record) => (
         <div title="View">
-          <Link to={route.VIEW_APPLICATION.dynamicRoute(record.key)}>
+          <Link to={route.VIEW_APPLICATION.dynamicRoute(record.application_guid)}>
             <Icon type="eye" className="icon-lg" />
           </Link>
         </div>
@@ -109,51 +113,61 @@ export class ApplicationTable extends Component {
   nestedColumns = [
     {
       title: "Well Auth No.",
-      dataIndex: "well_no",
+      key: "well_authorization_number",
+      dataIndex: "well_authorization_number",
       render: (text) => <div title="Well Auth No.">{text || Strings.DASH}</div>,
     },
     {
       title: "Work Type",
-      dataIndex: "work_type",
+      key: "contracted_work_type_description",
+      dataIndex: "contracted_work_type_description",
       render: (text) => <div title="Work Type">{text || Strings.DASH}</div>,
     },
     {
       title: "Priority Criteria",
+      key: "priority_criteria",
       dataIndex: "priority_criteria",
       render: (text) => <div title="Well Auth No.">{text || Strings.DASH}</div>,
     },
     {
       title: "Location",
+      key: "location",
       dataIndex: "location",
       render: (text) => <div title="Location">{formatDate(text) || Strings.DASH}</div>,
     },
     {
       title: "Completion Date",
+      key: "completion_date",
       dataIndex: "completion_date",
       render: (text) => <div title="Completion Date">{formatDate(text) || Strings.DASH}</div>,
     },
     {
       title: "Est. Cost",
+      key: "est_cost",
       dataIndex: "est_cost",
       render: (text) => <div title="Est. Cost">{formatMoney(text) || Strings.DASH}</div>,
     },
     {
       title: "Est. Shared Cost",
+      key: "est_shared_cost",
       dataIndex: "est_shared_cost",
       render: (text) => <div title="Est. Shared Cost">{formatMoney(text) || Strings.DASH}</div>,
     },
     {
       title: "LMR Value",
+      key: "LMR",
       dataIndex: "LMR",
       render: (text) => <div title="LMR Value">{text || Strings.DASH}</div>,
     },
     {
       title: "OGC Status",
+      key: "OGC_status",
       dataIndex: "OGC_status",
       render: (text) => <div title="OGC Status">{text || Strings.DASH}</div>,
     },
     {
       title: "Status",
+      key: "contracted_work_status_code",
       dataIndex: "contracted_work_status_code",
       render: (text, record) => (
         <div title="Status">
@@ -166,7 +180,8 @@ export class ApplicationTable extends Component {
               )}
             >
               <a>
-                {text || Strings.ERROR} <Icon type="down" className="icon-lg" />
+                {this.props.contractedWorkStatusOptionsHash[text] || Strings.ERROR}&nbsp;
+                <Icon type="down" className="icon-lg" />
               </a>
             </Dropdown>
           </span>
@@ -184,27 +199,31 @@ export class ApplicationTable extends Component {
     });
 
   getSum = (guid, field) =>
-    this.props.workTypes
-      .filter(({ key }) => key === guid)
+    this.props.applicationsWellSitesContractedWork
+      .filter(({ application_guid }) => application_guid === guid)
       .reduce((sum, type) => +sum + +type[field], 0);
 
-  getNoWorkTypes = (guid) => this.props.workTypes.filter(({ key }) => key === guid).length;
+  getNoWorkTypes = (guid) =>
+    this.props.applicationsWellSitesContractedWork.filter(
+      ({ application_guid }) => application_guid === guid
+    ).length;
 
   transformRowData = (applications) => {
-    const apps = applications.map((application) => {
+    const data = applications.map((application) => {
       return {
+        ...application,
         key: application.guid,
+        application_guid: application.guid,
         company_name: application.json.company_details.company_name.label,
         permit_holder: application.json.contract_details.organization_id,
         wells: application.json.well_sites ? application.json.well_sites.length : 0,
         work_types: this.getNoWorkTypes(application.guid),
         est_cost: this.getSum(application.guid, "est_cost"),
         est_shared_cost: this.getSum(application.guid, "est_shared_cost"),
-        payment: Strings.DASH,
-        ...application,
+        payment: null,
       };
     });
-    return apps;
+    return data;
   };
 
   renderTableExpandIcon = (rowProps) => (
@@ -228,14 +247,27 @@ export class ApplicationTable extends Component {
     </a>
   );
 
-  wells = (record) => {
+  transformNestedRowData = (wellSitesContractWork) => {
+    const data = wellSitesContractWork.map((wellSiteContractWork) => {
+      return {
+        ...wellSiteContractWork,
+      };
+    });
+    return data;
+  };
+
+  wellSitesContractedWorkTable = (record) => {
     return (
       <div className="nested-table">
         <Table
           align="left"
           pagination={false}
           columns={this.nestedColumns}
-          dataSource={this.props.workTypes.filter(({ key }) => key === record.key)}
+          dataSource={this.transformNestedRowData(
+            this.props.applicationsWellSitesContractedWork.filter(
+              ({ application_guid }) => application_guid === record.application_guid
+            )
+          )}
           style={{ backgroundColor: "#f7f8fa" }}
         />
       </div>
@@ -251,7 +283,7 @@ export class ApplicationTable extends Component {
           dataSource={this.transformRowData(this.props.applications)}
           expandIcon={this.renderTableExpandIcon}
           expandRowByClick={true}
-          expandedRowRender={this.wells}
+          expandedRowRender={this.wellSitesContractedWorkTable}
           expandedRowKeys={this.state.expandedRowKeys}
           onExpand={this.onExpand}
           className="table-headers-center"

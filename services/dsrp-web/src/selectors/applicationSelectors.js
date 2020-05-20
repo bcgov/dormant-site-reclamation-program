@@ -1,43 +1,83 @@
-import { startCase, camelCase, isNil } from "lodash";
+import { startCase, camelCase, isObjectLike, isEmpty, isArrayLike, sum, get } from "lodash";
 import { createSelector } from "reselect";
 import * as applicationReducer from "../reducers/applicationReducer";
 
 export const { getApplications, getApplication, getPageData } = applicationReducer;
 
 // return an array of contracted_work on well sites
-export const getWorkTypes = createSelector([getApplications], (applications) => {
-  const wellArray = [];
-  applications.map((application) => {
-    if (application.json.well_sites) {
-      application.json.well_sites.map((site) => {
-        const contractedWork = isNil(site.contracted_work) ? [] : Object.keys(site.contracted_work);
-        if (contractedWork.length >= 1) {
-          contractedWork.map((work) => {
-            const priorityCriteria = isNil(site.site_conditions)
-              ? 0
-              : Object.values(site.site_conditions).length;
-            const estimatedCostArray = Object.values(site.contracted_work[work]).filter(
-              (v) => !isNaN(v)
-            );
-            const estimatedCost = estimatedCostArray.reduce((sum, value) => +sum + +value, 0);
-            const workTypes = {
-              key: application.guid,
-              well_no: site.details.well_authorization_number,
-              work_type: startCase(camelCase(work)),
-              priority_criteria: priorityCriteria,
-              completion_date: site.contracted_work[work].planned_end_date,
-              est_cost: estimatedCost,
-              est_shared_cost: "",
-              LRM: "",
-              status: "",
-              OGC_status: "",
-              location: "",
-            };
-            wellArray.push(workTypes);
-          });
-        }
-      });
+export const getApplicationsWellSitesContractedWork = createSelector(
+  [getApplications],
+  (applications) => {
+    if (isEmpty(applications) || !isArrayLike(applications)) {
+      return [];
     }
-  });
-  return wellArray;
-});
+
+    const wellSitesContractedWork = [];
+    applications.map((application) => {
+      if (isEmpty(application) || isEmpty(application.json)) {
+        return;
+      }
+
+      const wellSites = application.json.well_sites;
+      if (isEmpty(wellSites) || !isArrayLike(wellSites)) {
+        return;
+      }
+
+      const reviewJson = (isObjectLike(application.review_json) && application.review_json) || null;
+
+      wellSites.map((site) => {
+        if (isEmpty(site)) {
+          return;
+        }
+
+        const wellAuthorizationNumber =
+          (isObjectLike(site.details) && site.details.well_authorization_number) || null;
+
+        const priorityCriteria =
+          (isObjectLike(site.site_conditions) && Object.values(site.site_conditions).length) || 0;
+
+        const reviewJsonWellSite =
+          (reviewJson &&
+            wellAuthorizationNumber &&
+            isObjectLike(reviewJson.well_sites) &&
+            reviewJson.well_sites[wellAuthorizationNumber]) ||
+          null;
+
+        const contractedWork = (isObjectLike(site.contracted_work) && site.contracted_work) || {};
+        Object.keys(contractedWork).map((type) => {
+          const estimatedCostArray = Object.values(contractedWork[type]).filter(
+            (value) => !isNaN(value)
+          );
+
+          const contractedWorkStatusCode = get(
+            reviewJsonWellSite,
+            `contracted_work.${type}.contracted_work_status_code`,
+            null
+          );
+
+          const wellSiteContractedWorkType = {
+            key: `${application.guid}.${wellAuthorizationNumber}.${type}`,
+            application_guid: application.guid || null,
+            well_authorization_number: wellAuthorizationNumber,
+            contracted_work_type: type,
+            contracted_work_type_description: startCase(camelCase(type)),
+            priority_criteria: priorityCriteria,
+            completion_date: contractedWork[type].planned_end_date || null,
+            est_cost: sum(estimatedCostArray),
+            est_shared_cost: null,
+            LMR: null,
+            status: null,
+            OGC_status: null,
+            location: null,
+            contracted_work_status_code: contractedWorkStatusCode || "NOT_STARTED",
+            review_json: reviewJson,
+          };
+
+          wellSitesContractedWork.push(wellSiteContractedWorkType);
+        });
+      });
+    });
+
+    return wellSitesContractedWork;
+  }
+);
