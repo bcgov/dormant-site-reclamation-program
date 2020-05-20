@@ -32,7 +32,7 @@ export const OGCReducer = (state = initialState, action) => {
     case actionTypes.STORE_LIABILITIES:
       return {
         ...state,
-        wells: action.payload.records,
+        liabilities: action.payload.records,
       };
     default:
       return state;

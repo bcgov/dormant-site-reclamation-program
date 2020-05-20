@@ -1,13 +1,19 @@
 import { startCase, camelCase, isObjectLike, isEmpty, isArrayLike, sum, get } from "lodash";
 import { createSelector } from "reselect";
 import * as applicationReducer from "../reducers/applicationReducer";
+import { getWells, getLiabilities } from "@/selectors/OGCSelectors";
 
 export const { getApplications, getApplication, getPageData } = applicationReducer;
 
 // return an array of contracted_work on well sites
 export const getApplicationsWellSitesContractedWork = createSelector(
-  [getApplications],
-  (applications) => {
+  [getApplications, getWells, getLiabilities],
+  (applications, wells, liabilities) => {
+    console.log(wells);
+    console.log(liabilities);
+    const wellsHash = wells.reduce((map, obj) => ((map[obj.well_auth_number] = obj), map), {});
+    console.log(wellsHash);
+
     if (isEmpty(applications) || !isArrayLike(applications)) {
       return [];
     }

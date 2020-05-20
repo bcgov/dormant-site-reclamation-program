@@ -250,13 +250,18 @@ export class ApplicationTable extends Component {
     },
   ];
 
-  onExpand = (expanded, record) =>
-    this.setState((prevState) => {
-      const expandedRowKeys = expanded
-        ? prevState.expandedRowKeys.concat(record.key)
-        : prevState.expandedRowKeys.filter((key) => key !== record.key);
-      return { expandedRowKeys };
+  onExpand = (expanded, record) => {
+    this.props.fetchLiabilities(record.key).then(() => {
+      this.props.fetchWells({ application_guid: record.key }).then(() => {
+        this.setState((prevState) => {
+          const expandedRowKeys = expanded
+            ? prevState.expandedRowKeys.concat(record.key)
+            : prevState.expandedRowKeys.filter((key) => key !== record.key);
+          return { expandedRowKeys };
+        });
+      });
     });
+  };
 
   getSum = (guid, field) =>
     this.props.applicationsWellSitesContractedWork

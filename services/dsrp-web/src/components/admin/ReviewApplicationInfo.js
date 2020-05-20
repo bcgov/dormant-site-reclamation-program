@@ -13,6 +13,7 @@ import {
   updateApplication,
   updateApplicationReview,
 } from "@/actionCreators/applicationActionCreator";
+import { fetchLiabilities } from "@/actionCreators/OGCActionCreator";
 import {
   getDropdownApplicationStatusOptions,
   getApplicationStatusOptionsHash,
@@ -91,6 +92,8 @@ export class ReviewApplicationInfo extends Component {
         contractedWorkStatusOptionsHash={this.props.contractedWorkStatusOptionsHash}
         handleApplicationStatusChange={this.handleApplicationStatusChange}
         handleContractedWorkStatusChange={this.handleContractedWorkStatusChange}
+        fetchLiabilities={this.props.fetchLiabilities}
+        fetchWells={this.props.fetchWells}
       />
     );
   }
@@ -112,6 +115,8 @@ const mapDispatchToProps = (dispatch) =>
       fetchApplications,
       updateApplication,
       updateApplicationReview,
+      fetchLiabilities,
+      fetchWells,
     },
     dispatch
   );

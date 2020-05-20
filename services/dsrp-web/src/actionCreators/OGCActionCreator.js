@@ -47,20 +47,7 @@ export const fetchSelectedWell = (params = {}) => (dispatch) => {
     .finally(() => dispatch(hideLoading()));
 };
 
-export const fetchLiabilities = () => (dispatch) => {
-  dispatch(request(reducerTypes.FETCH_LIABILITIES));
-  dispatch(showLoading());
-  return CustomAxios()
-    .get(ENVIRONMENT.apiUrl + API.LIABILITY(), createRequestHeader())
-    .then((response) => {
-      dispatch(success(reducerTypes.FETCH_LIABILITIES));
-      dispatch(OGCActions.storeLiabilities(response.data));
-    })
-    .catch(() => dispatch(error(reducerTypes.FETCH_LIABILITIES)))
-    .finally(() => dispatch(hideLoading()));
-};
-
-export const fetchLiabilitiesByApplicationID = (guid) => (dispatch) => {
+export const fetchLiabilities = (guid = "") => (dispatch) => {
   dispatch(request(reducerTypes.FETCH_LIABILITIES));
   dispatch(showLoading());
   return CustomAxios()
