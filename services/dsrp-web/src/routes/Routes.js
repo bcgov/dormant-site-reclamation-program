@@ -23,6 +23,11 @@ const Routes = () => (
     />
     <Route
       exact
+      path={routes.VIEW_APPLICATION_STATUS_LINK.route}
+      component={routes.VIEW_APPLICATION_STATUS.component}
+    />
+    <Route
+      exact
       path={routes.APPLICATION_SUCCESS.route}
       component={routes.APPLICATION_SUCCESS.component}
     />
