@@ -30,21 +30,17 @@ const defaultProps = {
 };
 
 const resetFormState = {
+  currentStep: 0,
   initialValues: {},
   previouslySavedFormValues: null,
   previouslySavedFormStep: 0,
   saveTimestamp: null,
-  currentStep: 0,
+  uploadedFiles: [],
+  filesToDelete: [],
 };
 
 export class ApplicationForm extends Component {
-  state = {
-    currentStep: 0,
-    initialValues: {},
-    previouslySavedFormValues: null,
-    previouslySavedFormStep: 0,
-    saveTimestamp: null,
-  };
+  state = resetFormState;
 
   nextFormStep = () => {
     const currentStep = this.state.currentStep + 1;
@@ -92,7 +88,7 @@ export class ApplicationForm extends Component {
   }
 
   handleSubmit = (values, dispatch) => {
-    const application = { json: values };
+    const application = { json: values, documents: this.state.uploadedFiles };
     this.props.createApplication(application).then((response) => {
       this.setState(resetFormState);
       dispatch(initialize(APPLICATION_FORM));
@@ -103,6 +99,20 @@ export class ApplicationForm extends Component {
 
   handleReset = () => {
     this.setState(resetFormState, () => this.emptySavedFormData());
+  };
+
+  onFileLoad = (document_name, document_manager_guid) => {
+    this.setState((prevState) => ({
+      uploadedFiles: [{ document_manager_guid, document_name }, ...prevState.uploadedFiles],
+    }));
+  };
+
+  onRemoveFile = (error, file) => {
+    this.setState((prevState) => ({
+      uploadedFiles: prevState.uploadedFiles.filter(
+        (doc) => doc.document_manager_guid !== file.serverId
+      ),
+    }));
   };
 
   componentDidMount() {
@@ -139,6 +149,8 @@ export class ApplicationForm extends Component {
             onSubmit={this.nextFormStep}
             handleReset={this.handleReset}
             initialValues={this.state.initialValues}
+            onFileLoad={this.onFileLoad}
+            onRemoveFile={this.onRemoveFile}
           />
         ),
       },

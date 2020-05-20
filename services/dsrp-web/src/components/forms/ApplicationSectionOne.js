@@ -12,11 +12,15 @@ import OrgBookSearch from "@/components/common/OrgBookSearch";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import { ORGBOOK_URL } from "@/constants/routes";
+import { APPLICATION } from "@/constants/api";
+import { DOCUMENT, EXCEL } from "@/constants/fileTypes";
 
 const { Title, Paragraph } = Typography;
 
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
+  onFileLoad: PropTypes.func.isRequired,
+  onRemoveFile: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   indigenousParticipationCheckbox: PropTypes.bool.isRequired,
   isViewingSubmission: PropTypes.bool,
@@ -271,6 +275,27 @@ class ApplicationSectionOne extends Component {
                 disabled={!this.props.isEditable}
                 {...phoneMask}
               />
+            </Col>
+          </Row>
+        </FormSection>
+
+        <FormSection name="required_files">
+          <Title level={2}>Upload Required Files</Title>
+          <Row gutter={48}>
+            <Col span={24}>
+              <Form.Item label="Upload Required Files">
+                <Field
+                  id="files"
+                  name="files"
+                  component={renderConfig.FILE_UPLOAD}
+                  uploadUrl={`${APPLICATION}/documents`}
+                  acceptedFileTypesMap={{ ...DOCUMENT, ...EXCEL }}
+                  onFileLoad={this.props.onFileLoad}
+                  onRemoveFile={this.props.onRemoveFile}
+                  allowRevert
+                  allowMultiple={false}
+                />
+              </Form.Item>
             </Col>
           </Row>
         </FormSection>
