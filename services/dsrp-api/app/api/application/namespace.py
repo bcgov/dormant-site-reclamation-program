@@ -9,5 +9,5 @@ api.add_resource(ApplicationResource, '/<string:application_guid>')
 api.add_resource(ApplicationDocumentResource,
                  '/<string:application_guid>/documents/<string:document_guid>')
 api.add_resource(ApplicationListResource, '')
-api.add_resource(ApplicationDocumentListResource, '/documents')
+api.add_resource(ApplicationDocumentListResource, '/<string:application_guid>/documents')
 api.add_resource(ApplicationReviewResource, '/<string:application_guid>/review')
