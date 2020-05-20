@@ -88,7 +88,7 @@ export const getApplicationsWellSitesContractedWork = createSelector(
             est_shared_cost: sharedCost,
             LMR: null,
             OGC_status: OGCStatus,
-            location: location,
+            location,
             contracted_work_status_code: contractedWorkStatusCode || "NOT_STARTED",
             review_json: reviewJson,
           };
