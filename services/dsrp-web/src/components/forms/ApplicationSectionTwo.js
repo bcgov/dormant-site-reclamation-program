@@ -5,9 +5,9 @@ import PropTypes from "prop-types";
 import { compose } from "redux";
 import moment from "moment";
 import { Row, Col, Typography, Form, Button, Collapse, Icon, Popconfirm } from "antd";
-import { sum, get, set, isEmpty, isEqual } from "lodash";
+import { sum, get, set, isEqual } from "lodash";
 import { renderConfig } from "@/components/common/config";
-import { required, number } from "@/utils/validate";
+import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 import { PROGRAM_START_DATE, PROGRAM_END_DATE } from "@/constants/strings";
 import { currencyMask, formatMoney, scrollToFirstError } from "@/utils/helpers";
@@ -384,7 +384,7 @@ class ApplicationSectionTwo extends Component {
                       label="Well Authorization Number"
                       placeholder="Well Authorization Number"
                       component={WellField}
-                      validate={[required, number]}
+                      validate={[required]}
                       disabled={!this.props.isEditable}
                       label={
                         <>
