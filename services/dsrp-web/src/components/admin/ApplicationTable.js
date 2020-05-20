@@ -11,9 +11,9 @@ const propTypes = {
   applications: PropTypes.any.isRequired,
 };
 
-const menu = (status, onClick, record) => (
+const renderDropdownMenu = (option, onClick, record) => (
   <Menu onClick={(e) => onClick(e, record)}>
-    {status.map(({ label, value }) => (
+    {option.map(({ label, value }) => (
       <Menu.Item key={value}>{label}</Menu.Item>
     ))}
   </Menu>
@@ -78,21 +78,19 @@ export class ApplicationTable extends Component {
       dataIndex: "application_status_code",
       render: (text, record) => (
         <div title="Status">
-          {
-            <span onClick={(e) => e.stopPropagation()}>
-              <Dropdown
-                overlay={menu(
-                  this.props.applicationStatusOptions,
-                  this.props.handleApplicationStatusChange,
-                  record
-                )}
-              >
-                <a>
-                  {text} <Icon type="down" className="icon-lg" />
-                </a>
-              </Dropdown>
-            </span>
-          }
+          <span onClick={(e) => e.stopPropagation()}>
+            <Dropdown
+              overlay={renderDropdownMenu(
+                this.props.applicationStatusDropdownOptions,
+                this.props.handleApplicationStatusChange,
+                record
+              )}
+            >
+              <a>
+                {text} <Icon type="down" className="icon-lg" />
+              </a>
+            </Dropdown>
+          </span>
         </div>
       ),
     },
@@ -156,8 +154,24 @@ export class ApplicationTable extends Component {
     },
     {
       title: "Status",
-      dataIndex: "status",
-      render: (text) => <div title="Status">{text || Strings.DASH}</div>,
+      dataIndex: "contracted_work_status_code",
+      render: (text, record) => (
+        <div title="Status">
+          <span onClick={(e) => e.stopPropagation()}>
+            <Dropdown
+              overlay={renderDropdownMenu(
+                this.props.contractedWorkStatusDropdownOptions,
+                this.props.handleContractedWorkStatusChange,
+                record
+              )}
+            >
+              <a>
+                {text || Strings.ERROR} <Icon type="down" className="icon-lg" />
+              </a>
+            </Dropdown>
+          </span>
+        </div>
+      ),
     },
   ];
 

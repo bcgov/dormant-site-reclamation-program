@@ -68,6 +68,24 @@ export const updateApplication = (guid, payload) => (dispatch) => {
       dispatch(success(reducerTypes.UPDATE_APPLICATION));
       return response;
     })
-    .catch(() => dispatch(error(reducerTypes.UPDATE_APPLICATION)))
+    .catch((error) => {
+      dispatch(error(reducerTypes.UPDATE_APPLICATION));
+      throw new Error(error);
+    })
+    .finally(() => dispatch(hideLoading()));
+};
+
+export const updateApplicationReview = (guid, payload) => (dispatch) => {
+  dispatch(request(reducerTypes.UPDATE_APPLICATION_REVIEW));
+  return CustomAxios()
+    .put(ENVIRONMENT.apiUrl + API.APPLICATION_REVIEW(guid), payload, createRequestHeader())
+    .then((response) => {
+      dispatch(success(reducerTypes.UPDATE_APPLICATION_REVIEW));
+      return response;
+    })
+    .catch((error) => {
+      dispatch(error(reducerTypes.UPDATE_APPLICATION_REVIEW));
+      throw new Error(error);
+    })
     .finally(() => dispatch(hideLoading()));
 };
