@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { compose } from "redux";
 import moment from "moment";
 import { Row, Col, Typography, Form, Button, Collapse, Icon, Popconfirm } from "antd";
-import { sum, get, set, isEqual } from "lodash";
+import { sum, get, set, isEqual, isArrayLike, isEmpty, isObjectLike } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
@@ -237,6 +237,49 @@ const asyncValidate = (values, dispatch, props, field) => {
   }
 };
 
+const validateWellSites = (wellSites, formValues, props) => {
+  const errors = {};
+  console.log(wellSites, formValues, props);
+
+  if (!isArrayLike(wellSites)) {
+    return "Bad save data: well sites is malformed.";
+  }
+
+  wellSites.map((wellSite, index) => {
+    // Check that the well authorization number.
+    const validateRequired = required(get(wellSite, "details.well_authorization_number", null));
+    if (validateRequired) {
+      set(errors, `well_sites[${index}].details.well_authorization_number`, validateRequired);
+    }
+
+    // Check that there is at least one site condition checked.
+    const siteConditions = get(wellSite, "site_conditions", null);
+    const isAtleastOneSelected =
+      !isEmpty(siteConditions) && !Object.values(siteConditions).every((condition) => !condition);
+    if (!isAtleastOneSelected) {
+      set(
+        errors,
+        `well_sites[${index}].site_conditions`,
+        "Sites must meet at least one of the Site Conditions to qualify for the program."
+      );
+    }
+
+    // Ensure that at least contracted work type is valid.
+    const contractedWorkErrors = {};
+    const emptySectionsCount = 0;
+    CONTRACT_WORK_SECTIONS.map((section) => {
+      const name = section.formSectionName;
+      const values = get(wellSite, `contracted_work.${name}`, null);
+      if (isEmpty(values)) {
+        emptySectionsCount++;
+      }
+    });
+  });
+
+  console.log("validateWellSites errors", errors);
+  return isEmpty(errors) ? undefined : errors;
+};
+
 // NOTE: We want to async validate ALWAYS for the three possible triggers. By default the submit trigger
 // only async validates if !pristine || !initialized, which we don't want, since we save and load form values.
 // https://redux-form.com/8.3.0/docs/api/reduxform.md/#-code-shouldasyncvalidate-params-boolean-code-optional-
@@ -328,12 +371,13 @@ class ApplicationSectionTwo extends Component {
       : null;
   }
 
-  renderWells = ({ fields }) => {
+  renderWells = ({ fields, meta }) => {
     // Ensure that there is always at least one well site.
     if (fields.length === 0) {
       fields.push({});
     }
 
+    console.log("meta", meta);
     return (
       <>
         <Collapse
@@ -355,6 +399,8 @@ class ApplicationSectionTwo extends Component {
             const actualName = this.getWellName(index);
             let wellName = `Well Site ${index + 1}`;
             wellName += actualName ? ` (${actualName})` : "";
+
+            const wellSiteErrors = get(meta, `error.well_sites[${index}]`, null);
 
             return (
               <Panel
@@ -419,7 +465,7 @@ class ApplicationSectionTwo extends Component {
                   <Title level={4} className="application-subsection">
                     Site Conditions
                   </Title>
-                  <Paragraph>Reasons for site nomination (select all that apply):</Paragraph>
+                  <Paragraph>Select all conditions that apply to this site:</Paragraph>
                   <Row gutter={48}>
                     <Col className="application-checkbox-section">
                       {wellSiteConditions.map((condition, index) => (
@@ -431,6 +477,11 @@ class ApplicationSectionTwo extends Component {
                           component={renderConfig.CHECKBOX}
                         />
                       ))}
+                      {wellSiteErrors &&
+                        wellSiteErrors.site_conditions &&
+                        this.props.anyTouched && (
+                          <span className="color-error">{wellSiteErrors.site_conditions}</span>
+                        )}
                     </Col>
                   </Row>
                 </FormSection>
@@ -520,7 +571,11 @@ class ApplicationSectionTwo extends Component {
         </Title>
         <Row gutter={[48, 48]}>
           <Col>
-            <FieldArray name="well_sites" component={this.renderWells} />
+            <FieldArray
+              name="well_sites"
+              validate={validateWellSites}
+              component={this.renderWells}
+            />
           </Col>
         </Row>
 
