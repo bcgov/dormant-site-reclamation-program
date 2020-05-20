@@ -7,7 +7,8 @@ APPLICATION = api.model(
         'guid': fields.String,
         'application_status_code': fields.String,
         'submission_date': fields.DateTime,
-        'json': fields.Raw
+        'json': fields.Raw,
+        'review_json': fields.Raw
     })
 
 PAGINATED_LIST = api.model(
@@ -15,9 +16,13 @@ PAGINATED_LIST = api.model(
         'current_page': fields.Integer,
         'total_pages': fields.Integer,
         'items_per_page': fields.Integer,
-        'total': fields.Integer,
+        'total': fields.Integer
     })
 
-APPLICATION_LIST = api.inherit('ApplicationList', PAGINATED_LIST, {
-    'records': fields.List(fields.Nested(APPLICATION)),
+APPLICATION_LIST = api.inherit('ApplicationList', PAGINATED_LIST,
+                               {'records': fields.List(fields.Nested(APPLICATION))})
+
+APPLICATION_STATUS = api.model('ApplicationStatus', {
+    'application_status_code': fields.String,
+    'description': fields.String
 })

@@ -237,6 +237,23 @@ const asyncValidate = (values, dispatch, props, field) => {
   }
 };
 
+// NOTE: We want to async validate ALWAYS for the three possible triggers. By default the submit trigger
+// only async validates if !pristine || !initialized, which we don't want, since we save and load form values.
+// https://redux-form.com/8.3.0/docs/api/reduxform.md/#-code-shouldasyncvalidate-params-boolean-code-optional-
+const shouldAsyncValidate = ({ trigger, syncValidationPasses }) => {
+  if (!syncValidationPasses) {
+    return false;
+  }
+  switch (trigger) {
+    case "blur":
+    case "change":
+    case "submit":
+      return true;
+    default:
+      return false;
+  }
+};
+
 const validateWellSites = (value) => {
   if (isEmpty(value)) {
     return "Your application must contain at least one well site.";
@@ -609,6 +626,7 @@ export default compose(
     keepDirtyOnReinitialize: true,
     enableReinitialize: true,
     updateUnregisteredFields: true,
+    shouldAsyncValidate,
     asyncValidate,
     asyncChangeFields: [
       "contract_details.operator_id",
