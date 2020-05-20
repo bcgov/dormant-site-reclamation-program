@@ -6,7 +6,7 @@ import { isPristine, getFormValues, reset, initialize } from "redux-form";
 import { Col, Row, Steps, Typography, Result, Icon } from "antd";
 import PropTypes from "prop-types";
 import { isEqual } from "lodash";
-import { formatDateTimeFine } from "@/utils/helpers";
+import { formatDateTimeFine, createUuidv4 } from "@/utils/helpers";
 import { createApplication } from "@/actionCreators/applicationActionCreator";
 import ApplicationSectionOne from "@/components/forms/ApplicationSectionOne";
 import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
@@ -37,6 +37,7 @@ const resetFormState = {
   saveTimestamp: null,
   uploadedFiles: [],
   filesToDelete: [],
+  fileGuid: createUuidv4(),
 };
 
 export class ApplicationForm extends Component {
