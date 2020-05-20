@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as staticContentReducer from "../reducers/staticContentReducer";
 import { createSelector } from "reselect";
 import { createLabelHash, createDropDownList } from "../utils/helpers";

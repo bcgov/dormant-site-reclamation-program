@@ -95,20 +95,20 @@ class ApplicationResource(Resource, UserMixin):
 
         return application
 
-    # @api.doc(description='Update an application')
-    # #@requires_role_admin
-    # @api.expect(Application)
-    # @api.marshal_with(APPLICATION, code=200)
-    # def put(self, application_guid):
-    #     try:
-    #         application = Application._schema().load(
-    #             request.json, instance=Application.find_by_guid(application_guid))
-    #     except MarshmallowError as e:
-    #         raise BadRequest(e)
+    @api.doc(description='Update an application')
+    @requires_role_admin
+    @api.expect(Application)
+    @api.marshal_with(APPLICATION, code=200)
+    def put(self, application_guid):
+        try:
+            application = Application._schema().load(
+                request.json, instance=Application.find_by_guid(application_guid))
+        except MarshmallowError as e:
+            raise BadRequest(e)
 
-    #     application.save()
+        application.save()
 
-    #     return application
+        return application
 
 
 class ApplicationReviewResource(Resource, UserMixin):

@@ -3,7 +3,11 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { getApplications, getWorkTypes, getPageData } from "@/selectors/applicationSelectors";
-import { fetchApplications } from "@/actionCreators/applicationActionCreator";
+import { fetchApplications, updateApplication } from "@/actionCreators/applicationActionCreator";
+import {
+  getApplicationStatusOptionsHash,
+  getDropdownApplicationStatusOptions,
+} from "@/selectors/staticContentSelectors";
 import ApplicationTable from "@/components/admin/ApplicationTable";
 
 const propTypes = {
@@ -15,6 +19,16 @@ export class ReviewApplicationInfo extends Component {
     this.props.fetchApplications();
   }
 
+  handleApplicationStatusChange = (e, application) => {
+    const payload = {
+      ...application,
+      application_status_code: e.key,
+    };
+    this.props.updateApplication(application.guid, payload).then(() => {
+      this.props.fetchApplications();
+    });
+  };
+
   render() {
     return (
       <>
@@ -23,6 +37,9 @@ export class ReviewApplicationInfo extends Component {
           workTypes={this.props.workTypes}
           pageData={this.props.pageData}
           fetchApplications={this.props.fetchApplications}
+          applicationStatusOptions={this.props.applicationStatusOptions}
+          applicationStatusOptionsHash={this.props.applicationStatusOptionsHash}
+          handleApplicationStatusChange={this.handleApplicationStatusChange}
         />
       </>
     );
@@ -33,12 +50,15 @@ const mapStateToProps = (state) => ({
   applications: getApplications(state),
   workTypes: getWorkTypes(state),
   pageData: getPageData(state),
+  applicationStatusOptions: getDropdownApplicationStatusOptions(state),
+  applicationStatusOptionsHash: getApplicationStatusOptionsHash(state),
 });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchApplications,
+      updateApplication,
     },
     dispatch
   );
