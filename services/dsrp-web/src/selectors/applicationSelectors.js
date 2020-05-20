@@ -9,10 +9,13 @@ export const { getApplications, getApplication, getPageData } = applicationReduc
 export const getApplicationsWellSitesContractedWork = createSelector(
   [getApplications, getWells, getLiabilities],
   (applications, wells, liabilities) => {
-    console.log(wells);
-    console.log(liabilities);
     const wellsHash = wells.reduce((map, obj) => ((map[obj.well_auth_number] = obj), map), {});
+    const liabilitiesHash = liabilities.reduce(
+      (map, obj) => ((map[obj.well_auth_number] = obj), map),
+      {}
+    );
     console.log(wellsHash);
+    // console.log(liabilitiesHash);
 
     if (isEmpty(applications) || !isArrayLike(applications)) {
       return [];
@@ -65,7 +68,14 @@ export const getApplicationsWellSitesContractedWork = createSelector(
             `contracted_work.${type}.contracted_work_status_code`,
             null
           );
-
+          const OGCStatus = !isEmpty(wellsHash[wellAuthorizationNumber])
+            ? wellsHash[wellAuthorizationNumber].current_status
+            : null;
+          const location = !isEmpty(wellsHash[wellAuthorizationNumber])
+            ? wellsHash[wellAuthorizationNumber].surface_location
+            : null;
+          console.log(OGCStatus);
+          console.log(wellAuthorizationNumber);
           const wellSiteContractedWorkType = {
             key: `${application.guid}.${wellAuthorizationNumber}.${type}`,
             application_guid: application.guid || null,
@@ -77,9 +87,8 @@ export const getApplicationsWellSitesContractedWork = createSelector(
             est_cost: sum(estimatedCostArray),
             est_shared_cost: sharedCost,
             LMR: null,
-            status: null,
-            OGC_status: null,
-            location: null,
+            OGC_status: OGCStatus,
+            location: location,
             contracted_work_status_code: contractedWorkStatusCode || "NOT_STARTED",
             review_json: reviewJson,
           };

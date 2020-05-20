@@ -180,7 +180,7 @@ export class ApplicationTable extends Component {
       title: "Location",
       key: "location",
       dataIndex: "location",
-      render: (text) => <div title="Location">{formatDate(text) || Strings.DASH}</div>,
+      render: (text) => <div title="Location">{text || Strings.DASH}</div>,
     },
     {
       title: "Completion Date",

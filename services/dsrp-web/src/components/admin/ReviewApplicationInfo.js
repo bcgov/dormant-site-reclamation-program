@@ -13,7 +13,7 @@ import {
   updateApplication,
   updateApplicationReview,
 } from "@/actionCreators/applicationActionCreator";
-import { fetchLiabilities } from "@/actionCreators/OGCActionCreator";
+import { fetchLiabilities, fetchWells } from "@/actionCreators/OGCActionCreator";
 import {
   getDropdownApplicationStatusOptions,
   getApplicationStatusOptionsHash,
