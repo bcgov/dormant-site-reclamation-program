@@ -152,6 +152,7 @@ export class ApplicationForm extends Component {
             initialValues={this.state.initialValues}
             onFileLoad={this.onFileLoad}
             onRemoveFile={this.onRemoveFile}
+            fileGuid={this.state.fileGuid}
           />
         ),
       },

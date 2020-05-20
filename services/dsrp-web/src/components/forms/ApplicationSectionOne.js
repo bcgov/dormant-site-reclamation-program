@@ -13,7 +13,6 @@ import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import { ORGBOOK_URL } from "@/constants/routes";
 import { APPLICATION } from "@/constants/api";
-import { DOCUMENT, EXCEL } from "@/constants/fileTypes";
 
 const { Title, Paragraph } = Typography;
 
@@ -23,6 +22,7 @@ const propTypes = {
   onRemoveFile: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   indigenousParticipationCheckbox: PropTypes.bool.isRequired,
+  fileGuid: PropTypes.string.isRequired,
   isViewingSubmission: PropTypes.bool,
   isEditable: PropTypes.bool,
 };
@@ -288,8 +288,7 @@ class ApplicationSectionOne extends Component {
                   id="files"
                   name="files"
                   component={renderConfig.FILE_UPLOAD}
-                  uploadUrl={`${APPLICATION}/documents`}
-                  acceptedFileTypesMap={{ ...DOCUMENT, ...EXCEL }}
+                  uploadUrl={`${APPLICATION}/${this.props.fileGuid}/documents`}
                   onFileLoad={this.props.onFileLoad}
                   onRemoveFile={this.props.onRemoveFile}
                   allowRevert
