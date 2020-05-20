@@ -30,17 +30,17 @@ class OGCDataService():
         if not expired:
 
             current_app.logger.debug(f'OGC DATA SERVICE - {cache_key} - Cached data not found.')
-            cookieProcessor = urllib.request.HTTPCookieProcessor()
-            opener = urllib.request.build_opener(cookieProcessor)
-            response = session.get(csv_url)
+            #cookieProcessor = urllib.request.HTTPCookieProcessor()
+            #opener = urllib.request.build_opener(cookieProcessor)
+            #response = session.get(csv_url)
 
-            df = pd.read_table(StringIO(response.text), sep=",")
+            #df = pd.read_table(StringIO(response.text), sep=",")
 
-            #if cache_key is PERMIT_HOLDER_CACHE:
-            #    df = pd.read_table(StringIO(PERMIT_HOLDER_CSV_DATA), sep=",")
+            if cache_key is PERMIT_HOLDER_CACHE:
+                df = pd.read_table(StringIO(PERMIT_HOLDER_CSV_DATA), sep=",")
 
-            #if cache_key is DORMANT_WELLS_CACHE:
-            #    df = pd.read_table(StringIO(DORMANT_WELLS_CSV_DATA), sep=",")
+            if cache_key is DORMANT_WELLS_CACHE:
+                df = pd.read_table(StringIO(DORMANT_WELLS_CSV_DATA), sep=",")
 
             df = process(df)
 
