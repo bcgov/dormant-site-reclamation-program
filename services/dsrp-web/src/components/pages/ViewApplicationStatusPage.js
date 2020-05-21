@@ -40,7 +40,6 @@ const isGuid = (input) => {
 
 export class ViewApplicationStatusPage extends Component {
   componentDidMount = () => {
-    console.log(JSON.stringify(this.props));
     if (
       this.props.match &&
       this.props.match.params &&
