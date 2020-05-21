@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { renderConfig } from "@/components/common/config";
-import { required, email, maxLength } from "@/utils/validate";
+import { required, email, maxLength, postalCode, exactLength } from "@/utils/validate";
 import { phoneMask, postalCodeMask, scrollToFirstError } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
@@ -159,7 +159,7 @@ class ApplicationSectionOne extends Component {
                 placeholder="Postal Code"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
-                validate={[required]}
+                validate={[required, postalCode]}
                 {...postalCodeMask}
               />
             </Col>
@@ -205,7 +205,7 @@ class ApplicationSectionOne extends Component {
                     placeholder="Phone Number 1"
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
-                    validate={[required]}
+                    validate={[required, exactLength(10)]}
                     {...phoneMask}
                   />
                 </Col>
@@ -232,6 +232,7 @@ class ApplicationSectionOne extends Component {
                     placeholder={this.props.isEditable ? "Phone Number 2 (Optional)" : ""}
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
+                    validate={[exactLength(10)]}
                     {...phoneMask}
                   />
                 </Col>
@@ -269,6 +270,7 @@ class ApplicationSectionOne extends Component {
                 placeholder={this.props.isEditable ? "Fax (Optional)" : ""}
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
+                validate={[exactLength(10)]}
                 {...phoneMask}
               />
             </Col>
