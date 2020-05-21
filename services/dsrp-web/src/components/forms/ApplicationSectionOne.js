@@ -29,12 +29,10 @@ const defaultProps = {
 };
 
 const validate = (values) => {
-  alert(JSON.stringify(values));
   const errors = {};
   if (values.company_contact && values.company_contact.email !== values.company_contact.email2) {
     errors.company_contact = { email2: "Email does not match" };
   }
-  alert(JSON.stringify(errors));
   return errors;
 };
 
