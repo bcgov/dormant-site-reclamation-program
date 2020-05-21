@@ -89,7 +89,7 @@ class Application(Base, AuditMixin):
 		  <br/>
 		  <br/>
           <p class="MsoNormal" style="margin-bottom:0cm; margin-bottom:.0001pt; line-height:normal">
-            <span style="font-size:12.0pt; color:#595959">Confirmation Number</span></p>
+            <span style="font-size:12.0pt; color:#595959">Reference Number</span></p>
         </td>
         <td width="232" colspan="2" valign="top"
           style="width:173.8pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:13.6pt">
@@ -152,7 +152,7 @@ class Application(Base, AuditMixin):
       </tr>
       <tr style="height:22.3pt">
         <td width="518" colspan="6"
-          style="width:388.65pt; border:none; border-top:solid #FCBA19 3.0pt; padding:0cm 5.4pt 0cm 5.4pt; height:22.3pt">
+          style="border:none; border-top:solid #FCBA19 3.0pt; padding:0cm 5.4pt 0cm 5.4pt; height:22.3pt">
           <p class="MsoNormal" align="right"
             style="margin-bottom:0cm; margin-bottom:.0001pt; text-align:right; line-height:normal">
           </p>
