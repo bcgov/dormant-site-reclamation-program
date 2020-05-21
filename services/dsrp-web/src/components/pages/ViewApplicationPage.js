@@ -9,6 +9,7 @@ import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import { fetchApplicationById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/selectors/applicationSelectors";
 import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm";
+import ViewApplicationDocuments from "@/components/pages/ViewApplicationDocuments";
 import LinkButton from "@/components/common/LinkButton";
 
 const propTypes = {
@@ -42,6 +43,7 @@ export class ViewApplicationPage extends Component {
   };
 
   render() {
+    console.log(this.props.application);
     return (
       <>
         {(this.state.isLoaded && (
@@ -55,6 +57,14 @@ export class ViewApplicationPage extends Component {
               </Col>
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
                 <Title>Application ID: {this.props.application.id}</Title>
+              </Col>
+            </Row>
+            <Row>
+              <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
+                <ViewApplicationDocuments
+                  application_guid={this.props.application.guid}
+                  documents={this.props.application.documents}
+                />
               </Col>
             </Row>
             <Row type="flex" justify="center" align="top" className="landing-section">

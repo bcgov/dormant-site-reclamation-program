@@ -8,7 +8,6 @@ import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import tus from "tus-js-client";
 import { ENVIRONMENT } from "@/constants/environment";
-import { createRequestHeader } from "@/utils/requestHeaders";
 
 registerPlugin(FilePondPluginFileValidateSize, FilePondPluginFileValidateType);
 
@@ -54,11 +53,11 @@ class FileUpload extends React.Component {
           },
           onSuccess: (e) => {
             const documentGuid =
-              "dsrp-applications/" +
+              `dsrp-applications/${ 
               upload.url
                 .split("/")
                 .pop()
-                .split("+")[0];
+                .split("+")[0]}`;
             load(documentGuid);
             this.props.onFileLoad(file.name, documentGuid);
           },

@@ -44,6 +44,7 @@ class ObjectStoreStorageService():
         Function to download a given file from an S3 bucket
         """
         buffer = io.BytesIO()
+        current_app.logger.info(path)
         self._client.download_fileobj(Config.OBJECT_STORE_BUCKET, path, buffer)
         #TODO avoid full buffered transfer, stream response instead
         buffer.seek(0)
