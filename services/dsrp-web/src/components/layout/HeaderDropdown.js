@@ -88,7 +88,7 @@ export class HeaderDropdown extends Component {
       </Menu>
     );
 
-    const smallestDesktopWidth = 1280;
+    const smallestDesktopWidth = 1520;
     return (
       // TODO: WHEN LAUNCH - REPLACE `isViewOnly` with `!isAuthenticated`
       <>
