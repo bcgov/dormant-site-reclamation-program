@@ -52,12 +52,12 @@ class FileUpload extends React.Component {
             progress(true, bytesUploaded, bytesTotal);
           },
           onSuccess: (e) => {
-            const documentGuid =
-              `dsrp-applications/${ 
+            const documentGuid = `dsrp-applications/${
               upload.url
                 .split("/")
                 .pop()
-                .split("+")[0]}`;
+                .split("+")[0]
+            }`;
             load(documentGuid);
             this.props.onFileLoad(file.name, documentGuid);
           },

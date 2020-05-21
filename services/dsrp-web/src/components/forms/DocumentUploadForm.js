@@ -8,7 +8,7 @@ import PropTypes from "prop-types";
 
 import { reduxForm, Field } from "redux-form";
 
-import { createApplication } from "@/actionCreators/applicationActionCreator";
+import { uploadDocuments } from "@/actionCreators/uploadDocumentsActionCreator";
 
 import { renderConfig } from "@/components/common/config";
 import { DOCUMENT_UPLOAD_FORM } from "@/constants/forms";

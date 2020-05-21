@@ -6,6 +6,7 @@ export const STATIC_CONTENT = "/exports/static-content";
 // Document Manager
 export const DOCUMENT_MANAGER_FILE_GET_URL = (token = {}) =>
   `/documents?${queryString.stringify(token)}`;
+export const DOCUMENT_MANAGER_FILE_POST_URL = "/documents";
 
 // OrgBook
 export const ORGBOOK_SEARCH = (search) => `/orgbook/search?${queryString.stringify({ search })}`;
