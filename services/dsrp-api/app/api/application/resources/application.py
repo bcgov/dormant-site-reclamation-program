@@ -11,7 +11,8 @@ from app.api.utils.access_decorators import requires_role_view_all, requires_rol
 from app.api.utils.resources_mixins import UserMixin
 from app.api.application.response_models import APPLICATION, APPLICATION_LIST
 from app.api.application.models.application import Application
-from app.api.constants import PAGE_DEFAULT, PER_PAGE_DEFAULT
+from app.api.constants import PAGE_DEFAULT, PER_PAGE_DEFAULT, DISABLE_APP_SUBMIT_SETTING
+from app.api.dsrp_settings.models.dsrp_settings import DSRPSettings
 
 
 class ApplicationListResource(Resource, UserMixin):
@@ -71,6 +72,11 @@ class ApplicationListResource(Resource, UserMixin):
     @api.expect(APPLICATION)
     @api.marshal_with(APPLICATION, code=201)
     def post(self):
+        applications_disabled = DSRPSettings.find_by_setting(
+            DISABLE_APP_SUBMIT_SETTING).setting_value
+        if applications_disabled:
+            raise BadRequest("Application Submissions are disabled at this time.")
+
         try:
             application = Application._schema().load(request.json['application'])
             application.save()

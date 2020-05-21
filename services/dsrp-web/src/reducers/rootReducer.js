@@ -11,6 +11,7 @@ import {
   authenticationReducer,
   OGCReducer,
   applicationReducer,
+  appSettingsReducer,
 } from "@/reducers";
 
 // Function to create a reusable reducer (used in src/reducers/rootReducer)
@@ -31,6 +32,7 @@ export const reducerObject = {
   ...networkReducer,
   ...OGCReducer,
   ...applicationReducer,
+  ...appSettingsReducer,
   [reducerTypes.GET_USER_INFO]: createReducer(networkReducer, reducerTypes.GET_USER_INFO),
 };
 

@@ -24,3 +24,6 @@ export const APPLICATION_REVIEW = (guid) => `${APPLICATION_BY_ID(guid)}/review`;
 export const PERMIT_HOLDER = () => "/permit_holder";
 export const WELL = (params) => `/well?${queryString.stringify(params)}`;
 export const LIABILITY = (guid) => (guid ? `/liability?application_guid=${guid}` : "/liability");
+
+//appSettings
+export const APP_SETTINGS = "/settings";

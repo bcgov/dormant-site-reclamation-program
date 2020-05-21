@@ -27,8 +27,7 @@ export const createApplication = (application) => (dispatch) => {
     });
 };
 
-export const fetchApplications = (page, per_page) => (dispatch) => {
-  const params = page ? { page, per_page } : {};
+export const fetchApplications = (params) => (dispatch) => {
   dispatch(request(reducerTypes.GET_APPLICATIONS));
   return CustomAxios()
     .get(ENVIRONMENT.apiUrl + API.APPLICATION(params), createRequestHeader())

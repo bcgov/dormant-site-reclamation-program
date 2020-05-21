@@ -1,3 +1,4 @@
+import queryString from "query-string";
 import LandingPage from "@/components/pages/LandingPage";
 import ReturnPage from "@/components/pages/ReturnPage";
 import SubmitApplicationPage from "@/components/pages/SubmitApplicationPage";
@@ -40,6 +41,8 @@ export const APPLICATION_SUCCESS = {
 
 export const REVIEW_APPLICATIONS = {
   route: "/review-applications",
+  dynamicRoute: ({ page, per_page, ...params }) =>
+    `/review-applications?${queryString.stringify({ page, per_page, ...params })}`,
   component: ReviewApplicationsPage,
 };
 

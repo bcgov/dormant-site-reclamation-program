@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { bindActionCreators } from "redux";
+import { withRouter } from "react-router-dom";
+import { bindActionCreators, compose } from "redux";
 import { set, isEmpty } from "lodash";
+import queryString from "query-string";
+import * as routes from "@/constants/routes";
 import {
   getApplications,
   getApplicationsWellSitesContractedWork,
@@ -42,10 +45,55 @@ const propTypes = {
 
 const defaultProps = {};
 
+const defaultParams = {
+  page: 1,
+  per_page: 25,
+};
 export class ReviewApplicationInfo extends Component {
+  state = { isLoaded: false, params: defaultParams };
+
   componentDidMount() {
-    this.props.fetchApplications();
+    const params = queryString.parse(this.props.location.search);
+    this.setState(
+      (prevState) => ({
+        params: {
+          ...prevState.params,
+          ...params,
+        },
+      }),
+      () => this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params))
+    );
     this.props.fetchPermitHolders();
+  }
+
+  renderDataFromURL = (params) => {
+    const parsedParams = queryString.parse(params);
+    console.log(parsedParams);
+    this.setState(
+      {
+        params: parsedParams,
+        isLoaded: false,
+      },
+      () =>
+        this.props.fetchApplications(this.state.params).then(() => {
+          this.setState({ isLoaded: true });
+        })
+    );
+  };
+
+  onPageChange = (page, per_page) => {
+    this.props.history.replace(
+      routes.REVIEW_APPLICATIONS.dynamicRoute({
+        page,
+        per_page,
+      })
+    );
+  };
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.location !== this.props.location) {
+      this.renderDataFromURL(nextProps.location.search);
+    }
   }
 
   handleApplicationStatusChange = (item, application) => {
@@ -55,7 +103,7 @@ export class ReviewApplicationInfo extends Component {
     };
 
     this.props.updateApplication(application.guid, payload).then(() => {
-      this.props.fetchApplications();
+      this.props.fetchApplications(this.state.params);
     });
   };
 
@@ -91,7 +139,8 @@ export class ReviewApplicationInfo extends Component {
         applications={this.props.applications}
         applicationsWellSitesContractedWork={this.props.applicationsWellSitesContractedWork}
         pageData={this.props.pageData}
-        fetchApplications={this.props.fetchApplications}
+        params={this.state.params}
+        onPageChange={this.onPageChange}
         applicationStatusDropdownOptions={this.props.applicationStatusDropdownOptions}
         applicationStatusOptionsHash={this.props.applicationStatusOptionsHash}
         contractedWorkStatusDropdownOptions={this.props.contractedWorkStatusDropdownOptions}
@@ -133,4 +182,7 @@ const mapDispatchToProps = (dispatch) =>
 ReviewApplicationInfo.propTypes = propTypes;
 ReviewApplicationInfo.defaultProps = defaultProps;
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReviewApplicationInfo);
+export default compose(
+  withRouter,
+  connect(mapStateToProps, mapDispatchToProps)
+)(ReviewApplicationInfo);
