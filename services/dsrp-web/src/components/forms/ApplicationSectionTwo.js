@@ -50,17 +50,19 @@ const defaultProps = {
 const createMemberName = (member, name) => `${member}.${name}`;
 
 const wellSiteConditions = [
-  "Within 1000 m of a stream (defined in WSA and includes all water bodies)",
-  "Within 500 m of a groundwater drinking well",
-  "Sensitive habitat",
+  "Within 1,000 metres of a stream",
+  "Within 500 metres of a groundwater well",
+  "Within environmental protection and management area or critical habitat",
   "Suspected or known to have offsite contamination",
-  "Within 1500 m of a school or residence",
-  "On Traditional Lands Entitlement, cultural lands and/or First Nations critical area",
-  "On Agricultural Land Reserve",
-  "On range tenure, trapping licence, guide outfitting, and/or hunting area",
-  "Winter only access",
-  "On Private land",
+  "Within 1,500 metres of a private residence or community gathering area",
+  "Within an area actively used for trapping, guide outfitting, range tenure or hunting",
+  "On Crown land that is winter access only",
   "Drilled or abandoned prior to 1997",
+  "Within Treaty Land Entitlement, cultural lands and/or Indigenous peoples’ critical areas",
+  "Within sensitive watersheds that service communities",
+  "On or near reserve lands",
+  "Permit holder has provided notice that this site is dormant to achieve cost efficiencies for an area-based closure plan",
+  "Located inside Agricultural Land Reserve",
 ];
 
 const renderMoneyTotal = (label, amount, style) => (
@@ -279,33 +281,51 @@ const prepareErrors = (errors) => {
   return newErrors;
 };
 
+const contractedWorkFormSectionNames = CONTRACT_WORK_SECTIONS.reduce(
+  (list, { formSectionName }) => {
+    list.push(formSectionName);
+    return list;
+  },
+  []
+);
+
 const openRequiredPanels = async (errors) => {
+  let waitForAnimations = Promise.resolve();
   const paths = getPathsToLeaves(errors);
   const elements = getPathElements(paths);
   const firstElement = getFirstPathElement(elements);
   const path = firstElement.path;
 
-  // If this element is within a well site panel, open it.
-  const wellSiteIndexMatch = path.match(/(?<=well_sites\[)(\d*)/g);
-  const wellSiteIndex = wellSiteIndexMatch && parseInt(wellSiteIndexMatch[0]);
-  if (wellSiteIndex === null) {
-    return false;
+  if (!path) {
+    return waitForAnimations;
   }
+
+  // If this error is not for an element within a well site, there is no panels to open.
+  const isWellSiteError = path.substring(0, 10) === "well_sites";
+  if (!isWellSiteError) {
+    return waitForAnimations;
+  }
+
+  // Get the well site index and element for this well site panel.
+  const wellSiteIndex = parseInt(path.substring(path.indexOf("[") + 1, path.indexOf("]")));
   const wellSitePanelHeaderElement = document.getElementById(
     `well_sites[${wellSiteIndex}]-panel-header`
   );
 
+  // Open the panel for this well site (if its not already).
   const animationDelayInMs = 600;
-  let waitForAnimations = Promise.resolve();
   if (!wellSitePanelHeaderElement.classList.contains("ant-collapse-item-active")) {
     wellSitePanelHeaderElement.firstChild.click();
     waitForAnimations = sleep(animationDelayInMs);
   }
 
   // If this element is also within a contracted work section panel, open that too.
-  const contractedWorkSectionMatch = path.match(/(?<=.contracted_work\.)(.*)(?=\.)/g);
-  const contractedWorkSection = contractedWorkSectionMatch && contractedWorkSectionMatch[0];
-  if (contractedWorkSection !== null) {
+  const pathSections = path.split(".");
+  const isContractedWorkSectionError =
+    pathSections[2] && contractedWorkFormSectionNames.indexOf(pathSections[2]) !== -1;
+
+  if (isContractedWorkSectionError) {
+    const contractedWorkSection = pathSections[2];
     const contractedWorkPanelHeaderElement = document.getElementById(
       `well_sites[${wellSiteIndex}].contracted_work.${contractedWorkSection}-panel-header`
     );
