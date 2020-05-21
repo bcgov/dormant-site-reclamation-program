@@ -2,6 +2,7 @@ import React from "react";
 import { Row, Col, Typography, Result, Icon } from "antd";
 import PropTypes from "prop-types";
 import { formatDateTime } from "@/utils/helpers";
+
 const { Paragraph, Title } = Typography;
 
 const propTypes = {

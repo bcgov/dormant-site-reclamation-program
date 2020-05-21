@@ -46,6 +46,9 @@ def create_app(test_config=None):
         from sqlalchemy.orm import configure_mappers
         configure_mappers()
 
+        from app.api.services.ogc_data_service import OGCDataService
+        OGCDataService.refreshAllData()
+
     return app
 
 
