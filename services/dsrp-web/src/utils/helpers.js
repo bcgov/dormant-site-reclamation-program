@@ -321,7 +321,7 @@ export const formatMoney = (value) => {
     : number.toLocaleString("en-US", { style: "currency", currency: "USD" });
 };
 
-const getPathsToLeaves = (obj = {}) => {
+export const getPathsToLeaves = (obj = {}) => {
   const result = [];
 
   const flatten = (collection, prefix = "", suffix = "") => {
@@ -343,6 +343,31 @@ const getPathsToLeaves = (obj = {}) => {
   return result;
 };
 
+export const getPathElements = (paths) => {
+  const elements = {};
+  paths.map((path) => {
+    const query = `input[name="${path}"], select[name="${path}"], span[name="${path}"], [id="${path}"]`;
+    const element = document.querySelector(query);
+    if (element) {
+      elements[path] = element;
+    }
+  });
+  return elements;
+};
+
+export const getFirstElement = (pathsElements) => {
+  const paths = Object.keys(pathsElements);
+  const nodeBefore = (a, b) => b.compareDocumentPosition(a) === Node.DOCUMENT_POSITION_PRECEDING;
+  paths.sort((a, b) => {
+    if (pathsElements[a] === null || nodeBefore(pathsElements[b], pathsElements[a])) {
+      return b;
+    }
+    return a;
+  });
+
+  return { path: paths[0], element: pathsElements[paths[0]] };
+};
+
 export const scrollToFirstError = (errors) => {
   if (!isObjectLike(errors)) {
     return false;
@@ -354,25 +379,8 @@ export const scrollToFirstError = (errors) => {
   });
 
   const errorPaths = getPathsToLeaves(errors);
-  console.log("scrollToFirstError errorPaths", errorPaths);
-
-  const errorElements = [];
-  errorPaths.map((path) => {
-    const query = `input[name="${path}"], select[name="${path}"], span[name="${path}"], [id="${path}"]`;
-    const element = document.querySelector(query);
-    if (element) {
-      errorElements.push(element);
-    }
-  });
-
-  const nodeBefore = (a, b) => b.compareDocumentPosition(a) === Node.DOCUMENT_POSITION_PRECEDING;
-  errorElements.sort((a, b) => {
-    if (a === null || nodeBefore(b, a)) {
-      return b;
-    }
-    return a;
-  });
-  const firstErrorElement = errorElements[0];
+  const errorElements = getPathElements(errorPaths);
+  const firstErrorElement = getFirstElement(errorElements).element;
 
   if (firstErrorElement) {
     firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
@@ -381,3 +389,5 @@ export const scrollToFirstError = (errors) => {
 
   return false;
 };
+
+export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

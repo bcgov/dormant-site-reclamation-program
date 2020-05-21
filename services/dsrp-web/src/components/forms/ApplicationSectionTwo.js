@@ -14,7 +14,11 @@ import {
   currencyMask,
   formatMoney,
   scrollToFirstError,
+  getPathsToLeaves,
+  getFirstElement,
+  getPathElements,
   wellAuthorizationNumberMask,
+  sleep,
 } from "@/utils/helpers";
 import CONTRACT_WORK_SECTIONS from "@/constants/contract_work_sections";
 import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
@@ -79,10 +83,12 @@ const renderContractWorkPanel = (
   isEditable,
   wellSiteFormValues,
   props,
-  wellNumber
+  wellNumber,
+  wellSectionErrors
 ) => (
   <Panel
     key={contractWorkSection.sectionHeader}
+    id={`well_sites[${wellNumber}].contracted_work.${contractWorkSection.formSectionName}-panel-header`}
     header={
       <Row type="flex" align="middle" justify="space-between">
         <Col>
@@ -97,6 +103,7 @@ const renderContractWorkPanel = (
         </Col>
       </Row>
     }
+    forceRender={wellSectionErrors !== null}
   >
     <FormSection name={contractWorkSection.formSectionName}>
       <Form.Item
@@ -112,8 +119,8 @@ const renderContractWorkPanel = (
               name="planned_start_date"
               label="Planned Start Date"
               placeholder="Select Planned Start Date"
+              error={wellSectionErrors && wellSectionErrors.planned_start_date}
               component={renderConfig.DATE}
-              meta={get(props.formMeta, "")}
               disabled={!isEditable}
               disabledDate={(date) => {
                 const selectedDate = date ? moment(date) : null;
@@ -139,6 +146,7 @@ const renderContractWorkPanel = (
               name="planned_end_date"
               label="Planned End Date"
               placeholder="Select Planned End Date"
+              error={wellSectionErrors && wellSectionErrors.planned_end_date}
               component={renderConfig.DATE}
               disabled={!isEditable}
               disabledDate={(date) => {
@@ -189,6 +197,14 @@ const renderContractWorkPanel = (
         </Form.Item>
       ))}
       {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, { marginRight: 24 })}
+      {props.anyTouched && wellSectionErrors && wellSectionErrors.error && (
+        <span
+          id={`well_sites[${wellNumber}].contracted_work.${contractWorkSection.formSectionName}.error`}
+          className="color-error"
+        >
+          {wellSectionErrors.error}
+        </span>
+      )}
     </FormSection>
   </Panel>
 );
@@ -246,9 +262,64 @@ const asyncValidate = (values, dispatch, props, field) => {
   }
 };
 
+// Unfortunately, FieldArray validation places the returned errors into an object under a key called "_error"
+// which we don't want because we want to use the path in the object to determine the correct field to target.
+const prepareErrors = (errors) => {
+  if (isEmpty(errors)) {
+    return errors;
+  }
+
+  const newErrors = errors;
+  if (errors.well_sites && errors.well_sites._error) {
+    const wellSitesErrors = errors.well_sites._error.well_sites;
+    delete newErrors.well_sites;
+    newErrors.well_sites = wellSitesErrors;
+  }
+
+  return newErrors;
+};
+
+const openRequiredPanels = async (errors) => {
+  const paths = getPathsToLeaves(errors);
+  const elements = getPathElements(paths);
+  const firstElement = getFirstElement(elements);
+  const path = firstElement.path;
+
+  // If this element is within a well site panel, open it.
+  const wellSiteIndexMatch = path.match(/(?<=well_sites\[)(\d*)/g);
+  const wellSiteIndex = wellSiteIndexMatch && parseInt(wellSiteIndexMatch[0]);
+  if (wellSiteIndex === null) {
+    return false;
+  }
+  const wellSitePanelHeaderElement = document.getElementById(
+    `well_sites[${wellSiteIndex}]-panel-header`
+  );
+
+  const animationDelayInMs = 600;
+  let waitForAnimations = Promise.resolve();
+  if (!wellSitePanelHeaderElement.classList.contains("ant-collapse-item-active")) {
+    wellSitePanelHeaderElement.firstChild.click();
+    waitForAnimations = sleep(animationDelayInMs);
+  }
+
+  // If this element is also within a contracted work section panel, open that too.
+  const contractedWorkSectionMatch = path.match(/(?<=.contracted_work\.)(.*)(?=\.)/g);
+  const contractedWorkSection = contractedWorkSectionMatch && contractedWorkSectionMatch[0];
+  if (contractedWorkSection !== null) {
+    const contractedWorkPanelHeaderElement = document.getElementById(
+      `well_sites[${wellSiteIndex}].contracted_work.${contractedWorkSection}-panel-header`
+    );
+    if (!contractedWorkPanelHeaderElement.classList.contains("ant-collapse-item-active")) {
+      contractedWorkPanelHeaderElement.firstChild.click();
+      waitForAnimations = !waitForAnimations ? sleep(animationDelayInMs) : waitForAnimations;
+    }
+  }
+
+  return waitForAnimations;
+};
+
 const validateWellSites = (wellSites, formValues, props) => {
   const errors = {};
-  console.log(wellSites, formValues, props);
 
   if (!isArrayLike(wellSites)) {
     return "Bad save data: well sites is malformed.";
@@ -268,7 +339,7 @@ const validateWellSites = (wellSites, formValues, props) => {
     if (!isAtleastOneSelected) {
       set(
         errors,
-        `well_sites[${index}].site_conditions`,
+        `well_sites[${index}].site_conditions.error`,
         "Sites must meet at least one of the Site Conditions to qualify for the program."
       );
     }
@@ -311,11 +382,7 @@ const validateWellSites = (wellSites, formValues, props) => {
 
       // The sum of the estimated work can't be 0/invalid if either of the dates are provided.
       if (!costSum && (startDate || endDate)) {
-        set(
-          errors,
-          `${path}.error`,
-          "The sum of the estimated cost of work can't be 0 if either of the date fields are provided."
-        );
+        set(errors, `${path}.error`, "Total estimated cost cannot be $0.");
         sectionErrorCount++;
       }
 
@@ -324,16 +391,18 @@ const validateWellSites = (wellSites, formValues, props) => {
       }
     });
 
-    if (emptySectionsCount === CONTRACT_WORK_SECTIONS.length || validSectionsCount === 0) {
+    if (emptySectionsCount === CONTRACT_WORK_SECTIONS.length) {
       set(
         errors,
         `well_sites[${index}].contracted_work.error`,
-        "This well site must contain at least one valid and completed contracted work section."
+        "Sites must contain at least one valid contracted work section."
       );
+    }
+
+    if (validSectionsCount === 0) {
     }
   });
 
-  console.log("validateWellSites errors", errors);
   return isEmpty(errors) ? undefined : errors;
 };
 
@@ -370,7 +439,6 @@ class ApplicationSectionTwo extends Component {
     if (!isEqual(nextProps.formValues, this.props.formValues)) {
       this.calculateContractWorkTotals(nextProps.formValues);
     }
-    console.log("FORM META", nextProps.formMeta);
   };
 
   componentWillMount = () => {
@@ -435,7 +503,6 @@ class ApplicationSectionTwo extends Component {
       fields.push({});
     }
 
-    console.log("meta", meta);
     return (
       <>
         <Collapse
@@ -463,6 +530,7 @@ class ApplicationSectionTwo extends Component {
             return (
               <Panel
                 key={index}
+                id={`well_sites[${index}]-panel-header`}
                 header={
                   <Title level={3} style={{ margin: 0, marginLeft: 8 }}>
                     {wellName}
@@ -484,6 +552,7 @@ class ApplicationSectionTwo extends Component {
                     )}
                   </Title>
                 }
+                forceRender={wellSiteErrors !== null}
               >
                 <FormSection name={createMemberName(member, "details")}>
                   <Title level={4}>Details</Title>
@@ -538,8 +607,14 @@ class ApplicationSectionTwo extends Component {
                       ))}
                       {this.props.anyTouched &&
                         wellSiteErrors &&
-                        wellSiteErrors.site_conditions && (
-                          <span className="color-error">{wellSiteErrors.site_conditions}</span>
+                        wellSiteErrors.site_conditions &&
+                        wellSiteErrors.site_conditions.error && (
+                          <span
+                            id={`well_sites[${index}].site_conditions.error`}
+                            className="color-error"
+                          >
+                            {wellSiteErrors.site_conditions.error}
+                          </span>
                         )}
                     </Col>
                   </Row>
@@ -557,7 +632,12 @@ class ApplicationSectionTwo extends Component {
                     wellSiteErrors &&
                     wellSiteErrors.contracted_work &&
                     wellSiteErrors.contracted_work.error && (
-                      <span className="color-error">{wellSiteErrors.contracted_work.error}</span>
+                      <span
+                        id={`well_sites[${index}].contracted_work.error`}
+                        className="color-error"
+                      >
+                        {wellSiteErrors.contracted_work.error}
+                      </span>
                     )}
                   <Row gutter={48}>
                     <Col>
@@ -580,7 +660,12 @@ class ApplicationSectionTwo extends Component {
                               ? this.props.formValues.well_sites[index]
                               : null,
                             this.props,
-                            index
+                            index,
+                            get(
+                              wellSiteErrors,
+                              `contracted_work.${contractWorkSection.formSectionName}`,
+                              null
+                            )
                           )
                         )}
                       </Collapse>
@@ -753,6 +838,12 @@ export default compose(
       "contract_details.operator_id",
       "well_sites[].details.well_authorization_number",
     ],
-    onSubmitFail: (errors) => scrollToFirstError(errors),
+    onSubmitFail: (errors) => {
+      if (!isObjectLike(errors)) {
+        return;
+      }
+      const newErrors = prepareErrors(errors);
+      openRequiredPanels(newErrors).then(() => scrollToFirstError(newErrors));
+    },
   })
 )(ApplicationSectionTwo);
