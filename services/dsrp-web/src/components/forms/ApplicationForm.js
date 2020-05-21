@@ -102,16 +102,16 @@ export class ApplicationForm extends Component {
     this.setState(resetFormState, () => this.emptySavedFormData());
   };
 
-  onFileLoad = (document_name, document_manager_guid) => {
+  onFileLoad = (document_name, object_store_path) => {
     this.setState((prevState) => ({
-      uploadedFiles: [{ document_manager_guid, document_name }, ...prevState.uploadedFiles],
+      uploadedFiles: [{ object_store_path, document_name }, ...prevState.uploadedFiles],
     }));
   };
 
   onRemoveFile = (error, file) => {
     this.setState((prevState) => ({
       uploadedFiles: prevState.uploadedFiles.filter(
-        (doc) => doc.document_manager_guid !== file.serverId
+        (doc) => doc.object_store_path !== file.serverId
       ),
     }));
   };
