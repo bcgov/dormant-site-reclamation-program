@@ -163,6 +163,11 @@ export class ApplicationForm extends Component {
                 <Paragraph>
                   Review your application details below to make sure all information provided is
                   accurate.
+                </Paragraph>
+                <Paragraph>
+                  <b>You will not be able to edit your application after it is submitted</b>
+                </Paragraph>
+                <Paragraph>
                   <ul>
                     <li>
                       Applications can be approved in part or in their entirety Any work on well
