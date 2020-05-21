@@ -50,17 +50,19 @@ const defaultProps = {
 const createMemberName = (member, name) => `${member}.${name}`;
 
 const wellSiteConditions = [
-  "Within 1000 m of a stream (defined in WSA and includes all water bodies)",
-  "Within 500 m of a groundwater drinking well",
-  "Sensitive habitat",
+  "Within 1,000 metres of a stream",
+  "Within 500 metres of a groundwater well",
+  "Within environmental protection and management area or critical habitat",
   "Suspected or known to have offsite contamination",
-  "Within 1500 m of a school or residence",
-  "On Traditional Lands Entitlement, cultural lands and/or First Nations critical area",
-  "On Agricultural Land Reserve",
-  "On range tenure, trapping licence, guide outfitting, and/or hunting area",
-  "Winter only access",
-  "On Private land",
+  "Within 1,500 metres of a private residence or community gathering area",
+  "Within an area actively used for trapping, guide outfitting, range tenure or hunting",
+  "On Crown land that is winter access only",
   "Drilled or abandoned prior to 1997",
+  "Within Treaty Land Entitlement, cultural lands and/or Indigenous peoples’ critical areas",
+  "Within sensitive watersheds that service communities",
+  "On or near reserve lands",
+  "Permit holder has provided notice that this site is dormant to achieve cost efficiencies for an area-based closure plan",
+  "Located inside Agricultural Land Reserve",
 ];
 
 const renderMoneyTotal = (label, amount, style) => (
