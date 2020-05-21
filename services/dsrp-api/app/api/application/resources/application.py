@@ -1,7 +1,7 @@
 from flask_restplus import Resource
-from flask import request
+from flask import request, current_app
 from sqlalchemy_filters import apply_pagination, apply_sort
-from sqlalchemy import desc, func, or_, and_
+from sqlalchemy import desc, func, or_, and_, ilike
 from werkzeug.exceptions import BadRequest, NotFound
 from marshmallow.exceptions import MarshmallowError
 
@@ -24,12 +24,18 @@ class ApplicationListResource(Resource, UserMixin):
     @api.marshal_with(APPLICATION_LIST, code=200)
     def get(self):
 
+        current_app.logger.info('*******************************')
+        current_app.logger.info(request.args.__dict__)
+
         records, pagination_details = self._apply_filters_and_pagination(
             page_number=request.args.get('page', PAGE_DEFAULT, type=int),
             page_size=request.args.get('per_page', PER_PAGE_DEFAULT, type=int),
             sort_field=request.args.get('sort_field', 'submission_date', type=str),
             sort_dir=request.args.get('sort_dir', 'desc', type=str),
-            application_status_code=request.args.getlist('application_status_code', type=str))
+            application_status_code=request.args.getlist('application_status_code', type=str),
+            id=request.args.get('id', type=int),
+            company=request.args.get('company', type=str),
+            permit_holder=request.args.get('permit_holder', type=str))
 
         data = records.all()
 
@@ -46,11 +52,18 @@ class ApplicationListResource(Resource, UserMixin):
                                       page_size=PER_PAGE_DEFAULT,
                                       sort_field=None,
                                       sort_dir=None,
-                                      application_status_code=[]):
+                                      id=None,
+                                      company=None,
+                                      permit_holder=None,
+                                      application_status_code=[]
+                                      ):
 
         base_query = Application.query
 
         filters = []
+
+        if id:
+            filters.append(Application.id == id)
 
         if application_status_code:
             filters.append(Application.application_status_code.in_(application_status_code))
