@@ -91,9 +91,15 @@ services:
     container_name: tusd
     image: tusproject/tusd
     ports:
-      - 1800:1800
+      - 1080:1080
     env_file: ./services/tusd/.env
-    command: ["--hooks-dir", "/srv/tusd-hooks", "-s3-endpoint=nrs.objectstore.gov.bc.ca/awlvru"]
+    command:
+      [
+        "--hooks-dir",
+        "/srv/tusd-hooks",
+        "-s3-endpoint=nrs.objectstore.gov.bc.ca",
+        "-s3-bucket=awlvru",
+      ]
 
   ####################### DOCUMENT_GENERATION Definition #######################
   docgen-api:
