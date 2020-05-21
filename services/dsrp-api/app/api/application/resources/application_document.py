@@ -13,11 +13,10 @@ from sqlalchemy.exc import DBAPIError
 
 from app.extensions import api, db
 from app.api.utils.resources_mixins import UserMixin
+from app.api.utils.access_decorators import requires_role_view_all, requires_role_admin
 
 from app.api.application.models.application import Application
 from app.api.application.models.application_document import ApplicationDocument
-
-from app.api.services.document_manager_service import DocumentManagerService
 from app.api.services.object_store_storage_service import ObjectStoreStorageService
 
 from app.api.application.response_models import APPLICATION_DOCUMENT
@@ -40,6 +39,8 @@ class ApplicationDocumentListResource(Resource, UserMixin):
 
 
 class ApplicationDocumentResource(Resource, UserMixin):
+    @api.doc(description='Retrieve a file from document storage')
+    @requires_role_admin
     def get(self, application_guid, document_guid):
         app_document = ApplicationDocument.find_by_guid(document_guid)
         if str(app_document.application.guid) != str(application_guid):
