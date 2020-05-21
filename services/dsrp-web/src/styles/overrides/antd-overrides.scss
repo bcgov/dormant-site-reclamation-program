@@ -170,6 +170,18 @@ td a {
   border: none;
 }
 
+.ant-pagination-item-active a {
+  font-weight: bold;
+}
+.ant-pagination-prev .ant-pagination-item-link,
+.ant-pagination-next .ant-pagination-item-link,
+.ant-select-selection,
+.ant-pagination-item {
+  & a {
+    text-decoration: none;
+  }
+}
+
 tr.ant-table-expanded-row {
   & .ant-table-thead > tr > th {
     border-top: none;
