@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { get } from "lodash";
 import { Table, Icon, Tooltip, Pagination, Menu, Dropdown } from "antd";
 import { formatDateTime, formatDate, formatMoney, formatDateTimeFine } from "@/utils/helpers";
 import * as Strings from "@/constants/strings";
@@ -180,7 +181,7 @@ export class ApplicationTable extends Component {
       title: "Location",
       key: "location",
       dataIndex: "location",
-      render: (text) => <div title="Location">{formatDate(text) || Strings.DASH}</div>,
+      render: (text) => <div title="Location">{text || Strings.DASH}</div>,
     },
     {
       title: "Completion Date",
@@ -250,13 +251,18 @@ export class ApplicationTable extends Component {
     },
   ];
 
-  onExpand = (expanded, record) =>
-    this.setState((prevState) => {
-      const expandedRowKeys = expanded
-        ? prevState.expandedRowKeys.concat(record.key)
-        : prevState.expandedRowKeys.filter((key) => key !== record.key);
-      return { expandedRowKeys };
+  onExpand = (expanded, record) => {
+    this.props.fetchLiabilities(record.key).then(() => {
+      this.props.fetchWells({ application_guid: record.key }).then(() => {
+        this.setState((prevState) => {
+          const expandedRowKeys = expanded
+            ? prevState.expandedRowKeys.concat(record.key)
+            : prevState.expandedRowKeys.filter((key) => key !== record.key);
+          return { expandedRowKeys };
+        });
+      });
     });
+  };
 
   getSum = (guid, field) =>
     this.props.applicationsWellSitesContractedWork
@@ -275,7 +281,7 @@ export class ApplicationTable extends Component {
         key: application.guid,
         application_guid: application.guid,
         company_name: application.json.company_details.company_name.label,
-        permit_holder: application.json.contract_details.organization_id,
+        permit_holder: this.props.permitHoldersHash[application.json.contract_details.operator_id],
         wells: application.json.well_sites ? application.json.well_sites.length : 0,
         work_types: this.getNoWorkTypes(application.guid),
         est_cost: this.getSum(application.guid, "est_cost"),
