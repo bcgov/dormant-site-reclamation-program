@@ -37,6 +37,7 @@ const propTypes = {
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   formValues: PropTypes.objectOf(PropTypes.any).isRequired,
   selectedWells: PropTypes.arrayOf(PropTypes.any),
+  selectedWells: PropTypes.objectOf(PropTypes.any),
   isViewingSubmission: PropTypes.bool,
   isEditable: PropTypes.bool,
 };

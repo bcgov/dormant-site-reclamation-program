@@ -23,7 +23,7 @@ export const Header = (props) => (
         <div className="header-content">
           <span className="header-logo">
             <a href="https://gov.bc.ca/">
-              <img alt="BC Government Logo" src={BC_GOV} width={154} />
+              <img id="bc-gov-header-img" alt="BC Government Logo" src={BC_GOV} />
             </a>
           </span>
           <span className="header-title">
