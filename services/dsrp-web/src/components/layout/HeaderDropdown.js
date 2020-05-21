@@ -101,13 +101,13 @@ export class HeaderDropdown extends Component {
                   to={routes.SUBMIT_APPLICATION.route}
                   className={this.setActiveLink(routes.SUBMIT_APPLICATION.route)}
                 >
-                  Apply
+                  New Application
                 </Link>
                 <Link
                   to={routes.VIEW_APPLICATION_STATUS.route}
                   className={this.setActiveLink(routes.VIEW_APPLICATION_STATUS.route)}
                 >
-                  Status
+                  Check Application Status
                 </Link>
               </>
             )}
