@@ -30,3 +30,6 @@ export const STORE_LIABILITIES = "STORE_LIABILITIES";
 // applications
 export const STORE_APPLICATIONS = "STORE_APPLICATIONS";
 export const STORE_APPLICATION = "STORE_APPLICATION";
+
+//App Settings
+export const STORE_APP_SETTINGS = "STORE_APP_SETTINGS";

@@ -26,3 +26,7 @@ STATIC_DATA = {}
 # Pagination
 PAGE_DEFAULT = 1
 PER_PAGE_DEFAULT = 25
+
+#settings
+
+DISABLE_APP_SUBMIT_SETTING = "disable_applications"
