@@ -46,7 +46,6 @@ class FileUpload extends React.Component {
             filename: file.name,
             filetype: file.type,
           },
-          headers: createRequestHeader().headers,
           onError: (err) => {
             error(err);
           },
