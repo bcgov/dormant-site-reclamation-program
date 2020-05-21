@@ -360,17 +360,19 @@ export const scrollToFirstError = (errors) => {
   errorPaths.map((path) => {
     const query = `input[name="${path}"], select[name="${path}"], span[name="${path}"], [id="${path}"]`;
     const element = document.querySelector(query);
-    errorElements.push(element);
+    if (element) {
+      errorElements.push(element);
+    }
   });
 
   const nodeBefore = (a, b) => b.compareDocumentPosition(a) === Node.DOCUMENT_POSITION_PRECEDING;
-
-  const firstErrorElement = errorElements.reduce((a, b) => {
+  errorElements.sort((a, b) => {
     if (a === null || nodeBefore(b, a)) {
       return b;
     }
     return a;
   });
+  const firstErrorElement = errorElements[0];
 
   if (firstErrorElement) {
     firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
