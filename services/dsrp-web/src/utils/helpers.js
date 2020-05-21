@@ -355,7 +355,7 @@ export const getPathElements = (paths) => {
   return elements;
 };
 
-export const getFirstElement = (pathsElements) => {
+export const getFirstPathElement = (pathsElements) => {
   const paths = Object.keys(pathsElements);
   const nodeBefore = (a, b) => b.compareDocumentPosition(a) === Node.DOCUMENT_POSITION_PRECEDING;
   paths.sort((a, b) => {
@@ -380,10 +380,10 @@ export const scrollToFirstError = (errors) => {
 
   const errorPaths = getPathsToLeaves(errors);
   const errorElements = getPathElements(errorPaths);
-  const firstErrorElement = getFirstElement(errorElements).element;
+  const firstErrorElement = getFirstPathElement(errorElements).element;
 
   if (firstErrorElement) {
-    firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+    firstErrorElement.scrollIntoView();
     return true;
   }
 

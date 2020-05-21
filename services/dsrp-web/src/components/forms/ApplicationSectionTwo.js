@@ -15,7 +15,7 @@ import {
   formatMoney,
   scrollToFirstError,
   getPathsToLeaves,
-  getFirstElement,
+  getFirstPathElement,
   getPathElements,
   wellAuthorizationNumberMask,
   sleep,
@@ -282,7 +282,7 @@ const prepareErrors = (errors) => {
 const openRequiredPanels = async (errors) => {
   const paths = getPathsToLeaves(errors);
   const elements = getPathElements(paths);
-  const firstElement = getFirstElement(elements);
+  const firstElement = getFirstPathElement(elements);
   const path = firstElement.path;
 
   // If this element is within a well site panel, open it.
