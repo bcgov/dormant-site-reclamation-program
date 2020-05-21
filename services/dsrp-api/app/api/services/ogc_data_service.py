@@ -109,7 +109,15 @@ class OGCDataService():
 
         #update data and return
         data = cache.get(cache_key)
-        df = serializer.deserialize(data)
+        if data:
+            df = serializer.deserialize(data)
+        else:
+            #workaround for timing issue on first load
+            current_app.logger.warning(f'OGC DATA SERVICE - {cache_key} - Waiting...')
+            time.sleep(1)
+            data = cache.get(cache_key)
+            df = serializer.deserialize(data)
+
         return df
 
     @classmethod
