@@ -50,11 +50,7 @@ class ApplicationSectionOne extends Component {
 
   render() {
     return (
-      <Form
-        layout="vertical"
-        onSubmit={this.props.handleSubmit(validate)}
-        onReset={this.handleReset}
-      >
+      <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="company_details">
           <Title level={3} className="application-section">
             Company Details
