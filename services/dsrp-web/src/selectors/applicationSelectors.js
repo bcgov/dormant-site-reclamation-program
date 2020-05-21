@@ -18,13 +18,17 @@ export const { getApplications, getApplication, getPageData } = applicationReduc
 const getLMR = (workType, liability) => {
   if (!liability) {
     return null;
-  } else if (startsWith(workType, "abandonment")) {
+  }
+  if (startsWith(workType, "abandonment")) {
     return liability.abandonment_liability;
-  } else if (endsWith(workType, "investigation")) {
+  }
+  if (endsWith(workType, "investigation")) {
     return liability.assessment_liability;
-  } else if (startsWith(workType, "reclamation")) {
+  }
+  if (startsWith(workType, "reclamation")) {
     return liability.reclamation_liability;
-  } else if (startsWith(workType, "remediation")) {
+  }
+  if (startsWith(workType, "remediation")) {
     return liability.remediation_liability;
   }
 };
@@ -32,13 +36,6 @@ const getLMR = (workType, liability) => {
 export const getApplicationsWellSitesContractedWork = createSelector(
   [getApplications, getWells, getLiabilities],
   (applications, wells, liabilities) => {
-    // const wellsHash = wells.reduce((map, obj) => ((map[obj.well_auth_number] = obj), map), {});
-    // const liabilitiesHash = liabilities.reduce(
-    //   (map, obj) => ((map[obj.well_auth_number] = obj), map),
-    //   {}
-    // );
-    // console.log(wellsHash);
-
     if (isEmpty(applications) || !isArrayLike(applications)) {
       return [];
     }
