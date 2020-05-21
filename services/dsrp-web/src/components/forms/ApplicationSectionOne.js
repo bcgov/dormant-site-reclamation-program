@@ -12,7 +12,6 @@ import OrgBookSearch from "@/components/common/OrgBookSearch";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import { ORGBOOK_URL } from "@/constants/routes";
-import { APPLICATION } from "@/constants/api";
 import { DOCUMENT, EXCEL } from "@/constants/fileTypes";
 
 const { Title, Paragraph } = Typography;
@@ -289,7 +288,6 @@ class ApplicationSectionOne extends Component {
                   id="files"
                   name="files"
                   component={renderConfig.FILE_UPLOAD}
-                  uploadUrl={`dsrp/${this.props.fileGuid}/documents`}
                   acceptedFileTypesMap={{ ...DOCUMENT, ...EXCEL }}
                   onFileLoad={this.props.onFileLoad}
                   onRemoveFile={this.props.onRemoveFile}
