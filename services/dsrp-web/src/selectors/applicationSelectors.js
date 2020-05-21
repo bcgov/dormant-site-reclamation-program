@@ -1,21 +1,43 @@
-import { startCase, camelCase, isObjectLike, isEmpty, isArrayLike, sum, get } from "lodash";
+import {
+  startCase,
+  camelCase,
+  isObjectLike,
+  isEmpty,
+  isArrayLike,
+  sum,
+  get,
+  startsWith,
+  endsWith,
+} from "lodash";
 import { createSelector } from "reselect";
 import * as applicationReducer from "../reducers/applicationReducer";
 import { getWells, getLiabilities } from "@/selectors/OGCSelectors";
 
 export const { getApplications, getApplication, getPageData } = applicationReducer;
 
+const getLMR = (workType, liability) => {
+  if (!liability) {
+    return null;
+  } else if (startsWith(workType, "abandonment")) {
+    return liability.abandonment_liability;
+  } else if (endsWith(workType, "investigation")) {
+    return liability.assessment_liability;
+  } else if (startsWith(workType, "reclamation")) {
+    return liability.reclamation_liability;
+  } else if (startsWith(workType, "remediation")) {
+    return liability.remediation_liability;
+  }
+};
 // return an array of contracted_work on well sites
 export const getApplicationsWellSitesContractedWork = createSelector(
   [getApplications, getWells, getLiabilities],
   (applications, wells, liabilities) => {
-    const wellsHash = wells.reduce((map, obj) => ((map[obj.well_auth_number] = obj), map), {});
-    const liabilitiesHash = liabilities.reduce(
-      (map, obj) => ((map[obj.well_auth_number] = obj), map),
-      {}
-    );
-    console.log(wellsHash);
-    // console.log(liabilitiesHash);
+    // const wellsHash = wells.reduce((map, obj) => ((map[obj.well_auth_number] = obj), map), {});
+    // const liabilitiesHash = liabilities.reduce(
+    //   (map, obj) => ((map[obj.well_auth_number] = obj), map),
+    //   {}
+    // );
+    // console.log(wellsHash);
 
     if (isEmpty(applications) || !isArrayLike(applications)) {
       return [];
@@ -68,14 +90,15 @@ export const getApplicationsWellSitesContractedWork = createSelector(
             `contracted_work.${type}.contracted_work_status_code`,
             null
           );
-          const OGCStatus = !isEmpty(wellsHash[wellAuthorizationNumber])
-            ? wellsHash[wellAuthorizationNumber].current_status
+          const OGCStatus = !isEmpty(wells[wellAuthorizationNumber])
+            ? wells[wellAuthorizationNumber].current_status
             : null;
-          const location = !isEmpty(wellsHash[wellAuthorizationNumber])
-            ? wellsHash[wellAuthorizationNumber].surface_location
+          const location = !isEmpty(wells[wellAuthorizationNumber])
+            ? wells[wellAuthorizationNumber].surface_location
             : null;
-          console.log(OGCStatus);
-          console.log(wellAuthorizationNumber);
+          const liability = !isEmpty(liabilities[wellAuthorizationNumber])
+            ? liabilities[wellAuthorizationNumber]
+            : null;
           const wellSiteContractedWorkType = {
             key: `${application.guid}.${wellAuthorizationNumber}.${type}`,
             application_guid: application.guid || null,
@@ -86,7 +109,7 @@ export const getApplicationsWellSitesContractedWork = createSelector(
             completion_date: contractedWork[type].planned_end_date || null,
             est_cost: sum(estimatedCostArray),
             est_shared_cost: sharedCost,
-            LMR: null,
+            LMR: getLMR(type, liability),
             OGC_status: OGCStatus,
             location,
             contracted_work_status_code: contractedWorkStatusCode || "NOT_STARTED",

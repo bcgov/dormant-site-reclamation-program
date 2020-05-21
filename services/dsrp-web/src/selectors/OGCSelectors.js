@@ -8,4 +8,4 @@ export const getPermitHoldersDropdown = createSelector([getPermitHolders], (opti
   createDropDownList(options, "organization_name", "operator_id")
 );
 
-export const getPermitHoldersHash = createSelector([getPermitHolders], createLabelHash);
+export const getPermitHoldersHash = createSelector([getPermitHoldersDropdown], createLabelHash);

@@ -13,13 +13,18 @@ import {
   updateApplication,
   updateApplicationReview,
 } from "@/actionCreators/applicationActionCreator";
-import { fetchLiabilities, fetchWells } from "@/actionCreators/OGCActionCreator";
 import {
   getDropdownApplicationStatusOptions,
   getApplicationStatusOptionsHash,
   getDropdownContractedWorkStatusOptions,
   getContractedWorkStatusOptionsHash,
 } from "@/selectors/staticContentSelectors";
+import { getPermitHoldersHash } from "@/selectors/OGCSelectors";
+import {
+  fetchLiabilities,
+  fetchWells,
+  fetchPermitHolders,
+} from "@/actionCreators/OGCActionCreator";
 import ApplicationTable from "@/components/admin/ApplicationTable";
 
 const propTypes = {
@@ -40,6 +45,7 @@ const defaultProps = {};
 export class ReviewApplicationInfo extends Component {
   componentDidMount() {
     this.props.fetchApplications();
+    this.props.fetchPermitHolders();
   }
 
   handleApplicationStatusChange = (item, application) => {
@@ -92,6 +98,7 @@ export class ReviewApplicationInfo extends Component {
         contractedWorkStatusOptionsHash={this.props.contractedWorkStatusOptionsHash}
         handleApplicationStatusChange={this.handleApplicationStatusChange}
         handleContractedWorkStatusChange={this.handleContractedWorkStatusChange}
+        permitHoldersHash={this.props.permitHoldersHash}
         fetchLiabilities={this.props.fetchLiabilities}
         fetchWells={this.props.fetchWells}
       />
@@ -107,6 +114,7 @@ const mapStateToProps = (state) => ({
   applicationStatusOptionsHash: getApplicationStatusOptionsHash(state),
   contractedWorkStatusDropdownOptions: getDropdownContractedWorkStatusOptions(state),
   contractedWorkStatusOptionsHash: getContractedWorkStatusOptionsHash(state),
+  permitHoldersHash: getPermitHoldersHash(state),
 });
 
 const mapDispatchToProps = (dispatch) =>
@@ -117,6 +125,7 @@ const mapDispatchToProps = (dispatch) =>
       updateApplicationReview,
       fetchLiabilities,
       fetchWells,
+      fetchPermitHolders,
     },
     dispatch
   );
