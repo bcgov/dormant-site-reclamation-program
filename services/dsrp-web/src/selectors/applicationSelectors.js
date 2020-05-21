@@ -1,13 +1,41 @@
-import { startCase, camelCase, isObjectLike, isEmpty, isArrayLike, sum, get } from "lodash";
+import {
+  startCase,
+  camelCase,
+  isObjectLike,
+  isEmpty,
+  isArrayLike,
+  sum,
+  get,
+  startsWith,
+  endsWith,
+} from "lodash";
 import { createSelector } from "reselect";
 import * as applicationReducer from "../reducers/applicationReducer";
+import { getWells, getLiabilities } from "@/selectors/OGCSelectors";
 
 export const { getApplications, getApplication, getPageData } = applicationReducer;
 
+const getLMR = (workType, liability) => {
+  if (!liability) {
+    return null;
+  }
+  if (startsWith(workType, "abandonment")) {
+    return liability.abandonment_liability;
+  }
+  if (endsWith(workType, "investigation")) {
+    return liability.assessment_liability;
+  }
+  if (startsWith(workType, "reclamation")) {
+    return liability.reclamation_liability;
+  }
+  if (startsWith(workType, "remediation")) {
+    return liability.remediation_liability;
+  }
+};
 // return an array of contracted_work on well sites
 export const getApplicationsWellSitesContractedWork = createSelector(
-  [getApplications],
-  (applications) => {
+  [getApplications, getWells, getLiabilities],
+  (applications, wells, liabilities) => {
     if (isEmpty(applications) || !isArrayLike(applications)) {
       return [];
     }
@@ -59,7 +87,15 @@ export const getApplicationsWellSitesContractedWork = createSelector(
             `contracted_work.${type}.contracted_work_status_code`,
             null
           );
-
+          const OGCStatus = !isEmpty(wells[wellAuthorizationNumber])
+            ? wells[wellAuthorizationNumber].current_status
+            : null;
+          const location = !isEmpty(wells[wellAuthorizationNumber])
+            ? wells[wellAuthorizationNumber].surface_location
+            : null;
+          const liability = !isEmpty(liabilities[wellAuthorizationNumber])
+            ? liabilities[wellAuthorizationNumber]
+            : null;
           const wellSiteContractedWorkType = {
             key: `${application.guid}.${wellAuthorizationNumber}.${type}`,
             application_guid: application.guid || null,
@@ -70,10 +106,9 @@ export const getApplicationsWellSitesContractedWork = createSelector(
             completion_date: contractedWork[type].planned_end_date || null,
             est_cost: sum(estimatedCostArray),
             est_shared_cost: sharedCost,
-            LMR: null,
-            status: null,
-            OGC_status: null,
-            location: null,
+            LMR: getLMR(type, liability),
+            OGC_status: OGCStatus,
+            location,
             contracted_work_status_code: contractedWorkStatusCode || "NOT_STARTED",
             review_json: reviewJson,
           };
