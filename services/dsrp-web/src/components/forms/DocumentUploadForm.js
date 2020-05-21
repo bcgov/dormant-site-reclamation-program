@@ -1,13 +1,17 @@
 import React, { Component } from "react";
 import { reset, initialize } from "redux-form";
 import { Form, Col, Row, Typography, Button } from "antd";
+import { compose, bindActionCreators } from "redux";
+import { connect } from "react-redux";
+
 import PropTypes from "prop-types";
 
 import { reduxForm, Field } from "redux-form";
 
-import { DOCUMENT_UPLOAD_FORM } from "@/constants/forms";
-import { renderConfig } from "@/components/common/config";
+import { createApplication } from "@/actionCreators/applicationActionCreator";
 
+import { renderConfig } from "@/components/common/config";
+import { DOCUMENT_UPLOAD_FORM } from "@/constants/forms";
 import { DOCUMENT, EXCEL } from "@/constants/fileTypes";
 
 const { Title } = Typography;
@@ -31,6 +35,10 @@ export class DocumentUploadForm extends Component {
 
   handleSubmit = (values, dispatch) => {
     const application = { json: values, documents: this.state.uploadedFiles };
+    this.props.uploadFiles(application).then((response) => {
+      this.setState(resetFormState);
+      dispatch(initialize(APPLICATION_FORM));
+    });
   };
 
   handleReset = () => {
@@ -56,7 +64,7 @@ export class DocumentUploadForm extends Component {
       <Row>
         <Col>
           <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
-            <Title level={2}>Upload Required Files</Title>
+            <Title level={3}>Upload Required Files</Title>
             <Row gutter={48}>
               <Col span={24}>
                 <Form.Item label="Upload Required Files">
@@ -90,6 +98,26 @@ export class DocumentUploadForm extends Component {
 DocumentUploadForm.propTypes = propTypes;
 DocumentUploadForm.defaultProps = defaultProps;
 
-export default reduxForm({
-  form: DOCUMENT_UPLOAD_FORM,
-})(DocumentUploadForm);
+const mapStateToProps = (state) => ({
+  // uploadedDocuments:
+});
+
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      uploadDocuments,
+    },
+    dispatch
+  );
+
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  reduxForm({
+    form: DOCUMENT_UPLOAD_FORM,
+    destroyOnUnmount: false,
+    forceUnregisterOnUnmount: true,
+    keepDirtyOnReinitialize: true,
+    enableReinitialize: true,
+    updateUnregisteredFields: true,
+  })
+)(DocumentUploadForm);
