@@ -63,6 +63,7 @@ const wellSiteConditions = [
   "On or near reserve lands",
   "Permit holder has provided notice that this site is dormant to achieve cost efficiencies for an area-based closure plan",
   "Located inside Agricultural Land Reserve",
+  "Specified work that was included in a permit holder’s Dormant Sites 2020 Annual Work Plan",
 ];
 
 const renderMoneyTotal = (label, amount, style) => (
