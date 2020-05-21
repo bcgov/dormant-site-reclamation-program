@@ -279,33 +279,51 @@ const prepareErrors = (errors) => {
   return newErrors;
 };
 
+const contractedWorkFormSectionNames = CONTRACT_WORK_SECTIONS.reduce(
+  (list, { formSectionName }) => {
+    list.push(formSectionName);
+    return list;
+  },
+  []
+);
+
 const openRequiredPanels = async (errors) => {
+  let waitForAnimations = Promise.resolve();
   const paths = getPathsToLeaves(errors);
   const elements = getPathElements(paths);
   const firstElement = getFirstPathElement(elements);
   const path = firstElement.path;
 
-  // If this element is within a well site panel, open it.
-  const wellSiteIndexMatch = path.match(/(?<=well_sites\[)(\d*)/g);
-  const wellSiteIndex = wellSiteIndexMatch && parseInt(wellSiteIndexMatch[0]);
-  if (wellSiteIndex === null) {
-    return false;
+  if (!path) {
+    return waitForAnimations;
   }
+
+  // If this error is not for an element within a well site, there is no panels to open.
+  const isWellSiteError = path.substring(0, 10) === "well_sites";
+  if (!isWellSiteError) {
+    return waitForAnimations;
+  }
+
+  // Get the well site index and element for this well site panel.
+  const wellSiteIndex = parseInt(path.substring(path.indexOf("[") + 1, path.indexOf("]")));
   const wellSitePanelHeaderElement = document.getElementById(
     `well_sites[${wellSiteIndex}]-panel-header`
   );
 
+  // Open the panel for this well site (if its not already).
   const animationDelayInMs = 600;
-  let waitForAnimations = Promise.resolve();
   if (!wellSitePanelHeaderElement.classList.contains("ant-collapse-item-active")) {
     wellSitePanelHeaderElement.firstChild.click();
     waitForAnimations = sleep(animationDelayInMs);
   }
 
   // If this element is also within a contracted work section panel, open that too.
-  const contractedWorkSectionMatch = path.match(/(?<=.contracted_work\.)(.*)(?=\.)/g);
-  const contractedWorkSection = contractedWorkSectionMatch && contractedWorkSectionMatch[0];
-  if (contractedWorkSection !== null) {
+  const pathSections = path.split(".");
+  const isContractedWorkSectionError =
+    pathSections[2] && contractedWorkFormSectionNames.indexOf(pathSections[2]) !== -1;
+
+  if (isContractedWorkSectionError) {
+    const contractedWorkSection = pathSections[2];
     const contractedWorkPanelHeaderElement = document.getElementById(
       `well_sites[${wellSiteIndex}].contracted_work.${contractedWorkSection}-panel-header`
     );
