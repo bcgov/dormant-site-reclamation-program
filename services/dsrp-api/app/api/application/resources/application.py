@@ -11,16 +11,17 @@ from app.api.utils.access_decorators import requires_role_view_all, requires_rol
 from app.api.utils.resources_mixins import UserMixin
 from app.api.application.response_models import APPLICATION, APPLICATION_LIST
 from app.api.application.models.application import Application
-from app.api.constants import PAGE_DEFAULT, PER_PAGE_DEFAULT
+from app.api.constants import PAGE_DEFAULT, PER_PAGE_DEFAULT, DISABLE_APP_SUBMIT_SETTING
+from app.api.dsrp_settings.models.dsrp_settings import DSRPSettings
 
 
 class ApplicationListResource(Resource, UserMixin):
-    @api.doc(
-        description='Get all applications. Default order: submission_date desc',
-        params={
-            'page': f'The page number of paginated records to return. Default: {PAGE_DEFAULT}',
-            'per_page': f'The number of records to return per page. Default: {PER_PAGE_DEFAULT}',
-        })
+    @api.doc(description='Get all applications. Default order: submission_date desc',
+             params={
+                 'page': f'The page number of paginated records to return. Default: {PAGE_DEFAULT}',
+                 'per_page':
+                 f'The number of records to return per page. Default: {PER_PAGE_DEFAULT}',
+             })
     @api.marshal_with(APPLICATION_LIST, code=200)
     def get(self):
 
@@ -84,6 +85,10 @@ class ApplicationListResource(Resource, UserMixin):
     @api.expect(APPLICATION)
     @api.marshal_with(APPLICATION, code=201)
     def post(self):
+        applications_disabled = DSRPSettings.find_by_setting(DISABLE_APP_SUBMIT_SETTING)
+        if applications_disabled:
+            raise BadRequest("Application Submissions are disabled at this time.")
+
         try:
             application = Application._schema().load(request.json['application'])
             application.save()
