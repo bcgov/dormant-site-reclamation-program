@@ -44,6 +44,7 @@ const defaultProps = {};
 
 export class ReviewApplicationInfo extends Component {
   state = { page: 1, perPage: 25 };
+
   componentDidMount() {
     this.props.fetchApplications();
     this.props.fetchPermitHolders();
