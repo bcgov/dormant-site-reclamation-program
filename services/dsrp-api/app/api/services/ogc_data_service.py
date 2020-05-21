@@ -2,13 +2,15 @@ from urllib.request import urlopen
 from http.cookiejar import CookieJar
 from io import StringIO
 from app.extensions import cache
-from app.api.constants import PERMIT_HOLDER_CACHE, DORMANT_WELLS_CACHE, LIABILITY_PER_WELL_CACHE, TIMEOUT_12_HOURS, TIMEOUT_1_YEAR
-from flask import current_app
+from app.api.constants import PERMIT_HOLDER_CACHE, DORMANT_WELLS_CACHE, LIABILITY_PER_WELL_CACHE, TIMEOUT_15_MINUTES, TIMEOUT_60_MINUTES, TIMEOUT_12_HOURS, TIMEOUT_1_YEAR
+from flask import Flask, current_app
+from threading import Thread
 
 import requests
 import urllib
 import pandas as pd
 import pyarrow as pa
+import time
 
 from .ogc_data_constants import PERMIT_HOLDER_CSV_DATA, DORMANT_WELLS_CSV_DATA, LIABILITY_PER_WELL_CSV_DATA
 
@@ -20,48 +22,94 @@ LIABILITY_PER_WELL_CSV = 'https://reports.bcogc.ca/ogc/f?p=200:10:10256707131131
 session = requests.session()
 
 
+def refreshOGCdata(app, cache_key, csv_url, process):
+    with app.app_context():
+        serializer = pa.default_serialization_context()
+
+        data = cache.get(cache_key)
+        expiry_token = cache.get(cache_key + '_EXPIRY_TOKEN')
+
+        if not expiry_token:
+            current_app.logger.debug(f'OGC DATA SERVICE - {cache_key} - Cached data not found.')
+            # set 15 minute token to mitigate multiple threads requesting data at the same time
+            cache.set(cache_key + '_EXPIRY_TOKEN', True, timeout=TIMEOUT_15_MINUTES)
+        else:
+            current_app.logger.debug(f'OGC DATA SERVICE - {cache_key} - Cached data up to date.')
+            return
+
+        try:
+            cookieProcessor = urllib.request.HTTPCookieProcessor()
+            opener = urllib.request.build_opener(cookieProcessor)
+            response = session.get(csv_url)
+
+            df = pd.read_table(StringIO(response.text), sep=",")
+            updated_from_web = True
+            current_app.logger.debug(
+                f'OGC DATA SERVICE - {cache_key} - Successful get from OGC reporting.')
+
+        except:
+            # on error, if we don't have data in the cache initialize it from static content
+            if not data:
+                current_app.logger.debug(
+                    f'OGC DATA SERVICE - {cache_key} - Falling back to static content.')
+                if cache_key is PERMIT_HOLDER_CACHE:
+                    df = pd.read_table(StringIO(PERMIT_HOLDER_CSV_DATA), sep=",")
+
+                if cache_key is DORMANT_WELLS_CACHE:
+                    df = pd.read_table(StringIO(DORMANT_WELLS_CSV_DATA), sep=",")
+
+                if cache_key is LIABILITY_PER_WELL_CACHE:
+                    df = pd.read_table(StringIO(LIABILITY_PER_WELL_CSV_DATA), sep=",")
+
+        df = process(df)
+        row_count = df.shape[0]
+
+        # only update cache if there is a good dataset
+        if row_count > 1:
+            current_app.logger.debug(f'OGC DATA SERVICE - {cache_key} - Updating cached data.')
+            cache.set(
+                cache_key,
+                serializer.serialize(df).to_buffer().to_pybytes(),
+                timeout=TIMEOUT_1_YEAR)
+
+            if updated_from_web:
+                cache.set(cache_key + '_EXPIRY_TOKEN', True, timeout=TIMEOUT_12_HOURS)
+        else:
+            current_app.logger.warning(
+                f'OGC DATA SERVICE - {cache_key} - FAILED TO RETRIEVE UPDATED DATA')
+
+
 class OGCDataService():
     @classmethod
-    def getOGCdf(cls, cache_key, csv_url, process):
+    def refreshAllData(cls):
+        cls.getPermitHoldersDataFrame()
+        cls.getDormantWellsDataFrame()
+        cls.getLiabilityPerWellDataFrame()
+
+    @classmethod
+    def getOGCdataframe(cls, cache_key, csv_url, process):
         serializer = pa.default_serialization_context()
         data = cache.get(cache_key)
-        last_modified = cache.get(cache_key + '_LAST_MODIFIED')
-        expired = cache.get(cache_key + '_EXPIRY_TOKEN')
-        if not expired:
 
-            current_app.logger.debug(f'OGC DATA SERVICE - {cache_key} - Cached data not found.')
-            #cookieProcessor = urllib.request.HTTPCookieProcessor()
-            #opener = urllib.request.build_opener(cookieProcessor)
-            #response = session.get(csv_url)
+        app = current_app._get_current_object()
 
-            #df = pd.read_table(StringIO(response.text), sep=",")
-
-            if cache_key is PERMIT_HOLDER_CACHE:
-                df = pd.read_table(StringIO(PERMIT_HOLDER_CSV_DATA), sep=",")
-
-            if cache_key is DORMANT_WELLS_CACHE:
-                df = pd.read_table(StringIO(DORMANT_WELLS_CSV_DATA), sep=",")
-
-            df = process(df)
-
-            row_count = df.shape[0]
-
-            # only update cache if there is a good dataset
-            if row_count > 1:
-                cache.set(
-                    cache_key,
-                    serializer.serialize(df).to_buffer().to_pybytes(),
-                    timeout=TIMEOUT_1_YEAR)
-                cache.set(cache_key + '_LAST_MODIFIED', last_modified, timeout=TIMEOUT_1_YEAR)
-                cache.set(cache_key + '_EXPIRY_TOKEN', True, timeout=TIMEOUT_12_HOURS)
-            else:
-                current_app.logger.warning(
-                    f'OGC DATA SERVICE - {cache_key} - FAILED TO RETRIEVE UPDATED DATA')
-                df = serializer.deserialize(data)
+        #if empty dataset refresh data synchronously, otherwise refresh in the background and continue
+        if not data:
+            refreshOGCdata(app, cache_key, csv_url, process)
         else:
-            current_app.logger.debug(f'OGC DATA SERVICE - {cache_key} - Cached data found.')
-            df = serializer.deserialize(data)
+            thread = Thread(
+                target=refreshOGCdata, args=(
+                    app,
+                    cache_key,
+                    csv_url,
+                    process,
+                ))
+            thread.daemon = True
+            thread.start()
 
+        #update data and return
+        data = cache.get(cache_key)
+        df = serializer.deserialize(data)
         return df
 
     @classmethod
@@ -73,7 +121,7 @@ class OGCDataService():
             ]
             return df
 
-        return cls.getOGCdf(PERMIT_HOLDER_CACHE, PERMIT_HOLDER_CSV, process)
+        return cls.getOGCdataframe(PERMIT_HOLDER_CACHE, PERMIT_HOLDER_CSV, process)
 
     @classmethod
     def getDormantWellsDataFrame(cls):
@@ -111,7 +159,7 @@ class OGCDataService():
                 errors='coerce').apply(lambda x: x.strftime('%Y-%m-%d') if pd.notnull(x) else None)
             return df
 
-        return cls.getOGCdf(DORMANT_WELLS_CACHE, DORMANT_WELLS_CSV, process)
+        return cls.getOGCdataframe(DORMANT_WELLS_CACHE, DORMANT_WELLS_CSV, process)
 
     @classmethod
     def getLiabilityPerWellDataFrame(cls):
@@ -123,4 +171,4 @@ class OGCDataService():
             ]
             return df
 
-        return cls.getOGCdf(LIABILITY_PER_WELL_CACHE, LIABILITY_PER_WELL_CSV, process)
+        return cls.getOGCdataframe(LIABILITY_PER_WELL_CACHE, LIABILITY_PER_WELL_CSV, process)
