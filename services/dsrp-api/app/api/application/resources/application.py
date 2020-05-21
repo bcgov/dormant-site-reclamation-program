@@ -1,7 +1,7 @@
 from flask_restplus import Resource
 from flask import request, current_app
 from sqlalchemy_filters import apply_pagination, apply_sort
-from sqlalchemy import desc, func, or_, and_, ilike
+from sqlalchemy import desc, func, or_, and_
 from werkzeug.exceptions import BadRequest, NotFound
 from marshmallow.exceptions import MarshmallowError
 
@@ -17,7 +17,7 @@ from app.api.dsrp_settings.models.dsrp_settings import DSRPSettings
 
 class ApplicationListResource(Resource, UserMixin):
     @api.doc(
-        description='Get all applications. Default order: submission_date desc',
+        description='Get all applications. Default order: submission_date asc',
         params={
             'page': f'The page number of paginated records to return. Default: {PAGE_DEFAULT}',
             'per_page': f'The number of records to return per page. Default: {PER_PAGE_DEFAULT}',
@@ -32,7 +32,7 @@ class ApplicationListResource(Resource, UserMixin):
             page_number=request.args.get('page', PAGE_DEFAULT, type=int),
             page_size=request.args.get('per_page', PER_PAGE_DEFAULT, type=int),
             sort_field=request.args.get('sort_field', 'submission_date', type=str),
-            sort_dir=request.args.get('sort_dir', 'desc', type=str),
+            sort_dir=request.args.get('sort_dir', 'asc', type=str),
             application_status_code=request.args.getlist('application_status_code', type=str),
             id=request.args.get('id', type=int),
             company=request.args.get('company', type=str),

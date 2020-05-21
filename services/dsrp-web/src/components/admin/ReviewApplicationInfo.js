@@ -6,6 +6,7 @@ import { bindActionCreators, compose } from "redux";
 import { set, isEmpty } from "lodash";
 import queryString from "query-string";
 import * as routes from "@/constants/routes";
+import * as Strings from "@/constants/strings";
 import {
   getApplications,
   getApplicationsWellSitesContractedWork,
@@ -46,9 +47,14 @@ const propTypes = {
 const defaultProps = {};
 
 const defaultParams = {
-  page: 1,
-  per_page: 25,
+  page: Strings.DEFAULT_PAGE,
+  per_page: Strings.DEFAULT_PER_PAGE,
+  sort_field: "submission_date",
+  sort_dir: "asc",
+  id: undefined,
+  application_status_code: [],
 };
+
 export class ReviewApplicationInfo extends Component {
   state = { isLoaded: false, params: defaultParams };
 
@@ -68,7 +74,6 @@ export class ReviewApplicationInfo extends Component {
 
   renderDataFromURL = (params) => {
     const parsedParams = queryString.parse(params);
-    console.log(parsedParams);
     this.setState(
       {
         params: parsedParams,
@@ -81,6 +86,21 @@ export class ReviewApplicationInfo extends Component {
     );
   };
 
+  // renderDataFromURL = (params) => {
+  //   const parsedParams = queryString.parse(params);
+  //   console.log(parsedParams);
+  //   this.setState(
+  //     {
+  //       params: parsedParams,
+  //       isLoaded: false,
+  //     },
+  //     () =>
+  //       this.props.fetchApplications(this.state.params).then(() => {
+  //         this.setState({ isLoaded: true });
+  //       })
+  //   );
+  // };
+
   onPageChange = (page, per_page) => {
     this.props.history.replace(
       routes.REVIEW_APPLICATIONS.dynamicRoute({
@@ -88,6 +108,45 @@ export class ReviewApplicationInfo extends Component {
         per_page,
       })
     );
+  };
+
+  clearParams = () => {
+    this.setState(
+      (prevState) => ({
+        params: {
+          ...defaultParams,
+          per_page: prevState.params.per_page || defaultParams.per_page,
+          sort_field: prevState.params.sort_field,
+          sort_dir: prevState.params.sort_dir,
+        },
+      }),
+      () => {
+        this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params));
+      }
+    );
+  };
+
+  handleApplicationsSearch = (params) => {
+    this.setState(
+      {
+        params,
+      },
+      () => this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params))
+    );
+  };
+
+  handleFilterChange = () => {
+    this.setState({ incidentsLoaded: false });
+    const params = {
+      ...this.state.params,
+      page: 1,
+    };
+    return this.props.fetchIncidents(params).then(() => {
+      this.setState({
+        incidentsLoaded: true,
+        params,
+      });
+    });
   };
 
   componentWillReceiveProps(nextProps) {
@@ -140,6 +199,7 @@ export class ReviewApplicationInfo extends Component {
         applicationsWellSitesContractedWork={this.props.applicationsWellSitesContractedWork}
         pageData={this.props.pageData}
         params={this.state.params}
+        handleTableChange={this.handleApplicationsSearch}
         onPageChange={this.onPageChange}
         applicationStatusDropdownOptions={this.props.applicationStatusDropdownOptions}
         applicationStatusOptionsHash={this.props.applicationStatusOptionsHash}

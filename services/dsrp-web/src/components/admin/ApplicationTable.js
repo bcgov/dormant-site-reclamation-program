@@ -1,14 +1,19 @@
 /* eslint-disable */
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Table, Icon, Tooltip, Pagination, Menu, Dropdown } from "antd";
 import { formatDateTime, formatDate, formatMoney, formatDateTimeFine } from "@/utils/helpers";
+import { getFilterListApplicationStatusOptions } from "@/selectors/staticContentSelectors";
 import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
 
 const propTypes = {
   applications: PropTypes.any.isRequired,
+  filterListApplicationStatusOptions: PropTypes.objectOf(PropTypes.any).isRequired,
+  handleTableChange: PropTypes.func.isRequired,
+  params: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 const renderDropdownMenu = (option, onClick, record, currentStatus) => (
@@ -21,8 +26,27 @@ const renderDropdownMenu = (option, onClick, record, currentStatus) => (
   </Menu>
 );
 
+const applySortIndicator = (columns, field, dir) =>
+  columns.map((column) => ({
+    ...column,
+    sortOrder: dir && column.sortField === field ? dir.concat("end") : false,
+  }));
+
+const handleTableChange = (updateApplications, tableFilters) => (pagination, filters, sorter) => {
+  console.log(pagination, filters, sorter);
+  const params = {
+    page: pagination.current,
+    ...tableFilters,
+    sort_field: sorter.order ? sorter.field : undefined,
+    sort_dir: sorter.order ? sorter.order.replace("end", "") : sorter.order,
+    ...filters,
+  };
+  console.log("updateApplications(params);", params);
+  updateApplications(params);
+};
+
 export const toolTip = (title) => (
-  <Tooltip title={title} placement="right" mouseEnterDelay={0.3}>
+  <Tooltip title={title} placement="right" mouseEnterDelay={0.3} style={{ marginLeft: 8 }}>
     <Icon type="info-circle" />
   </Tooltip>
 );
@@ -35,6 +59,8 @@ export class ApplicationTable extends Component {
       title: "Application ID",
       key: "id",
       dataIndex: "id",
+      sortField: "id",
+      sorter: true,
       render: (text) => (
         <div style={{ textAlign: "right" }} title="id">
           {text || Strings.DASH}
@@ -52,7 +78,7 @@ export class ApplicationTable extends Component {
       key: "submission_date",
       dataIndex: "submission_date",
       sortField: "submission_date",
-      // sorter: true,
+      sorter: true,
       render: (text) => (
         <div title={`Received On: ${formatDateTimeFine(text)}`}>{formatDateTime(text)}</div>
       ),
@@ -117,6 +143,9 @@ export class ApplicationTable extends Component {
       title: "Status",
       key: "application_status_code",
       dataIndex: "application_status_code",
+      sortField: "application_status_code",
+      sorter: true,
+      filters: this.props.filterListApplicationStatusOptions,
       render: (text, record) => (
         <div title="Status">
           <span onClick={(e) => e.stopPropagation()}>
@@ -345,7 +374,11 @@ export class ApplicationTable extends Component {
     return (
       <>
         <Table
-          columns={this.columns}
+          columns={applySortIndicator(
+            this.columns,
+            this.props.params.sort_field,
+            this.props.params.sort_dir
+          )}
           pagination={false}
           dataSource={this.transformRowData(this.props.applications)}
           expandIcon={this.renderTableExpandIcon}
@@ -353,6 +386,7 @@ export class ApplicationTable extends Component {
           expandedRowRender={this.wellSitesContractedWorkTable}
           expandedRowKeys={this.state.expandedRowKeys}
           onExpand={this.onExpand}
+          onChange={handleTableChange(this.props.handleTableChange, this.props.params)}
           className="table-headers-center"
         />
         <br />
@@ -374,4 +408,8 @@ export class ApplicationTable extends Component {
 ApplicationTable.propTypes = propTypes;
 // ApplicationTable.defaultProps = defaultProps;
 
-export default ApplicationTable;
+const mapStateToProps = (state) => ({
+  filterListApplicationStatusOptions: getFilterListApplicationStatusOptions(state),
+});
+
+export default connect(mapStateToProps)(ApplicationTable);
