@@ -2,7 +2,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { get } from "lodash";
 import { Table, Icon, Tooltip, Pagination, Menu, Dropdown } from "antd";
 import { formatDateTime, formatDate, formatMoney, formatDateTimeFine } from "@/utils/helpers";
 import * as Strings from "@/constants/strings";
@@ -357,11 +356,12 @@ export class ApplicationTable extends Component {
         <br />
         <div className="center">
           <Pagination
-            // hideOnSinglePage
-            itemsPerPage={1}
-            defaultCurrent={this.props.pageData.current_page}
-            total={this.props.pageData.total}
-            onChange={(page, per_page) => this.props.fetchApplications(page, per_page)}
+            defaultCurrent={Number(this.props.params.page)}
+            current={Number(this.props.params.page)}
+            total={Number(this.props.pageData.total)}
+            pageSize={Number(this.props.params.per_page)}
+            showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+            onChange={this.props.onPageChange}
           />
         </div>
       </>
