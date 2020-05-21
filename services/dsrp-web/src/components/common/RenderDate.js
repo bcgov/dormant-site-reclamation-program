@@ -13,6 +13,7 @@ const propTypes = {
   meta: PropTypes.objectOf(PropTypes.any).isRequired,
   label: PropTypes.string,
   placeholder: PropTypes.string,
+  error: PropTypes.string,
   disabled: PropTypes.bool,
   showTime: PropTypes.bool,
 };
@@ -20,6 +21,7 @@ const propTypes = {
 const defaultProps = {
   label: "",
   placeholder: "",
+  error: "",
   disabled: false,
   showTime: false,
 };
@@ -28,11 +30,14 @@ const RenderDate = (props) => (
   <Form.Item
     label={props.label}
     validateStatus={
-      props.meta.touched ? (props.meta.error && "error") || (props.meta.warning && "warning") : ""
+      props.meta.touched
+        ? ((props.meta.error || props.error) && "error") || (props.meta.warning && "warning")
+        : ""
     }
     help={
       props.meta.touched &&
       ((props.meta.error && <span>{props.meta.error}</span>) ||
+        (props.error && <span>{props.error}</span>) ||
         (props.meta.warning && <span>{props.meta.warning}</span>))
     }
   >
