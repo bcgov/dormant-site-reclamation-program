@@ -15,7 +15,7 @@ const { Title } = Typography;
 const propTypes = {
   uploadedFiles: PropTypes.arrayOf(PropTypes.any),
   application: PropTypes.string.isRequired,
-  uploadFiles: PropTypes.func.isRequired
+  uploadFiles: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -31,12 +31,6 @@ export class DocumentUploadForm extends Component {
 
   handleSubmit = (values, dispatch) => {
     const application = { json: values, documents: this.state.uploadedFiles };
-    this.props.(application).then((response) => {
-      this.setState(resetFormState);
-      dispatch(initialize(DOCUMENT_UPLOAD_FORM));
-      this.emptySavedFormData();
-      // Redirect
-    });
   };
 
   handleReset = () => {
