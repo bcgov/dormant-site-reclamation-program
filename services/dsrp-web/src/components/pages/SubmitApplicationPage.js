@@ -13,9 +13,9 @@ export class SubmitApplicationPage extends Component {
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
             <Title>Submit Application</Title>
             <Paragraph>
-              Duis dictum quam vel dictum sollicitudin. Suspendisse potenti. Mauris convallis eget
-              urna vitae dapibus. Etiam volutpat, metus aliquam sollicitudin aliquet, diam dui
-              lacinia odio, id tempor purus libero ut orci.
+              Enter your business name, BC address and contact information for this application. The
+              contact information provided will be used for all communication regarding this
+              application.
             </Paragraph>
           </Col>
         </Row>
