@@ -20,12 +20,23 @@ from app.api.application.models.application_document import ApplicationDocument
 from app.api.services.document_manager_service import DocumentManagerService
 from app.api.services.object_store_storage_service import ObjectStoreStorageService
 
+from app.api.application.response_models import APPLICATION_DOCUMENT
+
 
 class ApplicationDocumentListResource(Resource, UserMixin):
     @api.doc(description='Request a document_manager_guid for uploading a document')
-    def post(self):
+    @api.marshal_with(APPLICATION_DOCUMENT, code=201)
+    def post(self, application_guid):
+        application = Application.find_by_guid(application_guid)
+        if not application:
+            raise NotFound("Not found")
+        new_doc = ApplicationDocument(
+            application_guid=application_guid,
+            document_name=request.json['document_name'],
+            object_store_path=request.json['object_store_path'])
 
-        return DocumentManagerService.initializeFileUploadWithDocumentManager(request)
+        new_doc.save()
+        return new_doc
 
 
 class ApplicationDocumentResource(Resource, UserMixin):

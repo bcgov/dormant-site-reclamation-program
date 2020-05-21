@@ -25,8 +25,7 @@ class ObjectStoreStorageService():
         """
         contents = []
 
-        for item in self._client.list_objects(
-                Bucket=Config.OBJECT_STORE_BUCKET)['Contents']:
+        for item in self._client.list_objects(Bucket=Config.OBJECT_STORE_BUCKET)['Contents']:
             contents.append(item)
 
         return contents
@@ -36,8 +35,7 @@ class ObjectStoreStorageService():
         Function to upload a file to an S3 bucket
         """
         object_name = file_name
-        response = self._client.upload_file(file_name, Config.OBJECT_STORE_BUCKET,
-                                            object_name)
+        response = self._client.upload_file(file_name, Config.OBJECT_STORE_BUCKET, object_name)
 
         return response
 
@@ -48,11 +46,9 @@ class ObjectStoreStorageService():
 
         buffer = io.BytesIO()
         self._client.download_fileobj(Config.OBJECT_STORE_BUCKET, path, buffer)
-
+        #TODO avoid full buffered transfer, stream response instead
         buffer.seek(0)
-        return send_file(buffer,
-                         attachment_filename=display_name,
-                         as_attachment=as_attachment)
+        return send_file(buffer, attachment_filename=display_name, as_attachment=as_attachment)
 
     def check_file(self, path):
         """
