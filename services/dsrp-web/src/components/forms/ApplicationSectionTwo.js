@@ -243,7 +243,7 @@ const asyncValidateWell = async (values, field) => {
     if (response.data.records.length > 1)
       asyncValidateError(
         field,
-        "Multiple results for this Authorization Number. Please contact us for further assistance at DormantSiteReclamation@gov.bc.ca"
+        "Multiple results for this Authorization Number. Please contact us for further assistance at DormantSite.BC.Government@gov.bc.ca"
       );
   });
 };
@@ -361,7 +361,7 @@ const validateWellSites = (wellSites, formValues, props) => {
       set(
         errors,
         `well_sites[${index}].site_conditions.error`,
-        "Sites must meet at least one of the Site Conditions to qualify for the program."
+        "Sites must meet at least one of the Eligibility Criteria to qualify for the program."
       );
     }
 
@@ -612,9 +612,9 @@ class ApplicationSectionTwo extends Component {
 
                 <FormSection name={createMemberName(member, "site_conditions")}>
                   <Title level={4} className="application-subsection">
-                    Site Conditions
+                    Eligibility Criteria
                   </Title>
-                  <Paragraph>Select all conditions that apply to this site:</Paragraph>
+                  <Paragraph>Select all criteria that apply to this site:</Paragraph>
                   <Row gutter={48}>
                     <Col className="application-checkbox-section">
                       {wellSiteConditions.map((condition, index) => (
@@ -728,7 +728,7 @@ class ApplicationSectionTwo extends Component {
                   <>
                     Permit Holder
                     {this.props.isEditable && (
-                      <ApplicationFormTooltip content="Only businesses with permits for dormant wells can be entered." />
+                      <ApplicationFormTooltip content="Only businesses with permits for dormant well sites can be selected." />
                     )}
                   </>
                 }

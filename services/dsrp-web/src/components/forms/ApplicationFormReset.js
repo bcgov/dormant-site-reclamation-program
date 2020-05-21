@@ -8,7 +8,7 @@ const propTypes = {
 
 export const ApplicationFormReset = (props) => (
   <Popconfirm
-    title="Are you sure you want to reset the entire application?"
+    title="Are you sure you want to clear all of the contents of this application form?"
     onConfirm={() => props.onConfirm()}
     okText="Yes"
     cancelText="No"
@@ -16,7 +16,7 @@ export const ApplicationFormReset = (props) => (
     arrowPointAtCenter
   >
     <Button htmlType="reset" style={{ float: "right", marginLeft: 8 }}>
-      Reset
+      Clear Form
     </Button>
   </Popconfirm>
 );
