@@ -8,6 +8,11 @@
   }
 }
 
+#bc-gov-header-img {
+  height: 100% !important;
+  width: 154px !important;
+}
+
 .header-title {
   color: $white;
   font-size: $heading-4-size;
@@ -22,20 +27,16 @@
   float: right;
 }
 
-#dropdown-menu-mobile-trigger {
-  @include screen-md {
-    padding-left: 0;
-    padding-right: $padding-sm;
-  }
+#dropdown-menu-mobile-button {
+  border: none;
+  background-color: transparent !important;
+  z-index: 10000;
+  height: auto;
 }
 
-.login-btn {
-  color: $white !important;
-  border-color: $white !important;
-  background-color: transparent !important;
-  & a {
-    text-decoration: none;
-  }
+#dropdown-menu-mobile-icon {
+  font-size: $heading-1-size !important;
+  vertical-align: middle;
 }
 
 .header-link {
@@ -54,7 +55,6 @@
 
 .header-dropdown-menu {
   text-align: center;
-  z-index: 1001;
 }
 
 .header-dropdown-button {
