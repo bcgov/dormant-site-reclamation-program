@@ -10,7 +10,12 @@ import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 import { PROGRAM_START_DATE, PROGRAM_END_DATE } from "@/constants/strings";
-import { currencyMask, formatMoney, scrollToFirstError } from "@/utils/helpers";
+import {
+  currencyMask,
+  formatMoney,
+  scrollToFirstError,
+  wellAuthorizationNumberMask,
+} from "@/utils/helpers";
 import CONTRACT_WORK_SECTIONS from "@/constants/contract_work_sections";
 import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
@@ -410,6 +415,7 @@ class ApplicationSectionTwo extends Component {
                             )}
                           </>
                         }
+                        {...wellAuthorizationNumberMask}
                       />
                     </Col>
                   </Row>
@@ -537,7 +543,7 @@ class ApplicationSectionTwo extends Component {
                 wellName += actualName ? ` (${actualName})` : "";
                 return (
                   <>
-                    <Paragraph key={index} className="color-primary" strong>
+                    <Paragraph key={`${wellName}.${index}`} className="color-primary" strong>
                       {`${wellName} total:`}&nbsp;
                     </Paragraph>
                     {wellTotal.sections &&
@@ -546,7 +552,10 @@ class ApplicationSectionTwo extends Component {
                           wellTotal.sections[section.formSectionName] &&
                           wellTotal.sections[section.formSectionName] > 0
                       ).map((section) => (
-                        <Paragraph key={index} className="color-primary">
+                        <Paragraph
+                          key={`${section.sectionHeader}.${index}`}
+                          className="color-primary"
+                        >
                           {`${section.sectionHeader} total:`}&nbsp;
                         </Paragraph>
                       ))}
@@ -560,14 +569,16 @@ class ApplicationSectionTwo extends Component {
             <Col style={{ textAlign: "right" }}>
               {wellTotalsValues.map((wellTotal, index) => (
                 <>
-                  <Paragraph key={index}>{formatMoney(wellTotal.wellTotal || 0)}</Paragraph>
+                  <Paragraph key={`well-total.${index}`}>
+                    {formatMoney(wellTotal.wellTotal || 0)}
+                  </Paragraph>
                   {wellTotal.sections &&
                     CONTRACT_WORK_SECTIONS.filter(
                       (section) =>
                         wellTotal.sections[section.formSectionName] &&
                         wellTotal.sections[section.formSectionName] > 0
                     ).map((section) => (
-                      <Paragraph key={index}>
+                      <Paragraph key={`${section.formSectionName}.${index}`}>
                         {formatMoney(wellTotal.sections[section.formSectionName] || 0)}
                       </Paragraph>
                     ))}
