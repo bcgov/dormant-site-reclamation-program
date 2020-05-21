@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { reduxForm, FieldArray, getFormValues, Field, FormSection, getFormMeta } from "redux-form";
+import { reduxForm, FieldArray, getFormValues, Field, FormSection } from "redux-form";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { compose } from "redux";
@@ -36,7 +36,6 @@ const propTypes = {
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   formValues: PropTypes.objectOf(PropTypes.any).isRequired,
-  formMeta: PropTypes.objectOf(PropTypes.any).isRequired,
   selectedWells: PropTypes.arrayOf(PropTypes.any),
   isViewingSubmission: PropTypes.bool,
   isEditable: PropTypes.bool,
@@ -197,6 +196,7 @@ const renderContractWorkPanel = (
         </Form.Item>
       ))}
       {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, { marginRight: 24 })}
+      {/* // TODO: Only show this error when fields in this section are touched. */}
       {props.anyTouched && wellSectionErrors && wellSectionErrors.error && (
         <span
           id={`well_sites[${wellNumber}].contracted_work.${contractWorkSection.formSectionName}.error`}
@@ -321,8 +321,8 @@ const openRequiredPanels = async (errors) => {
 const validateWellSites = (wellSites, formValues, props) => {
   const errors = {};
 
-  if (!isArrayLike(wellSites)) {
-    return "Bad save data: well sites is malformed.";
+  if (!isArrayLike(wellSites) || isEmpty(wellSites)) {
+    return undefined;
   }
 
   wellSites.map((wellSite, index) => {
@@ -398,7 +398,7 @@ const validateWellSites = (wellSites, formValues, props) => {
         "Sites must contain at least one valid contracted work section."
       );
     }
-
+    // TODO: Use this for something? E.g., "3/5 entered sections are valid in the header of the well site".
     if (validSectionsCount === 0) {
     }
   });
@@ -605,6 +605,7 @@ class ApplicationSectionTwo extends Component {
                           component={renderConfig.CHECKBOX}
                         />
                       ))}
+                      {/* // TODO: Only show this error when fields in this section are touched. */}
                       {this.props.anyTouched &&
                         wellSiteErrors &&
                         wellSiteErrors.site_conditions &&
@@ -628,6 +629,7 @@ class ApplicationSectionTwo extends Component {
                     Enter the estimated cost of every work component your company will perform for
                     this contract.
                   </Paragraph>
+                  {/* // TODO: Only show this error when fields in this section are touched. */}
                   {this.props.anyTouched &&
                     wellSiteErrors &&
                     wellSiteErrors.contracted_work &&
@@ -814,7 +816,6 @@ class ApplicationSectionTwo extends Component {
 
 const mapStateToProps = (state) => ({
   formValues: getFormValues(FORM.APPLICATION_FORM)(state),
-  formMeta: getFormMeta(FORM.APPLICATION_FORM)(state),
   selectedWells: getSelectedWells(state),
 });
 
