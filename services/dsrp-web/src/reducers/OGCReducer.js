@@ -25,7 +25,7 @@ export const OGCReducer = (state = initialState, action) => {
         ...state,
         selectedWells: {
           ...state.selectedWells,
-          [action.payload.well_auth_number]: { ...action.payload.records },
+          [action.payload.well_auth_number]: { ...action.payload },
         },
       };
 
