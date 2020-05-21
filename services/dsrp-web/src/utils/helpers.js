@@ -383,7 +383,7 @@ export const scrollToFirstError = (errors) => {
   const firstErrorElement = getFirstPathElement(errorElements).element;
 
   if (firstErrorElement) {
-    firstErrorElement.scrollIntoView();
+    firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
     return true;
   }
 
