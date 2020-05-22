@@ -13,7 +13,7 @@ export const DEFAULT_ENVIRONMENT = {
 
 export const ENVIRONMENT = {
   apiUrl: "<API_URL>",
-  docManUrl: "<DOCUMENT_MANAGER_URL>",
+  docManUrl: "<TUSD_URL>",
   firstNationsLayerUrl: "<FN_LAYER_URL>",
   environment: "<ENV>",
 };

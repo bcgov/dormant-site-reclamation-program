@@ -35,11 +35,11 @@
       "value": "/"
     },
     {
-      "name": "DSRP_SERVICE_URL",
+      "name": "TUSD_SERVICE_URL",
       "value": "/"
     },
     {
-      "name": "DOCUMENT_MANAGER_SERVICE_URL",
+      "name": "TUSD_URL",
       "value": "/"
     },
     {
@@ -83,9 +83,7 @@
         "name": "dsrp-access-logs${SUFFIX}"
       },
       "spec": {
-        "accessModes": [
-          "ReadWriteMany"
-        ],
+        "accessModes": ["ReadWriteMany"],
         "resources": {
           "requests": {
             "storage": "${LOG_PVC_SIZE}"
@@ -135,9 +133,7 @@
             "type": "ImageChange",
             "imageChangeParams": {
               "automatic": true,
-              "containerNames": [
-                "nginx"
-              ],
+              "containerNames": ["nginx"],
               "from": {
                 "kind": "ImageStreamTag",
                 "name": "${NAME}:${VERSION}"
@@ -170,12 +166,12 @@
                     "value": "${PATH_PREFIX}"
                   },
                   {
-                    "name": "DSRP_SERVICE_URL",
-                    "value": "${DSRP_SERVICE_URL}"
+                    "name": "TUSD_SERVICE_URL",
+                    "value": "${TUSD_SERVICE_URL}"
                   },
                   {
-                    "name": "DOCUMENT_MANAGER_SERVICE_URL",
-                    "value": "${DOCUMENT_MANAGER_SERVICE_URL}"
+                    "name": "TUSD_URL",
+                    "value": "${TUSD_URL}"
                   },
                   {
                     "name": "API_SERVICE_URL",

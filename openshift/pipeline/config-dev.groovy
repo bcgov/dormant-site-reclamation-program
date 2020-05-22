@@ -121,7 +121,7 @@ app {
                             'KEYCLOAK_URL': "${vars.keycloak.url}",
                             'KEYCLOAK_IDP_HINT': "${vars.keycloak.idpHint_dsrp}",
                             'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/api",
-                            'DOCUMENT_MANAGER_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/document-manager"
+                            'TUSD_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/upload"
                     ]
                 ],
                 [
@@ -140,8 +140,8 @@ app {
                             'DSRP_DOMAIN': "${vars.modules.'dsrp-nginx'.HOST_DSRP}",
                             'ROUTE': "${vars.modules.'dsrp-nginx'.ROUTE}",
                             'PATH_PREFIX': "${vars.modules.'dsrp-nginx'.PATH}",
-                            'DSRP_SERVICE_URL': "${vars.modules.'dsrp-frontend'.HOST}",
-                            'DOCUMENT_MANAGER_SERVICE_URL': "${vars.modules.'dsrp-docman-backend'.HOST}",
+                            'TUSD_SERVICE_URL': "${vars.modules.'dsrp-frontend'.HOST}",
+                            'TUSD_SERVICE_URL': "${vars.modules.'dsrp-tusd-backend'.HOST}",
                             'API_SERVICE_URL': "${vars.modules.'dsrp-python-backend'.HOST}",
                     ]
                 ],
@@ -170,13 +170,13 @@ app {
                             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
                             'URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}",
                             'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/api",
-                            'DOCUMENT_MANAGER_URL': "${vars.modules.'dsrp-docman-backend'.HOST}${vars.modules.'dsrp-docman-backend'.PATH}",
+                            'TUSD_URL': "${vars.modules.'dsrp-tusd-backend'.HOST}${vars.modules.'dsrp-tusd-backend'.PATH}",
                     ]
                 ],
                 [
-                    'file':'openshift/templates/document-manager/docman.dc.json',
+                    'file':'openshift/templates/upload/docman.dc.json',
                     'params':[
-                            'NAME':"dsrp-docman-backend",
+                            'NAME':"dsrp-tusd-backend",
                             'SUFFIX': "${vars.deployment.suffix}",
                             'VERSION':"${app.deployment.version}",
                             'CPU_REQUEST':"${vars.resources.python_lite.cpu_request}",
@@ -190,7 +190,7 @@ app {
                             'JWT_OIDC_WELL_KNOWN_CONFIG': "${vars.keycloak.known_config_url}",
                             'JWT_OIDC_AUDIENCE': "${vars.keycloak.clientId_dsrp}",
                             'APPLICATION_DOMAIN': "${vars.modules.'dsrp-python-backend'.HOST}",
-                            'BASE_PATH': "${vars.modules.'dsrp-docman-backend'.PATH}",
+                            'BASE_PATH': "${vars.modules.'dsrp-tusd-backend'.PATH}",
                             'DB_HOST': "dsrp-postgresql${vars.deployment.suffix}",
                             'DB_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}",
                             'REDIS_CONFIG_NAME': "dsrp-redis${vars.deployment.suffix}",
@@ -198,7 +198,7 @@ app {
                             'DOCUMENT_CAPACITY':"${vars.DOCUMENT_PVC_SIZE}",
                             'DOCUMENT_CAPACITY_LOWER':"${vars.DOCUMENT_PVC_SIZE.toString().toLowerCase()}",
                             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
-                            'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/document-manager",
+                            'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/upload",
                     ]
                 ],
                 // [
@@ -345,9 +345,9 @@ environments {
                     HOST = "http://dsrp-python-backend${vars.deployment.suffix}:5000"
                     PATH = "/${vars.git.changeId}/api"
                 }
-                'dsrp-docman-backend' {
-                    HOST = "http://dsrp-docman-backend${vars.deployment.suffix}:5001"
-                    PATH = "/${vars.git.changeId}/document-manager"
+                'dsrp-tusd-backend' {
+                    HOST = "http://dsrp-tusd-backend${vars.deployment.suffix}:5001"
+                    PATH = "/${vars.git.changeId}/upload"
                 }
                 'dsrp-redis' {
                     HOST = "http://dsrp-redis${vars.deployment.suffix}"

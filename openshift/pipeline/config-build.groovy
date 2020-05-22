@@ -44,16 +44,6 @@ app {
                     ]
                 ],
                 [
-                    'file':'openshift/templates/document-manager/docman.bc.json',
-                    'params':[
-                            'NAME':"dsrp-docman-backend",
-                            'SUFFIX': "${app.build.suffix}",
-                            'VERSION':"${app.build.version}",
-                            'SOURCE_CONTEXT_DIR': "services/document-manager/backend",
-                            'SOURCE_REPOSITORY_URL': "${app.git.uri}"
-                    ]
-                ],
-                [
                     'file':'openshift/templates/_nginx.bc.json',
                     'params':[
                             'NAME':"dsrp-nginx",
@@ -118,6 +108,12 @@ app {
                     'params':[
                             'NAME':"metabase-postgres",
                             'VERSION':"${app.build.version}",
+                    ]
+                ]
+                [
+                    'file':'openshift/templates/tusd.bc.json',
+                    'params':[
+                            'TAG_NAME':"${app.build.version}",
                     ]
                 ]
         ]

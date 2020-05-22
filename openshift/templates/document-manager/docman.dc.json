@@ -143,9 +143,7 @@
         "name": "dsrp-document-storage${SUFFIX}"
       },
       "spec": {
-        "accessModes": [
-          "ReadWriteMany"
-        ],
+        "accessModes": ["ReadWriteMany"],
         "resources": {
           "requests": {
             "storage": "${DOCUMENT_CAPACITY}"
@@ -172,11 +170,7 @@
               "failurePolicy": "Retry",
               "execNewPod": {
                 "containerName": "app",
-                "command": [
-                  "bash",
-                  "-c",
-                  "cd /opt/app-root/src && flask db upgrade"
-                ]
+                "command": ["bash", "-c", "cd /opt/app-root/src && flask db upgrade"]
               }
             },
             "maxSurge": "50%",
@@ -190,9 +184,7 @@
             "type": "ImageChange",
             "imageChangeParams": {
               "automatic": true,
-              "containerNames": [
-                "app"
-              ],
+              "containerNames": ["app"],
               "from": {
                 "kind": "ImageStreamTag",
                 "name": "${NAME}:${VERSION}"
@@ -309,7 +301,7 @@
                     "value": "${BASE_PATH}"
                   },
                   {
-                    "name": "DOCUMENT_MANAGER_URL",
+                    "name": "TUSD_URL",
                     "value": "${API_URL}"
                   },
                   {

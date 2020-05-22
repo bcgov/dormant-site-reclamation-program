@@ -89,18 +89,11 @@ services:
   ####################### TUSD Definition #######################
   tusd:
     container_name: tusd
-    image: tusproject/tusd
+    build:
+      context: services/tusd
     ports:
       - 1080:1080
     env_file: ./services/tusd/.env
-    command:
-      [
-        "--hooks-dir",
-        "/srv/tusd-hooks",
-        "-s3-endpoint=nrs.objectstore.gov.bc.ca",
-        "-s3-bucket=awlvru",
-        "-s3-object-prefix=dsrp-applications/",
-      ]
 
   ####################### DOCUMENT_GENERATION Definition #######################
   docgen-api:

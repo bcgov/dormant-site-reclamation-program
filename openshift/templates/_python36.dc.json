@@ -115,7 +115,7 @@
       "required": true
     },
     {
-      "name": "DOCUMENT_MANAGER_URL",
+      "name": "TUSD_URL",
       "required": true
     },
     {
@@ -327,8 +327,8 @@
                     "value": "${BASE_PATH}"
                   },
                   {
-                    "name": "DOCUMENT_MANAGER_URL",
-                    "value": "${DOCUMENT_MANAGER_URL}"
+                    "name": "TUSD_URL",
+                    "value": "${TUSD_URL}"
                   },
                   {
                     "name": "ENVIRONMENT_NAME",
