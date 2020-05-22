@@ -9,14 +9,12 @@ const propTypes = {
 };
 
 export const ViewApplicationDocuments = (props) => (
-  <Row type="flex" justify="center" align="top" className="landing-header">
-    <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-      <Typography.Title level={3} className="documents-section">
-        Documents
-      </Typography.Title>
-      <DocumentTable {...props} />
-    </Col>
-  </Row>
+  <>
+    <Typography.Title level={3} className="documents-section">
+      Documents
+    </Typography.Title>
+    <DocumentTable {...props} />
+  </>
 );
 
 ViewApplicationDocuments.propTypes = propTypes;
