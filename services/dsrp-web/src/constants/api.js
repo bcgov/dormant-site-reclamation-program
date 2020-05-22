@@ -3,9 +3,10 @@ import queryString from "query-string";
 // Static Content
 export const STATIC_CONTENT = "/exports/static-content";
 
-// Document Manager
-export const DOCUMENT_MANAGER_FILE_GET_URL = (token = {}) =>
-  `/documents?${queryString.stringify(token)}`;
+// API DOWNLOAD FILE
+export const GET_TOKEN_FOR_DOC = (app_guid, doc_guid) =>
+  `${APPLICATION_DOCUMENT(app_guid)}/${doc_guid}`;
+export const GET_FILE_WITH_TOKEN = (token) => `/documents?${queryString.stringify(token)}`;
 export const DOCUMENT_MANAGER_FILE_POST_URL = "/documents";
 
 // OrgBook

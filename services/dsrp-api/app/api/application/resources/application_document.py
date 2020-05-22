@@ -6,20 +6,22 @@ import json
 
 from datetime import datetime
 from flask import request, current_app, Response
-from flask_restplus import Resource, reqparse
+from flask_restplus import Resource, reqparse, fields
 
 from werkzeug.exceptions import BadRequest, NotFound
 from sqlalchemy.exc import DBAPIError
 
-from app.extensions import api, db
+from app.extensions import api, db, cache
 from app.api.utils.resources_mixins import UserMixin
 from app.api.utils.access_decorators import requires_role_view_all, requires_role_admin
+from app.api.constants import DOWNLOAD_TOKEN, TIMEOUT_5_MINUTES
 
 from app.api.application.models.application import Application
 from app.api.application.models.application_document import ApplicationDocument
 from app.api.services.object_store_storage_service import ObjectStoreStorageService
 
 from app.api.application.response_models import APPLICATION_DOCUMENT
+from app.api.documents.response_models import DOWNLOAD_TOKEN_MODEL
 
 
 class ApplicationDocumentListResource(Resource, UserMixin):
@@ -39,12 +41,14 @@ class ApplicationDocumentListResource(Resource, UserMixin):
 
 
 class ApplicationDocumentResource(Resource, UserMixin):
-    @api.doc(description='Retrieve a file from document storage')
+    @api.doc(description='Generate a token to retrieve a file object storage')
+    @api.marshal_with(DOWNLOAD_TOKEN_MODEL, code=200)
     @requires_role_admin
     def get(self, application_guid, document_guid):
         app_document = ApplicationDocument.find_by_guid(document_guid)
-        if str(app_document.application.guid) != str(application_guid):
+        if not app_document or str(app_document.application.guid) != str(application_guid):
             raise NotFound('Not found')
 
-        return ObjectStoreStorageService().download_file(app_document.object_store_path,
-                                                         app_document.document_name, True)
+        token_guid = uuid.uuid4()
+        cache.set(DOWNLOAD_TOKEN(token_guid), document_guid, TIMEOUT_5_MINUTES)
+        return {'token_guid': token_guid}
