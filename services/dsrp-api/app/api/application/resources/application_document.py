@@ -25,23 +25,22 @@ from app.api.documents.response_models import DOWNLOAD_TOKEN_MODEL
 
 
 class ApplicationDocumentListResource(Resource, UserMixin):
-    @api.doc(description='Request a document_manager_guid for uploading a document')
+    @api.doc(description='Register files that have been uploaded to the document store')
     @api.marshal_with(APPLICATION_DOCUMENT_LIST, code=201)
     def post(self, application_guid):
         application = Application.find_by_guid(application_guid)
         if not application:
             raise NotFound("Not found")
-        
+
         docs = request.json['documents']
 
         for doc in docs:
             new_doc = ApplicationDocument(
-                document_name=doc['document_name'],
-                object_store_path=doc['object_store_path'])
+                document_name=doc['document_name'], object_store_path=doc['object_store_path'])
             application.documents.append(new_doc)
-        
+
         application.save()
-        
+
         return application.documents
 
 
