@@ -102,7 +102,7 @@ class ApplicationSectionOne extends Component {
               <Field
                 id="indigenous_participation_ind"
                 name="indigenous_participation_ind"
-                label="My proposal, as outlined in this application, includes Indigenous participation in completing the work"
+                label="My proposal, as outlined in this application, includes Indigenous participation in completing the work."
                 disabled={!this.props.isEditable}
                 component={renderConfig.CHECKBOX}
               />
@@ -110,7 +110,7 @@ class ApplicationSectionOne extends Component {
                 <Field
                   id="indigenous_participation_description"
                   name="indigenous_participation_description"
-                  label="Please describe:"
+                  label="Please describe: (Do not include any personal information)"
                   component={renderConfig.AUTO_SIZE_FIELD}
                   validate={[required, maxLength(65536)]}
                   disabled={!this.props.isEditable}

@@ -16,8 +16,7 @@ from app.api.dsrp_settings.models.dsrp_settings import DSRPSettings
 
 
 class ApplicationListResource(Resource, UserMixin):
-    @api.doc(
-        description='Get all applications. Default order: submission_date asc')
+    @api.doc(description='Get all applications. Default order: submission_date asc')
     @api.marshal_with(APPLICATION_LIST, code=200)
     def get(self):
         records, pagination_details = self._apply_filters_and_pagination(
@@ -26,7 +25,7 @@ class ApplicationListResource(Resource, UserMixin):
             sort_field=request.args.get('sort_field', 'submission_date', type=str),
             sort_dir=request.args.get('sort_dir', 'asc', type=str),
             application_status_code=request.args.getlist('application_status_code', type=str),
-            id=request.args.get('id', type=int),
+            guid=request.args.get('guid', type=str),
             company_name=request.args.get('company_name', type=str))
 
         data = records.all()
@@ -44,23 +43,24 @@ class ApplicationListResource(Resource, UserMixin):
                                       page_size=PER_PAGE_DEFAULT,
                                       sort_field=None,
                                       sort_dir=None,
-                                      id=None,
+                                      guid=None,
                                       company_name=None,
-                                      application_status_code=[]
-                                      ):
+                                      application_status_code=[]):
 
         base_query = Application.query
 
         filters = []
 
-        if id:
-            filters.append(Application.id == id)
+        if guid:
+            filters.append(Application.guid == guid)
 
         if application_status_code:
             filters.append(Application.application_status_code.in_(application_status_code))
 
         if company_name:
-            filters.append(Application.json['company_details']['company_name']['label'].astext.contains(company_name.upper()))
+            filters.append(
+                Application.json['company_details']['company_name']['label'].astext.contains(
+                    company_name.upper()))
 
         base_query = base_query.filter(*filters)
 
@@ -85,6 +85,10 @@ class ApplicationListResource(Resource, UserMixin):
 
         try:
             application = Application._schema().load(request.json['application'])
+            #get ip from NGINX (or direct for local devs)
+            application.submitter_ip = request.headers.getlist(
+                'X-Forwarded-For')[0] if request.headers.getlist(
+                    'X-Forwarded-For') else request.remote_addr
             application.save()
         except MarshmallowError as e:
             raise BadRequest(e)
