@@ -46,6 +46,7 @@ def refreshOGCdata(app, cache_key, csv_url, process):
             updated_from_web = True
             current_app.logger.debug(
                 f'OGC DATA SERVICE - {cache_key} - Successful get from OGC reporting.')
+            df = process(df)
 
         except:
             # on error, if we don't have data in the cache initialize it from static content
@@ -60,8 +61,8 @@ def refreshOGCdata(app, cache_key, csv_url, process):
 
                 if cache_key is LIABILITY_PER_WELL_CACHE:
                     df = pd.read_table(StringIO(LIABILITY_PER_WELL_CSV_DATA), sep=",")
+            df = process(df)
 
-        df = process(df)
         row_count = df.shape[0]
 
         # only update cache if there is a good dataset
