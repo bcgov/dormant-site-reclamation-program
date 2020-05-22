@@ -12,7 +12,7 @@ location ${PATH_PREFIX}/ {
                 return 503;
         }
 
-        proxy_pass ${TUSD_SERVICE_URL}${PATH_PREFIX}/;
+        proxy_pass ${DSRP_SERVICE_URL}${PATH_PREFIX}/;
         proxy_buffering    off;
         include /opt/app-root/etc/nginx.conf.d/proxy.params;
 }

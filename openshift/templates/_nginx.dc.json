@@ -35,12 +35,16 @@
       "value": "/"
     },
     {
-      "name": "TUSD_SERVICE_URL",
+      "name": "DSRP_SERVICE_URL",
       "value": "/"
     },
     {
+      "name": "TUSD_SERVICE_URL",
+      "value": "tusd"
+    },
+    {
       "name": "API_SERVICE_URL",
-      "value": "/"
+      "value": "api"
     },
     {
       "name": "DSRP_DOMAIN",
@@ -160,6 +164,10 @@
                   {
                     "name": "PATH_PREFIX",
                     "value": "${PATH_PREFIX}"
+                  },
+                  {
+                    "name": "DSRP_SERVICE_URL",
+                    "value": "${DSRP_SERVICE_URL}"
                   },
                   {
                     "name": "TUSD_SERVICE_URL",
