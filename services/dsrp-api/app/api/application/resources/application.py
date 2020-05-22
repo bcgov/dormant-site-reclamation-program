@@ -17,20 +17,17 @@ from app.api.dsrp_settings.models.dsrp_settings import DSRPSettings
 
 class ApplicationListResource(Resource, UserMixin):
     @api.doc(
-        description='Get all applications. Default order: submission_date desc',
-        params={
-            'page': f'The page number of paginated records to return. Default: {PAGE_DEFAULT}',
-            'per_page': f'The number of records to return per page. Default: {PER_PAGE_DEFAULT}',
-        })
+        description='Get all applications. Default order: submission_date asc')
     @api.marshal_with(APPLICATION_LIST, code=200)
     def get(self):
-
         records, pagination_details = self._apply_filters_and_pagination(
             page_number=request.args.get('page', PAGE_DEFAULT, type=int),
             page_size=request.args.get('per_page', PER_PAGE_DEFAULT, type=int),
             sort_field=request.args.get('sort_field', 'submission_date', type=str),
-            sort_dir=request.args.get('sort_dir', 'desc', type=str),
-            application_status_code=request.args.getlist('application_status_code', type=str))
+            sort_dir=request.args.get('sort_dir', 'asc', type=str),
+            application_status_code=request.args.getlist('application_status_code', type=str),
+            id=request.args.get('id', type=int),
+            company_name=request.args.get('company_name', type=str))
 
         data = records.all()
 
@@ -47,14 +44,23 @@ class ApplicationListResource(Resource, UserMixin):
                                       page_size=PER_PAGE_DEFAULT,
                                       sort_field=None,
                                       sort_dir=None,
-                                      application_status_code=[]):
+                                      id=None,
+                                      company_name=None,
+                                      application_status_code=[]
+                                      ):
 
         base_query = Application.query
 
         filters = []
 
+        if id:
+            filters.append(Application.id == id)
+
         if application_status_code:
             filters.append(Application.application_status_code.in_(application_status_code))
+
+        if company_name:
+            filters.append(Application.json['company_details']['company_name']['label'].astext.contains(company_name.upper()))
 
         base_query = base_query.filter(*filters)
 

@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
 from marshmallow import fields, validate
@@ -29,8 +29,8 @@ class Application(Base, AuditMixin):
         nullable=False,
         server_default=FetchedValue())
     submission_date = db.Column(db.DateTime, nullable=False, server_default=FetchedValue())
-    json = db.Column(db.JSON, nullable=False)
-    review_json = db.Column(db.JSON)
+    json = db.Column(JSONB, nullable=False)
+    review_json = db.Column(JSONB)
     documents = db.relationship('ApplicationDocument', lazy='select')
 
     def __repr__(self):

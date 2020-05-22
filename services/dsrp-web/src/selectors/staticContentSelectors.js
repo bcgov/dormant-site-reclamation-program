@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as staticContentReducer from "../reducers/staticContentReducer";
 import { createSelector } from "reselect";
-import { createLabelHash, createDropDownList } from "../utils/helpers";
+import { createLabelHash, createDropDownList, createFilterList } from "../utils/helpers";
 
 export const {
   getStaticContentLoadingIsComplete,
@@ -12,6 +12,11 @@ export const {
 export const getDropdownApplicationStatusOptions = createSelector(
   [getApplicationStatusOptions],
   (options) => createDropDownList(options, "description", "application_status_code")
+);
+
+export const getFilterListApplicationStatusOptions = createSelector(
+  [getApplicationStatusOptions],
+  (options) => createFilterList(options, "description", "application_status_code")
 );
 
 export const getApplicationStatusOptionsHash = createSelector(
