@@ -58,25 +58,11 @@ const defaultParams = {
 export class ReviewApplicationInfo extends Component {
   state = { isLoaded: false, params: defaultParams };
 
-  componentDidMount() {
-    const params = queryString.parse(this.props.location.search);
-    this.setState(
-      (prevState) => ({
-        params: {
-          ...prevState.params,
-          ...params,
-        },
-      }),
-      () => this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params))
-    );
-    this.props.fetchPermitHolders();
-  }
-
   renderDataFromURL = (params) => {
     const parsedParams = queryString.parse(params);
     this.setState(
       {
-        params: parsedParams,
+        params: { ...defaultParams, ...parsedParams },
         isLoaded: false,
       },
       () =>
@@ -86,43 +72,9 @@ export class ReviewApplicationInfo extends Component {
     );
   };
 
-  // renderDataFromURL = (params) => {
-  //   const parsedParams = queryString.parse(params);
-  //   console.log(parsedParams);
-  //   this.setState(
-  //     {
-  //       params: parsedParams,
-  //       isLoaded: false,
-  //     },
-  //     () =>
-  //       this.props.fetchApplications(this.state.params).then(() => {
-  //         this.setState({ isLoaded: true });
-  //       })
-  //   );
-  // };
-
   onPageChange = (page, per_page) => {
     this.props.history.replace(
-      routes.REVIEW_APPLICATIONS.dynamicRoute({
-        page,
-        per_page,
-      })
-    );
-  };
-
-  clearParams = () => {
-    this.setState(
-      (prevState) => ({
-        params: {
-          ...defaultParams,
-          per_page: prevState.params.per_page || defaultParams.per_page,
-          sort_field: prevState.params.sort_field,
-          sort_dir: prevState.params.sort_dir,
-        },
-      }),
-      () => {
-        this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params));
-      }
+      routes.REVIEW_APPLICATIONS.dynamicRoute({ ...this.state.params, page, per_page })
     );
   };
 
@@ -134,26 +86,6 @@ export class ReviewApplicationInfo extends Component {
       () => this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params))
     );
   };
-
-  handleFilterChange = () => {
-    this.setState({ incidentsLoaded: false });
-    const params = {
-      ...this.state.params,
-      page: 1,
-    };
-    return this.props.fetchIncidents(params).then(() => {
-      this.setState({
-        incidentsLoaded: true,
-        params,
-      });
-    });
-  };
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.location !== this.props.location) {
-      this.renderDataFromURL(nextProps.location.search);
-    }
-  }
 
   handleApplicationStatusChange = (item, application) => {
     const payload = {
@@ -191,6 +123,26 @@ export class ReviewApplicationInfo extends Component {
       this.props.fetchApplications();
     });
   };
+
+  componentDidMount() {
+    const params = queryString.parse(this.props.location.search);
+    this.setState(
+      {
+        params: {
+          ...defaultParams,
+          ...params,
+        },
+      },
+      () => this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params))
+    );
+    this.props.fetchPermitHolders();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.location !== this.props.location) {
+      this.renderDataFromURL(nextProps.location.search);
+    }
+  }
 
   render() {
     return (

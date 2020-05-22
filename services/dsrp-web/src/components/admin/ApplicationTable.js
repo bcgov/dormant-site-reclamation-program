@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import { isArray } from "lodash";
 import { Table, Icon, Tooltip, Pagination, Menu, Dropdown } from "antd";
 import { formatDateTime, formatDate, formatMoney, formatDateTimeFine } from "@/utils/helpers";
 import { getFilterListApplicationStatusOptions } from "@/selectors/staticContentSelectors";
@@ -26,11 +27,26 @@ const renderDropdownMenu = (option, onClick, record, currentStatus) => (
   </Menu>
 );
 
-const applySortIndicator = (columns, field, dir) =>
-  columns.map((column) => ({
-    ...column,
-    sortOrder: dir && column.sortField === field ? dir.concat("end") : false,
-  }));
+const applyColumnProps = (columns, params) =>
+  columns.map((column) => {
+    const extra = {};
+    if (column.dataIndex === "application_status_code") {
+      extra.filteredValue = isArray(params.application_status_code)
+        ? params.application_status_code
+        : params.application_status_code
+        ? [params.application_status_code]
+        : [];
+    }
+
+    return {
+      ...column,
+      sortOrder:
+        params.sort_dir && column.sortField === params.sort_field
+          ? params.sort_dir.concat("end")
+          : false,
+      ...extra,
+    };
+  });
 
 const handleTableChange = (updateApplications, tableFilters) => (pagination, filters, sorter) => {
   console.log(pagination, filters, sorter);
@@ -46,8 +62,8 @@ const handleTableChange = (updateApplications, tableFilters) => (pagination, fil
 };
 
 export const toolTip = (title) => (
-  <Tooltip title={title} placement="right" mouseEnterDelay={0.3} style={{ marginLeft: 8 }}>
-    <Icon type="info-circle" />
+  <Tooltip title={title} placement="right" mouseEnterDelay={0.3}>
+    <Icon type="info-circle" className="icon-sm" style={{ marginLeft: 4 }} />
   </Tooltip>
 );
 
@@ -120,7 +136,6 @@ export class ApplicationTable extends Component {
       ),
     },
     {
-      title: "Est. Shared Cost",
       title: (
         <>
           Total Est. Shared Cost
@@ -374,11 +389,7 @@ export class ApplicationTable extends Component {
     return (
       <>
         <Table
-          columns={applySortIndicator(
-            this.columns,
-            this.props.params.sort_field,
-            this.props.params.sort_dir
-          )}
+          columns={applyColumnProps(this.columns, this.props.params)}
           pagination={false}
           dataSource={this.transformRowData(this.props.applications)}
           expandIcon={this.renderTableExpandIcon}
