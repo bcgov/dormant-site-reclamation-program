@@ -7,10 +7,42 @@
   },
   "parameters": [
     {
-      "name": "TAG_NAME",
+      "name": "NAME",
       "displayName": "Name",
+      "description": "The name assigned to all of the objects defined in this template.",
+      "required": true,
+      "value": "tusd"
+    },
+    {
+      "name": "SUFFIX",
+      "displayName": "Name Suffix",
       "description": "A suffix appended to all objects",
       "required": true
+    },
+    {
+      "name": "SOURCE_REPOSITORY_URL",
+      "displayName": "Git Repo URL",
+      "description": "The URL to the Git repository.",
+      "required": true,
+      "value": "https://github.com/bcgov/dsrp.git"
+    },
+    {
+      "name": "VERSION",
+      "required": true
+    },
+    {
+      "name": "GIT_REF",
+      "displayName": "Git Reference",
+      "description": "The git reference or branch.",
+      "required": true,
+      "value": "master"
+    },
+    {
+      "name": "SOURCE_CONTEXT_DIR",
+      "displayName": "Source Context Directory",
+      "description": "The source context directory.",
+      "required": false,
+      "value": ""
     }
   ],
   "objects": [
@@ -18,7 +50,7 @@
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "tusd",
+        "name": "${NAME}-base",
         "creationTimestamp": null,
         "labels": {
           "shared": "true"
@@ -30,7 +62,7 @@
         },
         "tags": [
           {
-            "name": "${TAG_NAME}",
+            "name": "v1.2.0",
             "annotations": null,
             "from": {
               "kind": "DockerImage",
@@ -40,6 +72,51 @@
             "referencePolicy": {
               "type": "Local"
             }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "BuildConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}${SUFFIX}",
+        "labels": {
+          "app": "${NAME}${SUFFIX}",
+          "buildconfig": "${NAME}${SUFFIX}"
+        }
+      },
+      "spec": {
+        "source": {
+          "type": "Git",
+          "git": {
+            "uri": "${SOURCE_REPOSITORY_URL}",
+            "ref": "${GIT_REF}"
+          },
+          "contextDir": "${SOURCE_CONTEXT_DIR}"
+        },
+        "strategy": {
+          "type": "Docker",
+          "dockerStrategy": {
+            "from": {
+              "kind": "ImageStreamTag",
+              "name": "tusd-base:v1.2.0"
+            }
+          }
+        },
+        "output": {
+          "to": {
+            "kind": "ImageStreamTag",
+            "name": "${NAME}:${VERSION}"
+          }
+        },
+        "completionDeadlineSeconds": 600,
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "ImageChange"
           }
         ]
       }

@@ -113,7 +113,11 @@ app {
                 [
                     'file':'openshift/templates/tusd.bc.json',
                     'params':[
-                            'TAG_NAME':"${app.build.version}",
+                            'NAME':"tusd",
+                            'SUFFIX': "${app.build.suffix}",
+                            'VERSION':"${app.build.version}",
+                            'SOURCE_CONTEXT_DIR': "openshift/docker-images/tusd",
+                            'SOURCE_REPOSITORY_URL': "${app.git.uri}"
                     ]
                 ]
         ]
