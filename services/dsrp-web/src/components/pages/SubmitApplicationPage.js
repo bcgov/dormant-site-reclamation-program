@@ -68,13 +68,12 @@ export class SubmitApplicationPage extends Component {
           </Row>
         </>
       );
-    } else {
-      return (
-        <>
-          <Loading />
-        </>
-      );
     }
+    return (
+      <>
+        <Loading />
+      </>
+    );
   }
 }
 

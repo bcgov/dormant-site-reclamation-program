@@ -31,7 +31,6 @@ class StaticContentResource(Resource):
         description=
         'Returns static content in bulk instead of calling endpoints individually, keys are custom for current store in CORE/Minespace'
     )
-    # @requires_role_view_all
     def get(self):
         content_json = cache.get(STATIC_CONTENT_KEY)
         content_json = None
