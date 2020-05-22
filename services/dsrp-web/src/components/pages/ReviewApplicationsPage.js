@@ -9,6 +9,7 @@ import { updateAppSetting, fetchAppSettings } from "@/actionCreators/appSettings
 import { getAppSettings } from "@/selectors/appSettingsSelectors";
 import * as Strings from "@/constants/strings";
 import Loading from "@/components/common/Loading";
+import WarningBanner from "@/components/common/WarningBanner";
 
 const { Paragraph, Title } = Typography;
 
@@ -53,6 +54,7 @@ export class ReviewApplicationsPage extends Component {
       )[0].setting_value;
       return (
         <>
+          {appsDisabled && <WarningBanner type="disabled" />}
           <Drawer
             title="Admin Options"
             placement="right"
