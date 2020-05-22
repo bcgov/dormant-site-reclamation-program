@@ -77,6 +77,23 @@
       }
     },
     {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}",
+        "creationTimestamp": null,
+        "labels": {
+          "shared": "true"
+        }
+      },
+      "spec": {
+        "lookupPolicy": {
+          "local": false
+        },
+        "tags": []
+      }
+    },
+    {
       "kind": "BuildConfig",
       "apiVersion": "v1",
       "metadata": {
