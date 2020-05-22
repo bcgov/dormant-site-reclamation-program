@@ -102,7 +102,7 @@ class ApplicationSectionOne extends Component {
               <Field
                 id="indigenous_participation_ind"
                 name="indigenous_participation_ind"
-                label="My proposal, as outlined in this application, includes Indigenous participation in completing the work"
+                label="My proposal, as outlined in this application, includes Indigenous participation in completing the work."
                 disabled={!this.props.isEditable}
                 component={renderConfig.CHECKBOX}
               />
@@ -110,7 +110,7 @@ class ApplicationSectionOne extends Component {
                 <Field
                   id="indigenous_participation_description"
                   name="indigenous_participation_description"
-                  label="Please describe:"
+                  label="Please describe: (Do not include any personal information)"
                   component={renderConfig.AUTO_SIZE_FIELD}
                   validate={[required, maxLength(65536)]}
                   disabled={!this.props.isEditable}
@@ -311,7 +311,12 @@ class ApplicationSectionOne extends Component {
                   <Field
                     id="accept_program_details_and_requirements"
                     name="accept_program_details_and_requirements"
-                    label="I have read and understand all of the conditions required to qualify for this program."
+                    label={
+                      "I understand that in order to receive funding I must agree to the General \
+                    Terms and Conditions for the Dormant Sites Reclamation Program, as will be \
+                    supplemented by additional terms contained within any offer letter that may \
+                    be provided by the Province."
+                    }
                     component={renderConfig.CHECKBOX}
                     validate={[required]}
                   />
