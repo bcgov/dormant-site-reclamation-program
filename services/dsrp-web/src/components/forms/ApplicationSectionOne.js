@@ -48,12 +48,6 @@ class ApplicationSectionOne extends Component {
     }
   }
 
-  componentDidMount() {
-    if (!this.props.isViewingSubmission && this.props.isEditable) {
-      this.props.change("review_program_conditions.accept_program_details_and_requirements", false);
-    }
-  }
-
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>

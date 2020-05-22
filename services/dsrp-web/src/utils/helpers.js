@@ -349,7 +349,7 @@ export const getPathsToLeaves = (obj = {}) => {
 export const getPathElements = (paths) => {
   const elements = {};
   paths.map((path) => {
-    const query = `input[name="${path}"], select[name="${path}"], span[name="${path}"], [id="${path}"]`;
+    const query = `[id="${path}"], [name="${path}"]`;
     const element = document.querySelector(query);
     if (element) {
       elements[path] = element;
