@@ -10,8 +10,13 @@ import "antd/dist/antd.less";
 import "./styles/index.scss";
 import fetchEnv from "./fetchEnv";
 import configureStore from "./store/configureStore";
+import { MatomoProvider, createInstance } from "@datapunt/matomo-tracker-react";
 
 export const store = configureStore();
+
+const instance = createInstance({
+  urlBase: "https://matomo-eazios-test.pathfinder.gov.bc.ca/",
+});
 
 export class Index extends Component {
   constructor() {
@@ -26,7 +31,9 @@ export class Index extends Component {
     if (this.state.environment) {
       return (
         <Provider store={store}>
-          <App />
+          <MatomoProvider value={instance}>
+            <App />
+          </MatomoProvider>
         </Provider>
       );
     }
