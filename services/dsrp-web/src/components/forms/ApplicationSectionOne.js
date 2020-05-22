@@ -37,10 +37,6 @@ const validate = (values) => {
 };
 
 class ApplicationSectionOne extends Component {
-  state = {
-    hasResetConfirmationCheckbox: false,
-  };
-
   handleReset = () => {
     this.props.initialize();
     this.props.handleReset();
@@ -49,19 +45,6 @@ class ApplicationSectionOne extends Component {
   componentWillUnmount() {
     if (this.props.isViewingSubmission) {
       this.props.reset();
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.isViewingSubmission && nextProps.isEditable) {
-      if (nextProps.initialized && !this.state.hasResetConfirmationCheckbox) {
-        this.setState({ hasResetConfirmationCheckbox: true }, () => {
-          this.props.change(
-            "review_program_conditions.accept_program_details_and_requirements",
-            false
-          );
-        });
-      }
     }
   }
 
@@ -366,6 +349,7 @@ export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: FORM.APPLICATION_FORM,
+    validate,
     destroyOnUnmount: false,
     forceUnregisterOnUnmount: true,
     keepDirtyOnReinitialize: true,

@@ -26,10 +26,6 @@ const defaultProps = {
 const { Title } = Typography;
 
 class ApplicationSectionThree extends Component {
-  state = {
-    hasResetConfirmationCheckbox: false,
-  };
-
   handleReset = () => {
     this.props.initialize();
     this.props.handleReset();
@@ -38,16 +34,6 @@ class ApplicationSectionThree extends Component {
   componentWillUnmount() {
     if (this.props.isViewingSubmission) {
       this.props.reset();
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.isViewingSubmission && nextProps.isEditable) {
-      if (nextProps.initialized && !this.state.hasResetConfirmationCheckbox) {
-        this.setState({ hasResetConfirmationCheckbox: true }, () => {
-          this.props.change("review.reviewed_and_verified", false);
-        });
-      }
     }
   }
 
