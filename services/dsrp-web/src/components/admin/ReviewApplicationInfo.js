@@ -6,6 +6,7 @@ import { bindActionCreators, compose } from "redux";
 import { set, isEmpty } from "lodash";
 import queryString from "query-string";
 import * as routes from "@/constants/routes";
+import * as Strings from "@/constants/strings";
 import {
   getApplications,
   getApplicationsWellSitesContractedWork,
@@ -46,29 +47,20 @@ const propTypes = {
 const defaultProps = {};
 
 const defaultParams = {
-  page: 1,
-  per_page: 25,
+  page: Strings.DEFAULT_PAGE,
+  per_page: Strings.DEFAULT_PER_PAGE,
+  sort_field: "submission_date",
+  sort_dir: "asc",
+  id: undefined,
+  company_name: undefined,
+  application_status_code: [],
 };
+
 export class ReviewApplicationInfo extends Component {
   state = { isLoaded: false, params: defaultParams };
 
-  componentDidMount() {
-    const params = queryString.parse(this.props.location.search);
-    this.setState(
-      (prevState) => ({
-        params: {
-          ...prevState.params,
-          ...params,
-        },
-      }),
-      () => this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params))
-    );
-    this.props.fetchPermitHolders();
-  }
-
   renderDataFromURL = (params) => {
     const parsedParams = queryString.parse(params);
-    console.log(parsedParams);
     this.setState(
       {
         params: parsedParams,
@@ -83,18 +75,18 @@ export class ReviewApplicationInfo extends Component {
 
   onPageChange = (page, per_page) => {
     this.props.history.replace(
-      routes.REVIEW_APPLICATIONS.dynamicRoute({
-        page,
-        per_page,
-      })
+      routes.REVIEW_APPLICATIONS.dynamicRoute({ ...this.state.params, page, per_page })
     );
   };
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.location !== this.props.location) {
-      this.renderDataFromURL(nextProps.location.search);
-    }
-  }
+  handleApplicationsSearch = (params) => {
+    this.setState(
+      {
+        params,
+      },
+      () => this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params))
+    );
+  };
 
   handleApplicationStatusChange = (item, application) => {
     const payload = {
@@ -133,6 +125,26 @@ export class ReviewApplicationInfo extends Component {
     });
   };
 
+  componentDidMount() {
+    const params = queryString.parse(this.props.location.search);
+    this.setState(
+      {
+        params: {
+          ...defaultParams,
+          ...params,
+        },
+      },
+      () => this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params))
+    );
+    this.props.fetchPermitHolders();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.location !== this.props.location) {
+      this.renderDataFromURL(nextProps.location.search);
+    }
+  }
+
   render() {
     return (
       <ApplicationTable
@@ -140,7 +152,9 @@ export class ReviewApplicationInfo extends Component {
         applicationsWellSitesContractedWork={this.props.applicationsWellSitesContractedWork}
         pageData={this.props.pageData}
         params={this.state.params}
+        handleTableChange={this.handleApplicationsSearch}
         onPageChange={this.onPageChange}
+        isLoaded={this.state.isLoaded}
         applicationStatusDropdownOptions={this.props.applicationStatusDropdownOptions}
         applicationStatusOptionsHash={this.props.applicationStatusOptionsHash}
         contractedWorkStatusDropdownOptions={this.props.contractedWorkStatusDropdownOptions}
