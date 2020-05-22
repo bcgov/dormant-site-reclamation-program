@@ -40,7 +40,6 @@ const applySortIndicator = (columns, params) =>
   }));
 
 const handleTableChange = (updateApplications, tableFilters) => (pagination, filters, sorter) => {
-  console.log(pagination, filters, sorter);
   const params = {
     page: pagination.current,
     ...tableFilters,
@@ -48,7 +47,6 @@ const handleTableChange = (updateApplications, tableFilters) => (pagination, fil
     sort_dir: sorter.order ? sorter.order.replace("end", "") : sorter.order,
     ...filters,
   };
-  console.log("updateApplications(params);", params);
   updateApplications(params);
 };
 
