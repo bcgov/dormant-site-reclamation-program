@@ -107,7 +107,7 @@ export class ReviewApplicationsPage extends Component {
               <Button
                 type="link"
                 onClick={this.showDrawer}
-                style={{ float: "right", marginBottom: 16, zIndex: 1000 }}
+                style={{ float: "right", marginTop: 70, zIndex: 1000 }}
               >
                 <Icon type="setting" className="icon-lg" />
                 Admin Options

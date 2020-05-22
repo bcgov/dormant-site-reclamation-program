@@ -54,7 +54,7 @@ const defaultParams = {
   per_page: Strings.DEFAULT_PER_PAGE,
   sort_field: "submission_date",
   sort_dir: "asc",
-  id: undefined,
+  guid: undefined,
   company_name: undefined,
   application_status_code: [],
 };
@@ -82,9 +82,14 @@ export class ReviewApplicationInfo extends Component {
     );
   };
 
-  redirectToApplication = (values) => {
-    console.log(values);
-    this.props.history.push(route.VIEW_APPLICATION.dynamicRoute(values.guid));
+  search = (values) => {
+    const params = { ...defaultParams, guid: values.guid };
+    this.setState(
+      {
+        params,
+      },
+      () => this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params))
+    );
   };
 
   handleApplicationsSearch = (params) => {
@@ -157,8 +162,8 @@ export class ReviewApplicationInfo extends Component {
     return (
       <>
         <Row type="flex" justify="center" align="top">
-          <Col span={8}>
-            <JumpToApplicationForm onSubmit={this.redirectToApplication} />
+          <Col xl={{ span: 12 }} md={{ span: 20 }} sm={{ span: 24 }}>
+            <JumpToApplicationForm onSubmit={this.search} />
           </Col>
         </Row>
         <ApplicationTable
