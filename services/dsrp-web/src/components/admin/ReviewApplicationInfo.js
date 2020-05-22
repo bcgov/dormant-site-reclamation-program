@@ -52,6 +52,7 @@ const defaultParams = {
   sort_field: "submission_date",
   sort_dir: "asc",
   id: undefined,
+  company_name: undefined,
   application_status_code: [],
 };
 
@@ -62,7 +63,7 @@ export class ReviewApplicationInfo extends Component {
     const parsedParams = queryString.parse(params);
     this.setState(
       {
-        params: { ...defaultParams, ...parsedParams },
+        params: parsedParams,
         isLoaded: false,
       },
       () =>
@@ -153,6 +154,7 @@ export class ReviewApplicationInfo extends Component {
         params={this.state.params}
         handleTableChange={this.handleApplicationsSearch}
         onPageChange={this.onPageChange}
+        isLoaded={this.state.isLoaded}
         applicationStatusDropdownOptions={this.props.applicationStatusDropdownOptions}
         applicationStatusOptionsHash={this.props.applicationStatusOptionsHash}
         contractedWorkStatusDropdownOptions={this.props.contractedWorkStatusDropdownOptions}
