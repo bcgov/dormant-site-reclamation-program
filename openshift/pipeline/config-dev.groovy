@@ -141,6 +141,7 @@ app {
                             'ROUTE': "${vars.modules.'dsrp-nginx'.ROUTE}",
                             'PATH_PREFIX': "${vars.modules.'dsrp-nginx'.PATH}",
                             'TUSD_SERVICE_URL': "${vars.modules.'dsrp-tusd-backend'.HOST}${vars.modules.'dsrp-tusd-backend'.PATH}",
+                            'DSRP_SERVICE_URL': "${vars.modules.'dsrp-frontend'.HOST}",
                             'API_SERVICE_URL': "${vars.modules.'dsrp-python-backend'.HOST}",
                     ]
                 ],
