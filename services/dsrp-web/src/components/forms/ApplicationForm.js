@@ -6,7 +6,7 @@ import { isPristine, getFormValues, reset, initialize } from "redux-form";
 import { Col, Row, Steps, Typography, Result, Icon } from "antd";
 import PropTypes from "prop-types";
 import { isEqual } from "lodash";
-import { formatDateTimeFine, createUuidv4 } from "@/utils/helpers";
+import { formatDateTimeFine } from "@/utils/helpers";
 import { createApplication } from "@/actionCreators/applicationActionCreator";
 import ApplicationSectionOne from "@/components/forms/ApplicationSectionOne";
 import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
@@ -35,9 +35,6 @@ const resetFormState = {
   previouslySavedFormValues: null,
   previouslySavedFormStep: 0,
   saveTimestamp: null,
-  uploadedFiles: [],
-  filesToDelete: [],
-  fileGuid: createUuidv4(),
 };
 
 export class ApplicationForm extends Component {
@@ -102,20 +99,6 @@ export class ApplicationForm extends Component {
     this.setState(resetFormState, () => this.emptySavedFormData());
   };
 
-  onFileLoad = (document_name, object_store_path) => {
-    this.setState((prevState) => ({
-      uploadedFiles: [{ object_store_path, document_name }, ...prevState.uploadedFiles],
-    }));
-  };
-
-  onRemoveFile = (error, file) => {
-    this.setState((prevState) => ({
-      uploadedFiles: prevState.uploadedFiles.filter(
-        (doc) => doc.object_store_path !== file.serverId
-      ),
-    }));
-  };
-
   componentDidMount() {
     const data = this.getSavedFormData();
     if (data) {
@@ -150,8 +133,6 @@ export class ApplicationForm extends Component {
             onSubmit={this.nextFormStep}
             handleReset={this.handleReset}
             initialValues={this.state.initialValues}
-            onFileLoad={this.onFileLoad}
-            onRemoveFile={this.onRemoveFile}
             fileGuid={this.state.fileGuid}
           />
         ),
