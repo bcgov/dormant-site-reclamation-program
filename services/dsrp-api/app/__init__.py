@@ -17,6 +17,7 @@ from app.api.permit_holder.namespace import api as permit_holder_api
 from app.api.well.namespace import api as well_api
 from app.api.liability.namespace import api as liability_api
 from app.api.orgbook.namespace import api as orgbook_api
+from app.api.documents.namespace import api as download_api
 
 from app.commands import register_commands
 from app.config import Config
@@ -78,6 +79,7 @@ def register_routes(app):
 
     api.add_namespace(exports_api)
     api.add_namespace(application_api)
+    api.add_namespace(download_api)
     api.add_namespace(permit_holder_api)
     api.add_namespace(well_api)
     api.add_namespace(liability_api)
