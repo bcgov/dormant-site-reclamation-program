@@ -1,10 +1,10 @@
 from flask_restplus import Resource
-from flask import request, current_app
+from flask import request
 from sqlalchemy_filters import apply_pagination, apply_sort
 from sqlalchemy import desc, func, or_, and_
 from werkzeug.exceptions import BadRequest, NotFound
 from marshmallow.exceptions import MarshmallowError
-import json
+
 from app.extensions import api
 from app.api.services.email_service import EmailService
 from app.api.utils.access_decorators import requires_role_view_all, requires_role_admin
