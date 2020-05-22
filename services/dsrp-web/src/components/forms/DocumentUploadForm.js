@@ -8,7 +8,7 @@ import PropTypes from "prop-types";
 
 import { reduxForm, Field } from "redux-form";
 
-import { uploadDocuments } from "@/actionCreators/uploadDocumentsActionCreator";
+import { uploadDocs } from "@/actionCreators/uploadDocumentsActionCreator";
 
 import { renderConfig } from "@/components/common/config";
 import { DOCUMENT_UPLOAD_FORM } from "@/constants/forms";
@@ -17,25 +17,24 @@ import { DOCUMENT, EXCEL } from "@/constants/fileTypes";
 const { Title } = Typography;
 
 const propTypes = {
-  uploadedFiles: PropTypes.arrayOf(PropTypes.any),
-  application: PropTypes.string.isRequired,
-  uploadFiles: PropTypes.func.isRequired,
+  applicationGuid: PropTypes.string.isRequired,
+  uploadedDocs: PropTypes.arrayOf(PropTypes.any),
+  uploadDocs: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
-  uploadedFiles: [],
+  uploadedDocs: [],
 };
 
 const resetFormState = {
-  uploadedFiles: [],
+  uploadedDocs: [],
 };
 
 export class DocumentUploadForm extends Component {
   state = resetFormState;
 
   handleSubmit = (values, dispatch) => {
-    const application = { json: values, documents: this.state.uploadedFiles };
-    this.props.uploadFiles(application).then((response) => {
+    this.props.uploadDocs(this.props.applicationGuid, this.state.uploadedDocs).then((response) => {
       this.setState(resetFormState);
       dispatch(initialize(APPLICATION_FORM));
     });
@@ -47,15 +46,13 @@ export class DocumentUploadForm extends Component {
 
   onFileLoad = (document_name, object_store_path) => {
     this.setState((prevState) => ({
-      uploadedFiles: [{ object_store_path, document_name }, ...prevState.uploadedFiles],
+      uploadedDocs: [{ object_store_path, document_name }, ...prevState.uploadedDocs],
     }));
   };
 
   onRemoveFile = (error, file) => {
     this.setState((prevState) => ({
-      uploadedFiles: prevState.uploadedFiles.filter(
-        (doc) => doc.object_store_path !== file.serverId
-      ),
+      uploadedDocs: prevState.uploadedDocs.filter((doc) => doc.object_store_path !== file.serverId),
     }));
   };
 
@@ -105,7 +102,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      uploadDocuments,
+      uploadDocs,
     },
     dispatch
   );

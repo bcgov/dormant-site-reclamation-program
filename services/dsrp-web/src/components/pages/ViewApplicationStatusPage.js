@@ -75,7 +75,7 @@ export class ViewApplicationStatusPage extends Component {
       <Row type="flex" justify="center" align="top" className="landing-section">
         <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
           <ApplicationStatusCard application={this.props.loadedApplication} />
-          <DocumentUploadForm application={this.props.loadedApplication} />
+          <DocumentUploadForm application={this.props.loadedApplication.guid} />
         </Col>
       </Row>
     );

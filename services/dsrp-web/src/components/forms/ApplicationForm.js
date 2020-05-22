@@ -86,7 +86,7 @@ export class ApplicationForm extends Component {
   }
 
   handleSubmit = (values, dispatch) => {
-    const application = { json: values, documents: this.state.uploadedFiles };
+    const application = { json: values, documents: this.state.uploadedDocs };
     this.props.createApplication(application).then((response) => {
       this.setState(resetFormState);
       dispatch(initialize(APPLICATION_FORM));
