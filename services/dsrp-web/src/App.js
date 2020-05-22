@@ -24,7 +24,11 @@ Spin.setDefaultIndicator(<Icon type="loading" style={{ fontSize: 40 }} />);
 
 const propTypes = {
   loadBulkStaticContent: PropTypes.func.isRequired,
-  getStaticContentLoadingIsComplete: PropTypes.func.isRequired,
+  getStaticContentLoadingIsComplete: PropTypes.func,
+};
+
+const defaultProps = {
+  getStaticContentLoadingIsComplete: () => {},
 };
 
 class App extends Component {
@@ -93,6 +97,7 @@ const mapDispatchToProps = (dispatch) =>
   );
 
 App.propTypes = propTypes;
+App.defaultProps = defaultProps;
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
