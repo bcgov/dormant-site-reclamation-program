@@ -20,24 +20,29 @@ from app.api.application.models.application import Application
 from app.api.application.models.application_document import ApplicationDocument
 from app.api.services.object_store_storage_service import ObjectStoreStorageService
 
-from app.api.application.response_models import APPLICATION_DOCUMENT
+from app.api.application.response_models import APPLICATION_DOCUMENT, APPLICATION_DOCUMENT_LIST
 from app.api.documents.response_models import DOWNLOAD_TOKEN_MODEL
 
 
 class ApplicationDocumentListResource(Resource, UserMixin):
     @api.doc(description='Request a document_manager_guid for uploading a document')
-    @api.marshal_with(APPLICATION_DOCUMENT, code=201)
+    @api.marshal_with(APPLICATION_DOCUMENT_LIST, code=201)
     def post(self, application_guid):
         application = Application.find_by_guid(application_guid)
         if not application:
             raise NotFound("Not found")
-        new_doc = ApplicationDocument(
-            application_guid=application_guid,
-            document_name=request.json['document_name'],
-            object_store_path=request.json['object_store_path'])
+        
+        docs = request.json['documents']
 
-        new_doc.save()
-        return new_doc
+        for doc in docs:
+            new_doc = ApplicationDocument(
+                document_name=doc['document_name'],
+                object_store_path=doc['object_store_path'])
+            application.documents.append(new_doc)
+        
+        application.save()
+        
+        return application.documents
 
 
 class ApplicationDocumentResource(Resource, UserMixin):

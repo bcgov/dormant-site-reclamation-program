@@ -34,6 +34,7 @@ export class DocumentUploadForm extends Component {
   state = resetFormState;
 
   handleSubmit = (values, dispatch) => {
+    event.preventDefault();
     this.props.uploadDocs(this.props.application, this.state.uploadedDocs).then((response) => {
       this.setState(resetFormState);
       dispatch(initialize(APPLICATION_FORM));
@@ -46,7 +47,7 @@ export class DocumentUploadForm extends Component {
 
   onFileLoad = (document_name, object_store_path) => {
     this.setState((prevState) => ({
-      uploadedDocs: [{ object_store_path, document_name }, ...prevState.uploadedDocs],
+      uploadedDocs: [{ document_name, object_store_path }, ...prevState.uploadedDocs],
     }));
   };
 
@@ -60,7 +61,7 @@ export class DocumentUploadForm extends Component {
     return (
       <Row>
         <Col>
-          <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
+          <Form layout="vertical" onSubmit={this.handleSubmit} onReset={this.handleReset}>
             <Title level={3}>Upload Required Files</Title>
             <Row gutter={48}>
               <Col span={24}>
@@ -70,8 +71,8 @@ export class DocumentUploadForm extends Component {
                     name="files"
                     component={renderConfig.FILE_UPLOAD}
                     acceptedFileTypesMap={{ ...DOCUMENT, ...EXCEL }}
-                    onFileLoad={this.props.onFileLoad}
-                    onRemoveFile={this.props.onRemoveFile}
+                    onFileLoad={this.onFileLoad}
+                    onRemoveFile={this.onRemoveFile}
                     allowRevert
                     allowMultiple={false}
                   />
