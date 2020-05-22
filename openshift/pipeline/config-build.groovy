@@ -109,7 +109,7 @@ app {
                             'NAME':"metabase-postgres",
                             'VERSION':"${app.build.version}",
                     ]
-                ]
+                ],
                 [
                     'file':'openshift/templates/tusd.bc.json',
                     'params':[
