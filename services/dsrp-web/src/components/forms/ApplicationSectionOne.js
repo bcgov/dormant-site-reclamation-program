@@ -37,6 +37,10 @@ const validate = (values) => {
 };
 
 class ApplicationSectionOne extends Component {
+  state = {
+    hasResetConfirmationCheckbox: false,
+  };
+
   handleReset = () => {
     this.props.initialize();
     this.props.handleReset();
@@ -48,9 +52,16 @@ class ApplicationSectionOne extends Component {
     }
   }
 
-  componentDidMount() {
-    if (!this.props.isViewingSubmission && this.props.isEditable) {
-      this.props.change("review_program_conditions.accept_program_details_and_requirements", false);
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.isViewingSubmission && nextProps.isEditable) {
+      if (nextProps.initialized && !this.state.hasResetConfirmationCheckbox) {
+        this.setState({ hasResetConfirmationCheckbox: true }, () => {
+          this.props.change(
+            "review_program_conditions.accept_program_details_and_requirements",
+            false
+          );
+        });
+      }
     }
   }
 
