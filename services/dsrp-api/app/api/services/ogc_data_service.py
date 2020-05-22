@@ -43,6 +43,8 @@ def refreshOGCdata(app, cache_key, csv_url, process):
             response = session.get(csv_url)
 
             df = pd.read_table(StringIO(response.text), sep=",")
+            df = process(df)
+
             updated_from_web = True
             current_app.logger.debug(
                 f'OGC DATA SERVICE - {cache_key} - Successful get from OGC reporting.')
@@ -74,7 +76,7 @@ def refreshOGCdata(app, cache_key, csv_url, process):
                 timeout=TIMEOUT_1_YEAR)
 
             if updated_from_web:
-                cache.set(cache_key + '_EXPIRY_TOKEN', True, timeout=TIMEOUT_12_HOURS)
+                cache.set(cache_key + '_EXPIRY_TOKEN', True, timeout=TIMEOUT_60_MINUTES)
         else:
             current_app.logger.warning(
                 f'OGC DATA SERVICE - {cache_key} - FAILED TO RETRIEVE UPDATED DATA')
@@ -96,7 +98,7 @@ class OGCDataService():
 
         #if empty dataset refresh data synchronously, otherwise refresh in the background and continue
         if not data:
-            refreshOGCdata(app, cache_key, csv_url, process)
+            df = refreshOGCdata(app, cache_key, csv_url, process)
         else:
             thread = Thread(
                 target=refreshOGCdata, args=(
@@ -111,12 +113,6 @@ class OGCDataService():
         #update data and return
         data = cache.get(cache_key)
         if data:
-            df = serializer.deserialize(data)
-        else:
-            #workaround for timing issue on first load
-            current_app.logger.warning(f'OGC DATA SERVICE - {cache_key} - Waiting...')
-            time.sleep(1)
-            data = cache.get(cache_key)
             df = serializer.deserialize(data)
 
         return df
@@ -140,7 +136,8 @@ class OGCDataService():
                 'current_status', 'well_dormancy_date', 'site_dormancy_date', 'site_dormancy_type',
                 'site_dormant_status', 'surface_location', 'field', 'abandonment_date',
                 'last_spud_date', 'last_rig_rels_date', 'last_completion_date',
-                'last_active_production_year', 'last_active_inj_display_year', 'multi_well'
+                'last_active_production_year', 'last_active_inj_display_year',
+                'wellsite_dormancy_declaration_date', 'multi_well'
             ]
             df['well_dormancy_date'] = pd.to_datetime(
                 df['well_dormancy_date'],
@@ -165,6 +162,9 @@ class OGCDataService():
                 errors='coerce').apply(lambda x: x.strftime('%Y-%m-%d') if pd.notnull(x) else None)
             df['last_active_inj_display_year'] = pd.to_datetime(
                 df['last_active_inj_display_year'],
+                errors='coerce').apply(lambda x: x.strftime('%Y-%m-%d') if pd.notnull(x) else None)
+            df['wellsite_dormancy_declaration_date'] = pd.to_datetime(
+                df['wellsite_dormancy_declaration_date'],
                 errors='coerce').apply(lambda x: x.strftime('%Y-%m-%d') if pd.notnull(x) else None)
             return df
 
