@@ -39,10 +39,6 @@
       "value": "/"
     },
     {
-      "name": "TUSD_URL",
-      "value": "/"
-    },
-    {
       "name": "API_SERVICE_URL",
       "value": "/"
     },
@@ -168,10 +164,6 @@
                   {
                     "name": "TUSD_SERVICE_URL",
                     "value": "${TUSD_SERVICE_URL}"
-                  },
-                  {
-                    "name": "TUSD_URL",
-                    "value": "${TUSD_URL}"
                   },
                   {
                     "name": "API_SERVICE_URL",

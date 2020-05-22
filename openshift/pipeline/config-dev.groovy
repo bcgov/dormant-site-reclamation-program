@@ -336,7 +336,7 @@ environments {
                     PATH = "/${vars.git.changeId}/api"
                 }
                 'dsrp-tusd-backend' {
-                    HOST = "http://tusd-backend${vars.deployment.suffix}:1080"
+                    HOST = "http://tusd${vars.deployment.suffix}:1080"
                     PATH = "/${vars.git.changeId}/files/"
                 }
                 'dsrp-redis' {
