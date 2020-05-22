@@ -123,6 +123,13 @@ export const wellAuthorizationNumberMask = createTextMask({
   allowEmpty: true,
 });
 
+export const businessNumberMask = createTextMask({
+  pattern: "999999999",
+  guide: false,
+  stripMask: true,
+  allowEmpty: true,
+});
+
 export const dateSorter = (key) => (a, b) => {
   if (a[key] === b[key]) {
     return 0;
