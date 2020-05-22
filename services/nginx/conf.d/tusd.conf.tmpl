@@ -7,7 +7,7 @@ location ${PATH_PREFIX}/upload/ {
                 return 503;
         }
 
-        proxy_pass ${TUSD_SERVICE_URL}${PATH_PREFIX}/files;
+        proxy_pass ${TUSD_SERVICE_URL};
 
         # Disable request and response buffering
         proxy_request_buffering  off;

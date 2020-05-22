@@ -140,8 +140,7 @@ app {
                             'DSRP_DOMAIN': "${vars.modules.'dsrp-nginx'.HOST_DSRP}",
                             'ROUTE': "${vars.modules.'dsrp-nginx'.ROUTE}",
                             'PATH_PREFIX': "${vars.modules.'dsrp-nginx'.PATH}",
-                            'TUSD_SERVICE_URL': "${vars.modules.'dsrp-frontend'.HOST}",
-                            'TUSD_SERVICE_URL': "${vars.modules.'dsrp-tusd-backend'.HOST}",
+                            'TUSD_SERVICE_URL': "${vars.modules.'dsrp-tusd-backend'.HOST}${vars.modules.'dsrp-tusd-backend'.PATH}",
                             'API_SERVICE_URL': "${vars.modules.'dsrp-python-backend'.HOST}",
                     ]
                 ],
@@ -337,8 +336,8 @@ environments {
                     PATH = "/${vars.git.changeId}/api"
                 }
                 'dsrp-tusd-backend' {
-                    HOST = "http://dsrp-tusd-backend${vars.deployment.suffix}:5001"
-                    PATH = "/${vars.git.changeId}/upload"
+                    HOST = "http://tusd-backend${vars.deployment.suffix}:1080"
+                    PATH = "/${vars.git.changeId}/files/"
                 }
                 'dsrp-redis' {
                     HOST = "http://dsrp-redis${vars.deployment.suffix}"
