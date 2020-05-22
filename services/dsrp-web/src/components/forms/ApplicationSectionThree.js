@@ -37,6 +37,12 @@ class ApplicationSectionThree extends Component {
     }
   }
 
+  componentDidMount() {
+    if (!this.props.isViewingSubmission && this.props.isEditable) {
+      this.props.change("review.reviewed_and_verified", false);
+    }
+  }
+
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
