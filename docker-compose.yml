@@ -34,7 +34,6 @@ services:
       - FLYWAY_URL=jdbc:postgresql://postgres/dsrp
       - FLYWAY_OUT_OF_ORDER=true
       - FLYWAY_CONNECT_RETRIES=60
-      - DOCMAN_USER_PASSWORD=docman_pass
       - METABASE_USER_PASSWORD=metabase_pass
     depends_on:
       - postgres

@@ -115,10 +115,6 @@
       "required": true
     },
     {
-      "name": "TUSD_URL",
-      "required": true
-    },
-    {
       "name": "SMTP_CREDENTIALS",
       "value": "smtp-credentials"
     }
@@ -327,10 +323,6 @@
                     "value": "${BASE_PATH}"
                   },
                   {
-                    "name": "TUSD_URL",
-                    "value": "${TUSD_URL}"
-                  },
-                  {
                     "name": "ENVIRONMENT_NAME",
                     "value": "${ENVIRONMENT_NAME}"
                   },
@@ -478,15 +470,6 @@
                       "secretKeyRef": {
                         "name": "${DB_CONFIG_NAME}",
                         "key": "metabase-user-password"
-                      }
-                    }
-                  },
-                  {
-                    "name": "DOCMAN_USER_PASSWORD",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${DB_CONFIG_NAME}",
-                        "key": "docman-user-password"
                       }
                     }
                   },

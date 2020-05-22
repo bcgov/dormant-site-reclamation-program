@@ -77,8 +77,6 @@ class Config(object):
     # OrgBook
     ORGBOOK_API_URL = os.environ.get('ORGBOOK_API_URL', 'https://orgbook.gov.bc.ca/api/v2/')
 
-    #Doc Manager
-    TUSD_URL = os.environ.get('TUSD_URL', 'http://localhost:5001')
     # Document hosting settings
     OBJECT_STORE_ENABLED = os.environ.get('OBJECT_STORE_ENABLED', False)
     OBJECT_STORE_HOST = os.environ.get('OBJECT_STORE_HOST', '')

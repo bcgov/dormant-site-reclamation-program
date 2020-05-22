@@ -169,7 +169,6 @@ app {
                             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
                             'URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}",
                             'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/api",
-                            'TUSD_URL': "${vars.modules.'dsrp-tusd-backend'.HOST}${vars.modules.'dsrp-tusd-backend'.PATH}",
                     ]
                 ],
                 [
