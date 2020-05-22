@@ -133,11 +133,7 @@
                 "image": " ",
                 "ports": [
                   {
-                    "containerPort": 8080,
-                    "protocol": "TCP"
-                  },
-                  {
-                    "containerPort": 8081,
+                    "containerPort": 1080,
                     "protocol": "TCP"
                   }
                 ],
@@ -211,18 +207,8 @@
                 "capabilities": {}
               }
             ],
-            "volumes": [
-              {
-                "name": "${NAME}${SUFFIX}-data",
-                "persistentVolumeClaim": {
-                  "claimName": "${NAME}${SUFFIX}"
-                }
-              }
-            ],
             "restartPolicy": "Always",
-            "dnsPolicy": "ClusterFirst",
-            "serviceAccountName": "digdag",
-            "serviceAccount": "digdag"
+            "dnsPolicy": "ClusterFirst"
           }
         }
       }
