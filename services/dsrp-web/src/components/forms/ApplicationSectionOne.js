@@ -366,7 +366,6 @@ export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: FORM.APPLICATION_FORM,
-    validate,
     destroyOnUnmount: false,
     forceUnregisterOnUnmount: true,
     keepDirtyOnReinitialize: true,
