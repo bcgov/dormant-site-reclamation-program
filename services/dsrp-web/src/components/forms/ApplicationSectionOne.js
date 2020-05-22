@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { renderConfig } from "@/components/common/config";
-import { required, email, maxLength } from "@/utils/validate";
+import { required, email, maxLength, postalCode, exactLength } from "@/utils/validate";
 import { phoneMask, postalCodeMask, scrollToFirstError } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
@@ -28,6 +28,14 @@ const defaultProps = {
   isEditable: true,
 };
 
+const validate = (values) => {
+  const errors = {};
+  if (values.company_contact && values.company_contact.email !== values.company_contact.email2) {
+    errors.company_contact = { email2: "Email does not match" };
+  }
+  return errors;
+};
+
 class ApplicationSectionOne extends Component {
   handleReset = () => {
     this.props.initialize();
@@ -37,6 +45,12 @@ class ApplicationSectionOne extends Component {
   componentWillUnmount() {
     if (this.props.isViewingSubmission) {
       this.props.reset();
+    }
+  }
+
+  componentDidMount() {
+    if (!this.props.isViewingSubmission && this.props.isEditable) {
+      this.props.change("review_program_conditions.accept_program_details_and_requirements", false);
     }
   }
 
@@ -94,7 +108,7 @@ class ApplicationSectionOne extends Component {
               <Field
                 id="indigenous_participation_ind"
                 name="indigenous_participation_ind"
-                label="Do you wish to self‑identify as including Indigenous participation in completing the work outlined within this application?"
+                label="My proposal, as outlined in this application, includes Indigenous participation in completing the work"
                 disabled={!this.props.isEditable}
                 component={renderConfig.CHECKBOX}
               />
@@ -102,7 +116,7 @@ class ApplicationSectionOne extends Component {
                 <Field
                   id="indigenous_participation_description"
                   name="indigenous_participation_description"
-                  label="If so, please describe:"
+                  label="Please describe:"
                   component={renderConfig.AUTO_SIZE_FIELD}
                   validate={[required, maxLength(65536)]}
                   disabled={!this.props.isEditable}
@@ -159,7 +173,7 @@ class ApplicationSectionOne extends Component {
                 placeholder="Postal Code"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
-                validate={[required]}
+                validate={[required, postalCode]}
                 {...postalCodeMask}
               />
             </Col>
@@ -205,7 +219,7 @@ class ApplicationSectionOne extends Component {
                     placeholder="Phone Number 1"
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
-                    validate={[required]}
+                    validate={[required, exactLength(10)]}
                     {...phoneMask}
                   />
                 </Col>
@@ -232,6 +246,7 @@ class ApplicationSectionOne extends Component {
                     placeholder={this.props.isEditable ? "Phone Number 2 (Optional)" : ""}
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
+                    validate={[exactLength(10)]}
                     {...phoneMask}
                   />
                 </Col>
@@ -260,6 +275,15 @@ class ApplicationSectionOne extends Component {
                 disabled={!this.props.isEditable}
                 validate={[required, email, maxLength(1024)]}
               />
+              <Field
+                id="email2"
+                name="email2"
+                label="Confirm Email"
+                placeholder="Confirm Email"
+                component={renderConfig.FIELD}
+                disabled={!this.props.isEditable}
+                validate={[required, email, maxLength(1024)]}
+              />
             </Col>
             <Col xs={24} sm={12}>
               <Field
@@ -269,6 +293,7 @@ class ApplicationSectionOne extends Component {
                 placeholder={this.props.isEditable ? "Fax (Optional)" : ""}
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
+                validate={[exactLength(10)]}
                 {...phoneMask}
               />
             </Col>
@@ -284,6 +309,7 @@ class ApplicationSectionOne extends Component {
               <Row gutter={48}>
                 <Col>
                   <Paragraph>
+                    <title level={3}>TODO: ADD REAL PDF</title>
                     <a href="#" target="_blank" rel="noopener noreferrer">
                       Review program details and requirements
                     </a>
@@ -329,6 +355,7 @@ export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: FORM.APPLICATION_FORM,
+    validate,
     destroyOnUnmount: false,
     forceUnregisterOnUnmount: true,
     keepDirtyOnReinitialize: true,

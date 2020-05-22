@@ -15,25 +15,23 @@ from email.mime.text import MIMEText
 
 session = requests.session()
 
+
 class EmailService():
     #keys: host,port,user,pwrd
 
     SENDER_INFO = {
         'name': "BC Gov Dormant Site Reclamation Program",
-        'from-email': 'DormantSiteReclamation@gov.bc.ca'
+        'from-email': 'DormantSite.BC.Government@gov.bc.ca'
     }
-    
+
     signature = None
-    _smtp = None    
+    _smtp = None
 
     def __init__(self):
-        self._sent_mail = {
-            'success_count':0,
-            'errors':[]
-        }
+        self._sent_mail = {'success_count': 0, 'errors': []}
 
         self.SMTP_CRED = Config.SMTP_CRED
-        self.signature = f'<p>Email {self.SENDER_INFO["from-email"]} with this reference number if you have questions about your application.</p>' 
+        self.signature = f'<p>Email {self.SENDER_INFO["from-email"]} with this reference number if you have questions about your application.</p>'
 
     def __enter__(self):
         if Config.SMTP_ENABLED:
@@ -41,44 +39,46 @@ class EmailService():
             self._smtp = smtplib.SMTP()
             self._smtp.set_debuglevel(0)
             self._smtp.connect(self.SMTP_CRED['host'], self.SMTP_CRED['port'])
-            current_app.logger.info(f'Opening connection to {self.SMTP_CRED["host"]}:{self.SMTP_CRED["port"]}')
+            current_app.logger.info(
+                f'Opening connection to {self.SMTP_CRED["host"]}:{self.SMTP_CRED["port"]}')
         else:
-            current_app.logger.info(f'EmailService disabled, change SMTP_CRED_HOST env variable to go live')
-        return self 
+            current_app.logger.info(
+                f'EmailService disabled, change SMTP_CRED_HOST env variable to go live')
+        return self
 
-    def __exit__(self, exc_type, exc_value, traceback): 
-        if exc_type is not None: 
-            current_app.logger.error(f'EmailService.__exit__ values: {exc_type}, {exc_value}, {traceback}')
-        
+    def __exit__(self, exc_type, exc_value, traceback):
+        if exc_type is not None:
+            current_app.logger.error(
+                f'EmailService.__exit__ values: {exc_type}, {exc_value}, {traceback}')
+
         current_app.logger.info(
-            f'Sent {self._sent_mail["success_count"]} emails successfully, {len(self._sent_mail["errors"])} errors. closing connection')
-        
+            f'Sent {self._sent_mail["success_count"]} emails successfully, {len(self._sent_mail["errors"])} errors. closing connection'
+        )
+
         if self._sent_mail['errors']:
-            current_app.logger.error(self._sent_mail['errors'])  
+            current_app.logger.error(self._sent_mail['errors'])
 
         if Config.SMTP_ENABLED:
-            self._smtp.quit()   
-
+            self._smtp.quit()
 
     def send_email(self, to_email, subject, html_body):
         if Config.SMTP_ENABLED and not self._smtp:
             raise Exception('Initialize EmailService() as context manager using \'with\' keyword')
-        
-        msg = MIMEMultipart()     
 
-        msg['From']=self.SENDER_INFO['from-email']
-        msg['To']=to_email
-        msg['Subject']=subject
+        msg = MIMEMultipart()
+
+        msg['From'] = self.SENDER_INFO['from-email']
+        msg['To'] = to_email
+        msg['Subject'] = subject
         # add in the message body
 
-        html = "<html><head></head><body>" + html_body + self.signature +"</body></html>"
-        msg.attach(MIMEText(html,'html'))
-        
+        html = "<html><head></head><body>" + html_body + self.signature + "</body></html>"
+        msg.attach(MIMEText(html, 'html'))
+
         # send the message via the server set up earlier.
-        try:    
+        try:
             if Config.SMTP_ENABLED:
                 self._smtp.send_message(msg)
             self._sent_mail['success_count'] += 1
-        except Exception as e: 
+        except Exception as e:
             self._sent_mail['errors'].append((msg['To']) + 'THREW' + str(e))
-        

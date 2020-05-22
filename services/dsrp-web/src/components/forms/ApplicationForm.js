@@ -158,11 +158,13 @@ export class ApplicationForm extends Component {
                 <Paragraph>
                   Review your application details below to make sure all information provided is
                   accurate.
+                </Paragraph>
+                <Paragraph>
+                  <b>You will not be able to edit your application after it is submitted</b>
+                </Paragraph>
+                <Paragraph>
                   <ul>
-                    <li>
-                      Applications can be approved in part or in their entirety Any work on well
-                      sites that does not qualify or contains errors will be rejected
-                    </li>
+                    <li>Applications can be approved in part or in their entirety</li>
                     <li>
                       Any work on well sites that does not qualify or contains errors will be
                       rejected
@@ -173,26 +175,28 @@ export class ApplicationForm extends Component {
                 <Title level={4}>What happens next?</Title>
                 <Paragraph>Make sure the email address provided is correct!</Paragraph>
                 <Paragraph>
-                  After completing your application, you will be given a unique confirmation number
-                  you can use to check the status of your application at any time.
+                  After completing your application, you will receive a unique confirmation number
+                  you can use to check the status of your application at any time by clicking Check
+                  Application Status at the top of the page.
                 </Paragraph>
                 <Paragraph>
-                  If any of the work applied for is approved, you will need to upload the following
-                  files to your application when requested:
+                  If any of the work applied for is approved, you will receive an agreement that you
+                  must sign and upload along with:
                   <ul>
-                    <li>Contract with the Permit Holder identified in the application</li>
-                    <li>A criminal record check</li>
-                    <li>A certificate of insurance</li>
+                    <li>
+                      A copy of the contract between your company and the permit holder named in
+                      your application
+                    </li>
+                    <li>A certificate of Insurance</li>
                     <li>
                       A signed copy of the agreement between your company and the Province of
                       British Columbia
                     </li>
-                    <li>Record of Good Standing for the Permit Holder named in your application</li>
                   </ul>
                 </Paragraph>
                 <Paragraph>
-                  When this is completed, you will be approved to begin work and receive the initial
-                  10% payment.
+                  When the files have been uploaded, you may begin work and the initial payment will
+                  be processed and sent to you at the address provided.
                 </Paragraph>
                 <Paragraph>
                   Once approved work begins, you will be required to submit regular reports and
@@ -202,9 +206,6 @@ export class ApplicationForm extends Component {
                 </Paragraph>
               </Col>
             </Row>
-            <br />
-            <Title level={3}>Review Application</Title>
-            <hr />
             <Row>
               <Col>
                 <ViewOnlyApplicationForm isEditable={false} noRenderStep3 />

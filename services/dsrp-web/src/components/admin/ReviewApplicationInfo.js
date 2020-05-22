@@ -1,8 +1,12 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { bindActionCreators } from "redux";
+import { withRouter } from "react-router-dom";
+import { bindActionCreators, compose } from "redux";
 import { set, isEmpty } from "lodash";
+import queryString from "query-string";
+import * as routes from "@/constants/routes";
+import * as Strings from "@/constants/strings";
 import {
   getApplications,
   getApplicationsWellSitesContractedWork,
@@ -19,6 +23,12 @@ import {
   getDropdownContractedWorkStatusOptions,
   getContractedWorkStatusOptionsHash,
 } from "@/selectors/staticContentSelectors";
+import { getPermitHoldersHash } from "@/selectors/OGCSelectors";
+import {
+  fetchLiabilities,
+  fetchWells,
+  fetchPermitHolders,
+} from "@/actionCreators/OGCActionCreator";
 import ApplicationTable from "@/components/admin/ApplicationTable";
 
 const propTypes = {
@@ -36,10 +46,47 @@ const propTypes = {
 
 const defaultProps = {};
 
+const defaultParams = {
+  page: Strings.DEFAULT_PAGE,
+  per_page: Strings.DEFAULT_PER_PAGE,
+  sort_field: "submission_date",
+  sort_dir: "asc",
+  id: undefined,
+  company_name: undefined,
+  application_status_code: [],
+};
+
 export class ReviewApplicationInfo extends Component {
-  componentDidMount() {
-    this.props.fetchApplications();
-  }
+  state = { isLoaded: false, params: defaultParams };
+
+  renderDataFromURL = (params) => {
+    const parsedParams = queryString.parse(params);
+    this.setState(
+      {
+        params: parsedParams,
+        isLoaded: false,
+      },
+      () =>
+        this.props.fetchApplications(this.state.params).then(() => {
+          this.setState({ isLoaded: true });
+        })
+    );
+  };
+
+  onPageChange = (page, per_page) => {
+    this.props.history.replace(
+      routes.REVIEW_APPLICATIONS.dynamicRoute({ ...this.state.params, page, per_page })
+    );
+  };
+
+  handleApplicationsSearch = (params) => {
+    this.setState(
+      {
+        params,
+      },
+      () => this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params))
+    );
+  };
 
   handleApplicationStatusChange = (item, application) => {
     const payload = {
@@ -48,7 +95,7 @@ export class ReviewApplicationInfo extends Component {
     };
 
     this.props.updateApplication(application.guid, payload).then(() => {
-      this.props.fetchApplications();
+      this.props.fetchApplications(this.state.params);
     });
   };
 
@@ -78,19 +125,45 @@ export class ReviewApplicationInfo extends Component {
     });
   };
 
+  componentDidMount() {
+    const params = queryString.parse(this.props.location.search);
+    this.setState(
+      {
+        params: {
+          ...defaultParams,
+          ...params,
+        },
+      },
+      () => this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params))
+    );
+    this.props.fetchPermitHolders();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.location !== this.props.location) {
+      this.renderDataFromURL(nextProps.location.search);
+    }
+  }
+
   render() {
     return (
       <ApplicationTable
         applications={this.props.applications}
         applicationsWellSitesContractedWork={this.props.applicationsWellSitesContractedWork}
         pageData={this.props.pageData}
-        fetchApplications={this.props.fetchApplications}
+        params={this.state.params}
+        handleTableChange={this.handleApplicationsSearch}
+        onPageChange={this.onPageChange}
+        isLoaded={this.state.isLoaded}
         applicationStatusDropdownOptions={this.props.applicationStatusDropdownOptions}
         applicationStatusOptionsHash={this.props.applicationStatusOptionsHash}
         contractedWorkStatusDropdownOptions={this.props.contractedWorkStatusDropdownOptions}
         contractedWorkStatusOptionsHash={this.props.contractedWorkStatusOptionsHash}
         handleApplicationStatusChange={this.handleApplicationStatusChange}
         handleContractedWorkStatusChange={this.handleContractedWorkStatusChange}
+        permitHoldersHash={this.props.permitHoldersHash}
+        fetchLiabilities={this.props.fetchLiabilities}
+        fetchWells={this.props.fetchWells}
       />
     );
   }
@@ -104,6 +177,7 @@ const mapStateToProps = (state) => ({
   applicationStatusOptionsHash: getApplicationStatusOptionsHash(state),
   contractedWorkStatusDropdownOptions: getDropdownContractedWorkStatusOptions(state),
   contractedWorkStatusOptionsHash: getContractedWorkStatusOptionsHash(state),
+  permitHoldersHash: getPermitHoldersHash(state),
 });
 
 const mapDispatchToProps = (dispatch) =>
@@ -112,6 +186,9 @@ const mapDispatchToProps = (dispatch) =>
       fetchApplications,
       updateApplication,
       updateApplicationReview,
+      fetchLiabilities,
+      fetchWells,
+      fetchPermitHolders,
     },
     dispatch
   );
@@ -119,4 +196,7 @@ const mapDispatchToProps = (dispatch) =>
 ReviewApplicationInfo.propTypes = propTypes;
 ReviewApplicationInfo.defaultProps = defaultProps;
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReviewApplicationInfo);
+export default compose(
+  withRouter,
+  connect(mapStateToProps, mapDispatchToProps)
+)(ReviewApplicationInfo);

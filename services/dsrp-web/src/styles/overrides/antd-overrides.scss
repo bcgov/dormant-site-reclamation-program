@@ -118,7 +118,7 @@ h1.ant-typography,
 .ant-table {
   border: none !important;
   border-radius: 0 !important;
-  font-size: 13px;
+  font-size: 12px;
 
   table {
     overflow-x: auto;
@@ -168,6 +168,18 @@ td a {
 
 .ant-pagination-item {
   border: none;
+}
+
+.ant-pagination-item-active a {
+  font-weight: bold;
+}
+.ant-pagination-prev .ant-pagination-item-link,
+.ant-pagination-next .ant-pagination-item-link,
+.ant-select-selection,
+.ant-pagination-item {
+  & a {
+    text-decoration: none;
+  }
 }
 
 tr.ant-table-expanded-row {

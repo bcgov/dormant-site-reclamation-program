@@ -18,7 +18,7 @@ export const OGCReducer = (state = initialState, action) => {
     case actionTypes.STORE_WELLS:
       return {
         ...state,
-        wells: action.payload.records,
+        wells: createItemMap(action.payload.records, "well_auth_number", state.wells),
       };
     case actionTypes.STORE_SELECTED_WELL:
       return {
@@ -32,11 +32,19 @@ export const OGCReducer = (state = initialState, action) => {
     case actionTypes.STORE_LIABILITIES:
       return {
         ...state,
-        wells: action.payload.records,
+        liabilities: createItemMap(action.payload.records, "well_auth_number", state.liabilities),
       };
     default:
       return state;
   }
+};
+
+const createItemMap = (array, idField, currentState) => {
+  const mapping = { ...currentState };
+  array.forEach((item) => {
+    mapping[item[idField]] = item;
+  });
+  return mapping;
 };
 
 const OGCReducerObject = {

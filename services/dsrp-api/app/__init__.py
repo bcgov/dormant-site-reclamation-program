@@ -18,6 +18,7 @@ from app.api.well.namespace import api as well_api
 from app.api.liability.namespace import api as liability_api
 from app.api.orgbook.namespace import api as orgbook_api
 from app.api.documents.namespace import api as download_api
+from app.api.dsrp_settings.namespace import api as dsrp_settings_api
 
 from app.commands import register_commands
 from app.config import Config
@@ -77,6 +78,7 @@ def register_routes(app):
     # Set URL rules for resources
     app.add_url_rule('/', endpoint='index')
 
+    api.add_namespace(dsrp_settings_api)
     api.add_namespace(exports_api)
     api.add_namespace(application_api)
     api.add_namespace(download_api)
