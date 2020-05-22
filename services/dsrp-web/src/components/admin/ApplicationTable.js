@@ -40,7 +40,6 @@ const applySortIndicator = (columns, params) =>
   }));
 
 const handleTableChange = (updateApplications, tableFilters) => (pagination, filters, sorter) => {
-  console.log(pagination, filters, sorter);
   const params = {
     page: pagination.current,
     ...tableFilters,
@@ -48,7 +47,6 @@ const handleTableChange = (updateApplications, tableFilters) => (pagination, fil
     sort_dir: sorter.order ? sorter.order.replace("end", "") : sorter.order,
     ...filters,
   };
-  console.log("updateApplications(params);", params);
   updateApplications(params);
 };
 
@@ -153,7 +151,7 @@ export class ApplicationTable extends Component {
     return (
       <div style={{ padding: 8 }}>
         <Input
-          ref={(node) => console.log(node)}
+          ref={(node) => {}}
           placeholder={placeholder}
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}

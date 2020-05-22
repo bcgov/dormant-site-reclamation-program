@@ -54,8 +54,6 @@ export class ViewApplicationStatusPage extends Component {
     this.props.fetchApplicationById(values.guid);
   };
 
-  onUpload = (values) => {};
-
   render = () =>
     isEmpty(this.props.loadedApplication) ? (
       <>

@@ -17,7 +17,7 @@ import { DOCUMENT, EXCEL } from "@/constants/fileTypes";
 const { Title } = Typography;
 
 const propTypes = {
-  applicationGuid: PropTypes.string.isRequired,
+  application: PropTypes.string.isRequired,
   uploadedDocs: PropTypes.arrayOf(PropTypes.any),
   uploadDocs: PropTypes.func.isRequired,
 };
@@ -34,7 +34,7 @@ export class DocumentUploadForm extends Component {
   state = resetFormState;
 
   handleSubmit = (values, dispatch) => {
-    this.props.uploadDocs(this.props.applicationGuid, this.state.uploadedDocs).then((response) => {
+    this.props.uploadDocs(this.props.application, this.state.uploadedDocs).then((response) => {
       this.setState(resetFormState);
       dispatch(initialize(APPLICATION_FORM));
     });

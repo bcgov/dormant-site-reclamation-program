@@ -43,7 +43,6 @@ export class ViewApplicationPage extends Component {
   };
 
   render() {
-    console.log(this.props.application);
     return (
       <>
         {(this.state.isLoaded && (
