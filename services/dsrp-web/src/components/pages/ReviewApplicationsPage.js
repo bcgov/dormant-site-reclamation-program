@@ -10,6 +10,8 @@ import { getAppSettings } from "@/selectors/appSettingsSelectors";
 import * as Strings from "@/constants/strings";
 import Loading from "@/components/common/Loading";
 import WarningBanner from "@/components/common/WarningBanner";
+import JumpToApplicationForm from "@/components/forms/JumpToApplicationForm";
+import * as route from "@/constants/routes";
 
 const { Paragraph, Title } = Typography;
 
@@ -45,6 +47,11 @@ export class ReviewApplicationsPage extends Component {
 
   onDrawerClose = () => {
     this.setState({ adminDrawerVisible: false });
+  };
+
+  redirectToApplication = (values) => {
+    console.log(values);
+    this.props.history.push(route.VIEW_APPLICATION.dynamicRoute(values.guid));
   };
 
   render() {
@@ -90,6 +97,7 @@ export class ReviewApplicationsPage extends Component {
               </Col>
             </Row>
           </Drawer>
+
           <Row type="flex" justify="center" align="top" className="landing-header">
             <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
               <Title>Review Applications</Title>
@@ -99,6 +107,11 @@ export class ReviewApplicationsPage extends Component {
                 Authorization Number. Click <Icon type="eye" /> to open the original application or
                 view the documents related to the application.
               </Paragraph>
+            </Col>
+          </Row>
+          <Row type="flex" justify="center" align="top">
+            <Col span={8}>
+              <JumpToApplicationForm onSubmit={this.redirectToApplication} />
             </Col>
           </Row>
           <Row type="flex" justify="center" align="top" className="landing-section">
@@ -116,13 +129,12 @@ export class ReviewApplicationsPage extends Component {
           </Row>
         </>
       );
-    } else {
-      return (
-        <>
-          <Loading />
-        </>
-      );
     }
+    return (
+      <>
+        <Loading />
+      </>
+    );
   }
 }
 
