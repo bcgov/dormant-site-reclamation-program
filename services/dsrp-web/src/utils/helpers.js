@@ -42,6 +42,9 @@ export const createItemIdsArray = (array, idField) => array.map((item) => item[i
 export const createDropDownList = (array, labelField, valueField) =>
   array.map((item) => ({ value: item[valueField], label: item[labelField] }));
 
+export const createFilterList = (array, labelField, valueField) =>
+  array.map((item) => ({ value: item[valueField], text: item[labelField] }));
+
 // Function to create a hash given an array of values and labels
 export const createLabelHash = (arr) =>
   arr.reduce((map, { value, label }) => ({ [value]: label, ...map }), {});
@@ -346,7 +349,7 @@ export const getPathsToLeaves = (obj = {}) => {
 export const getPathElements = (paths) => {
   const elements = {};
   paths.map((path) => {
-    const query = `input[name="${path}"], select[name="${path}"], span[name="${path}"], [id="${path}"]`;
+    const query = `[id="${path}"], [name="${path}"]`;
     const element = document.querySelector(query);
     if (element) {
       elements[path] = element;

@@ -57,7 +57,6 @@ const RenderField = (props) => {
             <Icon type="sync" spin />
           </div>
         }
-        style={props.inputStyle}
         {...props.input}
       />
     </Form.Item>

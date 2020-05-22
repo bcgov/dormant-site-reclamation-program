@@ -194,6 +194,11 @@ const renderContractWorkPanel = (
               component={renderConfig.FIELD}
               disabled={!isEditable}
               {...currencyMask}
+              onChange={(event, newValue) => {
+                if (newValue && newValue.toString().split(".")[0].length > 8) {
+                  event.preventDefault();
+                }
+              }}
             />
           ))}
         </Form.Item>
