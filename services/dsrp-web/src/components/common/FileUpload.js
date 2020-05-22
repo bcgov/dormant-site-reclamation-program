@@ -12,7 +12,7 @@ import { ENVIRONMENT } from "@/constants/environment";
 registerPlugin(FilePondPluginFileValidateSize, FilePondPluginFileValidateType);
 
 const propTypes = {
-  uploadUrl: PropTypes.string.isRequired,
+  uploadUrl: PropTypes.string,
   maxFileSize: PropTypes.string,
   acceptedFileTypesMap: PropTypes.objectOf(PropTypes.string),
   onFileLoad: PropTypes.func,
@@ -22,6 +22,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+  uploadUrl: ENVIRONMENT.docManUrl,
   maxFileSize: "750MB",
   acceptedFileTypesMap: {},
   allowRevert: false,
@@ -37,7 +38,7 @@ class FileUpload extends React.Component {
     this.server = {
       process: (fieldName, file, metadata, load, error, progress, abort) => {
         const upload = new tus.Upload(file, {
-          endpoint: ENVIRONMENT.docManUrl,
+          endpoint: this.props.uploadUrl,
           retryDelays: [100, 1000, 3000],
           removeFingerprintOnSuccess: true,
           chunkSize: this.props.chunkSize,
