@@ -31,6 +31,8 @@ class Application(Base, AuditMixin):
     submission_date = db.Column(db.DateTime, nullable=False, server_default=FetchedValue())
     json = db.Column(JSONB, nullable=False)
     review_json = db.Column(JSONB)
+    submitter_ip = db.Column(db.String)
+
     documents = db.relationship('ApplicationDocument', lazy='select')
 
     def __repr__(self):

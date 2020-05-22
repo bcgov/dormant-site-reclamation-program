@@ -56,7 +56,7 @@ export class ViewApplicationPage extends Component {
                 </LinkButton>
               </Col>
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-                <Title>Application ID: {this.props.application.id}</Title>
+                <Title>Application Reference Number: {this.props.application.guid}</Title>
               </Col>
             </Row>
             <Row type="flex" justify="center" align="top" className="landing-header">

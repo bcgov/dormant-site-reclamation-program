@@ -40,7 +40,20 @@ const renderIEBanner = () => (
   </div>
 );
 
+const renderApplicationDisabledBanner = () => (
+  <div className="center">
+    <h2>Applications Disabled</h2>
+    <p>
+      Applications are not being accepted through the online portal. Click{" "}
+      <Icon type="setting" className="icon-lg" /> Admin Options to enable submissions.
+    </p>
+  </div>
+);
+
 const WarningBanner = (props) =>
+  (props.type === "disabled" && (
+    <Alert message={renderApplicationDisabledBanner()} type="warning" banner showIcon={false} />
+  )) ||
   (props.type === "IE" && (
     <Alert message={renderIEBanner()} type="warning" banner closable onClose={props.onClose} />
   )) ||

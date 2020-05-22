@@ -20,7 +20,7 @@ from app.api.dsrp_settings.response_models import DSRP_SETTINGS, DSRP_SETTING
 class DSRPSettingsResource(Resource, UserMixin):
     @api.doc(description='Request all app settings')
     @api.marshal_with(DSRP_SETTINGS, code=200)
-    @requires_role_view_all
+    #@requires_role_view_all
     def get(self):
         settings = DSRPSettings.get_all()
 
