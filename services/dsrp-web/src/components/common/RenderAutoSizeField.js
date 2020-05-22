@@ -26,7 +26,6 @@ const RenderAutoSizeField = (props) => {
   return (
     <Form.Item
       label={props.label}
-      placeholder={props.placeholder}
       validateStatus={
         props.meta.touched ? (props.meta.error && "error") || (props.meta.warning && "warning") : ""
       }
@@ -37,11 +36,11 @@ const RenderAutoSizeField = (props) => {
       }
     >
       <TextArea
-        disabled={props.disabled}
         id={props.id}
-        {...props.input}
+        disabled={props.disabled}
         autoSize={{ minRows: 4 }}
         placeholder={props.placeholder}
+        {...props.input}
       />
     </Form.Item>
   );
