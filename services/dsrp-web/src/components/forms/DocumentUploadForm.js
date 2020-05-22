@@ -20,6 +20,7 @@ const propTypes = {
   application: PropTypes.string.isRequired,
   uploadedDocs: PropTypes.arrayOf(PropTypes.any),
   uploadDocs: PropTypes.func.isRequired,
+  onDocumentUpload: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -28,6 +29,7 @@ const defaultProps = {
 
 const resetFormState = {
   uploadedDocs: [],
+  submitted: false,
 };
 
 export class DocumentUploadForm extends Component {
@@ -36,8 +38,9 @@ export class DocumentUploadForm extends Component {
   handleSubmit = (values, dispatch) => {
     event.preventDefault();
     this.props.uploadDocs(this.props.application, this.state.uploadedDocs).then((response) => {
-      this.setState(resetFormState);
-      dispatch(initialize(APPLICATION_FORM));
+      this.setState({ submitted: true });
+      dispatch(initialize(DOCUMENT_UPLOAD_FORM));
+      this.props.onDocumentUpload();
     });
   };
 
@@ -58,7 +61,7 @@ export class DocumentUploadForm extends Component {
   };
 
   render() {
-    return (
+    return !this.state.submitted ? (
       <Row>
         <Col>
           <Form layout="vertical" onSubmit={this.handleSubmit} onReset={this.handleReset}>
@@ -81,12 +84,28 @@ export class DocumentUploadForm extends Component {
             </Row>
             <Row>
               <Col>
-                <Button type="primary" htmlType="submit">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  disabled={this.state.uploadedDocs.length === 0}
+                >
                   Submit Files
                 </Button>
               </Col>
             </Row>
           </Form>
+        </Col>
+      </Row>
+    ) : (
+      <Row>
+        <Col>
+          <Title level={3}>Document Upload Successful</Title>
+          <p>Succesfully uploaded the following documents:</p>
+          <ul>
+            {this.state.uploadedDocs.map((value, index) => {
+              return <li key={index}>{value.document_name}</li>;
+            })}
+          </ul>
         </Col>
       </Row>
     );
