@@ -1,4 +1,6 @@
 import uuid
+from json2table import convert
+from flask import current_app
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
@@ -176,3 +178,12 @@ class Application(Base, AuditMixin):
         """
 
         email_service.send_email(self.submitter_email, 'Application Confirmation', html_body)
+
+    def get_table_html(self):
+      json_object = self.json
+      build_direction = "LEFT_TO_RIGHT"
+      table_attributes = {"style" : "width:100%", "class" : "table table-striped","border":"1"}
+      html = convert(json_object, build_direction=build_direction, table_attributes=table_attributes)
+      current_app.logger.info('*********************************************************')
+      current_app.logger.info(html)
+      return html
