@@ -11,7 +11,9 @@ from flask_restplus import Resource, reqparse, fields
 from werkzeug.exceptions import BadRequest, NotFound
 from sqlalchemy.exc import DBAPIError
 
-from app.extensions import api, db, cache
+from app.extensions import api, db, cache, jwt
+from app.api.utils.access_decorators import ADMIN
+
 from app.api.utils.resources_mixins import UserMixin
 from app.api.utils.access_decorators import requires_role_view_all, requires_role_admin
 from app.api.constants import DOWNLOAD_TOKEN, TIMEOUT_5_MINUTES
@@ -28,9 +30,13 @@ class ApplicationDocumentListResource(Resource, UserMixin):
     @api.doc(description='Register files that have been uploaded to the document store')
     @api.marshal_with(APPLICATION_DOCUMENT_LIST, code=201)
     def post(self, application_guid):
+
         application = Application.find_by_guid(application_guid)
         if not application:
             raise NotFound("Not found")
+
+        if jwt.validate_roles(ADMIN) or application.status == "WAITING FOR DOCUMENTS": # placeholder
+            pass
 
         docs = request.json['documents']
 
