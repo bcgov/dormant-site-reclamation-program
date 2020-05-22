@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import { bindActionCreators, compose } from "redux";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { Row, Col, Typography, Switch, Icon, Card, Popconfirm } from "antd";
-
+import { Row, Col, Typography, Switch, Icon, Card, Popconfirm, Drawer, Button } from "antd";
 import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import ReviewApplicationInfo from "@/components/admin/ReviewApplicationInfo";
 import { updateAppSetting, fetchAppSettings } from "@/actionCreators/appSettingsActionCreator";
@@ -20,7 +19,7 @@ const propTypes = {
 };
 
 export class ReviewApplicationsPage extends Component {
-  state = { isLoaded: false };
+  state = { isLoaded: false, adminDrawerVisible: false };
 
   componentDidMount() {
     this.props.fetchAppSettings().then(() => {
@@ -28,15 +27,23 @@ export class ReviewApplicationsPage extends Component {
     });
   }
 
-  disableSubmissions = (currentSettingValue) => {
+  changeDisableApplications = (disableApplications) => {
     this.props
       .updateAppSetting({
         setting: Strings.DISABLE_APPLICATIONS,
-        setting_value: !currentSettingValue,
+        setting_value: !disableApplications,
       })
       .then(() => {
         this.props.fetchAppSettings();
       });
+  };
+
+  showDrawer = () => {
+    this.setState({ adminDrawerVisible: true });
+  };
+
+  onDrawerClose = () => {
+    this.setState({ adminDrawerVisible: false });
   };
 
   render() {
@@ -46,34 +53,41 @@ export class ReviewApplicationsPage extends Component {
       )[0].setting_value;
       return (
         <>
-          <Row gutter={16} type="flex" justify="end" align="top">
-            <Col style={{ padding: 20 }}>
-              <Card size="small" title="Disable/Enable Applications" style={{ width: 300 }}>
-                <p>
-                  If this toggle is activated, applications will not be accepted through the online
-                  portal
-                </p>
-                <div className="center">
-                  <Popconfirm
-                    title="Are you sure you want to disable application submission?"
-                    onConfirm={() => {
-                      this.disableSubmissions(appsDisabled);
-                    }}
-                    okText="Yes"
-                    cancelText="No"
-                    placement="topRight"
-                    arrowPointAtCenter
-                  >
-                    <Switch
-                      unCheckedChildren="Disabled"
-                      checkedChildren="Enabled"
-                      checked={!appsDisabled}
-                    />
-                  </Popconfirm>
-                </div>
-              </Card>
-            </Col>
-          </Row>
+          <Drawer
+            title="Admin Options"
+            placement="right"
+            closable={false}
+            onClose={this.onDrawerClose}
+            visible={this.state.adminDrawerVisible}
+          >
+            <Row type="flex" justify="center" align="top">
+              <Col>
+                <Title level={4}>Enable/Disable Applications</Title>
+                <Paragraph>
+                  If this toggle is disabled, applications will not be accepted through the online
+                  portal.
+                </Paragraph>
+                <Popconfirm
+                  title={`Are you sure you want to ${
+                    appsDisabled ? "enable" : "disable"
+                  } application submission?`}
+                  onConfirm={() => {
+                    this.changeDisableApplications(appsDisabled);
+                  }}
+                  okText="Yes"
+                  cancelText="No"
+                  placement="topRight"
+                  arrowPointAtCenter
+                >
+                  <Switch
+                    checkedChildren="Applications Enabled"
+                    unCheckedChildren="Applications Disabled"
+                    checked={!appsDisabled}
+                  />
+                </Popconfirm>
+              </Col>
+            </Row>
+          </Drawer>
           <Row type="flex" justify="center" align="top" className="landing-header">
             <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
               <Title>Review Applications</Title>
@@ -87,6 +101,14 @@ export class ReviewApplicationsPage extends Component {
           </Row>
           <Row type="flex" justify="center" align="top" className="landing-section">
             <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
+              <Button
+                type="link"
+                onClick={this.showDrawer}
+                style={{ float: "right", marginBottom: 16, zIndex: 1000 }}
+              >
+                <Icon type="setting" className="icon-lg" />
+                Admin Options
+              </Button>
               <ReviewApplicationInfo />
             </Col>
           </Row>
