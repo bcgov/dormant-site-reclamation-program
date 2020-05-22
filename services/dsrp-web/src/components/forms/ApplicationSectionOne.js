@@ -311,7 +311,12 @@ class ApplicationSectionOne extends Component {
                   <Field
                     id="accept_program_details_and_requirements"
                     name="accept_program_details_and_requirements"
-                    label="I have read and understand all of the conditions required to qualify for this program."
+                    label={
+                      "I understand that in order to receive funding I must agree to the General \
+                    Terms and Conditions for the Dormant Sites Reclamation Program, as will be \
+                    supplemented by additional terms contained within any offer letter that may \
+                    be provided by the Province."
+                    }
                     component={renderConfig.CHECKBOX}
                     validate={[required]}
                   />
