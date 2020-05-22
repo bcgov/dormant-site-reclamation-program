@@ -452,7 +452,7 @@ export class ApplicationTable extends Component {
               )
             )}
             style={{ backgroundColor: "#f7f8fa" }}
-            loading={this.props.isLoaded}
+            loading={!this.props.isLoaded}
           />
         </div>
       );
@@ -471,7 +471,7 @@ export class ApplicationTable extends Component {
           onExpand={this.onExpand}
           onChange={handleTableChange(this.props.handleTableChange, this.props.params)}
           className="table-headers-center"
-          loading={this.props.isLoaded}
+          loading={!this.props.isLoaded}
         />
         <br />
         <div className="center">
