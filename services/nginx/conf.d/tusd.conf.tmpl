@@ -2,7 +2,7 @@
 # | TUSD document endpoint                                             |
 # ----------------------------------------------------------------------
 
-location ${PATH_PREFIX}/upload/ {
+location ${PATH_PREFIX}/files/ {
         if (-f /opt/app-root/src/html/maintenance_on.html){
                 return 503;
         }
