@@ -376,6 +376,8 @@ class Application(Base, AuditMixin):
 
     def get_application_html(self):
         def create_company_details(company_details):
+            indigenous_participation_ind = company_details.get(
+                "indigenous_participation_ind", False) == True
             return f"""
             <h2>Company Details<h2>
 
@@ -388,8 +390,7 @@ class Application(Base, AuditMixin):
             <br />
             {company_details["address_line_1"]}
             <br />
-            {company_details["address_line_2"]}
-            <br />
+            {f'{company_details["address_line_2"]}</br />' if company_details.get("address_line_2") else ""}
             {company_details["postal_code"]}
             </p>
 
@@ -397,8 +398,8 @@ class Application(Base, AuditMixin):
             <p>{company_details["business_number"]}</p>
 
             <h3>Indigenous Participation</h3>
-            <p>{"Yes" if company_details["indigenous_participation_ind"] else "No"}</p>
-            {f'<p>{company_details["indigenous_participation_description"]}</p>' if company_details["indigenous_participation_ind"] else ""}
+            <p>{"Yes" if indigenous_participation_ind else "No"}</p>
+            {f'<p>{company_details["indigenous_participation_description"]}</p>' if indigenous_participation_ind else ""}
             """
 
         def create_company_contact(company_contact):
@@ -409,10 +410,10 @@ class Application(Base, AuditMixin):
             <p>{company_contact["email"]}</p>
             <p>
             Phone: {company_contact["phone_number_1"]}<br />     
-            {f'Ext.: {company_contact["phone_ext_1"]}<br />' if company_contact["phone_ext_1"] else ""} 
-            {f'Phone 2.: {company_contact["phone_number_2"]}<br />' if company_contact["phone_number_2"] else ""}
-            {f'Ext. 2: {company_contact["phone_ext_2"]}<br />' if company_contact["phone_ext_2"] else ""}
-            {f'Fax: {company_contact["fax"]}<br />' if company_contact["fax"] else ""}
+            {f'Ext.: {company_contact["phone_ext_1"]}<br />' if company_contact.get("phone_ext_1") else ""} 
+            {f'Phone 2.: {company_contact["phone_number_2"]}<br />' if company_contact.get("phone_number_2") else ""}
+            {f'Ext. 2: {company_contact["phone_ext_2"]}<br />' if company_contact.get("phone_ext_2") else ""}
+            {f'Fax: {company_contact["fax"]}<br />' if company_contact.get("fax") else ""}
             </p>
             """
 
@@ -457,8 +458,11 @@ class Application(Base, AuditMixin):
                         </table>
                         """
 
+                    current_app.logger.info(section["section_name"])
                     return f"""             
                     <h5>{section["section_header"]}</h5>
+                    <p><b>Planned Start Date</b>: {contracted_work[section["section_name"]]["planned_start_date"] if contracted_work.get(section["section_name"]) else "N/A"}</p>
+                    <p><b>Planned End Date</b>: {contracted_work[section["section_name"]]["planned_end_date"] if contracted_work.get(section["section_name"]) else "N/A"}</p>
                     {''.join([create_sub_section(sub_section, section, contracted_work) for sub_section in section["sub_sections"]])}
                     """
 
