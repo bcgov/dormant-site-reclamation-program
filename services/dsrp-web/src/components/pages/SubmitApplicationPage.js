@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { bindActionCreators } from "redux";
+import { bindActionCreators, compose } from "redux";
 import { connect } from "react-redux";
 import { Row, Col, Typography } from "antd";
 import PropTypes from "prop-types";
 
+import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import ApplicationForm from "@/components/forms/ApplicationForm";
 import { fetchAppSettings } from "@/actionCreators/appSettingsActionCreator";
 import { getAppSettings } from "@/selectors/appSettingsSelectors";
@@ -54,6 +55,11 @@ export class SubmitApplicationPage extends Component {
           <Row type="flex" justify="center" align="top" className="landing-header">
             <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
               <Title>Submit Application</Title>
+              <Paragraph>
+                You must submit a separate application for each contract you have with an eligible
+                contract holder. Any work in an application that is not in the contract, cannot
+                qualify for the program.
+              </Paragraph>
             </Col>
           </Row>
           <Row type="flex" justify="center" align="top" className="landing-section">
@@ -63,12 +69,13 @@ export class SubmitApplicationPage extends Component {
           </Row>
         </>
       );
+    } else {
+      return (
+        <>
+          <Loading />
+        </>
+      );
     }
-    return (
-      <>
-        <Loading />
-      </>
-    );
   }
 }
 
@@ -86,4 +93,8 @@ const mapDispatchToProps = (dispatch) =>
 
 SubmitApplicationPage.propTypes = propTypes;
 
-export default connect(mapStateToProps, mapDispatchToProps)(SubmitApplicationPage);
+// TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  AuthorizationGuard()
+)(SubmitApplicationPage);
