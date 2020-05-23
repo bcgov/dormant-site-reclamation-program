@@ -17,6 +17,7 @@ export const ORGBOOK_CREDENTIAL = (credentialId) => `/orgbook/credential/${crede
 // export const APPLICATION = "/application";
 export const APPLICATION = (params) =>
   params ? `/application?${queryString.stringify(params)}` : "/application";
+export const STATUS = (guid) => `applications/${guid}/status`;
 export const APPLICATION_BY_ID = (guid) => `/application/${guid}`;
 export const APPLICATION_REVIEW = (guid) => `${APPLICATION_BY_ID(guid)}/review`;
 
