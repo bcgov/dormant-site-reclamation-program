@@ -45,8 +45,7 @@ class Application(Base, AuditMixin):
 
     @hybrid_property
     def submitter_email(self):
-<<<<<<< HEAD
-        return self.json.get('company_contact', {'email': None}).get('email', None)
+        return self.json.get('company_contact', {}).get('email')
     
     @hybrid_property
     def application_status_code(self):
@@ -54,11 +53,6 @@ class Application(Base, AuditMixin):
           return self.status_changes[0].application_status_code
         else:
           return 'NOT_STARTED'
-=======
-        return self.json.get('company_contact', {
-            'email': None
-        }).get('email', None)
->>>>>>> bdc7d99bf007e4f4832149cc2637f8b30502b7c2
 
     def send_confirmation_email(self, email_service):
         if not self.submitter_email:
