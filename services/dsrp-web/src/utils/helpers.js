@@ -42,6 +42,18 @@ export const createItemIdsArray = (array, idField) => array.map((item) => item[i
 export const createDropDownList = (array, labelField, valueField) =>
   array.map((item) => ({ value: item[valueField], label: item[labelField] }));
 
+export const createDropDownListWithDescriptions = (
+  array,
+  labelField,
+  valueField,
+  descriptionValue
+) =>
+  array.map((item) => ({
+    value: item[valueField],
+    label: item[labelField],
+    description: item[descriptionValue],
+  }));
+
 export const createFilterList = (array, labelField, valueField) =>
   array.map((item) => ({ value: item[valueField], text: item[labelField] }));
 

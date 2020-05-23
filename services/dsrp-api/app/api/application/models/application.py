@@ -22,20 +22,21 @@ class Application(Base, AuditMixin):
         id = fields.Integer(dump_only=True)
         guid = fields.String(dump_only=True)
         submission_date = fields.String(dump_only=True)
-        application_status_code = FieldTemplate(field=fields.String, one_of='ApplicationStatus')
 
     id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
     guid = db.Column(UUID(as_uuid=True), nullable=False, unique=True, server_default=FetchedValue())
-    application_status_code = db.Column(db.String,
-                                        db.ForeignKey('application_status.application_status_code'),
-                                        nullable=False,
-                                        server_default=FetchedValue())
+
     submission_date = db.Column(db.DateTime, nullable=False, server_default=FetchedValue())
     json = db.Column(JSONB, nullable=False)
     review_json = db.Column(JSONB)
     submitter_ip = db.Column(db.String)
 
     documents = db.relationship('ApplicationDocument', lazy='select')
+    status_changes = db.relationship(
+        'ApplicationStatusChange',
+        lazy='joined',
+        order_by='desc(ApplicationStatusChange.change_date)',
+    )
 
     def __repr__(self):
         return f'<{self.__name__} {self.guid}>'
@@ -86,7 +87,14 @@ class Application(Base, AuditMixin):
 
     @hybrid_property
     def submitter_email(self):
-        return self.json.get('company_contact', {'email': None}).get('email', None)
+        return self.json.get('company_contact', {}).get('email')
+
+    @hybrid_property
+    def application_status_code(self):
+        if self.status_changes:
+            return self.status_changes[0].application_status_code
+        else:
+            return 'NOT_STARTED'
 
     def send_confirmation_email(self, email_service):
         if not self.submitter_email:
@@ -217,7 +225,6 @@ class Application(Base, AuditMixin):
   <p class="MsoNormal"><span>&nbsp;</span></p>
 </div>
         """
-
         email_service.send_email(self.submitter_email, 'Application Confirmation', html_body)
 
     def get_application_html(self):
@@ -225,7 +232,7 @@ class Application(Base, AuditMixin):
             indigenous_participation_ind = company_details.get("indigenous_participation_ind",
                                                                False) == True
             return f"""
-            <h1>Company Details<h1>
+            <h1>Company Details</h1>
 
             <h2>Company Name</h2>
             <p>{company_details["company_name"]["label"]}</p>
@@ -236,7 +243,7 @@ class Application(Base, AuditMixin):
             <br />
             {company_details["address_line_1"]}
             <br />
-            {f'{company_details["address_line_2"]}</br />' if company_details.get("address_line_2") else ""}
+            {f'{company_details["address_line_2"]}<br />' if company_details.get("address_line_2") else ""}
             {company_details["postal_code"]}
             </p>
 
@@ -288,8 +295,8 @@ class Application(Base, AuditMixin):
                         def create_amount_field(amount_field, section, contracted_work):
                             return f"""
                                 <tr>
-                                <td>{amount_field["label"]}:</td>
-                                <td>{'$0.00' if not (section["section_name"] in contracted_work and (amount_field["name"] in contracted_work[section["section_name"]])) else f'${contracted_work[section["section_name"]][amount_field["name"]] or "0.00"}'}</td>
+                                <td style="padding-left: 10px;">{amount_field["label"]}:</td>
+                                <td style="padding-left: 10px;">{'$0.00' if not (section["section_name"] in contracted_work and (amount_field["name"] in contracted_work[section["section_name"]])) else f'${contracted_work[section["section_name"]][amount_field["name"]] or "0.00"}'}</td>
                                 </tr>
                             """
 
@@ -328,16 +335,7 @@ class Application(Base, AuditMixin):
             {''.join([create_well_site(well_site, index) for index, well_site in enumerate(well_sites)])}
             """
 
-        style = """
-        <style>
-            table.contracted_work_amount th, td {
-            padding-left: 10px;
-            }
-        </style>
-        """
-
         html = f"""
-        {style}
         {create_company_details(self.json["company_details"])}     
         {create_company_contact(self.json["company_contact"])}
         {create_contract_details(self.json["contract_details"])}
