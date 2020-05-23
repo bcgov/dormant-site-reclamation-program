@@ -1,4 +1,3 @@
-import json
 from flask import current_app
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -6,7 +5,7 @@ from sqlalchemy.schema import FetchedValue
 from marshmallow import fields, validate
 
 from app.config import Config
-from app.extensions import db, cache
+from app.extensions import db
 from app.api.utils.models_mixins import Base, AuditMixin
 from app.api.utils.field_template import FieldTemplate
 from .application_status import ApplicationStatus
