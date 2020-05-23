@@ -62,11 +62,11 @@
         },
         "tags": [
           {
-            "name": "v1.2.0",
+            "name": "0.14.0",
             "annotations": null,
             "from": {
               "kind": "DockerImage",
-              "name": "tusproject/tusd:v1.2.0"
+              "name": "tusproject/tusd:0.14.0"
             },
             "importPolicy": {},
             "referencePolicy": {
@@ -117,7 +117,7 @@
           "dockerStrategy": {
             "from": {
               "kind": "ImageStreamTag",
-              "name": "tusd-base:v1.2.0"
+              "name": "tusd-base:0.14.0"
             }
           }
         },
