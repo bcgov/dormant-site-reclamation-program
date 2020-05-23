@@ -39,10 +39,9 @@ export class HeaderDropdown extends Component {
       </Menu.Item>
     );
 
-    // TODO: WHEN LAUNCH - REPLACE `isViewOnly` with `!isAuthenticated`
     const dropdownMenuMobile = (
       <Menu className="header-dropdown-menu" forceSubMenuRender>
-        {this.props.isViewOnly && (
+        {!this.props.isAuthenticated && (
           <>
             <Menu.Item key="submit-application" className="custom-menu-item">
               <Button className="header-dropdown-item-button">
@@ -90,11 +89,10 @@ export class HeaderDropdown extends Component {
 
     const smallestDesktopWidth = 1560;
     return (
-      // TODO: WHEN LAUNCH - REPLACE `isViewOnly` with `!isAuthenticated`
       <>
         <MediaQuery minWidth={smallestDesktopWidth}>
           <>
-            {this.props.isViewOnly && (
+            {!this.props.isAuthenticated && (
               <>
                 <Link
                   to={routes.SUBMIT_APPLICATION.route}
@@ -130,8 +128,6 @@ export class HeaderDropdown extends Component {
             overlay={dropdownMenuMobile}
             placement="bottomRight"
             trigger={["hover", "click"]}
-            // TODO: WHEN LAUNCH - REMOVE THIS LINE
-            className={this.props.isViewOnly ? "" : "hidden"}
             forceRender
           >
             <Button id="dropdown-menu-mobile-button">

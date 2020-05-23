@@ -12,4 +12,15 @@ class PermitHolderListResource(Resource, UserMixin):
     @api.marshal_with(PERMIT_HOLDER, envelope='records', code=200)
     def get(self):
         permit_holders = OGCDataService.getPermitHoldersDataFrame()
-        return permit_holders.sort_values(by=['organization_name']).to_dict('records')
+        return permit_holders.sort_values(
+            by=['organization_name']).to_dict('records')
+
+
+class PermitHolderResource(Resource, UserMixin):
+    @api.doc(description='Get a permit holder by its operator ID')
+    #@requires_role_view_all
+    @api.marshal_with(PERMIT_HOLDER, envelope='records', code=200)
+    def get(self, operator_id):
+        permit_holders = OGCDataService.getPermitHoldersDataFrame()
+        return permit_holders.loc[permit_holders['operator_id'] ==
+                                  operator_id].to_dict('records')

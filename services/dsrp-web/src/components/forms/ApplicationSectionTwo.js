@@ -21,6 +21,7 @@ import {
   sleep,
 } from "@/utils/helpers";
 import CONTRACT_WORK_SECTIONS from "@/constants/contract_work_sections";
+import SITE_CONDITIONS from "@/constants/site_conditions";
 import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import WellField from "@/components/forms/WellField";
@@ -48,23 +49,6 @@ const defaultProps = {
 };
 
 const createMemberName = (member, name) => `${member}.${name}`;
-
-const wellSiteConditions = [
-  "Within 1,000 metres of a stream",
-  "Within 500 metres of a groundwater well",
-  "Within environmental protection and management area or critical habitat",
-  "Suspected or known to have offsite contamination",
-  "Within 1,500 metres of a private residence or community gathering area",
-  "Within an area actively used for trapping, guide outfitting, range tenure or hunting",
-  "On Crown land that is winter access only",
-  "Drilled or abandoned prior to 1997",
-  "Within Treaty Land Entitlement, cultural lands and/or Indigenous peoples’ critical areas",
-  "Within sensitive watersheds that service communities",
-  "On or near reserve lands",
-  "Permit holder has provided notice that this site is dormant to achieve cost efficiencies for an area-based closure plan",
-  "Located inside Agricultural Land Reserve",
-  "Specified work that was included in a permit holder’s Dormant Sites 2020 Annual Work Plan",
-];
 
 const renderMoneyTotal = (label, amount, style) => (
   <Row type="flex" justify="end" gutter={16} style={style}>
@@ -194,6 +178,11 @@ const renderContractWorkPanel = (
               component={renderConfig.FIELD}
               disabled={!isEditable}
               {...currencyMask}
+              onChange={(event, newValue) => {
+                if (newValue && newValue.toString().split(".")[0].length > 8) {
+                  event.preventDefault();
+                }
+              }}
             />
           ))}
         </Form.Item>
@@ -617,11 +606,11 @@ class ApplicationSectionTwo extends Component {
                   <Paragraph>Select all criteria that apply to this site:</Paragraph>
                   <Row gutter={48}>
                     <Col className="application-checkbox-section">
-                      {wellSiteConditions.map((condition, index) => (
+                      {SITE_CONDITIONS.map((condition) => (
                         <Field
-                          key={index}
-                          name={`site_condition_${index}`}
-                          label={condition}
+                          key={condition.fieldName}
+                          name={condition.fieldName}
+                          label={condition.fieldLabel}
                           disabled={!this.props.isEditable}
                           component={renderConfig.CHECKBOX}
                         />

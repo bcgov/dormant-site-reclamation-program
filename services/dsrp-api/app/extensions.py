@@ -14,4 +14,5 @@ api = Api(
     prefix='{}'.format(Config.BASE_PATH),
     doc='{}/'.format(Config.BASE_PATH),
     default='dsrp',
-    default_label='DSRP related operations')
+    default_label='DSRP related operations',
+)

@@ -8,7 +8,7 @@ WELL = api.model(
         'well_auth_number': fields.Integer,
         'well_name': fields.String,
         'dormant_status': fields.String,
-        'current_status' : fields.String,
+        'current_status': fields.String,
         'well_dormancy_date': fields.Date,
         'site_dormancy_date': fields.Date,
         'site_dormancy_type': fields.String,
@@ -21,5 +21,6 @@ WELL = api.model(
         'last_completion_date': fields.Date,
         'last_active_production_year': fields.Date,
         'last_active_inj_display_year': fields.Date,
+        'wellsite_dormancy_declaration_date': fields.Date,
         'multi_well': fields.String
     })

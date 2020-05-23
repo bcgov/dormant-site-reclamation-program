@@ -42,6 +42,9 @@ export const createItemIdsArray = (array, idField) => array.map((item) => item[i
 export const createDropDownList = (array, labelField, valueField) =>
   array.map((item) => ({ value: item[valueField], label: item[labelField] }));
 
+export const createFilterList = (array, labelField, valueField) =>
+  array.map((item) => ({ value: item[valueField], text: item[labelField] }));
+
 // Function to create a hash given an array of values and labels
 export const createLabelHash = (arr) =>
   arr.reduce((map, { value, label }) => ({ [value]: label, ...map }), {});
@@ -115,6 +118,13 @@ export const guidMask = createTextMask({
 
 export const wellAuthorizationNumberMask = createTextMask({
   pattern: "99999",
+  guide: false,
+  stripMask: true,
+  allowEmpty: true,
+});
+
+export const businessNumberMask = createTextMask({
+  pattern: "999999999",
   guide: false,
   stripMask: true,
   allowEmpty: true,
@@ -346,7 +356,7 @@ export const getPathsToLeaves = (obj = {}) => {
 export const getPathElements = (paths) => {
   const elements = {};
   paths.map((path) => {
-    const query = `input[name="${path}"], select[name="${path}"], span[name="${path}"], [id="${path}"]`;
+    const query = `[id="${path}"], [name="${path}"]`;
     const element = document.querySelector(query);
     if (element) {
       elements[path] = element;
@@ -391,3 +401,11 @@ export const scrollToFirstError = (errors) => {
 };
 
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export const createUuidv4 = () => {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+    var r = (Math.random() * 16) | 0,
+      v = c == "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};

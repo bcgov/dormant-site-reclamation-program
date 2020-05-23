@@ -14,10 +14,10 @@ pipeline {
 
                     // Grab any files under the pipeline directory
                     // Verify they match the trusted version
-                    files = findFiles(glob: 'openshift/pipeline/**')
-                    for (def file : files) {
-                        readTrusted file.path
-                    }
+                    // files = findFiles(glob: 'openshift/pipeline/**')
+                    // for (def file : files) {
+                    //     readTrusted file.path
+                    // }
                 }
             }
         }

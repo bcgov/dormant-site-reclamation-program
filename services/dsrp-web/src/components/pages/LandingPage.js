@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Row, Col, Button, Typography } from "antd";
 import * as routes from "@/constants/routes";
-import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 
 const { Paragraph, Text, Title } = Typography;
 
@@ -25,6 +24,19 @@ export const LandingPage = (props) => (
         <Paragraph>
           The Program will also provide Indigenous peoples, landowners and local communities in
           British Columbia the opportunity to nominate dormant sites for reclamation.
+        </Paragraph>
+
+        <Title level={4}>Before you apply:</Title>
+        <Paragraph>
+          <ul className="landing-list">
+            <li>
+              Read the <strong>full details</strong> of the program by{" "}
+              <a href="https://www2.gov.bc.ca/gov/content/industry/natural-gas-oil/responsible-oil-gas-development/dormant-sites-reclamation-program">
+                clicking here
+              </a>
+              .
+            </li>
+          </ul>
         </Paragraph>
 
         <Title level={4}>What you need to apply:</Title>
@@ -61,5 +73,5 @@ export const LandingPage = (props) => (
     </Row>
   </>
 );
-// TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
-export default AuthorizationGuard()(LandingPage);
+
+export default LandingPage;

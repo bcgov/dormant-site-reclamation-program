@@ -31,7 +31,7 @@ export class ApplicationSuccessPage extends Component {
             <Title level={4}>Your reference code is: {this.props.match.params.id}</Title>
 
             <Paragraph>
-              Please <Text strong>write this code down</Text> for future reference and to check the
+              Please <Text strong>print this code</Text> for future reference and to check the
               status of your application.
             </Paragraph>
             <Title level={4}>What happens next</Title>
@@ -59,5 +59,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({}, dispatch);
 ApplicationSuccessPage.propTypes = propTypes;
 ApplicationSuccessPage.defaultProps = defaultProps;
 
-// TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
 export default compose(connect(mapStateToProps, mapDispatchToProps))(ApplicationSuccessPage);

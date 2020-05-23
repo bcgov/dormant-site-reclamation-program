@@ -17,6 +17,7 @@ const propTypes = {
   allowClear: PropTypes.bool,
   labelCol: PropTypes.object,
   wrapperCol: PropTypes.object,
+  inputStyle: PropTypes.object,
 };
 
 const defaultProps = {
@@ -27,6 +28,7 @@ const defaultProps = {
   allowClear: false,
   labelCol: {},
   wrapperCol: {},
+  inputStyle: {},
 };
 
 const RenderField = (props) => {
@@ -52,12 +54,12 @@ const RenderField = (props) => {
         defaultValue={props.defaultValue}
         placeholder={props.placeholder}
         allowClear={props.allowClear}
+        style={props.inputStyle}
         suffix={
           <div className={props.meta.asyncValidating ? "" : "hidden"}>
             <Icon type="sync" spin />
           </div>
         }
-        style={props.inputStyle}
         {...props.input}
       />
     </Form.Item>
