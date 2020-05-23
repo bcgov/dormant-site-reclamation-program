@@ -117,6 +117,10 @@
     {
       "name": "SMTP_CREDENTIALS",
       "value": "smtp-credentials"
+    },
+    {
+      "name": "OBJECT_STORE_SECRET_NAME",
+      "value": "object-store-credentials"
     }
   ],
   "objects": [
