@@ -22,6 +22,8 @@ class Application(Base, AuditMixin):
         id = fields.Integer(dump_only=True)
         guid = fields.String(dump_only=True)
         submission_date = fields.String(dump_only=True)
+        status_changes = fields.Raw(dump_only=True) ##DO NOT INJEST ON POST
+
 
     id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
     guid = db.Column(UUID(as_uuid=True), nullable=False, unique=True, server_default=FetchedValue())
@@ -180,13 +182,12 @@ class Application(Base, AuditMixin):
         <td colspan="4" width="416" valign="top"
           style="width:41.15pt; border:none; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:56.9pt">
           <p>
-                We have successfully received your application in the BC Governments Dormant
-                Site Reclamation Program. Please keep your reference number safe as you will
+                We have successfully received your application in the British Columbia Dormant Sites Reclamation Program. Please keep your reference number safe as you will
                 need it to carry your application forward in this process. You can view the 
                 contents of your application below.
 				<br />
 				<br />
-                <a href='{Config.URL}/view-application-status/{self.guid}'>Click here to view the status of your application.</a>
+                <a href='{Config.URL}view-application-status/{self.guid}'>Click here to view the status of your application.</a>
                 <br/>
                 <br/>
 		  <br/>

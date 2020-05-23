@@ -1,3 +1,4 @@
+TRUNCATE TABLE application_status CASCADE; --all new shiny statuses
 
 INSERT INTO application_status(
     application_status_code,

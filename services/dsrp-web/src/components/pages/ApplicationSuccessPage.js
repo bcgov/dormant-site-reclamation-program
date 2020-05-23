@@ -36,14 +36,17 @@ export class ApplicationSuccessPage extends Component {
             </Paragraph>
             <Title level={4}>What happens next</Title>
             <Paragraph>
-              If your application is approved, you will need to submit the following:
+              If any of the work applied for is approved, you will receive an agreement that you
+              must sign and upload along with:
               <ul>
-                <li>Contract with Permit Holder</li>
-                <li>Criminal Records Check</li>
-                <li>Certificate of Insurance</li>
+                <li>
+                  A copy of the contract between your company and the permit holder named in your
+                  application
+                </li>
+                <li>A certificate of Insurance</li>
               </ul>
-              You will also be sent Shared Cost Arrangement (Schedule A) to sign and return before
-              first payment can be processed.
+              When the files have been uploaded, you may begin work and the initial payment will be
+              processed and sent to you at the address provided.
             </Paragraph>
           </Typography>
         </Col>
