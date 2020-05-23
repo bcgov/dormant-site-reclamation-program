@@ -496,7 +496,6 @@ class Application(Base, AuditMixin):
 
         html = f"""
         {style}
-        <h1>Application Contents</h1>
         {create_company_details(self.json["company_details"])}     
         {create_company_contact(self.json["company_contact"])}
         {create_contract_details(self.json["contract_details"])}
