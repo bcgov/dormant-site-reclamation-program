@@ -12,6 +12,8 @@ import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm"
 import ViewApplicationDocuments from "@/components/pages/ViewApplicationDocuments";
 import LinkButton from "@/components/common/LinkButton";
 import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
+import Loading from "@/components/common/Loading";
+
 const { TabPane } = Tabs;
 const propTypes = {
   match: PropTypes.shape({
@@ -27,7 +29,7 @@ const defaultProps = {
   application: {},
 };
 
-const { Paragraph, Title, Text } = Typography;
+const { Title } = Typography;
 
 export class ViewApplicationPage extends Component {
   state = { isLoaded: false };
@@ -62,13 +64,13 @@ export class ViewApplicationPage extends Component {
             <Row type="flex" justify="center" align="top" className="landing-header">
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
                 <Tabs type="card">
-                  <TabPane tab="Application" key="1">
+                  <TabPane tab="Application" key="1" style={{ padding: "20px" }}>
                     <ViewOnlyApplicationForm
                       isViewingSubmission
                       initialValues={this.props.application.json}
                     />
                   </TabPane>
-                  <TabPane tab="Documents" key="2">
+                  <TabPane tab="Documents" key="2" style={{ padding: "20px" }}>
                     <ViewApplicationDocuments
                       application_guid={this.props.application.guid}
                       documents={this.props.application.documents}
@@ -79,7 +81,7 @@ export class ViewApplicationPage extends Component {
               </Col>
             </Row>
           </>
-        )) || <div>Loading...</div>}
+        )) || <Loading />}
       </>
     );
   }
