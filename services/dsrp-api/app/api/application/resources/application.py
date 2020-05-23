@@ -102,6 +102,7 @@ class ApplicationListResource(Resource, UserMixin):
 class ApplicationResource(Resource, UserMixin):
     @api.doc(description='Get an application')
     @api.marshal_with(APPLICATION, code=200)
+    @requires_role_view_all
     def get(self, application_guid):
 
         application = Application.find_by_guid(application_guid)

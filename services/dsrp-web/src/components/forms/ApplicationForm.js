@@ -154,7 +154,7 @@ export class ApplicationForm extends Component {
           <React.Fragment>
             <Row>
               <Col>
-                <Title level={3}>Review application</Title>
+                <Title level={3}>Review Application</Title>
                 <Title level={4}>Before you submit</Title>
                 <Paragraph>
                   Review your application details below to make sure all information provided is
