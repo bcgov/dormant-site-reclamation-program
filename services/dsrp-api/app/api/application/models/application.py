@@ -1,4 +1,4 @@
-import uuid
+from flask import current_app
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
@@ -8,8 +8,9 @@ from app.config import Config
 from app.extensions import db
 from app.api.utils.models_mixins import Base, AuditMixin
 from app.api.utils.field_template import FieldTemplate
-
 from .application_status import ApplicationStatus
+from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK
+from app.api.permit_holder.resources.permit_holder import PermitHolderResource
 
 
 class Application(Base, AuditMixin):
@@ -19,16 +20,22 @@ class Application(Base, AuditMixin):
         id = fields.Integer(dump_only=True)
         guid = fields.String(dump_only=True)
         submission_date = fields.String(dump_only=True)
-        application_status_code = FieldTemplate(field=fields.String, one_of='ApplicationStatus')
+        application_status_code = FieldTemplate(field=fields.String,
+                                                one_of='ApplicationStatus')
 
     id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
-    guid = db.Column(UUID(as_uuid=True), nullable=False, unique=True, server_default=FetchedValue())
+    guid = db.Column(UUID(as_uuid=True),
+                     nullable=False,
+                     unique=True,
+                     server_default=FetchedValue())
     application_status_code = db.Column(
         db.String,
         db.ForeignKey('application_status.application_status_code'),
         nullable=False,
         server_default=FetchedValue())
-    submission_date = db.Column(db.DateTime, nullable=False, server_default=FetchedValue())
+    submission_date = db.Column(db.DateTime,
+                                nullable=False,
+                                server_default=FetchedValue())
     json = db.Column(JSONB, nullable=False)
     review_json = db.Column(JSONB)
     submitter_ip = db.Column(db.String)
@@ -48,7 +55,9 @@ class Application(Base, AuditMixin):
 
     @hybrid_property
     def submitter_email(self):
-        return self.json.get('company_contact', {'email': None}).get('email', None)
+        return self.json.get('company_contact', {
+            'email': None
+        }).get('email', None)
 
     def send_confirmation_email(self, email_service):
         if not self.submitter_email:
@@ -79,6 +88,7 @@ class Application(Base, AuditMixin):
             <span style="font-size:16.0pt">&nbsp;</span></p>
         </td>
       </tr>
+
       <tr style="height:13.6pt">
         <td width="47" valign="top"
           style="width:35.45pt; border:none; border-left:solid #D9D9D9 1.0pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:13.6pt">
@@ -116,7 +126,6 @@ class Application(Base, AuditMixin):
         </td>
         <td width="416" colspan="4" valign="top"
           style="width:312.05pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:56.9pt">
-
         </td>
         <td width="55" valign="top"
           style="width:41.15pt; border:none; border-right:solid #D9D9D9 1.0pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:56.9pt">
@@ -124,6 +133,7 @@ class Application(Base, AuditMixin):
             &nbsp;</p>
         </td>
       </tr>
+
       <tr>
         <td width="47" valign="top"
           style="width:41.15pt; border:none; border-left:solid #D9D9D9 1.0pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:56.9pt">
@@ -135,7 +145,8 @@ class Application(Base, AuditMixin):
           <p>
                 We have successfully received your application in the BC Governments Dormant
                 Site Reclamation Program. Please keep your reference number safe as you will
-                need it to carry your application forward in this process.
+                need it to carry your application forward in this process. You can view the 
+                contents of your application below.
 				<br />
 				<br />
                 <a href='{Config.URL}/view-application-status/{self.guid}'>Click here to view the status of your application.</a>
@@ -145,6 +156,7 @@ class Application(Base, AuditMixin):
 		  <br/>
 		  <br/>
           </p>
+          {self.get_application_html()}
         </td>
         <td width="55" valign="top"
           style="width:41.15pt; border:none; border-right:solid #D9D9D9 1.0pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:56.9pt">
@@ -152,6 +164,7 @@ class Application(Base, AuditMixin):
             &nbsp;</p>
         </td>
       </tr>
+
       <tr style="height:22.3pt">
         <td width="518" colspan="6"
           style="border:none; border-top:solid #FCBA19 3.0pt; padding:0cm 5.4pt 0cm 5.4pt; height:22.3pt">
@@ -160,6 +173,7 @@ class Application(Base, AuditMixin):
           </p>
         </td>
       </tr>
+
       <tr>
         <td width="59" style="width:44.25pt; padding:0cm 0cm 0cm 0cm"></td>
         <td width="213" style="width:159.75pt; padding:0cm 0cm 0cm 0cm"></td>
@@ -175,4 +189,135 @@ class Application(Base, AuditMixin):
 </div>
         """
 
-        email_service.send_email(self.submitter_email, 'Application Confirmation', html_body)
+        email_service.send_email(self.submitter_email,
+                                 'Application Confirmation', html_body)
+
+    def get_application_html(self):
+        def create_company_details(company_details):
+            indigenous_participation_ind = company_details.get(
+                "indigenous_participation_ind", False) == True
+            return f"""
+            <h1>Company Details<h1>
+
+            <h2>Company Name</h2>
+            <p>{company_details["company_name"]["label"]}</p>
+
+            <h2>Company Address</h2>
+            <p>
+            {company_details["city"]} {company_details["province"]} Canada
+            <br />
+            {company_details["address_line_1"]}
+            <br />
+            {f'{company_details["address_line_2"]}</br />' if company_details.get("address_line_2") else ""}
+            {company_details["postal_code"]}
+            </p>
+
+            <h2>Business Number</h2>
+            <p>{company_details["business_number"]}</p>
+
+            <h2>Indigenous Participation</h2>
+            <p>{"Yes" if indigenous_participation_ind else "No"}</p>
+            {f'<p>{company_details["indigenous_participation_description"]}</p>' if indigenous_participation_ind else ""}
+            """
+
+        def create_company_contact(company_contact):
+            return f"""
+            <h1>Company Contact</h1>
+
+            <p>{company_contact["first_name"]} {company_contact["last_name"]}</p>
+            <p>{company_contact["email"]}</p>
+            <p>
+            Phone: {company_contact["phone_number_1"]}<br />     
+            {f'Ext.: {company_contact["phone_ext_1"]}<br />' if company_contact.get("phone_ext_1") else ""} 
+            {f'Phone 2.: {company_contact["phone_number_2"]}<br />' if company_contact.get("phone_number_2") else ""}
+            {f'Ext. 2: {company_contact["phone_ext_2"]}<br />' if company_contact.get("phone_ext_2") else ""}
+            {f'Fax: {company_contact["fax"]}<br />' if company_contact.get("fax") else ""}
+            </p>
+            """
+
+        def create_contract_details(contract_details):
+            try:
+                permit_holder = PermitHolderResource.get(
+                    self,
+                    operator_id=contract_details["operator_id"])["records"][0]
+            except:
+                current_app.logger.warning(
+                    'Failed to find the permit holder. Displaying operator ID instead.'
+                )
+
+            return f"""
+            <h1>Contract Details</h1>
+
+            <h2>Permit Holder</h2>
+            <p>{permit_holder["organization_name"] if permit_holder else f'Operator ID: {contract_details["operator_id"]}'}</p>
+            """
+
+        def create_well_sites(well_sites):
+            def create_well_site(well_site, index):
+                def create_site_condition(condition, site_conditions):
+                    return f"<li><b>{condition['label']}</b>: {'Yes' if condition['name'] in site_conditions and site_conditions[condition['name']] == True else 'No'}</li>"
+
+                def create_contracted_work_section(section, contracted_work):
+                    def create_sub_section(sub_section, section,
+                                           contracted_work):
+                        def create_amount_field(amount_field, section,
+                                                contracted_work):
+                            return f"""
+                                <tr>
+                                <td>{amount_field["label"]}:</td>
+                                <td>{'$0.00' if not (section["section_name"] in contracted_work and (amount_field["name"] in contracted_work[section["section_name"]])) else f'${contracted_work[section["section_name"]][amount_field["name"]] or "0.00"}'}</td>
+                                </tr>
+                            """
+
+                        return f"""
+                        <p><u>{sub_section["sub_section_header"]}</u></p>
+                        <table class="contracted_work_amount">
+                        {''.join([create_amount_field(amount_field, section, contracted_work) for amount_field in sub_section["amount_fields"]])}
+                        </table>
+                        """
+
+                    return f"""             
+                    <h4>{section["section_header"]}</h4>
+                    <p>Planned Start Date: {contracted_work[section["section_name"]]["planned_start_date"] if contracted_work.get(section["section_name"]) and contracted_work.get(section["section_name"]).get("planned_start_date") else "N/A"}</p>
+                    <p>Planned End Date: {contracted_work[section["section_name"]]["planned_end_date"] if contracted_work.get(section["section_name"]) and contracted_work.get(section["section_name"]).get("planned_end_date") else "N/A"}</p>
+                    {''.join([create_sub_section(sub_section, section, contracted_work) for sub_section in section["sub_sections"]])}
+                    """
+
+                return f"""
+                <h2>Well Site {index + 1}</h2>
+
+                <h3>Well Authorization Number</h3>
+                <p>{well_site["details"]["well_authorization_number"]}</p>
+
+                <h3>Site Conditions</h3>
+                <ul>
+                {''.join([create_site_condition(condition, well_site["site_conditions"]) for condition in SITE_CONDITIONS])}
+                </ul>
+
+                <h3>Contracted Work</h3>
+                {''.join([create_contracted_work_section(section, well_site["contracted_work"]) for section in CONTRACTED_WORK])}
+                <hr />
+                """
+
+            return f"""
+            <h1>Well Sites</h1>
+            {''.join([create_well_site(well_site, index) for index, well_site in enumerate(well_sites)])}
+            """
+
+        style = """
+        <style>
+            table.contracted_work_amount th, td {
+            padding-left: 10px;
+            }
+        </style>
+        """
+
+        html = f"""
+        {style}
+        {create_company_details(self.json["company_details"])}     
+        {create_company_contact(self.json["company_contact"])}
+        {create_contract_details(self.json["contract_details"])}
+        {create_well_sites(self.json["well_sites"])}
+        """
+
+        return html
