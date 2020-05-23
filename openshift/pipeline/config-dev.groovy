@@ -125,27 +125,6 @@ app {
                     ]
                 ],
                 [
-                    'file':'openshift/templates/_nginx.dc.json',
-                    'params':[
-                            'NAME':"dsrp-nginx",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'VERSION':"${app.deployment.version}",
-                            'LOG_PVC_SIZE':"${vars.LOG_PVC_SIZE}",
-                            'CPU_REQUEST':"${vars.resources.nginx.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.nginx.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.nginx.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.nginx.memory_limit}",
-                            'REPLICA_MIN':"${vars.resources.nginx.replica_min}",
-                            'REPLICA_MAX':"${vars.resources.nginx.replica_max}",
-                            'DSRP_DOMAIN': "${vars.modules.'dsrp-nginx'.HOST_DSRP}",
-                            'ROUTE': "${vars.modules.'dsrp-nginx'.ROUTE}",
-                            'PATH_PREFIX': "${vars.modules.'dsrp-nginx'.PATH}",
-                            'TUSD_SERVICE_URL': "${vars.modules.'dsrp-tusd-backend'.HOST}${vars.modules.'dsrp-tusd-backend'.PATH}",
-                            'DSRP_SERVICE_URL': "${vars.modules.'dsrp-frontend'.HOST}",
-                            'API_SERVICE_URL': "${vars.modules.'dsrp-python-backend'.HOST}",
-                    ]
-                ],
-                [
                     'file':'openshift/templates/_python36.dc.json',
                     'params':[
                             'NAME':"dsrp-python-backend",
@@ -182,6 +161,27 @@ app {
                             'CPU_LIMIT':"${vars.resources.tusd.cpu_limit}",
                             'MEMORY_REQUEST':"${vars.resources.tusd.memory_request}",
                             'MEMORY_LIMIT':"${vars.resources.tusd.memory_limit}"
+                    ]
+                ],
+                [
+                    'file':'openshift/templates/_nginx.dc.json',
+                    'params':[
+                            'NAME':"dsrp-nginx",
+                            'SUFFIX': "${vars.deployment.suffix}",
+                            'VERSION':"${app.deployment.version}",
+                            'LOG_PVC_SIZE':"${vars.LOG_PVC_SIZE}",
+                            'CPU_REQUEST':"${vars.resources.nginx.cpu_request}",
+                            'CPU_LIMIT':"${vars.resources.nginx.cpu_limit}",
+                            'MEMORY_REQUEST':"${vars.resources.nginx.memory_request}",
+                            'MEMORY_LIMIT':"${vars.resources.nginx.memory_limit}",
+                            'REPLICA_MIN':"${vars.resources.nginx.replica_min}",
+                            'REPLICA_MAX':"${vars.resources.nginx.replica_max}",
+                            'DSRP_DOMAIN': "${vars.modules.'dsrp-nginx'.HOST_DSRP}",
+                            'ROUTE': "${vars.modules.'dsrp-nginx'.ROUTE}",
+                            'PATH_PREFIX': "${vars.modules.'dsrp-nginx'.PATH}",
+                            'TUSD_SERVICE_URL': "${vars.modules.'dsrp-tusd-backend'.HOST}${vars.modules.'dsrp-tusd-backend'.PATH}",
+                            'DSRP_SERVICE_URL': "${vars.modules.'dsrp-frontend'.HOST}",
+                            'API_SERVICE_URL': "${vars.modules.'dsrp-python-backend'.HOST}",
                     ]
                 ]
                 // [

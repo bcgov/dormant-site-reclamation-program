@@ -125,6 +125,18 @@ app {
                     ]
                 ],
                 [
+                    'file':'openshift/templates/tusd.dc.json',
+                    'params':[
+                            'NAME':"tusd",
+                            'VERSION':"${app.deployment.version}",
+                            'SUFFIX': "${vars.deployment.suffix}",
+                            'CPU_REQUEST':"${vars.resources.tusd.cpu_request}",
+                            'CPU_LIMIT':"${vars.resources.tusd.cpu_limit}",
+                            'MEMORY_REQUEST':"${vars.resources.tusd.memory_request}",
+                            'MEMORY_LIMIT':"${vars.resources.tusd.memory_limit}"
+                    ]
+                ],
+                [
                     'file':'openshift/templates/_nginx.dc.json',
                     'params':[
                             'NAME':"dsrp-nginx",
@@ -240,6 +252,14 @@ environments {
                     memory_limit = "160Mi"
                     replica_min = 3
                     replica_max = 6
+                }
+                tusd {
+                    cpu_request = "50m"
+                    cpu_limit = "100m"
+                    memory_request = "256Mi"
+                    memory_limit = "512Mi"
+                    replica_min = 1
+                    replica_max = 1
                 }
                 python {
                     cpu_request = "100m"
