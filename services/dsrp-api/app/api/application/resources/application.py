@@ -75,7 +75,7 @@ class ApplicationListResource(Resource, UserMixin):
         return apply_pagination(base_query, page_number, page_size)
 
     @api.doc(description='Create an application')
-    @api.expect(APPLICATION)
+    @api.expect(APPLICATION, validate=True)
     @api.marshal_with(APPLICATION, code=201)
     def post(self):
         applications_disabled = DSRPSettings.find_by_setting(

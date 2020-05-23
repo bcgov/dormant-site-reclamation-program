@@ -1,6 +1,7 @@
 from flask import current_app
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import validates
 from sqlalchemy.schema import FetchedValue
 from marshmallow import fields, validate
 
@@ -8,6 +9,7 @@ from app.config import Config
 from app.extensions import db
 from app.api.utils.models_mixins import Base, AuditMixin
 from app.api.utils.field_template import FieldTemplate
+from app.api.constants import WELL_SITE_CONTRACTED_WORK, APPLICATION_JSON, COMPANY_NAME_JSON_KEYS
 from .application_status import ApplicationStatus
 from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK
 from app.api.permit_holder.resources.permit_holder import PermitHolderResource
@@ -20,10 +22,21 @@ class Application(Base, AuditMixin):
         id = fields.Integer(dump_only=True)
         guid = fields.String(dump_only=True)
         submission_date = fields.String(dump_only=True)
+<<<<<<< HEAD
 
     id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
     guid = db.Column(UUID(as_uuid=True), nullable=False, unique=True, server_default=FetchedValue())
 
+=======
+        application_status_code = FieldTemplate(field=fields.String, one_of='ApplicationStatus')
+
+    id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
+    guid = db.Column(UUID(as_uuid=True), nullable=False, unique=True, server_default=FetchedValue())
+    application_status_code = db.Column(db.String,
+                                        db.ForeignKey('application_status.application_status_code'),
+                                        nullable=False,
+                                        server_default=FetchedValue())
+>>>>>>> 7213cbc2425e42249253826a11e8eb2220d47849
     submission_date = db.Column(db.DateTime, nullable=False, server_default=FetchedValue())
     json = db.Column(JSONB, nullable=False)
     review_json = db.Column(JSONB)
@@ -43,8 +56,45 @@ class Application(Base, AuditMixin):
     def find_by_guid(cls, guid):
         return cls.query.filter_by(guid=guid).first()
 
+    @validates('json')
+    def validate_json(self, key, json):
+        well_sites = json.get('well_sites')
+        for site in well_sites:
+            contracted_work = site.get('contracted_work')
+            work = list(set(list(WELL_SITE_CONTRACTED_WORK.keys())).intersection(contracted_work))
+            if len(work) == 0:
+                raise AssertionError(
+                    'Application must contain at least one piece of contracted work.')
+            for i in work:
+                work_item = contracted_work.get(i)
+                total = [
+                    value for key, value in work_item.items()
+                    if key in WELL_SITE_CONTRACTED_WORK.get(i)
+                ]
+                if sum(total) == 0:
+                    raise AssertionError('Contracted works must have an amount greater than $0')
+        for key, value in APPLICATION_JSON.items():
+            k = json.get(key, None)
+            if k:
+                for item in value:
+                    if item == 'company_name':
+                        company_name = k.get(item, None)
+                        if company_name:
+                            for i in COMPANY_NAME_JSON_KEYS:
+                                if not company_name.get(i, None):
+                                    raise AssertionError(f'{i} must not be None')
+                        else:
+                            raise AssertionError(f'{item} must not be None')
+                    if not k.get(item, None):
+                        raise AssertionError(f'{item} must not be None')
+            else:
+                raise AssertionError(f'{key} must not be None')
+
+        return json
+
     @hybrid_property
     def submitter_email(self):
+<<<<<<< HEAD
 <<<<<<< HEAD
         return self.json.get('company_contact', {'email': None}).get('email', None)
     
@@ -59,6 +109,9 @@ class Application(Base, AuditMixin):
             'email': None
         }).get('email', None)
 >>>>>>> bdc7d99bf007e4f4832149cc2637f8b30502b7c2
+=======
+        return self.json.get('company_contact', {'email': None}).get('email', None)
+>>>>>>> 7213cbc2425e42249253826a11e8eb2220d47849
 
     def send_confirmation_email(self, email_service):
         if not self.submitter_email:
@@ -191,6 +244,7 @@ class Application(Base, AuditMixin):
         """
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         email_service.send_email(self.submitter_email, 'Application Confirmation', html_body)
 
 
@@ -199,11 +253,14 @@ class Application(Base, AuditMixin):
 =======
         email_service.send_email(self.submitter_email,
                                  'Application Confirmation', html_body)
+=======
+        email_service.send_email(self.submitter_email, 'Application Confirmation', html_body)
+>>>>>>> 7213cbc2425e42249253826a11e8eb2220d47849
 
     def get_application_html(self):
         def create_company_details(company_details):
-            indigenous_participation_ind = company_details.get(
-                "indigenous_participation_ind", False) == True
+            indigenous_participation_ind = company_details.get("indigenous_participation_ind",
+                                                               False) == True
             return f"""
             <h1>Company Details<h1>
 
@@ -246,12 +303,10 @@ class Application(Base, AuditMixin):
         def create_contract_details(contract_details):
             try:
                 permit_holder = PermitHolderResource.get(
-                    self,
-                    operator_id=contract_details["operator_id"])["records"][0]
+                    self, operator_id=contract_details["operator_id"])["records"][0]
             except:
                 current_app.logger.warning(
-                    'Failed to find the permit holder. Displaying operator ID instead.'
-                )
+                    'Failed to find the permit holder. Displaying operator ID instead.')
 
             return f"""
             <h1>Contract Details</h1>
@@ -266,10 +321,8 @@ class Application(Base, AuditMixin):
                     return f"<li><b>{condition['label']}</b>: {'Yes' if condition['name'] in site_conditions and site_conditions[condition['name']] == True else 'No'}</li>"
 
                 def create_contracted_work_section(section, contracted_work):
-                    def create_sub_section(sub_section, section,
-                                           contracted_work):
-                        def create_amount_field(amount_field, section,
-                                                contracted_work):
+                    def create_sub_section(sub_section, section, contracted_work):
+                        def create_amount_field(amount_field, section, contracted_work):
                             return f"""
                                 <tr>
                                 <td>{amount_field["label"]}:</td>
