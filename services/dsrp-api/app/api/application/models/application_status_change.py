@@ -1,60 +1,29 @@
-import uuid
 from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
-from marshmallow import fields, validate
-
 from app.config import Config
+
 from app.extensions import db
 from app.api.utils.models_mixins import Base, AuditMixin
-from app.api.utils.field_template import FieldTemplate
-
-from .application_status import ApplicationStatus
 
 
-class Application(Base, AuditMixin):
-    __tablename__ = 'application'
+class ApplicationStatusChange(Base, AuditMixin):
+    __tablename__ = "application_status_change"
 
-    class _ModelSchema(Base._ModelSchema):
-        id = fields.Integer(dump_only=True)
-        guid = fields.String(dump_only=True)
-        submission_date = fields.String(dump_only=True)
+    application_status_change_id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
+    application_guid = db.Column(UUID(as_uuid=True), db.ForeignKey('application.guid'))
+    application_status_code = db.Column(UUID(as_uuid=True), db.ForeignKey('application_status.application_status_code'))
+    change_date = db.Column(db.DateTime, nullable=False, server_default=FetchedValue())
+    note = db.Column(db.String, nullable=False)
 
-    id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
-    guid = db.Column(UUID(as_uuid=True), nullable=False, unique=True, server_default=FetchedValue())
-
-    submission_date = db.Column(db.DateTime, nullable=False, server_default=FetchedValue())
-    json = db.Column(JSONB, nullable=False)
-    review_json = db.Column(JSONB)
-    submitter_ip = db.Column(db.String)
-
-    documents = db.relationship('ApplicationDocument', lazy='select')
-    status_changes = db.relationship('ApplicationStatusChange', lazy='joined', order_by='desc(ApplicationStatusChange.change_date)',)
+    application_status = db.relationship("ApplicationStatus")
+    application = db.relationship("Application")
 
     def __repr__(self):
-        return f'<{self.__name__} {self.guid}>'
+        return f'<{self.__name__} {self.application_status_code}>'
 
-    @classmethod
-    def get_all(cls):
-        return cls.query.all()
 
-    @classmethod
-    def find_by_guid(cls, guid):
-        return cls.query.filter_by(guid=guid).first()
-
-    @hybrid_property
-    def submitter_email(self):
-        return self.json.get('company_contact', {'email': None}).get('email', None)
-    
-    @hybrid_property
-    def application_status_code(self):
-        if self.status_changes:
-          return self.status_changes[0].application_status_code
-        else:
-          return 'Not Started'
-
-    def send_confirmation_email(self, email_service):
-        if not self.submitter_email:
+    def send_status_change_email(self, email_service):
+        if not self.application.submitter_email:
             raise Exception(
                 'Application.json.company_contact.email is not set, must set before email can be sent'
             )
@@ -102,7 +71,7 @@ class Application(Base, AuditMixin):
 		  <br/>
 		  <br/>
           <p class="MsoNormal" style="margin-bottom:0cm; margin-bottom:.0001pt; line-height:normal">
-            <b><span style="font-size:12.0pt; color:#595959">{self.guid}</span></b></p>
+            <b><span style="font-size:12.0pt; color:#595959">{self.application_guid}</span></b></p>
         </td>
         <td width="55" valign="top"
           style="width:41.15pt; border:none; border-right:solid #D9D9D9 1.0pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:13.6pt">
@@ -136,12 +105,11 @@ class Application(Base, AuditMixin):
         <td colspan="4" width="416" valign="top"
           style="width:41.15pt; border:none; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:56.9pt">
           <p>
-                We have successfully received your application in the BC Governments Dormant
-                Site Reclamation Program. Please keep your reference number safe as you will
-                need it to carry your application forward in this process.
+                The status of your application has change to {self.application_status.description} with the following note:
 				<br />
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;{self.note}</span>
 				<br />
-                <a href='{Config.URL}/view-application-status/{self.guid}'>Click here to view the status of your application.</a>
+                <a href='{Config.URL}/view-application-status/{self.application_guid}'>Click here to view the status of your application.</a>
                 <br/>
                 <br/>
 		  <br/>
@@ -178,8 +146,4 @@ class Application(Base, AuditMixin):
 </div>
         """
 
-        email_service.send_email(self.submitter_email, 'Application Confirmation', html_body)
-
-
-
-    
+        email_service.send_email(self.application.submitter_email, 'Application Status Change', html_body)
