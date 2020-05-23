@@ -181,17 +181,18 @@ export class ApplicationForm extends Component {
                   you can use to check the status of your application at any time by clicking Check
                   Application Status at the top of the page.
                 </Paragraph>
+
                 <Paragraph>
-                  If any of the work applied for is approved, you will receive an agreement that you
-                  must sign and upload along with:
+                  If any of the work applied for is approved, you must upload the following:
                   <ul>
                     <li>
-                      A copy of the contract between your company and the permit holder named in
-                      your application
+                      A signed copy of the agreement you received from the Province of British
+                      Columbia
                     </li>
                     <li>A certificate of Insurance</li>
                   </ul>
                 </Paragraph>
+
                 <Paragraph>
                   When the files have been uploaded, you may begin work and the initial payment will
                   be processed and sent to you at the address provided.
