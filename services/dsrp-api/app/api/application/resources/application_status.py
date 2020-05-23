@@ -14,20 +14,18 @@ from app.api.application.models.application import Application
 from app.api.application.models.application_status_change import ApplicationStatusChange
 
 from app.api.services.email_service import EmailService
+from app.api.utils.access_decorators import requires_role_admin
 
 
 
 class ApplicationStatusListResource(Resource, UserMixin):
-    @api.doc(description='Register files that have been uploaded to the document store')
+    @api.doc(description='Change status on an application and send an email')
+    @requires_role_admin
     def post(self, application_guid):
 
         application = Application.find_by_guid(application_guid)
         if not application:
             raise NotFound("Not found")
-
-        if jwt.validate_roles(ADMIN) or application.application_status_code == "WAITING FOR DOCUMENTS": # placeholder
-            pass
-        
         app_status_change =  ApplicationStatusChange(
             application_status_code=request.json['application_status_code'], 
             note=request.json['note']
