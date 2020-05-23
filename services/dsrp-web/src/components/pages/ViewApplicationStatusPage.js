@@ -56,10 +56,6 @@ export class ViewApplicationStatusPage extends Component {
     this.props.fetchApplicationById(values.guid);
   };
 
-  onDocumentUpload = () => {
-    // this.props.history.push(router.VIEW_APPLICATION_STATUS);
-  };
-
   render = () =>
     isEmpty(this.props.loadedApplication) ? (
       <>
@@ -81,15 +77,7 @@ export class ViewApplicationStatusPage extends Component {
           <ApplicationStatusCard application={this.props.loadedApplication} />
           {this.props.loadedApplication.application_status_code === "WAIT_FOR_DOCS" && (
             <>
-              <Title level={3}>Upload Required Files</Title>
-              <p>
-                Use the document submission form below <strong>only</strong> if you have been
-                requested to provide additional documentation related to your application.
-              </p>
-              <DocumentUploadForm
-                onDocumentUpload={this.onDocumentUpload}
-                applicationGuid={this.props.loadedApplication.guid}
-              />
+              <DocumentUploadForm applicationGuid={this.props.loadedApplication.guid} />
             </>
           )}
         </Col>
