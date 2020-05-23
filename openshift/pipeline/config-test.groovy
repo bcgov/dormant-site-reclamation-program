@@ -121,7 +121,19 @@ app {
                             'KEYCLOAK_URL': "${vars.keycloak.url}",
                             'KEYCLOAK_IDP_HINT': "${vars.keycloak.idpHint_dsrp}",
                             'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/api",
-                            'TUSD_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/upload"
+                            'TUSD_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/upload/"
+                    ]
+                ],
+                [
+                    'file':'openshift/templates/tusd.dc.json',
+                    'params':[
+                            'NAME':"tusd",
+                            'VERSION':"${app.deployment.version}",
+                            'SUFFIX': "${vars.deployment.suffix}",
+                            'CPU_REQUEST':"${vars.resources.tusd.cpu_request}",
+                            'CPU_LIMIT':"${vars.resources.tusd.cpu_limit}",
+                            'MEMORY_REQUEST':"${vars.resources.tusd.memory_request}",
+                            'MEMORY_LIMIT':"${vars.resources.tusd.memory_limit}"
                     ]
                 ],
                 [
@@ -241,6 +253,14 @@ environments {
                     replica_min = 3
                     replica_max = 6
                 }
+                tusd {
+                    cpu_request = "50m"
+                    cpu_limit = "100m"
+                    memory_request = "256Mi"
+                    memory_limit = "512Mi"
+                    replica_min = 1
+                    replica_max = 1
+                }
                 python {
                     cpu_request = "100m"
                     cpu_limit = "200m"
@@ -316,8 +336,8 @@ environments {
                     PATH = "/api"
                 }
                 'dsrp-tusd-backend' {
-                    HOST = "http://dsrp-tusd-backend${vars.deployment.suffix}:5001"
-                    PATH = "/upload"
+                    HOST = "http://tusd${vars.deployment.suffix}:1080"
+                    PATH = "/files/"
                 }
                 'dsrp-redis' {
                     HOST = "http://dsrp-redis${vars.deployment.suffix}"

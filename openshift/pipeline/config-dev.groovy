@@ -121,28 +121,7 @@ app {
                             'KEYCLOAK_URL': "${vars.keycloak.url}",
                             'KEYCLOAK_IDP_HINT': "${vars.keycloak.idpHint_dsrp}",
                             'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/api",
-                            'TUSD_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/upload"
-                    ]
-                ],
-                [
-                    'file':'openshift/templates/_nginx.dc.json',
-                    'params':[
-                            'NAME':"dsrp-nginx",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'VERSION':"${app.deployment.version}",
-                            'LOG_PVC_SIZE':"${vars.LOG_PVC_SIZE}",
-                            'CPU_REQUEST':"${vars.resources.nginx.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.nginx.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.nginx.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.nginx.memory_limit}",
-                            'REPLICA_MIN':"${vars.resources.nginx.replica_min}",
-                            'REPLICA_MAX':"${vars.resources.nginx.replica_max}",
-                            'DSRP_DOMAIN': "${vars.modules.'dsrp-nginx'.HOST_DSRP}",
-                            'ROUTE': "${vars.modules.'dsrp-nginx'.ROUTE}",
-                            'PATH_PREFIX': "${vars.modules.'dsrp-nginx'.PATH}",
-                            'TUSD_SERVICE_URL': "${vars.modules.'dsrp-tusd-backend'.HOST}${vars.modules.'dsrp-tusd-backend'.PATH}",
-                            'DSRP_SERVICE_URL': "${vars.modules.'dsrp-frontend'.HOST}",
-                            'API_SERVICE_URL': "${vars.modules.'dsrp-python-backend'.HOST}",
+                            'TUSD_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/upload/"
                     ]
                 ],
                 [
@@ -182,6 +161,27 @@ app {
                             'CPU_LIMIT':"${vars.resources.tusd.cpu_limit}",
                             'MEMORY_REQUEST':"${vars.resources.tusd.memory_request}",
                             'MEMORY_LIMIT':"${vars.resources.tusd.memory_limit}"
+                    ]
+                ],
+                [
+                    'file':'openshift/templates/_nginx.dc.json',
+                    'params':[
+                            'NAME':"dsrp-nginx",
+                            'SUFFIX': "${vars.deployment.suffix}",
+                            'VERSION':"${app.deployment.version}",
+                            'LOG_PVC_SIZE':"${vars.LOG_PVC_SIZE}",
+                            'CPU_REQUEST':"${vars.resources.nginx.cpu_request}",
+                            'CPU_LIMIT':"${vars.resources.nginx.cpu_limit}",
+                            'MEMORY_REQUEST':"${vars.resources.nginx.memory_request}",
+                            'MEMORY_LIMIT':"${vars.resources.nginx.memory_limit}",
+                            'REPLICA_MIN':"${vars.resources.nginx.replica_min}",
+                            'REPLICA_MAX':"${vars.resources.nginx.replica_max}",
+                            'DSRP_DOMAIN': "${vars.modules.'dsrp-nginx'.HOST_DSRP}",
+                            'ROUTE': "${vars.modules.'dsrp-nginx'.ROUTE}",
+                            'PATH_PREFIX': "${vars.modules.'dsrp-nginx'.PATH}",
+                            'TUSD_SERVICE_URL': "${vars.modules.'dsrp-tusd-backend'.HOST}${vars.modules.'dsrp-tusd-backend'.PATH}",
+                            'DSRP_SERVICE_URL': "${vars.modules.'dsrp-frontend'.HOST}",
+                            'API_SERVICE_URL': "${vars.modules.'dsrp-python-backend'.HOST}",
                     ]
                 ]
                 // [
@@ -232,7 +232,7 @@ environments {
             keycloak {
                 clientId_dsrp = "dormant-application-dev"
                 resource = "dormant-application-dev"
-                idpHint_dsrp = "dev"
+                idpHint_dsrp = "idir"
                 url = "https://sso-test.pathfinder.gov.bc.ca/auth"
                 known_config_url = "https://sso-test.pathfinder.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration"
                 siteminder_url = "https://logontest7.gov.bc.ca"
@@ -338,7 +338,7 @@ environments {
                 }
                 'dsrp-tusd-backend' {
                     HOST = "http://tusd${vars.deployment.suffix}:1080"
-                    PATH = "/${vars.git.changeId}/files/"
+                    PATH = "/files/"
                 }
                 'dsrp-redis' {
                     HOST = "http://dsrp-redis${vars.deployment.suffix}"

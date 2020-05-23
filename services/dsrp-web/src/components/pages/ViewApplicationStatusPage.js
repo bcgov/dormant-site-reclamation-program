@@ -82,6 +82,11 @@ export class ViewApplicationStatusPage extends Component {
       <Row type="flex" justify="center" align="top" className="landing-section">
         <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
           <ApplicationStatusCard application={this.props.loadedApplication} />
+          <Title level={3}>Upload Required Files</Title>
+          <p>
+            Use the document submission form below <strong>only</strong> if you have been requested
+            to provide additional documentation related to your application.
+          </p>
           <DocumentUploadForm
             onDocumentUpload={this.onDocumentUpload}
             application={this.props.loadedApplication.guid}
