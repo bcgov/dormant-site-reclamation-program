@@ -18,6 +18,7 @@ from app.api.dsrp_settings.models.dsrp_settings import DSRPSettings
 class ApplicationListResource(Resource, UserMixin):
     @api.doc(description='Get all applications. Default order: submission_date asc')
     @api.marshal_with(APPLICATION_LIST, code=200)
+    @requires_role_view_all
     def get(self):
         records, pagination_details = self._apply_filters_and_pagination(
             page_number=request.args.get('page', PAGE_DEFAULT, type=int),
@@ -102,6 +103,7 @@ class ApplicationListResource(Resource, UserMixin):
 class ApplicationResource(Resource, UserMixin):
     @api.doc(description='Get an application')
     @api.marshal_with(APPLICATION, code=200)
+    @requires_role_view_all
     def get(self, application_guid):
 
         application = Application.find_by_guid(application_guid)

@@ -154,13 +154,15 @@ export class ApplicationForm extends Component {
           <React.Fragment>
             <Row>
               <Col>
+                <Title level={3}>Review Application</Title>
                 <Title level={4}>Before you submit</Title>
                 <Paragraph>
                   Review your application details below to make sure all information provided is
-                  accurate.
+                  accurate. If you need to change any information, use the “Previous” button at the
+                  bottom of the page to get to the correct step.
                 </Paragraph>
                 <Paragraph>
-                  <b>You will not be able to edit your application after it is submitted</b>
+                  <b>You will not be able to edit your application after it is submitted.</b>
                 </Paragraph>
                 <Paragraph>
                   <ul>
@@ -187,11 +189,7 @@ export class ApplicationForm extends Component {
                       A signed copy of the agreement you received from the Province of British
                       Columbia
                     </li>
-                    <li>
-                      A copy of the contract between your company and the permit holder named in the
-                      application
-                    </li>
-                    <li>A certificate of insurance</li>
+                    <li>A certificate of Insurance</li>
                   </ul>
                 </Paragraph>
 
@@ -203,7 +201,6 @@ export class ApplicationForm extends Component {
                   Once approved work begins, you will be required to submit regular reports and
                   invoices documenting contributions of employees who are residents of British
                   Columbia. This information will be used to process the payments that follow.
-                  Application Review
                 </Paragraph>
               </Col>
             </Row>
