@@ -184,65 +184,59 @@ class Application(Base, AuditMixin):
     }
 
     def get_application_email_display(self):
-      application = json.loads(json.dumps(self.json), object_hook=lambda d: namedtuple('Application', d.keys())(*d.values()))
+        application = json.loads(json.dumps(self.json), object_hook=lambda d: namedtuple('Application', d.keys())(*d.values()))
 
-      def create_company_details(company_details):
-        return f"""
-        <h2>Company Details<h2>
+        def create_company_details(company_details):
+            return f"""
+            <h2>Company Details<h2>
 
-        <h4>Company Name</h4>
-        <p>{company_details.company_name.label}</p>
-        <br />
+            <h4>Company Name</h4>
+            <p>{company_details.company_name.label}</p>
 
-        <h4>Business Number</h4>
-        <p>{company_details.business_number}</p>
-        <br />
+            <h4>Business Number</h4>
+            <p>{company_details.business_number}</p>
 
-        <h4>Indigenous Participation</h4>
-        <p>{"Yes" if company_details.indigenous_participation_ind else "No"}</p>
-        <p>{company_details.indigenous_participation_description if company_details.indigenous_participation_ind else ""}</p>
-        <br />
+            <h4>Indigenous Participation</h4>
+            <p>{"Yes" if company_details.indigenous_participation_ind else "No"}</p>
+            <p>{company_details.indigenous_participation_description if company_details.indigenous_participation_ind else ""}</p>
 
-        <h4>Address</h4>
-        <p>
-        {company_details.city} {company_details.province} Canada
+            <h4>Address</h4>
+            <p>
+            {company_details.city} {company_details.province} Canada
+            <br />
+            {company_details.address_line_1}
+            <br />
+            {company_details.address_line_2}
+            <br />
+            {company_details.postal_code}
+            </p>
+            """
+
+        def create_company_contact(company_contact):
+            return f"""
+            <h2>Company Contact</h2>
+
+            <p>{company_contact.first_name} {company_contact.last_name}</p>
+            <p>{company_contact.email}</p>
+            <p>
+            Phone: {company_contact.phone_number_1}
+            <br />
+            Ext.: {company_contact.phone_ext_1}
+            <br />
+            Phone 2: {company_contact.phone_number_1}
+            <br />
+            Ext. 2: {company_contact.phone_ext_1}
+            <br />
+            Fax: {company_contact.fax}
+            <br />
+            </p>
+            <br />
+            """
+
+        html = f"""
+        {create_company_details(application.company_details)}
         <br />
-        {company_details.address_line_1}
-        <br />
-        {company_details.address_line_2}
-        <br />
-        {company_details.postal_code}
-        </p>
-        <br />
+        {create_company_contact(application.company_contact)}
         """
 
-      def create_company_contact(company_contact):
-        return f"""
-        <h2>Company Contact</h2>
-
-        <p>{company_contact.first_name} {company_contact.last_name}</p>
-        <br />
-        <p>{company_contact.email}</p>
-        <br />
-        <p>
-        Phone: {company_contact.phone_number_1}
-        <br />
-        Ext.: {company_contact.phone_ext_1}
-        <br />
-        Phone 2: {company_contact.phone_number_1}
-        <br />
-        Ext. 2: {company_contact.phone_ext_1}
-        <br />
-        Fax: {company_contact.fax}
-        <br />
-        </p>
-        <br />
-        """
-
-      html = f"""
-      {create_company_details(application.company_details)}
-      <br />
-      {create_company_contact(application.company_contact)}
-      """
-
-      return html
+        return html
