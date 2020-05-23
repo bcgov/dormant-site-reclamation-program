@@ -75,7 +75,7 @@ class FileUpload extends React.Component {
 
   render() {
     const acceptedFileTypes = Object.keys(this.props.acceptedFileTypesMap);
-    console.log(ENVIRONMENT.docManUrl);
+
     return (
       <FilePond
         server={this.server}
