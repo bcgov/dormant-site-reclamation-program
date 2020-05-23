@@ -3,10 +3,6 @@
 # ----------------------------------------------------------------------
 
 location ${PATH_PREFIX}/upload {
-        if ( $request_method ~ ^(GET)$ ) {
-                return 405;
-        }
-
         if (-f /opt/app-root/src/html/maintenance_on.html){
                 return 503;
         }
@@ -23,14 +19,18 @@ location ${PATH_PREFIX}/upload {
         proxy_set_header   Host $host;
 
         # Add X-Forwarded-* headers
-        proxy_set_header X-Forwarded-Host $server_name;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header   X-Forwarded-Host $server_name;
+        proxy_set_header   X-Forwarded-Proto $scheme;
         proxy_set_header   X-Real-IP $remote_addr;
         proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
 
         proxy_set_header         Upgrade $http_upgrade;
         proxy_set_header         Connection "upgrade";
         client_max_body_size     0;
+
+        # Proxy header optimization
+        proxy_headers_hash_max_size 1024;
+        proxy_headers_hash_bucket_size 256; 
 
         proxy_pass_request_headers on;
     }   
