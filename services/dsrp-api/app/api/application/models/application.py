@@ -51,7 +51,7 @@ class Application(Base, AuditMixin):
         if self.status_changes:
           return self.status_changes[0].application_status_code
         else:
-          return 'Not Started'
+          return 'NOT_STARTED'
 
     def send_confirmation_email(self, email_service):
         if not self.submitter_email:

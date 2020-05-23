@@ -20,7 +20,10 @@ from app.api.constants import DOWNLOAD_TOKEN, TIMEOUT_5_MINUTES
 
 from app.api.application.models.application import Application
 from app.api.application.models.application_document import ApplicationDocument
+from app.api.application.models.application_status_change import ApplicationStatusChange
 from app.api.services.object_store_storage_service import ObjectStoreStorageService
+from app.api.services.email_service import EmailService
+
 
 from app.api.application.response_models import APPLICATION_DOCUMENT, APPLICATION_DOCUMENT_LIST
 from app.api.documents.response_models import DOWNLOAD_TOKEN_MODEL
@@ -45,8 +48,18 @@ class ApplicationDocumentListResource(Resource, UserMixin):
                 document_name=doc['document_name'], object_store_path=doc['object_store_path'])
             application.documents.append(new_doc)
 
-        application.save()
 
+        if request.json.get('confirm_final_documents'):
+            new_app_status_change = ApplicationStatusChange(
+                application_status_code="DOCUMNETS_ULOADES",
+                note="Thank you for uploading all of the required documentation"
+            ) #placeholder 
+            application.status_changes.append(new_app_status_change)
+
+        with EmailService() as es:
+            new_app_status_change.send_status_change_email(es)
+
+        application.save()
         return application.documents
 
 

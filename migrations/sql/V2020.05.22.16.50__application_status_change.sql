@@ -16,4 +16,6 @@ CREATE TABLE application_status_change (
 ALTER TABLE application_status_change OWNER TO dsrp;
 
 ALTER TABLE application drop column application_status_code;
+ALTER TABLE application_status ADD COLUMN long_description varchar;
 
+TRUNCATE TABLE application_status CASCADE; --all new shiny statuses
