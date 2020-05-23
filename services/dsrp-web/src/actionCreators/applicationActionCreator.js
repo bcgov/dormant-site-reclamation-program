@@ -59,6 +59,22 @@ export const fetchApplicationById = (guid) => (dispatch) => {
     .finally(() => dispatch(hideLoading()));
 };
 
+export const fetchApplicationSummaryById = (guid) => (dispatch) => {
+  dispatch(request(reducerTypes.GET_APPLICATION_SUMMARY));
+  return CustomAxios()
+    .get(ENVIRONMENT.apiUrl + API.APPLICATION_SUMMARY_BY_ID(guid), createRequestHeader())
+    .then((response) => {
+      dispatch(success(reducerTypes.GET_APPLICATION_SUMMARY));
+      dispatch(applicationActions.storeApplication(response.data));
+      return response;
+    })
+    .catch((error) => {
+      dispatch(error(reducerTypes.GET_APPLICATION_SUMMARY));
+      throw new Error(error);
+    })
+    .finally(() => dispatch(hideLoading()));
+};
+
 export const updateApplication = (guid, payload) => (dispatch) => {
   dispatch(request(reducerTypes.UPDATE_APPLICATION));
   return CustomAxios()
