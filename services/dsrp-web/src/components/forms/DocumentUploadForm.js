@@ -81,6 +81,18 @@ export class DocumentUploadForm extends Component {
                 </Form.Item>
               </Col>
             </Row>
+            <Row gutter={48}>
+              <Col span={24}>
+                <Form.Item>
+                  <Field
+                    id="confirm_final_documents"
+                    name="confirm_final_documents"
+                    label="I have finished submitting all requested documents"
+                    component={renderConfig.CHECKBOX}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
             <Row>
               <Col>
                 <Button
