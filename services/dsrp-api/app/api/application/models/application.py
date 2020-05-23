@@ -447,7 +447,7 @@ class Application(Base, AuditMixin):
                             return f"""
                                 <tr>
                                 <td>{amount_field["label"]}:</td>
-                                <td>{'$0.00' if not (section["section_name"] in contracted_work and (amount_field["name"] in contracted_work[section["section_name"]])) else f'${contracted_work[section["section_name"]][amount_field["name"]]}'}</td>
+                                <td>{'$0.00' if not (section["section_name"] in contracted_work and (amount_field["name"] in contracted_work[section["section_name"]])) else f'${contracted_work[section["section_name"]][amount_field["name"]] or "0.00"}'}</td>
                                 </tr>
                             """
 
@@ -461,8 +461,8 @@ class Application(Base, AuditMixin):
                     current_app.logger.info(section["section_name"])
                     return f"""             
                     <h5>{section["section_header"]}</h5>
-                    <p><b>Planned Start Date</b>: {contracted_work[section["section_name"]]["planned_start_date"] if contracted_work.get(section["section_name"]) else "N/A"}</p>
-                    <p><b>Planned End Date</b>: {contracted_work[section["section_name"]]["planned_end_date"] if contracted_work.get(section["section_name"]) else "N/A"}</p>
+                    <p><b>Planned Start Date</b>: {contracted_work[section["section_name"]]["planned_start_date"] if contracted_work.get(section["section_name"]) and contracted_work.get(section["section_name"]).get("planned_start_date") else "N/A"}</p>
+                    <p><b>Planned End Date</b>: {contracted_work[section["section_name"]]["planned_end_date"] if contracted_work.get(section["section_name"]) and contracted_work.get(section["section_name"]).get("planned_end_date") else "N/A"}</p>
                     {''.join([create_sub_section(sub_section, section, contracted_work) for sub_section in section["sub_sections"]])}
                     """
 
@@ -486,6 +486,8 @@ class Application(Base, AuditMixin):
             <h2>Well Sites</h2>
             {''.join([create_well_site(well_site, index) for index, well_site in enumerate(well_sites)])}
             """
+
+        current_app.logger.info(self.json)
 
         html = f"""
         <h1>Application Contents</h1>
