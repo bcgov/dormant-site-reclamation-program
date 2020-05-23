@@ -96,7 +96,7 @@ class ApplicationListResource(Resource, UserMixin):
         with EmailService() as es:
             application.send_confirmation_email(es)
 
-        table_html = application.get_table_html()
+        table_html = application.get_application_email_display()
 
         return table_html, 201
 
