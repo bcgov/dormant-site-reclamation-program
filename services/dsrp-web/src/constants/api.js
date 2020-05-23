@@ -3,11 +3,10 @@ import queryString from "query-string";
 // Static Content
 export const STATIC_CONTENT = "/exports/static-content";
 
-// Document Manager
-export const DOCUMENT_MANAGER_FILE_GET_URL = (token = {}) =>
-  `/documents?${queryString.stringify(token)}`;
-export const DOCUMENT_MANAGER_TOKEN_GET_URL = (documentManagerGuid) =>
-  `/download-token/${documentManagerGuid}`;
+// Documents
+export const GET_TOKEN_FOR_DOC = (app_guid, doc_guid) =>
+  `${APPLICATION_DOCUMENT(app_guid)}/${doc_guid}`;
+export const GET_FILE_WITH_TOKEN = (token) => `/documents?${queryString.stringify(token)}`;
 
 // OrgBook
 export const ORGBOOK_SEARCH = (search) => `/orgbook/search?${queryString.stringify({ search })}`;
@@ -19,6 +18,7 @@ export const APPLICATION = (params) =>
   params ? `/application?${queryString.stringify(params)}` : "/application";
 export const APPLICATION_BY_ID = (guid) => `/application/${guid}`;
 export const APPLICATION_REVIEW = (guid) => `${APPLICATION_BY_ID(guid)}/review`;
+export const APPLICATION_DOCUMENT = (guid) => `${APPLICATION_BY_ID(guid)}/documents`;
 
 // OGC
 export const PERMIT_HOLDER = () => "/permit_holder";

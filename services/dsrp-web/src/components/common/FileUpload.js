@@ -8,12 +8,10 @@ import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import tus from "tus-js-client";
 import { ENVIRONMENT } from "@/constants/environment";
-import { createRequestHeader } from "@/utils/requestHeaders";
 
 registerPlugin(FilePondPluginFileValidateSize, FilePondPluginFileValidateType);
 
 const propTypes = {
-  uploadUrl: PropTypes.string.isRequired,
   maxFileSize: PropTypes.string,
   acceptedFileTypesMap: PropTypes.objectOf(PropTypes.string),
   onFileLoad: PropTypes.func,
@@ -38,22 +36,27 @@ class FileUpload extends React.Component {
     this.server = {
       process: (fieldName, file, metadata, load, error, progress, abort) => {
         const upload = new tus.Upload(file, {
-          endpoint: ENVIRONMENT.apiUrl + this.props.uploadUrl,
+          endpoint: ENVIRONMENT.docManUrl,
           retryDelays: [100, 1000, 3000],
           removeFingerprintOnSuccess: true,
           chunkSize: this.props.chunkSize,
           metadata: {
             filename: file.name,
+            filetype: file.type,
           },
-          headers: createRequestHeader().headers,
           onError: (err) => {
             error(err);
           },
           onProgress: (bytesUploaded, bytesTotal) => {
             progress(true, bytesUploaded, bytesTotal);
           },
-          onSuccess: () => {
-            const documentGuid = upload.url.split("/").pop();
+          onSuccess: (e) => {
+            const documentGuid = `dsrp-applications/${
+              upload.url
+                .split("/")
+                .pop()
+                .split("+")[0]
+            }`;
             load(documentGuid);
             this.props.onFileLoad(file.name, documentGuid);
           },

@@ -121,28 +121,7 @@ app {
                             'KEYCLOAK_URL': "${vars.keycloak.url}",
                             'KEYCLOAK_IDP_HINT': "${vars.keycloak.idpHint_dsrp}",
                             'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/api",
-                            'DOCUMENT_MANAGER_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/document-manager"
-                    ]
-                ],
-                [
-                    'file':'openshift/templates/_nginx.dc.json',
-                    'params':[
-                            'NAME':"dsrp-nginx",
-                            'SUFFIX': "${vars.deployment.suffix}",
-                            'VERSION':"${app.deployment.version}",
-                            'LOG_PVC_SIZE':"${vars.LOG_PVC_SIZE}",
-                            'CPU_REQUEST':"${vars.resources.nginx.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.nginx.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.nginx.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.nginx.memory_limit}",
-                            'REPLICA_MIN':"${vars.resources.nginx.replica_min}",
-                            'REPLICA_MAX':"${vars.resources.nginx.replica_max}",
-                            'DSRP_DOMAIN': "${vars.modules.'dsrp-nginx'.HOST_DSRP}",
-                            'ROUTE': "${vars.modules.'dsrp-nginx'.ROUTE}",
-                            'PATH_PREFIX': "${vars.modules.'dsrp-nginx'.PATH}",
-                            'DSRP_SERVICE_URL': "${vars.modules.'dsrp-frontend'.HOST}",
-                            'DOCUMENT_MANAGER_SERVICE_URL': "${vars.modules.'dsrp-docman-backend'.HOST}",
-                            'API_SERVICE_URL': "${vars.modules.'dsrp-python-backend'.HOST}",
+                            'TUSD_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/files/"
                     ]
                 ],
                 [
@@ -170,37 +149,41 @@ app {
                             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
                             'URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}",
                             'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/api",
-                            'DOCUMENT_MANAGER_URL': "${vars.modules.'dsrp-docman-backend'.HOST}${vars.modules.'dsrp-docman-backend'.PATH}",
                     ]
                 ],
                 [
-                    'file':'openshift/templates/document-manager/docman.dc.json',
+                    'file':'openshift/templates/tusd.dc.json',
                     'params':[
-                            'NAME':"dsrp-docman-backend",
-                            'SUFFIX': "${vars.deployment.suffix}",
+                            'NAME':"tusd",
                             'VERSION':"${app.deployment.version}",
-                            'CPU_REQUEST':"${vars.resources.python_lite.cpu_request}",
-                            'CPU_LIMIT':"${vars.resources.python_lite.cpu_limit}",
-                            'MEMORY_REQUEST':"${vars.resources.python_lite.memory_request}",
-                            'MEMORY_LIMIT':"${vars.resources.python_lite.memory_limit}",
-                            'UWSGI_THREADS':"${vars.resources.python_lite.uwsgi_threads}",
-                            'UWSGI_PROCESSES':"${vars.resources.python_lite.uwsgi_processes}",
-                            'REPLICA_MIN':"${vars.resources.python_lite.replica_min}",
-                            'REPLICA_MAX':"${vars.resources.python_lite.replica_max}",
-                            'JWT_OIDC_WELL_KNOWN_CONFIG': "${vars.keycloak.known_config_url}",
-                            'JWT_OIDC_AUDIENCE': "${vars.keycloak.clientId_dsrp}",
-                            'APPLICATION_DOMAIN': "${vars.modules.'dsrp-python-backend'.HOST}",
-                            'BASE_PATH': "${vars.modules.'dsrp-docman-backend'.PATH}",
-                            'DB_HOST': "dsrp-postgresql${vars.deployment.suffix}",
-                            'DB_CONFIG_NAME': "dsrp-postgresql${vars.deployment.suffix}",
-                            'REDIS_CONFIG_NAME': "dsrp-redis${vars.deployment.suffix}",
-                            'CACHE_REDIS_HOST': "dsrp-redis${vars.deployment.suffix}",
-                            'DOCUMENT_CAPACITY':"${vars.DOCUMENT_PVC_SIZE}",
-                            'DOCUMENT_CAPACITY_LOWER':"${vars.DOCUMENT_PVC_SIZE.toString().toLowerCase()}",
-                            'ENVIRONMENT_NAME':"${app.deployment.env.name}",
-                            'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/document-manager",
+                            'SUFFIX': "${vars.deployment.suffix}",
+                            'CPU_REQUEST':"${vars.resources.tusd.cpu_request}",
+                            'CPU_LIMIT':"${vars.resources.tusd.cpu_limit}",
+                            'MEMORY_REQUEST':"${vars.resources.tusd.memory_request}",
+                            'MEMORY_LIMIT':"${vars.resources.tusd.memory_limit}"
                     ]
                 ],
+                [
+                    'file':'openshift/templates/_nginx.dc.json',
+                    'params':[
+                            'NAME':"dsrp-nginx",
+                            'SUFFIX': "${vars.deployment.suffix}",
+                            'VERSION':"${app.deployment.version}",
+                            'LOG_PVC_SIZE':"${vars.LOG_PVC_SIZE}",
+                            'CPU_REQUEST':"${vars.resources.nginx.cpu_request}",
+                            'CPU_LIMIT':"${vars.resources.nginx.cpu_limit}",
+                            'MEMORY_REQUEST':"${vars.resources.nginx.memory_request}",
+                            'MEMORY_LIMIT':"${vars.resources.nginx.memory_limit}",
+                            'REPLICA_MIN':"${vars.resources.nginx.replica_min}",
+                            'REPLICA_MAX':"${vars.resources.nginx.replica_max}",
+                            'DSRP_DOMAIN': "${vars.modules.'dsrp-nginx'.HOST_DSRP}",
+                            'ROUTE': "${vars.modules.'dsrp-nginx'.ROUTE}",
+                            'PATH_PREFIX': "${vars.modules.'dsrp-nginx'.PATH}",
+                            'TUSD_SERVICE_URL': "${vars.modules.'dsrp-tusd-backend'.HOST}${vars.modules.'dsrp-tusd-backend'.PATH}",
+                            'DSRP_SERVICE_URL': "${vars.modules.'dsrp-frontend'.HOST}",
+                            'API_SERVICE_URL': "${vars.modules.'dsrp-python-backend'.HOST}",
+                    ]
+                ]
                 // [
                 //     'file':'openshift/templates/tools/metabase.dc.json',
                 //     'params':[
@@ -249,7 +232,7 @@ environments {
             keycloak {
                 clientId_dsrp = "dormant-application-dev"
                 resource = "dormant-application-dev"
-                idpHint_dsrp = "dev"
+                idpHint_dsrp = "idir"
                 url = "https://sso-test.pathfinder.gov.bc.ca/auth"
                 known_config_url = "https://sso-test.pathfinder.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration"
                 siteminder_url = "https://logontest7.gov.bc.ca"
@@ -268,6 +251,14 @@ environments {
                     cpu_limit = "20m"
                     memory_request = "64Mi"
                     memory_limit = "104Mi"
+                    replica_min = 1
+                    replica_max = 1
+                }
+                tusd {
+                    cpu_request = "50m"
+                    cpu_limit = "100m"
+                    memory_request = "256Mi"
+                    memory_limit = "512Mi"
                     replica_min = 1
                     replica_max = 1
                 }
@@ -345,9 +336,9 @@ environments {
                     HOST = "http://dsrp-python-backend${vars.deployment.suffix}:5000"
                     PATH = "/${vars.git.changeId}/api"
                 }
-                'dsrp-docman-backend' {
-                    HOST = "http://dsrp-docman-backend${vars.deployment.suffix}:5001"
-                    PATH = "/${vars.git.changeId}/document-manager"
+                'dsrp-tusd-backend' {
+                    HOST = "http://tusd${vars.deployment.suffix}:1080"
+                    PATH = "/files/"
                 }
                 'dsrp-redis' {
                     HOST = "http://dsrp-redis${vars.deployment.suffix}"

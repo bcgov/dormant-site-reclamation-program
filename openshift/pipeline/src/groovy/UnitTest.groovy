@@ -50,7 +50,7 @@ def frontEndDeploymentConfigs = ocGet(['is','-l', "app-name=${config.app.name},i
 def frontEndPublicDeploymentConfigs = ocGet(['is','-l', "app-name=${config.app.name},image-stream.name=${frontendPublicIsName}", "--namespace=${namespace}"])
 def backEndDeploymentConfigs = ocGet(['is','-l', "app-name=${config.app.name},image-stream.name=dsrp-python-backend", "--namespace=${namespace}"])
 def nrisBackendDeploymentConfigs = ocGet(['is','-l', "app-name=${config.app.name},image-stream.name=dsrp-nris-backend", "--namespace=${namespace}"])
-def docmanBackendDeploymentConfigs = ocGet(['is','-l', "app-name=${config.app.name},image-stream.name=dsrp-docman-backend", "--namespace=${namespace}"])
+def docmanBackendDeploymentConfigs = ocGet(['is','-l', "app-name=${config.app.name},image-stream.name=dsrp-tusd-backend", "--namespace=${namespace}"])
 
 
 // Run frontend tests
