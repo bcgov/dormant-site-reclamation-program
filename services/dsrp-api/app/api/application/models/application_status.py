@@ -11,6 +11,7 @@ class ApplicationStatus(Base, AuditMixin):
 
     application_status_code = db.Column(db.String, nullable=False, primary_key=True)
     description = db.Column(db.String, nullable=False)
+    long_description = db.Column(db.String)
     active = db.Column(db.Boolean, nullable=False, server_default=FetchedValue())
 
     def __repr__(self):
