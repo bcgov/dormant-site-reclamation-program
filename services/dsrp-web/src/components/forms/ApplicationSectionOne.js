@@ -6,7 +6,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { renderConfig } from "@/components/common/config";
 import { required, email, maxLength, postalCode, exactLength } from "@/utils/validate";
-import { phoneMask, postalCodeMask, scrollToFirstError } from "@/utils/helpers";
+import { phoneMask, postalCodeMask, businessNumberMask, scrollToFirstError } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
@@ -98,6 +98,16 @@ class ApplicationSectionOne extends Component {
                 validate={[required]}
                 disabled={!this.props.isEditable}
                 format={null}
+              />
+              <Field
+                id="business_number"
+                name="business_number"
+                label="Business Number"
+                placeholder="Business Number"
+                component={renderConfig.FIELD}
+                disabled={!this.props.isEditable}
+                validate={[required, exactLength(9)]}
+                {...businessNumberMask}
               />
               <Field
                 id="indigenous_participation_ind"
