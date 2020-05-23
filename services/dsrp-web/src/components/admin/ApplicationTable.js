@@ -151,7 +151,7 @@ export class ApplicationTable extends Component {
     return (
       <div style={{ padding: 8 }}>
         <Input
-          ref={(node) => console.log(node)}
+          ref={(node) => {}}
           placeholder={placeholder}
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
@@ -189,27 +189,6 @@ export class ApplicationTable extends Component {
 
   render() {
     const columns = [
-      {
-        title: "Application ID",
-        key: "id",
-        dataIndex: "id",
-        sortField: "id",
-        sorter: true,
-        render: (text) => (
-          <div style={{ textAlign: "right" }} title="id">
-            {text || Strings.DASH}
-          </div>
-        ),
-        filterDropdown: ({ setSelectedKeys, selectedKeys, clearFilters }) =>
-          this.columnSearchInput(
-            setSelectedKeys,
-            selectedKeys,
-            clearFilters,
-            "id",
-            "Search App. ID..."
-          ),
-        filterIcon: () => this.searchFilterIcon("id"),
-      },
       {
         title: "Company",
         key: "company_name",

@@ -77,8 +77,13 @@ class Config(object):
     # OrgBook
     ORGBOOK_API_URL = os.environ.get('ORGBOOK_API_URL', 'https://orgbook.gov.bc.ca/api/v2/')
 
-    #Doc Manager
-    DOCUMENT_MANAGER_URL = os.environ.get('DOCUMENT_MANAGER_URL', 'http://localhost:5001')
+    # Document hosting settings
+    OBJECT_STORE_ENABLED = os.environ.get('OBJECT_STORE_ENABLED', False)
+    OBJECT_STORE_HOST = os.environ.get('OBJECT_STORE_HOST', '')
+    OBJECT_STORE_ACCESS_KEY_ID = os.environ.get('OBJECT_STORE_ACCESS_KEY_ID', '')
+    OBJECT_STORE_ACCESS_KEY = os.environ.get('OBJECT_STORE_ACCESS_KEY', '')
+    OBJECT_STORE_BUCKET = os.environ.get('OBJECT_STORE_BUCKET', '')
+
     #SMTP
     SMTP_CRED_HOST = os.environ.get('SMTP_CRED_HOST', None)
 
@@ -105,18 +110,13 @@ class TestConfig(Config):
 
     JWT_OIDC_TEST_KEYS = {
         "keys": [{
-            "kid":
-            "flask-jwt-oidc-test-client",
-            "kty":
-            "RSA",
-            "alg":
-            "RS256",
-            "use":
-            "sig",
+            "kid": "flask-jwt-oidc-test-client",
+            "kty": "RSA",
+            "alg": "RS256",
+            "use": "sig",
             "n":
             "AN-fWcpCyE5KPzHDjigLaSUVZI0uYrcGcc40InVtl-rQRDmAh-C2W8H4_Hxhr5VLc6crsJ2LiJTV_E72S03pzpOOaaYV6-TzAjCou2GYJIXev7f6Hh512PuG5wyxda_TlBSsI-gvphRTPsKCnPutrbiukCYrnPuWxX5_cES9eStR",
-            "e":
-            "AQAB"
+            "e": "AQAB"
         }]
     }
     # Dummy Private Keys for testing purposes.

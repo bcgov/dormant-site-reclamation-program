@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { Row, Col } from "antd";
 import { withRouter } from "react-router-dom";
 import { bindActionCreators, compose } from "redux";
 import { set, isEmpty } from "lodash";
@@ -30,6 +31,8 @@ import {
   fetchPermitHolders,
 } from "@/actionCreators/OGCActionCreator";
 import ApplicationTable from "@/components/admin/ApplicationTable";
+import JumpToApplicationForm from "@/components/forms/JumpToApplicationForm";
+import * as route from "@/constants/routes";
 
 const propTypes = {
   applications: PropTypes.any.isRequired,
@@ -51,7 +54,7 @@ const defaultParams = {
   per_page: Strings.DEFAULT_PER_PAGE,
   sort_field: "submission_date",
   sort_dir: "asc",
-  id: undefined,
+  guid: undefined,
   company_name: undefined,
   application_status_code: [],
 };
@@ -76,6 +79,16 @@ export class ReviewApplicationInfo extends Component {
   onPageChange = (page, per_page) => {
     this.props.history.replace(
       routes.REVIEW_APPLICATIONS.dynamicRoute({ ...this.state.params, page, per_page })
+    );
+  };
+
+  search = (values) => {
+    const params = { ...defaultParams, guid: values.guid };
+    this.setState(
+      {
+        params,
+      },
+      () => this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params))
     );
   };
 
@@ -147,24 +160,31 @@ export class ReviewApplicationInfo extends Component {
 
   render() {
     return (
-      <ApplicationTable
-        applications={this.props.applications}
-        applicationsWellSitesContractedWork={this.props.applicationsWellSitesContractedWork}
-        pageData={this.props.pageData}
-        params={this.state.params}
-        handleTableChange={this.handleApplicationsSearch}
-        onPageChange={this.onPageChange}
-        isLoaded={this.state.isLoaded}
-        applicationStatusDropdownOptions={this.props.applicationStatusDropdownOptions}
-        applicationStatusOptionsHash={this.props.applicationStatusOptionsHash}
-        contractedWorkStatusDropdownOptions={this.props.contractedWorkStatusDropdownOptions}
-        contractedWorkStatusOptionsHash={this.props.contractedWorkStatusOptionsHash}
-        handleApplicationStatusChange={this.handleApplicationStatusChange}
-        handleContractedWorkStatusChange={this.handleContractedWorkStatusChange}
-        permitHoldersHash={this.props.permitHoldersHash}
-        fetchLiabilities={this.props.fetchLiabilities}
-        fetchWells={this.props.fetchWells}
-      />
+      <>
+        <Row type="flex" justify="center" align="top">
+          <Col xl={{ span: 12 }} md={{ span: 20 }} sm={{ span: 24 }}>
+            <JumpToApplicationForm onSubmit={this.search} />
+          </Col>
+        </Row>
+        <ApplicationTable
+          applications={this.props.applications}
+          applicationsWellSitesContractedWork={this.props.applicationsWellSitesContractedWork}
+          pageData={this.props.pageData}
+          params={this.state.params}
+          handleTableChange={this.handleApplicationsSearch}
+          onPageChange={this.onPageChange}
+          isLoaded={this.state.isLoaded}
+          applicationStatusDropdownOptions={this.props.applicationStatusDropdownOptions}
+          applicationStatusOptionsHash={this.props.applicationStatusOptionsHash}
+          contractedWorkStatusDropdownOptions={this.props.contractedWorkStatusDropdownOptions}
+          contractedWorkStatusOptionsHash={this.props.contractedWorkStatusOptionsHash}
+          handleApplicationStatusChange={this.handleApplicationStatusChange}
+          handleContractedWorkStatusChange={this.handleContractedWorkStatusChange}
+          permitHoldersHash={this.props.permitHoldersHash}
+          fetchLiabilities={this.props.fetchLiabilities}
+          fetchWells={this.props.fetchWells}
+        />
+      </>
     );
   }
 }

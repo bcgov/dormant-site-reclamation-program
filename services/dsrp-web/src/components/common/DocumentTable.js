@@ -8,9 +8,8 @@ import CustomPropTypes from "@/customPropTypes";
 import LinkButton from "@/components/common/LinkButton";
 
 const propTypes = {
-  documents: PropTypes.arrayOf(CustomPropTypes.mineDocument),
-  // eslint-disable-next-line react/no-unused-prop-types
-  documentCategoryOptionsHash: PropTypes.objectOf(PropTypes.string).isRequired,
+  documents: PropTypes.arrayOf(CustomPropTypes.document).isRequired,
+  application_guid: PropTypes.string,
 };
 
 const defaultProps = {
@@ -25,7 +24,16 @@ export const DocumentTable = (props) => {
       render: (text, record) => {
         return (
           <div title="File name">
-            <LinkButton title={text} onClick={() => downloadFileFromDocumentManager(record)}>
+            <LinkButton
+              title={text}
+              onClick={() =>
+                downloadFileFromDocumentManager(
+                  props.application_guid,
+                  record.application_document_guid,
+                  record.document_name
+                )
+              }
+            >
               {truncateFilename(text)}
             </LinkButton>
           </div>
@@ -33,13 +41,8 @@ export const DocumentTable = (props) => {
       },
     },
     {
-      title: "Category",
-      dataIndex: "variance_document_category_code",
-      render: (text) => <div title="Upload date">{props.documentCategoryOptionsHash[text]}</div>,
-    },
-    {
       title: "Upload date",
-      dataIndex: "created_at",
+      dataIndex: "upload_date",
       render: (text) => <div title="Upload date">{formatDate(text) || Strings.EMPTY_FIELD}</div>,
     },
   ];
@@ -51,7 +54,7 @@ export const DocumentTable = (props) => {
         pagination={false}
         columns={columns}
         rowKey={(record) => record.mine_document_guid}
-        locale={{ emptyText: "This variance does not contain any documents." }}
+        locale={{ emptyText: "This application does not contain any documents." }}
         dataSource={props.documents}
       />
     </div>

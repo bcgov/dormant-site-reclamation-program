@@ -9,7 +9,9 @@ import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import { fetchApplicationById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/selectors/applicationSelectors";
 import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm";
+import ViewApplicationDocuments from "@/components/pages/ViewApplicationDocuments";
 import LinkButton from "@/components/common/LinkButton";
+import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
 
 const propTypes = {
   match: PropTypes.shape({
@@ -54,7 +56,20 @@ export class ViewApplicationPage extends Component {
                 </LinkButton>
               </Col>
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-                <Title>Application ID: {this.props.application.id}</Title>
+                <Title>Application Reference Number: {this.props.application.guid}</Title>
+              </Col>
+            </Row>
+            <Row type="flex" justify="center" align="top" className="landing-header">
+              <Col xl={{ span: 20 }} xxl={{ span: 16 }}>
+                <ViewApplicationDocuments
+                  application_guid={this.props.application.guid}
+                  documents={this.props.application.documents}
+                />
+              </Col>
+            </Row>
+            <Row type="flex" justify="center" align="top">
+              <Col xl={{ span: 20 }} xxl={{ span: 16 }}>
+                <DocumentUploadForm application={this.props.application.guid} />
               </Col>
             </Row>
             <Row type="flex" justify="center" align="top" className="landing-section">

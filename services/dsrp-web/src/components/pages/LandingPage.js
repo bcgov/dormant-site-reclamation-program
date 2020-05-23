@@ -26,6 +26,19 @@ export const LandingPage = (props) => (
           British Columbia the opportunity to nominate dormant sites for reclamation.
         </Paragraph>
 
+        <Title level={4}>Before you apply:</Title>
+        <Paragraph>
+          <ul className="landing-list">
+            <li>
+              Read the <strong>full details</strong> of the program by{" "}
+              <a href="https://www2.gov.bc.ca/gov/content/industry/natural-gas-oil/responsible-oil-gas-development/dormant-sites-reclamation-program">
+                clicking here
+              </a>
+              .
+            </li>
+          </ul>
+        </Paragraph>
+
         <Title level={4}>What you need to apply:</Title>
         <Paragraph>
           <ul className="landing-list">

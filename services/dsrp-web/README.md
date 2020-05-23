@@ -108,13 +108,13 @@ make frontend
 
 This application requires a test BCeID in order to login and contribute locally.
 
-NOTE: Dormant Site Reclamation Program is using the same Keycloak client as CORE, thus if the user is currently authenticated through CORE with an IDIR, the session will persist on Dormant Site Reclamation Program.
+NOTE: Dormant Sites Reclamation Program is using the same Keycloak client as CORE, thus if the user is currently authenticated through CORE with an IDIR, the session will persist on Dormant Sites Reclamation Program.
 
-This is a known issue, knowing that Ministry staff will not be interacting with Dormant Site Reclamation Program and Proponents will not be interacting with CORE, it has been de-prioritized as it only affects the Dev team.
+This is a known issue, knowing that Ministry staff will not be interacting with Dormant Sites Reclamation Program and Proponents will not be interacting with CORE, it has been de-prioritized as it only affects the Dev team.
 
 To avoid having permission issues:
 
-- Do not have test CORE and test Dormant Site Reclamation Program authenticated on the same browser
+- Do not have test CORE and test Dormant Sites Reclamation Program authenticated on the same browser
 - Open Dormant Site Reclamation Program in an incognito window, or clear the browser cashe.
 
 ## Code Contribution Standards

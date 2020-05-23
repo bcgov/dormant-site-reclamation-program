@@ -37,8 +37,6 @@ endif
 	@cp ./services/dsrp-api/.env-dev-local-keycloak ./services/dsrp-api/.env
 	@[ ! -f "./services/nris-api/backend/.env" ] || cp ./services/nris-api/backend/.env ./services/nris-api/backend/.env-last-backup
 	@cp ./services/nris-api/backend/.env-dev-local-keycloak ./services/nris-api/backend/.env
-	@[ ! -f "./services/document-manager/backend/.env" ] || cp ./services/document-manager/backend/.env ./services/document-manager/backend/.env-last-backup
-	@cp ./services/document-manager/backend/.env-dev-local-keycloak ./services/document-manager/backend/.env
 else
 	@if "$(KC_HOST_ENTRY)" GTR "" (echo "hosts entry already exists") else (echo 127.0.0.1        localhost       keycloak >> C:\Windows\System32\drivers\etc\hosts)
 	@if exist .\services\dsrp-web\.env copy /Y .\services\dsrp-web\.env .\services\dsrp-web\.env-last-backup
@@ -47,8 +45,6 @@ else
 	@copy /Y .\services\dsrp-web\src\constants\environment.js-dev-local-keycloak .\services\dsrp-web\src\constants\environment.js
 	@if exist .\services\dsrp-api\.env copy .\services\dsrp-api\.env .\services\dsrp-api\.env-last-backup
 	@copy /Y .\services\dsrp-api\.env-dev-local-keycloak .\services\dsrp-api\.env
-	@if exist .\services\document-manager\backend\.env copy .\services\document-manager\backend\.env .\services\document-manager\backend\.env-last-backup
-	@copy /Y .\services\document-manager\backend\.env-dev-local-keycloak .\services\document-manager\backend\.env
 endif
 	@echo "+"
 
@@ -58,7 +54,6 @@ restore-last-env:
 	@cp ./services/dsrp-web/src/constants/environment.js ./services/dsrp-web/src/constants/environment.js-last-backup
 	@cp ./services/dsrp-api/.env-last-backup ./services/dsrp-api/.env
 	@cp ./services/nris-api/backend/.env-last-backup ./services/nris-api/backend/.env
-	@cp ./services/document-manager/backend/.env-last-backup ./services/document-manager/backend/.env
 
 pause-30:
 	@echo "+\n++ Pausing 30 seconds\n+"
