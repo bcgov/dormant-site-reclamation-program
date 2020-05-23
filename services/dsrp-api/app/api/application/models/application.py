@@ -184,13 +184,6 @@ class Application(Base, AuditMixin):
 </div>
         """
 
-<<<<<<< HEAD
-        email_service.send_email(self.submitter_email, 'Application Confirmation', html_body)
-
-
-
-    
-=======
         email_service.send_email(self.submitter_email,
                                  'Application Confirmation', html_body)
 
@@ -323,4 +316,3 @@ class Application(Base, AuditMixin):
         """
 
         return html
->>>>>>> bdc7d99bf007e4f4832149cc2637f8b30502b7c2
