@@ -379,12 +379,12 @@ class Application(Base, AuditMixin):
             indigenous_participation_ind = company_details.get(
                 "indigenous_participation_ind", False) == True
             return f"""
-            <h2>Company Details<h2>
+            <h1>Company Details<h1>
 
-            <h3>Company Name</h3>
+            <h2>Company Name</h2>
             <p>{company_details["company_name"]["label"]}</p>
 
-            <h3>Company Address</h3>
+            <h2>Company Address</h2>
             <p>
             {company_details["city"]} {company_details["province"]} Canada
             <br />
@@ -394,17 +394,17 @@ class Application(Base, AuditMixin):
             {company_details["postal_code"]}
             </p>
 
-            <h3>Business Number</h3>
+            <h2>Business Number</h2>
             <p>{company_details["business_number"]}</p>
 
-            <h3>Indigenous Participation</h3>
+            <h2>Indigenous Participation</h2>
             <p>{"Yes" if indigenous_participation_ind else "No"}</p>
             {f'<p>{company_details["indigenous_participation_description"]}</p>' if indigenous_participation_ind else ""}
             """
 
         def create_company_contact(company_contact):
             return f"""
-            <h2>Company Contact</h2>
+            <h1>Company Contact</h1>
 
             <p>{company_contact["first_name"]} {company_contact["last_name"]}</p>
             <p>{company_contact["email"]}</p>
@@ -428,9 +428,9 @@ class Application(Base, AuditMixin):
                 )
 
             return f"""
-            <h2>Contract Details</h2>
+            <h1>Contract Details</h1>
 
-            <h3>Permit Holder</h3>
+            <h2>Permit Holder</h2>
             <p>{permit_holder["organization_name"] if permit_holder else f'Operator ID: {contract_details["operator_id"]}'}</p>
             """
 
@@ -452,41 +452,50 @@ class Application(Base, AuditMixin):
                             """
 
                         return f"""
-                        <p><b>{sub_section["sub_section_header"]}</b></p>
-                        <table>
+                        <p><u>{sub_section["sub_section_header"]}</u></p>
+                        <table class="contracted_work_amount">
                         {''.join([create_amount_field(amount_field, section, contracted_work) for amount_field in sub_section["amount_fields"]])}
                         </table>
                         """
 
                     return f"""             
-                    <h5>{section["section_header"]}</h5>
-                    <p><b>Planned Start Date</b>: {contracted_work[section["section_name"]]["planned_start_date"] if contracted_work.get(section["section_name"]) and contracted_work.get(section["section_name"]).get("planned_start_date") else "N/A"}</p>
-                    <p><b>Planned End Date</b>: {contracted_work[section["section_name"]]["planned_end_date"] if contracted_work.get(section["section_name"]) and contracted_work.get(section["section_name"]).get("planned_end_date") else "N/A"}</p>
+                    <h4>{section["section_header"]}</h4>
+                    <p>Planned Start Date: {contracted_work[section["section_name"]]["planned_start_date"] if contracted_work.get(section["section_name"]) and contracted_work.get(section["section_name"]).get("planned_start_date") else "N/A"}</p>
+                    <p>Planned End Date: {contracted_work[section["section_name"]]["planned_end_date"] if contracted_work.get(section["section_name"]) and contracted_work.get(section["section_name"]).get("planned_end_date") else "N/A"}</p>
                     {''.join([create_sub_section(sub_section, section, contracted_work) for sub_section in section["sub_sections"]])}
                     """
 
                 return f"""
-                <h3>Well Site {index + 1}</h3>
+                <h2>Well Site {index + 1}</h2>
 
-                <h4>Well Authorization Number</h4>
+                <h3>Well Authorization Number</h3>
                 <p>{well_site["details"]["well_authorization_number"]}</p>
 
-                <h4>Site Conditions</h4>
+                <h3>Site Conditions</h3>
                 <ul>
                 {''.join([create_site_condition(condition, well_site["site_conditions"]) for condition in SITE_CONDITIONS])}
                 </ul>
 
-                <h4>Contracted Work</h4>
+                <h3>Contracted Work</h3>
                 {''.join([create_contracted_work_section(section, well_site["contracted_work"]) for section in CONTRACTED_WORK])}
                 <hr />
                 """
 
             return f"""
-            <h2>Well Sites</h2>
+            <h1>Well Sites</h1>
             {''.join([create_well_site(well_site, index) for index, well_site in enumerate(well_sites)])}
             """
 
+        style = """
+        <style>
+            table.contracted_work_amount th, td {
+            padding-left: 10px;
+            }
+        </style>
+        """
+
         html = f"""
+        {style}
         <h1>Application Contents</h1>
         {create_company_details(self.json["company_details"])}     
         {create_company_contact(self.json["company_contact"])}
