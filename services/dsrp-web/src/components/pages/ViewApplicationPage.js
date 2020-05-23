@@ -3,7 +3,7 @@ import { bindActionCreators, compose } from "redux";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import { Row, Col, Typography, Icon } from "antd";
+import { Row, Col, Typography, Icon, Tabs } from "antd";
 import { reset } from "redux-form";
 import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import { fetchApplicationById } from "@/actionCreators/applicationActionCreator";
@@ -12,7 +12,7 @@ import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm"
 import ViewApplicationDocuments from "@/components/pages/ViewApplicationDocuments";
 import LinkButton from "@/components/common/LinkButton";
 import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
-
+const { TabPane } = Tabs;
 const propTypes = {
   match: PropTypes.shape({
     params: {
@@ -60,24 +60,22 @@ export class ViewApplicationPage extends Component {
               </Col>
             </Row>
             <Row type="flex" justify="center" align="top" className="landing-header">
-              <Col xl={{ span: 20 }} xxl={{ span: 16 }}>
-                <ViewApplicationDocuments
-                  application_guid={this.props.application.guid}
-                  documents={this.props.application.documents}
-                />
-              </Col>
-            </Row>
-            <Row type="flex" justify="center" align="top">
-              <Col xl={{ span: 20 }} xxl={{ span: 16 }}>
-                <DocumentUploadForm applicationGuid={this.props.application.guid} />
-              </Col>
-            </Row>
-            <Row type="flex" justify="center" align="top" className="landing-section">
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-                <ViewOnlyApplicationForm
-                  isViewingSubmission
-                  initialValues={this.props.application.json}
-                />
+                <Tabs type="card">
+                  <TabPane tab="Application" key="1">
+                    <ViewOnlyApplicationForm
+                      isViewingSubmission
+                      initialValues={this.props.application.json}
+                    />
+                  </TabPane>
+                  <TabPane tab="Documents" key="2">
+                    <ViewApplicationDocuments
+                      application_guid={this.props.application.guid}
+                      documents={this.props.application.documents}
+                    />
+                    <DocumentUploadForm applicationGuid={this.props.application.guid} />
+                  </TabPane>
+                </Tabs>
               </Col>
             </Row>
           </>
