@@ -98,3 +98,12 @@
     font-size: $font-size-lg;
   }
 }
+
+.font-weight {
+  &-bold {
+    font-weight: bold;
+  }
+  &-normal {
+    font-weight: normal;
+  }
+}
