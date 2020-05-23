@@ -8,7 +8,7 @@ from datetime import datetime
 from flask import request, current_app, Response
 from flask_restplus import Resource, reqparse, fields
 
-from werkzeug.exceptions import BadRequest, NotFound
+from werkzeug.exceptions import BadRequest, NotFound, Unauthorized
 from sqlalchemy.exc import DBAPIError
 
 from app.extensions import api, db, cache, jwt
@@ -39,29 +39,28 @@ class ApplicationDocumentListResource(Resource, UserMixin):
             raise NotFound("Not found")
 
         if jwt.validate_roles(ADMIN) or application.application_status_code == "WAIT_FOR_DOCS":
-            pass
-        
+            ##Admin or public if waiting for docs, otherwise reject
+            docs = request.json['documents']
 
-        docs = request.json['documents']
-
-        for doc in docs:
-            new_doc = ApplicationDocument(
-                document_name=doc['document_name'], object_store_path=doc['object_store_path'])
-            application.documents.append(new_doc)
+            for doc in docs:
+                new_doc = ApplicationDocument(
+                    document_name=doc['document_name'], object_store_path=doc['object_store_path'])
+                application.documents.append(new_doc)
 
 
-        if request.json.get('confirm_final_documents'):
-            new_app_status_change = ApplicationStatusChange(
-                application_status_code="DOC_SUBMITTED",
-                note="Thank you for uploading all of the required documentation"
-            ) #placeholder 
-            application.status_changes.append(new_app_status_change)
+            if request.json.get('confirm_final_documents'):
+                new_app_status_change = ApplicationStatusChange(
+                    application_status_code="DOC_SUBMITTED",
+                    note="Thank you for uploading all of the required documentation"
+                ) #placeholder 
+                application.status_changes.append(new_app_status_change)
 
-            with EmailService() as es:
-                new_app_status_change.send_status_change_email(es)
+                with EmailService() as es:
+                    new_app_status_change.send_status_change_email(es)
 
-        application.save()
-        return application.documents
+            application.save()
+            return application.documents
+        raise Unauthorized("Not currently accepting documents on this application")
 
 
 class ApplicationDocumentResource(Resource, UserMixin):
