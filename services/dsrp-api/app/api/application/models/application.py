@@ -458,7 +458,6 @@ class Application(Base, AuditMixin):
                         </table>
                         """
 
-                    current_app.logger.info(section["section_name"])
                     return f"""             
                     <h5>{section["section_header"]}</h5>
                     <p><b>Planned Start Date</b>: {contracted_work[section["section_name"]]["planned_start_date"] if contracted_work.get(section["section_name"]) and contracted_work.get(section["section_name"]).get("planned_start_date") else "N/A"}</p>
@@ -486,8 +485,6 @@ class Application(Base, AuditMixin):
             <h2>Well Sites</h2>
             {''.join([create_well_site(well_site, index) for index, well_site in enumerate(well_sites)])}
             """
-
-        current_app.logger.info(self.json)
 
         html = f"""
         <h1>Application Contents</h1>
