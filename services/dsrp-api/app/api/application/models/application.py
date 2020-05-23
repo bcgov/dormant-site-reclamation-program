@@ -232,7 +232,7 @@ class Application(Base, AuditMixin):
             indigenous_participation_ind = company_details.get("indigenous_participation_ind",
                                                                False) == True
             return f"""
-            <h1>Company Details<h1>
+            <h1>Company Details</h1>
 
             <h2>Company Name</h2>
             <p>{company_details["company_name"]["label"]}</p>
@@ -243,7 +243,7 @@ class Application(Base, AuditMixin):
             <br />
             {company_details["address_line_1"]}
             <br />
-            {f'{company_details["address_line_2"]}</br />' if company_details.get("address_line_2") else ""}
+            {f'{company_details["address_line_2"]}<br />' if company_details.get("address_line_2") else ""}
             {company_details["postal_code"]}
             </p>
 
@@ -295,8 +295,8 @@ class Application(Base, AuditMixin):
                         def create_amount_field(amount_field, section, contracted_work):
                             return f"""
                                 <tr>
-                                <td>{amount_field["label"]}:</td>
-                                <td>{'$0.00' if not (section["section_name"] in contracted_work and (amount_field["name"] in contracted_work[section["section_name"]])) else f'${contracted_work[section["section_name"]][amount_field["name"]] or "0.00"}'}</td>
+                                <td style="padding-left: 10px;">{amount_field["label"]}:</td>
+                                <td style="padding-left: 10px;">{'$0.00' if not (section["section_name"] in contracted_work and (amount_field["name"] in contracted_work[section["section_name"]])) else f'${contracted_work[section["section_name"]][amount_field["name"]] or "0.00"}'}</td>
                                 </tr>
                             """
 
@@ -335,16 +335,7 @@ class Application(Base, AuditMixin):
             {''.join([create_well_site(well_site, index) for index, well_site in enumerate(well_sites)])}
             """
 
-        style = """
-        <style>
-            table.contracted_work_amount th, td {
-            padding-left: 10px;
-            }
-        </style>
-        """
-
         html = f"""
-        {style}
         {create_company_details(self.json["company_details"])}     
         {create_company_contact(self.json["company_contact"])}
         {create_contract_details(self.json["contract_details"])}
