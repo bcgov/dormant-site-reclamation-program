@@ -213,7 +213,7 @@
                   },
                   {
                     "name": "S3_PREFIX",
-                    "value": "dsrp/"
+                    "value": "dsrp-applications/"
                   }
                 ],
                 "resources": {
