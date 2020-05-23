@@ -188,8 +188,7 @@ const renderContractWorkPanel = (
         </Form.Item>
       ))}
       {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, { marginRight: 24 })}
-      {/* // TODO: Only show this error when fields in this section are touched. */}
-      {props.anyTouched && wellSectionErrors && wellSectionErrors.error && (
+      {props.submitFailed && wellSectionErrors && wellSectionErrors.error && (
         <span
           id={`well_sites[${wellNumber}].contracted_work.${contractWorkSection.formSectionName}.error`}
           className="color-error"
@@ -526,6 +525,7 @@ class ApplicationSectionTwo extends Component {
               className="icon-lg"
             />
           )}
+          defaultActiveKey={[0]}
         >
           {fields.map((member, index) => {
             const wellTotals = this.state.contractedWorkTotals.wellTotals[index];
@@ -545,6 +545,14 @@ class ApplicationSectionTwo extends Component {
                 header={
                   <Title level={3} style={{ margin: 0, marginLeft: 8 }}>
                     {wellName}
+                    {this.props.submitFailed && !isEmpty(wellSiteErrors) && (
+                      <Text
+                        className="font-size-base font-weight-normal color-error"
+                        style={{ marginLeft: 16 }}
+                      >
+                        This well site has missing or incorrect information
+                      </Text>
+                    )}
                     {this.props.isEditable && (
                       <span onClick={(e) => e.stopPropagation()}>
                         <Popconfirm
@@ -616,8 +624,7 @@ class ApplicationSectionTwo extends Component {
                           component={renderConfig.CHECKBOX}
                         />
                       ))}
-                      {/* // TODO: Only show this error when fields in this section are touched. */}
-                      {this.props.anyTouched &&
+                      {this.props.submitFailed &&
                         wellSiteErrors &&
                         wellSiteErrors.site_conditions &&
                         wellSiteErrors.site_conditions.error && (
@@ -640,8 +647,7 @@ class ApplicationSectionTwo extends Component {
                     Enter the estimated cost of every work component your company will perform for
                     this contract.
                   </Paragraph>
-                  {/* // TODO: Only show this error when fields in this section are touched. */}
-                  {this.props.anyTouched &&
+                  {this.props.submitFailed &&
                     wellSiteErrors &&
                     wellSiteErrors.contracted_work &&
                     wellSiteErrors.contracted_work.error && (

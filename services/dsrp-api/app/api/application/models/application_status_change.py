@@ -105,10 +105,12 @@ class ApplicationStatusChange(Base, AuditMixin):
         <td colspan="4" width="416" valign="top"
           style="width:41.15pt; border:none; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:56.9pt">
           <p>
-                The status of your application has change to {self.application_status.description} with the following note:
+                The status of your application has change to <b>{self.application_status.description}</b> with the following note:
 				<br />
+        <br />
                 <span>&nbsp;&nbsp;&nbsp;&nbsp;{self.note}</span>
 				<br />
+        <br />
                 <a href='{Config.URL}/view-application-status/{self.application_guid}'>Click here to view the status of your application.</a>
                 <br/>
                 <br/>

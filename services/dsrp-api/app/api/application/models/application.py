@@ -22,6 +22,8 @@ class Application(Base, AuditMixin):
         id = fields.Integer(dump_only=True)
         guid = fields.String(dump_only=True)
         submission_date = fields.String(dump_only=True)
+        status_changes = fields.Raw(dump_only=True) ##DO NOT INJEST ON POST
+
 
     id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
     guid = db.Column(UUID(as_uuid=True), nullable=False, unique=True, server_default=FetchedValue())
