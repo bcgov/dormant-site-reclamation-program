@@ -4,14 +4,14 @@ from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.schema import FetchedValue
 from marshmallow import fields, validate
-from collections import namedtuple
 
 from app.config import Config
-from app.extensions import db
+from app.extensions import db, cache
 from app.api.utils.models_mixins import Base, AuditMixin
 from app.api.utils.field_template import FieldTemplate
-
 from .application_status import ApplicationStatus
+from app.api.constants import PERMIT_HOLDER_CACHE
+from app.api.permit_holder.resources.permit_holder import PermitHolderResource
 
 
 def section(section_header, section_name, sub_sections):
@@ -21,121 +21,149 @@ def section(section_header, section_name, sub_sections):
         "sub_sections": sub_sections
     }
 
+
 def subSection(sub_section_header, amount_fields):
     return {
         "sub_section_header": sub_section_header,
         "amount_fields": amount_fields
     }
 
+
 def field(name, label):
-    return {
-        "name": name,
-        "label": label
-    }
+    return {"name": name, "label": label}
+
 
 CONTRACTED_WORK = [
-  section("Abandonment", "abandonment", [
-    subSection("Abandonment Planning and Logistics", [
-      field("well_file_review", "Well file review abandonment plan development"),
-      field("abandonment_plan", "Abandonment plan submission"),
-      field("mob_demob_site", "Mob/Demob to/from site and site preparation"),
-      field("camp_lodging", "Camp or lodging accommodations for workers"),
+    section("Abandonment", "abandonment", [
+        subSection("Abandonment Planning and Logistics", [
+            field("well_file_review",
+                  "Well file review abandonment plan development"),
+            field("abandonment_plan", "Abandonment plan submission"),
+            field("mob_demob_site",
+                  "Mob/Demob to/from site and site preparation"),
+            field("camp_lodging",
+                  "Camp or lodging accommodations for workers"),
+        ]),
+        subSection("Well Decommissioning (Downhole Abandonment)", [
+            field("permanent_plugging_wellbore",
+                  "Permanent plugging of the wellbore"),
+        ]),
+        subSection("Well Decommissioning (Surface Abandonment)", [
+            field("cut_and_cap", "Cut and Cap abandonment"),
+        ]),
+        subSection("Site Decommissioning", [
+            field("removal_of_facilities",
+                  "Removal of facilities and other equipment on the site"),
+        ]),
     ]),
-    subSection("Well Decommissioning (Downhole Abandonment)", [
-      field("permanent_plugging_wellbore", "Permanent plugging of the wellbore"),
+    section("Preliminary Site Investigation", "preliminary_site_investigation", [
+        subSection("Stage 1 PSI", [
+            field("historical_well_file",
+                  "Historical well file review including interviews"),
+            field("site_visit", "Site visit"),
+            field("report_writing_submission",
+                  "Report writing and submission"),
+        ]),
+        subSection("Stage 2 PSI", [
+            field("psi_review", "PSI review"),
+            field("mob_demob_site",
+                  "Mob/Demob to/from site and any site preparation"),
+            field("camp_lodging",
+                  "Camp or lodging accommodations for workers"),
+            field("intrusive_sampling",
+                  "Intrusive sampling and site investigation"),
+            field("submission_of_samples",
+                  "Submission of samples to accredited analytical lab"),
+            field("completion_of_notifications",
+                  "Completion of any and all required notifications"),
+            field(
+                "analysis_results",
+                "Analysis of results, technical report writing, and report submission"
+            ),
+        ]),
     ]),
-    subSection("Well Decommissioning (Surface Abandonment)", [
-      field("cut_and_cap", "Cut and Cap abandonment"),
+    section("Detailed Site Investigation", "detailed_site_investigation", [
+        subSection("Site Investigation Planning and Logistics", [
+            field("psi_review_dsi_scope",
+                  "PSI review and DSI scope development"),
+        ]),
+        subSection("DSI Fieldwork Execution", [
+            field("mob_demob_site",
+                  "Mob/Demob to/from site and any site preparation"),
+            field("camp_lodging",
+                  "Camp or lodging accommodations for workers"),
+            field(
+                "complete_sampling",
+                "Complete sampling and delineation of historic contamination"),
+        ]),
+        subSection("Technical Assessment, Report Writing, and Submission", [
+            field("analysis_lab_results", "Analysis of lab results"),
+            field("development_remediation_plan",
+                  "Development of a remediation plan"),
+            field("technical_report_writing",
+                  "Technical report writing and submission"),
+        ]),
     ]),
-    subSection("Site Decommissioning", [
-      field("removal_of_facilities", "Removal of facilities and other equipment on the site"),
+    section("Remediation", "remediation", [
+        subSection("Remediation Planning and Logistics", [
+            field("mob_demob_site",
+                  "Mob/Demob to/from site and any site preparation"),
+            field("camp_lodging",
+                  "Camp or lodging accommodations for workers"),
+        ]),
+        subSection("Completion of Physical Remediation", [
+            field("excavation", "Excavation"),
+            field("contaminated_soil",
+                  "Contaminated soil hauling and disposal"),
+            field("confirmatory_sampling", "Confirmatory sampling"),
+            field("backfilling_excavation", "Backfilling of excavation"),
+        ]),
+        subSection("Completion of Risk Assessment", [
+            field(
+                "risk_assessment",
+                "Risk assessment activities, technical report writing, and submission"
+            ),
+        ]),
+        subSection("Technical Report Writing and Submission", [
+            field("site_closure",
+                  "Site closure to either risk-based or numeric standards"),
+        ]),
     ]),
-  ]),
-  section("Preliminary Site Investigation", "preliminary_site_investigation", [
-    subSection("Stage 1 PSI", [
-      field("historical_well_file", "Historical well file review including interviews"),
-      field("site_visit", "Site visit"),
-      field("report_writing_submission", "Report writing and submission"),
+    section("Reclamation", "reclamation", [
+        subSection("Reclamation Planning and Logistics", [
+            field("mob_demob_site",
+                  "Mob/Demob to/from site and any site preparation"),
+            field("camp_lodging",
+                  "Camp or lodging accommodations for workers"),
+        ]),
+        subSection("Reclamation Fieldwork", [
+            field("surface_recontouring", "Surface re-contouring"),
+            field("topsoil_replacement",
+                  "Topsoil replacement and redistribution"),
+            field("revegetation_monitoring", "Re-vegetation and monitoring"),
+        ]),
+        subSection("Reporting", [
+            field("technical_report_writing",
+                  "Technical report writing and submission"),
+        ]),
     ]),
-    subSection("Stage 2 PSI", [
-      field("psi_review", "PSI review"),
-      field("mob_demob_site", "Mob/Demob to/from site and any site preparation"),
-      field("camp_lodging", "Camp or lodging accommodations for workers"),
-      field("intrusive_sampling", "Intrusive sampling and site investigation"),
-      field("submission_of_samples", "Submission of samples to accredited analytical lab"),
-      field("completion_of_notifications", "Completion of any and all required notifications"),
-      field(
-        "analysis_results",
-        "Analysis of results, technical report writing, and report submission"
-      ),
-    ]),
-  ]),
-  section("Detailed Site Investigation", "detailed_site_investigation", [
-    subSection("Site Investigation Planning and Logistics", [
-      field("psi_review_dsi_scope", "PSI review and DSI scope development"),
-    ]),
-    subSection("DSI Fieldwork Execution", [
-      field("mob_demob_site", "Mob/Demob to/from site and any site preparation"),
-      field("camp_lodging", "Camp or lodging accommodations for workers"),
-      field("complete_sampling", "Complete sampling and delineation of historic contamination"),
-    ]),
-    subSection("Technical Assessment, Report Writing, and Submission", [
-      field("analysis_lab_results", "Analysis of lab results"),
-      field("development_remediation_plan", "Development of a remediation plan"),
-      field("technical_report_writing", "Technical report writing and submission"),
-    ]),
-  ]),
-  section("Remediation", "remediation", [
-    subSection("Remediation Planning and Logistics", [
-      field("mob_demob_site", "Mob/Demob to/from site and any site preparation"),
-      field("camp_lodging", "Camp or lodging accommodations for workers"),
-    ]),
-    subSection("Completion of Physical Remediation", [
-      field("excavation", "Excavation"),
-      field("contaminated_soil", "Contaminated soil hauling and disposal"),
-      field("confirmatory_sampling", "Confirmatory sampling"),
-      field("backfilling_excavation", "Backfilling of excavation"),
-    ]),
-    subSection("Completion of Risk Assessment", [
-      field(
-        "risk_assessment",
-        "Risk assessment activities, technical report writing, and submission"
-      ),
-    ]),
-    subSection("Technical Report Writing and Submission", [
-      field("site_closure", "Site closure to either risk-based or numeric standards"),
-    ]),
-  ]),
-  section("Reclamation", "reclamation", [
-    subSection("Reclamation Planning and Logistics", [
-      field("mob_demob_site", "Mob/Demob to/from site and any site preparation"),
-      field("camp_lodging", "Camp or lodging accommodations for workers"),
-    ]),
-    subSection("Reclamation Fieldwork", [
-      field("surface_recontouring", "Surface re-contouring"),
-      field("topsoil_replacement", "Topsoil replacement and redistribution"),
-      field("revegetation_monitoring", "Re-vegetation and monitoring"),
-    ]),
-    subSection("Reporting", [
-      field("technical_report_writing", "Technical report writing and submission"),
-    ]),
-  ]),
 ]
 
+
 def site_condition(name, label):
-    return {
-        "name": name,
-        "label": label
-    }
+    return {"name": name, "label": label}
+
 
 SITE_CONDITIONS = [
     site_condition("within_1000m_stream", "Within 1,000 metres of a stream"),
-    site_condition("within_500m_groundwater_well", "Within 500 metres of a groundwater well"),
+    site_condition("within_500m_groundwater_well",
+                   "Within 500 metres of a groundwater well"),
     site_condition(
         "within_environmental_protection",
         "Within environmental protection and management area or critical habitat"
     ),
-    site_condition("suspected_offsite_contamination", "Suspected or known to have offsite contamination"),
+    site_condition("suspected_offsite_contamination",
+                   "Suspected or known to have offsite contamination"),
     site_condition(
         "within_1500m_private_residence",
         "Within 1,500 metres of a private residence or community gathering area"
@@ -144,19 +172,23 @@ SITE_CONDITIONS = [
         "within_active_area_trapping",
         "Within an area actively used for trapping, guide outfitting, range tenure or hunting"
     ),
-    site_condition("on_crown_land_winter_access", "On Crown land that is winter access only"),
-    site_condition("drilled_abandonded_prior_1997", "Drilled or abandoned prior to 1997"),
+    site_condition("on_crown_land_winter_access",
+                   "On Crown land that is winter access only"),
+    site_condition("drilled_abandonded_prior_1997",
+                   "Drilled or abandoned prior to 1997"),
     site_condition(
         "within_treaty_land_entitlement",
         "Within Treaty Land Entitlement, cultural lands and/or Indigenous peoples' critical areas"
     ),
-    site_condition("within_sensitive_watersheds", "Within sensitive watersheds that service communities"),
+    site_condition("within_sensitive_watersheds",
+                   "Within sensitive watersheds that service communities"),
     site_condition("on_or_near_reserve_lands", "On or near reserve lands"),
     site_condition(
         "permit_holider_notice_dormant",
         "Permit holder has provided notice that this site is dormant to achieve cost efficiencies for an area-based closure plan"
     ),
-    site_condition("located_agricultural_land_reserve", "Located inside Agricultural Land Reserve"),
+    site_condition("located_agricultural_land_reserve",
+                   "Located inside Agricultural Land Reserve"),
     site_condition(
         "permit_holder_work_specified_2020_awp",
         "Specified work that was included in a permit holder's Dormant Sites 2020 Annual Work Plan"
@@ -171,16 +203,22 @@ class Application(Base, AuditMixin):
         id = fields.Integer(dump_only=True)
         guid = fields.String(dump_only=True)
         submission_date = fields.String(dump_only=True)
-        application_status_code = FieldTemplate(field=fields.String, one_of='ApplicationStatus')
+        application_status_code = FieldTemplate(field=fields.String,
+                                                one_of='ApplicationStatus')
 
     id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
-    guid = db.Column(UUID(as_uuid=True), nullable=False, unique=True, server_default=FetchedValue())
+    guid = db.Column(UUID(as_uuid=True),
+                     nullable=False,
+                     unique=True,
+                     server_default=FetchedValue())
     application_status_code = db.Column(
         db.String,
         db.ForeignKey('application_status.application_status_code'),
         nullable=False,
         server_default=FetchedValue())
-    submission_date = db.Column(db.DateTime, nullable=False, server_default=FetchedValue())
+    submission_date = db.Column(db.DateTime,
+                                nullable=False,
+                                server_default=FetchedValue())
     json = db.Column(JSONB, nullable=False)
     review_json = db.Column(JSONB)
     submitter_ip = db.Column(db.String)
@@ -200,7 +238,9 @@ class Application(Base, AuditMixin):
 
     @hybrid_property
     def submitter_email(self):
-        return self.json.get('company_contact', {'email': None}).get('email', None)
+        return self.json.get('company_contact', {
+            'email': None
+        }).get('email', None)
 
     def send_confirmation_email(self, email_service):
         if not self.submitter_email:
@@ -331,15 +371,10 @@ class Application(Base, AuditMixin):
 </div>
         """
 
-        email_service.send_email(self.submitter_email, 'Application Confirmation', html_body)
-
-    json_key_desc = {
-
-    }
+        email_service.send_email(self.submitter_email,
+                                 'Application Confirmation', html_body)
 
     def get_application_html(self):
-        application = self.json
-
         def create_company_details(company_details):
             return f"""
             <h2>Company Details<h2>
@@ -385,13 +420,21 @@ class Application(Base, AuditMixin):
             </p>
             """
 
-        # TODO: Get the name of the permit holder
         def create_contract_details(contract_details):
+            try:
+                permit_holder = PermitHolderResource.get(
+                    self,
+                    operator_id=contract_details["operator_id"])["records"][0]
+            except:
+                current_app.logger.warning(
+                    'Failed to find the permit holder. Displaying operator ID instead.'
+                )
+
             return f"""
             <h2>Contract Details</h2>
 
             <h3>Permit Holder</h3>
-            <p>{contract_details["operator_id"]}</p>
+            <p>{permit_holder["organization_name"] if permit_holder else f'Operator ID: {contract_details["operator_id"]}'}</p>
             """
 
         def create_well_sites(well_sites):
@@ -400,8 +443,10 @@ class Application(Base, AuditMixin):
                     return f"<li><b>{condition['label']}</b>: {'Yes' if condition['name'] in site_conditions and site_conditions[condition['name']] == True else 'No'}</li>"
 
                 def create_contracted_work_section(section, contracted_work):
-                    def create_sub_section(sub_section, section, contracted_work):
-                        def create_amount_field(amount_field, section, contracted_work):
+                    def create_sub_section(sub_section, section,
+                                           contracted_work):
+                        def create_amount_field(amount_field, section,
+                                                contracted_work):
                             return f"""
                                 <tr>
                                 <td>{amount_field["label"]}:</td>
@@ -440,14 +485,14 @@ class Application(Base, AuditMixin):
             return f"""
             <h2>Well Sites</h2>
             {''.join([create_well_site(well_site, index) for index, well_site in enumerate(well_sites)])}
-            """            
+            """
 
         html = f"""
         <h1>Application Contents</h1>
-        {create_company_details(application["company_details"])}     
-        {create_company_contact(application["company_contact"])}
-        {create_contract_details(application["contract_details"])}
-        {create_well_sites(application["well_sites"])}
+        {create_company_details(self.json["company_details"])}     
+        {create_company_contact(self.json["company_contact"])}
+        {create_contract_details(self.json["contract_details"])}
+        {create_well_sites(self.json["well_sites"])}
         """
-        
+
         return html
