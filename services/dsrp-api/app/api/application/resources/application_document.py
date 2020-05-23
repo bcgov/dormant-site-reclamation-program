@@ -38,7 +38,7 @@ class ApplicationDocumentListResource(Resource, UserMixin):
         if not application:
             raise NotFound("Not found")
 
-        if jwt.validate_roles(ADMIN) or application.application_status_code == "WAIT_FOR_DOCS":
+        if application.application_status_code == "WAIT_FOR_DOCS" or jwt.validate_roles(ADMIN):
             ##Admin or public if waiting for docs, otherwise reject
             docs = request.json['documents']
 
