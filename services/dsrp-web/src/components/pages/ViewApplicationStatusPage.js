@@ -10,7 +10,7 @@ import ViewApplicationStatusForm from "@/components/forms/ViewApplicationStatusF
 import ApplicationStatusCard from "@/components/pages/ApplicationStatusCard";
 import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
 
-import { fetchApplicationById } from "@/actionCreators/applicationActionCreator";
+import { fetchApplicationSummaryById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
 
 import * as router from "@/constants/routes";
@@ -18,7 +18,7 @@ import * as router from "@/constants/routes";
 const { Paragraph, Title } = Typography;
 
 const propTypes = {
-  fetchApplicationById: PropTypes.func.isRequired,
+  fetchApplicationSummaryById: PropTypes.func.isRequired,
   loadedApplication: PropTypes.shape({
     guid: PropTypes.string,
     application_status_code: PropTypes.string,
@@ -43,17 +43,18 @@ const isGuid = (input) => {
 
 export class ViewApplicationStatusPage extends Component {
   componentDidMount = () => {
+    alert(JSON.stringify(this.props.match));
     if (
       this.props.match &&
       this.props.match.params &&
       this.props.match.params.id &&
       isGuid(this.props.match.params.id)
     )
-      this.props.fetchApplicationById(this.props.match.params.id);
+      this.props.fetchApplicationSummaryById(this.props.match.params.id);
   };
 
   onFormSubmit = (values) => {
-    this.props.fetchApplicationById(values.guid);
+    this.props.fetchApplicationSummaryById(values.guid);
   };
 
   render = () =>
@@ -94,7 +95,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      fetchApplicationById,
+      fetchApplicationSummaryById,
     },
     dispatch
   );
