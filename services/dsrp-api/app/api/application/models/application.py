@@ -338,50 +338,50 @@ class Application(Base, AuditMixin):
     }
 
     def get_application_html(self):
-        application = json.loads(json.dumps(self.json), object_hook=lambda d: namedtuple('x', d.keys())(*d.values()))
+        application = self.json
 
         def create_company_details(company_details):
             return f"""
             <h2>Company Details<h2>
 
             <h3>Company Name</h3>
-            <p>{company_details.company_name.label}</p>
+            <p>{company_details["company_name"]["label"]}</p>
 
             <h3>Company Address</h3>
             <p>
-            {company_details.city} {company_details.province} Canada
+            {company_details["city"]} {company_details["province"]} Canada
             <br />
-            {company_details.address_line_1}
+            {company_details["address_line_1"]}
             <br />
-            {company_details.address_line_2}
+            {company_details["address_line_2"]}
             <br />
-            {company_details.postal_code}
+            {company_details["postal_code"]}
             </p>
 
             <h3>Business Number</h3>
-            <p>{company_details.business_number}</p>
+            <p>{company_details["business_number"]}</p>
 
             <h3>Indigenous Participation</h3>
-            <p>{"Yes" if company_details.indigenous_participation_ind else "No"}</p>
-            <p>{company_details.indigenous_participation_description if company_details.indigenous_participation_ind else ""}</p>
+            <p>{"Yes" if company_details["indigenous_participation_ind"] else "No"}</p>
+            <p>{company_details["indigenous_participation_description"] if company_details["indigenous_participation_ind"] else ""}</p>
             """
 
         def create_company_contact(company_contact):
             return f"""
             <h2>Company Contact</h2>
 
-            <p>{company_contact.first_name} {company_contact.last_name}</p>
-            <p>{company_contact.email}</p>
+            <p>{company_contact["first_name"]} {company_contact["last_name"]}</p>
+            <p>{company_contact["email"]}</p>
             <p>
-            Phone: {company_contact.phone_number_1}
+            Phone: {company_contact["phone_number_1"]}
             <br />
-            Ext.: {company_contact.phone_ext_1}
+            Ext.: {company_contact["phone_ext_1"]}
             <br />
-            Phone 2: {company_contact.phone_number_1}
+            Phone 2: {company_contact["phone_number_1"]}
             <br />
-            Ext. 2: {company_contact.phone_ext_1}
+            Ext. 2: {company_contact["phone_ext_1"]}
             <br />
-            Fax: {company_contact.fax}
+            Fax: {company_contact["fax"]}
             </p>
             """
 
@@ -391,7 +391,7 @@ class Application(Base, AuditMixin):
             <h2>Contract Details</h2>
 
             <h3>Permit Holder</h3>
-            <p>{contract_details.operator_id}</p>
+            <p>{contract_details["operator_id"]}</p>
             """
 
         def create_well_sites(well_sites):
@@ -405,7 +405,7 @@ class Application(Base, AuditMixin):
                             return f"""
                                 <tr>
                                 <td>{amount_field["label"]}:</td>
-                                <td>{'$0.00' if not (section["section_name"] in contracted_work and (amount_field["name"] in contracted_work[section["section_name"]]._asdict())) else f'${contracted_work[section["section_name"]]._asdict()[amount_field["name"]]}'}</td>
+                                <td>{'$0.00' if not (section["section_name"] in contracted_work and (amount_field["name"] in contracted_work[section["section_name"]])) else f'${contracted_work[section["section_name"]][amount_field["name"]]}'}</td>
                                 </tr>
                             """
 
@@ -425,15 +425,15 @@ class Application(Base, AuditMixin):
                 <h3>Well Site {index + 1}</h3>
 
                 <h4>Well Authorization Number</h4>
-                <p>{well_site.details.well_authorization_number}</p>
+                <p>{well_site["details"]["well_authorization_number"]}</p>
 
                 <h4>Site Conditions</h4>
                 <ul>
-                {''.join([create_site_condition(condition, well_site.site_conditions._asdict()) for condition in SITE_CONDITIONS])}
+                {''.join([create_site_condition(condition, well_site["site_conditions"]) for condition in SITE_CONDITIONS])}
                 </ul>
 
                 <h4>Contracted Work</h4>
-                {''.join([create_contracted_work_section(section, well_site.contracted_work._asdict()) for section in CONTRACTED_WORK])}
+                {''.join([create_contracted_work_section(section, well_site["contracted_work"]) for section in CONTRACTED_WORK])}
                 <hr />
                 """
 
@@ -444,10 +444,10 @@ class Application(Base, AuditMixin):
 
         html = f"""
         <h1>Application Contents</h1>
-        {create_company_details(application.company_details)}     
-        {create_company_contact(application.company_contact)}
-        {create_contract_details(application.contract_details)}
-        {create_well_sites(application.well_sites)}
+        {create_company_details(application["company_details"])}     
+        {create_company_contact(application["company_contact"])}
+        {create_contract_details(application["contract_details"])}
+        {create_well_sites(application["well_sites"])}
         """
         
         return html

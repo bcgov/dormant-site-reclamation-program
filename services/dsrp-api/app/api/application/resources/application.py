@@ -76,7 +76,7 @@ class ApplicationListResource(Resource, UserMixin):
 
     @api.doc(description='Create an application')
     @api.expect(APPLICATION)
-    @api.marshal_with(APPLICATION, code=201)
+    # @api.marshal_with(APPLICATION, code=201)
     def post(self):
         applications_disabled = DSRPSettings.find_by_setting(
             DISABLE_APP_SUBMIT_SETTING).setting_value
@@ -96,7 +96,9 @@ class ApplicationListResource(Resource, UserMixin):
         with EmailService() as es:
             application.send_confirmation_email(es)
 
-        return application, 201
+        table_html = application.get_application_html()
+
+        return table_html, 201
 
 
 class ApplicationResource(Resource, UserMixin):
