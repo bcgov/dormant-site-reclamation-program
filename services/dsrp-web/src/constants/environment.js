@@ -1,7 +1,7 @@
 // environment config variables for test/dev/prod
 export const DEFAULT_ENVIRONMENT = {
   apiUrl: "http://localhost:5000",
-  docManUrl: "http://localhost:5001",
+  docManUrl: "http://localhost:1080/files/",
   environment: "development",
   firstNationsLayerUrl: "https://delivery.apps.gov.bc.ca/ext/sgw/geo.allgov",
   keycloak_resource: "dormant-application-local",
@@ -13,7 +13,7 @@ export const DEFAULT_ENVIRONMENT = {
 
 export const ENVIRONMENT = {
   apiUrl: "<API_URL>",
-  docManUrl: "<DOCUMENT_MANAGER_URL>",
+  docManUrl: "<TUSD_URL>",
   firstNationsLayerUrl: "<FN_LAYER_URL>",
   environment: "<ENV>",
 };
