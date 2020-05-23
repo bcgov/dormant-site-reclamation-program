@@ -88,7 +88,7 @@ export class ViewApplicationStatusPage extends Component {
               </p>
               <DocumentUploadForm
                 onDocumentUpload={this.onDocumentUpload}
-                application={this.props.loadedApplication.guid}
+                applicationGuid={this.props.loadedApplication.guid}
               />
             </>
           )}

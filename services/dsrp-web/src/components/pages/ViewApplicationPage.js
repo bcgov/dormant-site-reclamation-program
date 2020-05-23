@@ -69,7 +69,7 @@ export class ViewApplicationPage extends Component {
             </Row>
             <Row type="flex" justify="center" align="top">
               <Col xl={{ span: 20 }} xxl={{ span: 16 }}>
-                <DocumentUploadForm application={this.props.application.guid} />
+                <DocumentUploadForm applicationGuid={this.props.application.guid} />
               </Col>
             </Row>
             <Row type="flex" justify="center" align="top" className="landing-section">
