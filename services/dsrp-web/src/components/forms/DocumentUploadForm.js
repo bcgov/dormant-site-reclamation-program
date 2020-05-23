@@ -34,14 +34,8 @@ export class DocumentUploadForm extends Component {
   state = resetFormState;
 
   handleSubmit = (values, dispatch) => {
-    console.log(values);
-    console.log(this.props.applicationGuid);
-    const payload = {
-      documents: this.state.uploadedDocs,
-      confirm_final_documents: values.confirm_final_documents,
-    };
     event.preventDefault();
-    this.props.uploadDocs(this.props.applicationGuid, payload).then((response) => {
+    this.props.uploadDocs(this.props.applicationGuid, this.state.uploadedDocs).then((response) => {
       this.setState({ submitted: true });
       dispatch(initialize(DOCUMENT_UPLOAD_FORM));
       this.props.onDocumentUpload();
