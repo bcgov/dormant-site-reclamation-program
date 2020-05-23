@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { reset, initialize, reduxForm, Field } from "redux-form";
+import { initialize, reduxForm, Field, getFormValues } from "redux-form";
 import { Form, Col, Row, Typography, Button } from "antd";
 import { compose, bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -33,11 +33,15 @@ const resetFormState = {
 export class DocumentUploadForm extends Component {
   state = resetFormState;
 
-  handleSubmit = (values, dispatch) => {
+  handleSubmit = (event) => {
     event.preventDefault();
-    this.props.uploadDocs(this.props.applicationGuid, this.state.uploadedDocs).then((response) => {
+    const payload = {
+      documents: this.state.uploadedDocs,
+      confirm_final_documents: this.props.formValues.confirm_final_documents,
+    };
+    this.props.uploadDocs(this.props.applicationGuid, payload).then(() => {
       this.setState({ submitted: true });
-      dispatch(initialize(DOCUMENT_UPLOAD_FORM));
+      this.props.initialize(DOCUMENT_UPLOAD_FORM);
       this.props.onDocumentUpload();
     });
   };
@@ -86,6 +90,7 @@ export class DocumentUploadForm extends Component {
                     id="confirm_final_documents"
                     name="confirm_final_documents"
                     label="I have finished submitting all requested documents"
+                    type="checkbox"
                     component={renderConfig.CHECKBOX}
                   />
                 </Form.Item>
@@ -125,13 +130,14 @@ DocumentUploadForm.propTypes = propTypes;
 DocumentUploadForm.defaultProps = defaultProps;
 
 const mapStateToProps = (state) => ({
-  // uploadedDocuments:
+  formValues: getFormValues(DOCUMENT_UPLOAD_FORM)(state),
 });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       uploadDocs,
+      initialize,
     },
     dispatch
   );
