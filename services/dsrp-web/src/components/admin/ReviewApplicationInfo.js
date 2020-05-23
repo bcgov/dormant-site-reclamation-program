@@ -3,10 +3,10 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Row, Col } from "antd";
 import { withRouter } from "react-router-dom";
-import { openModal, closeModal } from "@/actions/modalActions";
 import { bindActionCreators, compose } from "redux";
 import { set, isEmpty } from "lodash";
 import queryString from "query-string";
+import { openModal, closeModal } from "@/actions/modalActions";
 import * as routes from "@/constants/routes";
 import * as Strings from "@/constants/strings";
 import {

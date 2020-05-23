@@ -31,7 +31,7 @@ export const FETCH_WELLS = "FETCH_WELLS";
 export const FETCH_SELECTED_WELL = "FETCH_SELECTED_WELL";
 export const FETCH_LIABILITIES = "FETCH_LIABILITIES";
 
-//App Settings
+// App Settings
 export const GET_APP_SETTINGS = "GET_APP_SETTINGS";
 export const APP_SETTINGS = "APP_SETTINGS";
 export const UPDATE_APP_SETTING = "UPDATE_APP_SETTING";
