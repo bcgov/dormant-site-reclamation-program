@@ -1,7 +1,7 @@
-// import AddReportModal from "@/components/modalContent/reports/AddReportModal";
+import ApplicationStatusModal from "@/components/modalContent/ApplicationStatusModal";
 
 export const modalConfig = {
-  // ADD_REPORT: AddReportModal,
+  UPDATE_APPLICATION_STATUS: ApplicationStatusModal,
 };
 
 export default modalConfig;

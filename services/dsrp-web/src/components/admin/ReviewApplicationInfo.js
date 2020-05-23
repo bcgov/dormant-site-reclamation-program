@@ -6,6 +6,7 @@ import { withRouter } from "react-router-dom";
 import { bindActionCreators, compose } from "redux";
 import { set, isEmpty } from "lodash";
 import queryString from "query-string";
+import { openModal, closeModal } from "@/actions/modalActions";
 import * as routes from "@/constants/routes";
 import * as Strings from "@/constants/strings";
 import {
@@ -17,6 +18,7 @@ import {
   fetchApplications,
   updateApplication,
   updateApplicationReview,
+  createApplicationStatus,
 } from "@/actionCreators/applicationActionCreator";
 import {
   getDropdownApplicationStatusOptions,
@@ -32,7 +34,7 @@ import {
 } from "@/actionCreators/OGCActionCreator";
 import ApplicationTable from "@/components/admin/ApplicationTable";
 import JumpToApplicationForm from "@/components/forms/JumpToApplicationForm";
-import * as route from "@/constants/routes";
+import { modalConfig } from "@/components/modalContent/config";
 
 const propTypes = {
   applications: PropTypes.any.isRequired,
@@ -101,14 +103,25 @@ export class ReviewApplicationInfo extends Component {
     );
   };
 
-  handleApplicationStatusChange = (item, application) => {
-    const payload = {
-      ...application,
-      application_status_code: item.key,
-    };
-
-    this.props.updateApplication(application.guid, payload).then(() => {
+  handleApplicationStatusChange = (guid, payload) => {
+    this.props.createApplicationStatus(guid, payload).then(() => {
       this.props.fetchApplications(this.state.params);
+      this.props.closeModal();
+    });
+  };
+
+  openUpdateStatusModal = (item, record) => {
+    event.preventDefault();
+    this.props.openModal({
+      props: {
+        title: `Update Status of ${record.company_name} to: ${
+          this.props.applicationStatusOptionsHash[item.key]
+        }`,
+        status: item.key,
+        application: record,
+        onSubmit: this.handleApplicationStatusChange,
+      },
+      content: modalConfig.UPDATE_APPLICATION_STATUS,
     });
   };
 
@@ -178,7 +191,7 @@ export class ReviewApplicationInfo extends Component {
           applicationStatusOptionsHash={this.props.applicationStatusOptionsHash}
           contractedWorkStatusDropdownOptions={this.props.contractedWorkStatusDropdownOptions}
           contractedWorkStatusOptionsHash={this.props.contractedWorkStatusOptionsHash}
-          handleApplicationStatusChange={this.handleApplicationStatusChange}
+          handleApplicationStatusChange={this.openUpdateStatusModal}
           handleContractedWorkStatusChange={this.handleContractedWorkStatusChange}
           permitHoldersHash={this.props.permitHoldersHash}
           fetchLiabilities={this.props.fetchLiabilities}
@@ -209,6 +222,9 @@ const mapDispatchToProps = (dispatch) =>
       fetchLiabilities,
       fetchWells,
       fetchPermitHolders,
+      createApplicationStatus,
+      openModal,
+      closeModal,
     },
     dispatch
   );

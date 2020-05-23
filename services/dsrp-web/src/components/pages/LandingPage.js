@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Row, Col, Button, Typography } from "antd";
 import * as routes from "@/constants/routes";
-import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 
 const { Paragraph, Text, Title } = Typography;
 
@@ -74,5 +73,5 @@ export const LandingPage = (props) => (
     </Row>
   </>
 );
-// TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
-export default AuthorizationGuard()(LandingPage);
+
+export default LandingPage;

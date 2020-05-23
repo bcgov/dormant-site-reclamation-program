@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import { bindActionCreators, compose } from "redux";
+import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Row, Col, Typography } from "antd";
 import PropTypes from "prop-types";
 
-import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import ApplicationForm from "@/components/forms/ApplicationForm";
 import { fetchAppSettings } from "@/actionCreators/appSettingsActionCreator";
 import { getAppSettings } from "@/selectors/appSettingsSelectors";
@@ -64,13 +63,12 @@ export class SubmitApplicationPage extends Component {
           </Row>
         </>
       );
-    } else {
-      return (
-        <>
-          <Loading />
-        </>
-      );
     }
+    return (
+      <>
+        <Loading />
+      </>
+    );
   }
 }
 
@@ -88,8 +86,4 @@ const mapDispatchToProps = (dispatch) =>
 
 SubmitApplicationPage.propTypes = propTypes;
 
-// TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
-export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
-  AuthorizationGuard()
-)(SubmitApplicationPage);
+export default connect(mapStateToProps, mapDispatchToProps)(SubmitApplicationPage);
