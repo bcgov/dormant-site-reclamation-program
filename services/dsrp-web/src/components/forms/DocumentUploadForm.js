@@ -1,12 +1,10 @@
 import React, { Component } from "react";
-import { reset, initialize } from "redux-form";
+import { reset, initialize, reduxForm, Field } from "redux-form";
 import { Form, Col, Row, Typography, Button } from "antd";
 import { compose, bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
 import PropTypes from "prop-types";
-
-import { reduxForm, Field } from "redux-form";
 
 import { uploadDocs } from "@/actionCreators/uploadDocumentsActionCreator";
 
