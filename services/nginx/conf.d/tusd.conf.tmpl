@@ -2,7 +2,11 @@
 # | TUSD document endpoint                                             |
 # ----------------------------------------------------------------------
 
-location ${PATH_PREFIX}/upload/ {
+location ${PATH_PREFIX}/upload {
+        if ( $request_method ~ ^(GET)$ ) {
+                return 405;
+        }
+
         if (-f /opt/app-root/src/html/maintenance_on.html){
                 return 503;
         }

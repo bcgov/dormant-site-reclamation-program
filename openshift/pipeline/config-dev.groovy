@@ -232,7 +232,7 @@ environments {
             keycloak {
                 clientId_dsrp = "dormant-application-dev"
                 resource = "dormant-application-dev"
-                idpHint_dsrp = "dev"
+                idpHint_dsrp = "idir"
                 url = "https://sso-test.pathfinder.gov.bc.ca/auth"
                 known_config_url = "https://sso-test.pathfinder.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration"
                 siteminder_url = "https://logontest7.gov.bc.ca"
