@@ -398,7 +398,7 @@ class Application(Base, AuditMixin):
 
             <h3>Indigenous Participation</h3>
             <p>{"Yes" if company_details["indigenous_participation_ind"] else "No"}</p>
-            <p>{company_details["indigenous_participation_description"] if company_details["indigenous_participation_ind"] else ""}</p>
+            {f'<p>{company_details["indigenous_participation_description"]}</p>' if company_details["indigenous_participation_ind"] else ""}
             """
 
         def create_company_contact(company_contact):
@@ -408,15 +408,11 @@ class Application(Base, AuditMixin):
             <p>{company_contact["first_name"]} {company_contact["last_name"]}</p>
             <p>{company_contact["email"]}</p>
             <p>
-            Phone: {company_contact["phone_number_1"]}
-            <br />
-            Ext.: {company_contact["phone_ext_1"]}
-            <br />
-            Phone 2: {company_contact["phone_number_1"]}
-            <br />
-            Ext. 2: {company_contact["phone_ext_1"]}
-            <br />
-            Fax: {company_contact["fax"]}
+            Phone: {company_contact["phone_number_1"]}<br />     
+            {f'Ext.: {company_contact["phone_ext_1"]}<br />' if company_contact["phone_ext_1"] else ""} 
+            {f'Phone 2.: {company_contact["phone_number_2"]}<br />' if company_contact["phone_number_2"] else ""}
+            {f'Ext. 2: {company_contact["phone_ext_2"]}<br />' if company_contact["phone_ext_2"] else ""}
+            {f'Fax: {company_contact["fax"]}<br />' if company_contact["fax"] else ""}
             </p>
             """
 
