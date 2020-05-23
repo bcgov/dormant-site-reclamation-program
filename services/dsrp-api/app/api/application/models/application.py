@@ -9,7 +9,6 @@ from app.extensions import db
 from app.api.utils.models_mixins import Base, AuditMixin
 from app.api.utils.field_template import FieldTemplate
 from .application_status import ApplicationStatus
-from app.api.constants import PERMIT_HOLDER_CACHE
 from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK
 from app.api.permit_holder.resources.permit_holder import PermitHolderResource
 
@@ -146,7 +145,8 @@ class Application(Base, AuditMixin):
           <p>
                 We have successfully received your application in the BC Governments Dormant
                 Site Reclamation Program. Please keep your reference number safe as you will
-                need it to carry your application forward in this process.
+                need it to carry your application forward in this process. You can view the 
+                contents of your application below.
 				<br />
 				<br />
                 <a href='{Config.URL}/view-application-status/{self.guid}'>Click here to view the status of your application.</a>
