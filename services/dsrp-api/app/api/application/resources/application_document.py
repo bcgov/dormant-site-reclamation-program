@@ -55,7 +55,7 @@ class ApplicationDocumentListResource(Resource, UserMixin):
                 ) #placeholder 
                 application.status_changes.append(new_app_status_change)
                 application.save()
-                db.session.refresh(app_status_change)
+                db.session.refresh(new_app_status_change)
                 with EmailService() as es:
                     new_app_status_change.send_status_change_email(es)
 
