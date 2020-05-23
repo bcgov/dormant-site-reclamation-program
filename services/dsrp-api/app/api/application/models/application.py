@@ -22,20 +22,21 @@ class Application(Base, AuditMixin):
         id = fields.Integer(dump_only=True)
         guid = fields.String(dump_only=True)
         submission_date = fields.String(dump_only=True)
-        application_status_code = FieldTemplate(field=fields.String, one_of='ApplicationStatus')
 
     id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
     guid = db.Column(UUID(as_uuid=True), nullable=False, unique=True, server_default=FetchedValue())
-    application_status_code = db.Column(db.String,
-                                        db.ForeignKey('application_status.application_status_code'),
-                                        nullable=False,
-                                        server_default=FetchedValue())
+
     submission_date = db.Column(db.DateTime, nullable=False, server_default=FetchedValue())
     json = db.Column(JSONB, nullable=False)
     review_json = db.Column(JSONB)
     submitter_ip = db.Column(db.String)
 
     documents = db.relationship('ApplicationDocument', lazy='select')
+    status_changes = db.relationship(
+        'ApplicationStatusChange',
+        lazy='joined',
+        order_by='desc(ApplicationStatusChange.change_date)',
+    )
 
     def __repr__(self):
         return f'<{self.__name__} {self.guid}>'
@@ -86,7 +87,14 @@ class Application(Base, AuditMixin):
 
     @hybrid_property
     def submitter_email(self):
-        return self.json.get('company_contact', {'email': None}).get('email', None)
+        return self.json.get('company_contact', {}).get('email')
+
+    @hybrid_property
+    def application_status_code(self):
+        if self.status_changes:
+            return self.status_changes[0].application_status_code
+        else:
+            return 'NOT_STARTED'
 
     def send_confirmation_email(self, email_service):
         if not self.submitter_email:
@@ -217,7 +225,6 @@ class Application(Base, AuditMixin):
   <p class="MsoNormal"><span>&nbsp;</span></p>
 </div>
         """
-
         email_service.send_email(self.submitter_email, 'Application Confirmation', html_body)
 
     def get_application_html(self):

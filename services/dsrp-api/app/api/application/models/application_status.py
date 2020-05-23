@@ -4,11 +4,14 @@ from app.extensions import db
 from app.api.utils.models_mixins import Base, AuditMixin
 
 
+
+#'NOT_STARTED', 'IN_PROGRESS', 'WAIT_FOR_DOCS', 'DOC_SUBMITTED', 'FIRST_PAY_APPROVED','Rejected','WITHDRAWN'
 class ApplicationStatus(Base, AuditMixin):
     __tablename__ = "application_status"
 
     application_status_code = db.Column(db.String, nullable=False, primary_key=True)
     description = db.Column(db.String, nullable=False)
+    long_description = db.Column(db.String)
     active = db.Column(db.Boolean, nullable=False, server_default=FetchedValue())
 
     def __repr__(self):

@@ -11,7 +11,8 @@ PAGINATED_LIST = api.model(
 
 APPLICATION_STATUS = api.model('ApplicationStatus', {
     'application_status_code': fields.String,
-    'description': fields.String
+    'description': fields.String,
+    'long_description':fields.String
 })
 
 

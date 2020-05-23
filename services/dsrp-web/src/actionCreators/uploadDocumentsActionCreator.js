@@ -8,9 +8,8 @@ import { createRequestHeader } from "../utils/requestHeaders";
 import * as applicationActions from "@/actions/applicationActions";
 import CustomAxios from "../customAxios";
 
-export const uploadDocs = (guid, documents) => (dispatch) => {
+export const uploadDocs = (guid, payload) => (dispatch) => {
   dispatch(request(reducerTypes.UPLOAD_DOCUMENTS));
-  const payload = { documents };
   return CustomAxios()
     .post(ENVIRONMENT.apiUrl + API.APPLICATION_DOCUMENT(guid), payload, createRequestHeader())
     .then((response) => {
