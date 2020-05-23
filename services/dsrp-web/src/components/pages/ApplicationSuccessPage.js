@@ -59,5 +59,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({}, dispatch);
 ApplicationSuccessPage.propTypes = propTypes;
 ApplicationSuccessPage.defaultProps = defaultProps;
 
-// TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
 export default compose(connect(mapStateToProps, mapDispatchToProps))(ApplicationSuccessPage);
