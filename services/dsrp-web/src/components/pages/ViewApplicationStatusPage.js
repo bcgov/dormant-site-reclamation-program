@@ -3,15 +3,20 @@ import { connect } from "react-redux";
 import { Row, Col, Typography } from "antd";
 import PropTypes from "prop-types";
 import { bindActionCreators, compose } from "redux";
+import { withRouter } from "react-router-dom";
+
 import { isEmpty } from "lodash";
 
 import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 
 import ViewApplicationStatusForm from "@/components/forms/ViewApplicationStatusForm";
 import ApplicationStatusCard from "@/components/pages/ApplicationStatusCard";
+import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
 
 import { fetchApplicationById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
+
+import * as router from "@/constants/routes";
 
 const { Paragraph, Title } = Typography;
 
@@ -28,6 +33,7 @@ const propTypes = {
       id: PropTypes.string,
     },
   }).isRequired,
+  history: PropTypes.shape({ push: PropTypes.func }).isRequired,
 };
 
 const isGuid = (input) => {
@@ -53,6 +59,10 @@ export class ViewApplicationStatusPage extends Component {
     this.props.fetchApplicationById(values.guid);
   };
 
+  onDocumentUpload = () => {
+    // this.props.history.push(router.VIEW_APPLICATION_STATUS);
+  };
+
   render = () =>
     isEmpty(this.props.loadedApplication) ? (
       <>
@@ -72,6 +82,10 @@ export class ViewApplicationStatusPage extends Component {
       <Row type="flex" justify="center" align="top" className="landing-section">
         <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
           <ApplicationStatusCard application={this.props.loadedApplication} />
+          <DocumentUploadForm
+            onDocumentUpload={this.onDocumentUpload}
+            application={this.props.loadedApplication.guid}
+          />
         </Col>
       </Row>
     );
@@ -93,6 +107,7 @@ const mapDispatchToProps = (dispatch) =>
 
 // TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
 export default compose(
+  withRouter,
   connect(mapStateToProps, mapDispatchToProps),
   AuthorizationGuard()
 )(ViewApplicationStatusPage);

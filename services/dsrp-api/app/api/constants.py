@@ -1,5 +1,5 @@
 def DOWNLOAD_TOKEN(token_guid):
-    return f'document-manager:download-token:{token_guid}'
+    return f'dsrp:s3-download-token:{token_guid}'
 
 
 # Deep Update Special Flag

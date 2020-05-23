@@ -1,16 +1,6 @@
 from app.extensions import api
 from flask_restplus import fields
 
-APPLICATION = api.model(
-    'Application', {
-        'id': fields.Integer,
-        'guid': fields.String,
-        'application_status_code': fields.String,
-        'submission_date': fields.DateTime,
-        'json': fields.Raw,
-        'review_json': fields.Raw
-    })
-
 PAGINATED_LIST = api.model(
     'List', {
         'current_page': fields.Integer,
@@ -19,10 +9,36 @@ PAGINATED_LIST = api.model(
         'total': fields.Integer
     })
 
-APPLICATION_LIST = api.inherit('ApplicationList', PAGINATED_LIST,
-                               {'records': fields.List(fields.Nested(APPLICATION))})
-
 APPLICATION_STATUS = api.model('ApplicationStatus', {
     'application_status_code': fields.String,
-    'description': fields.String
+    'description': fields.String,
+    'long_description':fields.String
 })
+
+
+APPLICATION_DOCUMENT = api.model(
+    "ApplicationDocument", {
+        'application_document_guid': fields.String,
+        'document_name': fields.String,
+        'upload_date': fields.Date,
+    })
+
+APPLICATION_DOCUMENT_LIST = api.model(
+    "ApplicationDocumentList",{
+        'documents':fields.List(fields.Nested(APPLICATION_DOCUMENT))
+    }
+)
+
+APPLICATION = api.model(
+    'Application', {
+        'id': fields.Integer,
+        'guid': fields.String,
+        'application_status_code': fields.String,
+        'submission_date': fields.DateTime,
+        'json': fields.Raw,
+        'review_json': fields.Raw,
+        'documents': fields.List(fields.Nested(APPLICATION_DOCUMENT))
+    })
+
+APPLICATION_LIST = api.inherit('ApplicationList', PAGINATED_LIST,
+                               {'records': fields.List(fields.Nested(APPLICATION))})
