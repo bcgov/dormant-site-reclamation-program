@@ -3,6 +3,7 @@ import { initialize, reduxForm, Field, getFormValues } from "redux-form";
 import { Form, Col, Row, Typography, Button } from "antd";
 import { compose, bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import { has } from "lodash";
 
 import PropTypes from "prop-types";
 
@@ -12,22 +13,25 @@ import { renderConfig } from "@/components/common/config";
 import { DOCUMENT_UPLOAD_FORM } from "@/constants/forms";
 import { DOCUMENT, EXCEL } from "@/constants/fileTypes";
 
-const { Title } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 const propTypes = {
   applicationGuid: PropTypes.string.isRequired,
   uploadedDocs: PropTypes.arrayOf(PropTypes.any),
   uploadDocs: PropTypes.func.isRequired,
   onDocumentUpload: PropTypes.func.isRequired,
+  isAdminView: PropTypes.bool,
 };
 
 const defaultProps = {
   uploadedDocs: [],
+  isAdminView: false,
 };
 
 const resetFormState = {
   uploadedDocs: [],
   submitted: false,
+  finalDocuments: false,
 };
 
 export class DocumentUploadForm extends Component {
@@ -35,12 +39,15 @@ export class DocumentUploadForm extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
+    const finalDocuments = has(this.props.formValues, "confirm_final_documents")
+      ? this.props.formValues.confirm_final_documents
+      : false;
     const payload = {
       documents: this.state.uploadedDocs,
-      confirm_final_documents: this.props.formValues.confirm_final_documents,
+      confirm_final_documents: finalDocuments,
     };
     this.props.uploadDocs(this.props.applicationGuid, payload).then(() => {
-      this.setState({ submitted: true });
+      this.setState({ submitted: true, finalDocuments });
       this.props.initialize(DOCUMENT_UPLOAD_FORM);
       this.props.onDocumentUpload();
     });
@@ -66,6 +73,28 @@ export class DocumentUploadForm extends Component {
     return !this.state.submitted ? (
       <Row>
         <Col>
+          {!this.props.isAdminView && (
+            <>
+              <Title level={3}>Supporting Documents</Title>
+              <Text>
+                You must submit the following files before any approved work can begin and your
+                initial payment can be processed:
+              </Text>
+              <Paragraph>
+                <ul className="landing-list">
+                  <li>
+                    A signed copy of the agreement you received from the Province of British
+                    Columbia
+                  </li>
+                  <li>
+                    A copy of the contract between your company and the permit holder named in the
+                    application
+                  </li>
+                  <li>A certificate of insurance</li>
+                </ul>
+              </Paragraph>
+            </>
+          )}
           <Form layout="vertical" onSubmit={this.handleSubmit} onReset={this.handleReset}>
             <Row gutter={48}>
               <Col span={24}>
@@ -85,11 +114,21 @@ export class DocumentUploadForm extends Component {
             </Row>
             <Row gutter={48}>
               <Col span={24}>
+                {!this.props.isAdminView && (
+                  <Text>
+                    Your application cannot progress until you indicate that all documents have been
+                    submitted
+                  </Text>
+                )}
                 <Form.Item>
                   <Field
                     id="confirm_final_documents"
                     name="confirm_final_documents"
-                    label="I have finished submitting all requested documents"
+                    label={
+                      this.props.isAdminView
+                        ? "All files have been received from applicant"
+                        : "I have finished submitting all requested documents"
+                    }
                     type="checkbox"
                     component={renderConfig.CHECKBOX}
                   />
@@ -115,6 +154,12 @@ export class DocumentUploadForm extends Component {
         <Col>
           <Title level={3}>Document Upload Successful</Title>
           <p>Succesfully uploaded the following documents:</p>
+          {!this.props.isAdminView && this.state.finalDocuments && (
+            <p>
+              Application Status has changed to <strong>Documents Submitted</strong>. You will see
+              this change the next time you visit this page.
+            </p>
+          )}
           <ul>
             {this.state.uploadedDocs.map((value, index) => {
               return <li key={index}>{value.document_name}</li>;

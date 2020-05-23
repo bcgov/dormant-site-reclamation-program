@@ -36,14 +36,17 @@ export class ApplicationSuccessPage extends Component {
             </Paragraph>
             <Title level={4}>What happens next</Title>
             <Paragraph>
-              If your application is approved, you will need to submit the following:
+              If any of the work applied for is approved, you must upload the following:
               <ul>
-                <li>Contract with Permit Holder</li>
-                <li>Criminal Records Check</li>
-                <li>Certificate of Insurance</li>
+                <li>
+                  A signed copy of the agreement you received from the Province of British Columbia
+                </li>
+                <li>
+                  A copy of the contract between your company and the permit holder named in the
+                  application
+                </li>
+                <li>A certificate of insurance</li>
               </ul>
-              You will also be sent Shared Cost Arrangement (Schedule A) to sign and return before
-              first payment can be processed.
             </Paragraph>
           </Typography>
         </Col>
