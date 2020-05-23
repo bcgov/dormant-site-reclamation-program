@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { isArray } from "lodash";
+import { isArray, isEmpty } from "lodash";
 import { Table, Icon, Tooltip, Pagination, Menu, Dropdown, Input, Button } from "antd";
 import { formatDateTime, formatDate, formatMoney, formatDateTimeFine } from "@/utils/helpers";
 import { getFilterListApplicationStatusOptions } from "@/selectors/staticContentSelectors";
@@ -451,16 +451,18 @@ export class ApplicationTable extends Component {
           loading={!this.props.isLoaded}
         />
         <br />
-        <div className="center">
-          <Pagination
-            defaultCurrent={Number(this.props.params.page)}
-            current={Number(this.props.params.page)}
-            total={Number(this.props.pageData.total)}
-            pageSize={Number(this.props.params.per_page)}
-            showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
-            onChange={this.props.onPageChange}
-          />
-        </div>
+        {!isEmpty(this.props.applications) && (
+          <div className="center">
+            <Pagination
+              defaultCurrent={Number(this.props.params.page)}
+              current={Number(this.props.params.page)}
+              total={Number(this.props.pageData.total)}
+              pageSize={Number(this.props.params.per_page)}
+              showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+              onChange={this.props.onPageChange}
+            />
+          </div>
+        )}
       </>
     );
   }

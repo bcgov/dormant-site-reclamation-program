@@ -1,11 +1,13 @@
 import React from "react";
-import { Layout, Row, Col } from "antd";
+import { Layout, Row, Col, Tag } from "antd";
 import { Link } from "react-router-dom";
 import MediaQuery from "react-responsive";
 import PropTypes from "prop-types";
 import HeaderDropdown from "@/components/layout/HeaderDropdown";
 import * as routes from "@/constants/routes";
 import { BC_GOV } from "@/constants/assets";
+
+import { ENVIRONMENT } from "@/constants/environment";
 
 const propTypes = {
   xs: PropTypes.number.isRequired,
@@ -15,6 +17,8 @@ const propTypes = {
 };
 
 const smallestDesktopWidth = 640;
+
+const notProd = (ENVIRONMENT.environment === "development") | (ENVIRONMENT.environment === "test");
 
 export const Header = (props) => (
   <Layout.Header>
@@ -31,7 +35,8 @@ export const Header = (props) => (
               <MediaQuery minWidth={smallestDesktopWidth}>
                 Dormant Sites Reclamation Program
               </MediaQuery>
-              <MediaQuery maxWidth={smallestDesktopWidth - 1}>DSRP</MediaQuery>
+              <MediaQuery maxWidth={smallestDesktopWidth - 1}>DSRP</MediaQuery>{" "}
+              {notProd && <Tag color="red">Test Site</Tag>}
             </Link>
           </span>
           <span className="header-menu">

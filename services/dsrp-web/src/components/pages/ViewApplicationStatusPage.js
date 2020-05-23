@@ -4,10 +4,7 @@ import { Row, Col, Typography } from "antd";
 import PropTypes from "prop-types";
 import { bindActionCreators, compose } from "redux";
 import { withRouter } from "react-router-dom";
-
 import { isEmpty } from "lodash";
-
-import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 
 import ViewApplicationStatusForm from "@/components/forms/ViewApplicationStatusForm";
 import ApplicationStatusCard from "@/components/pages/ApplicationStatusCard";
@@ -110,9 +107,7 @@ const mapDispatchToProps = (dispatch) =>
     dispatch
   );
 
-// TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
 export default compose(
   withRouter,
-  connect(mapStateToProps, mapDispatchToProps),
-  AuthorizationGuard()
+  connect(mapStateToProps, mapDispatchToProps)
 )(ViewApplicationStatusPage);

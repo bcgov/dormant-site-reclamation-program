@@ -11,7 +11,7 @@ from sqlalchemy.exc import DBAPIError
 
 from app.extensions import api, db
 from app.api.utils.resources_mixins import UserMixin
-from app.api.utils.access_decorators import requires_role_admin, requires_role_view_all
+from app.api.utils.access_decorators import requires_role_admin
 
 from app.api.dsrp_settings.models.dsrp_settings import DSRPSettings
 from app.api.dsrp_settings.response_models import DSRP_SETTINGS, DSRP_SETTING
@@ -20,14 +20,12 @@ from app.api.dsrp_settings.response_models import DSRP_SETTINGS, DSRP_SETTING
 class DSRPSettingsResource(Resource, UserMixin):
     @api.doc(description='Request all app settings')
     @api.marshal_with(DSRP_SETTINGS, code=200)
-    #@requires_role_view_all
     def get(self):
         settings = DSRPSettings.get_all()
 
         return {'settings': settings}
 
     @api.doc(description='Update app settings')
-    #@requires_role_view_all
     @api.expect(DSRP_SETTING)
     @api.marshal_with(DSRP_SETTING, code=200)
     @requires_role_admin
