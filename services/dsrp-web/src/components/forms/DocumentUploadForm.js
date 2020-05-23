@@ -65,7 +65,6 @@ export class DocumentUploadForm extends Component {
       <Row>
         <Col>
           <Form layout="vertical" onSubmit={this.handleSubmit} onReset={this.handleReset}>
-            <Title level={3}>Upload Required Files</Title>
             <Row gutter={48}>
               <Col span={24}>
                 <Form.Item label="Upload Required Files">
