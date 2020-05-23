@@ -133,12 +133,11 @@ class Application(Base, AuditMixin):
         <td colspan="4" width="416" valign="top"
           style="width:41.15pt; border:none; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:56.9pt">
           <p>
-                We have successfully received your application in the BC Governments Dormant
-                Site Reclamation Program. Please keep your reference number safe as you will
+                We have successfully received your application in the British Columbia Dormant Sites Reclamation Program. Please keep your reference number safe as you will
                 need it to carry your application forward in this process.
 				<br />
 				<br />
-                <a href='{Config.URL}/view-application-status/{self.guid}'>Click here to view the status of your application.</a>
+                <a href='{Config.URL}view-application-status/{self.guid}'>Click here to view the status of your application.</a>
                 <br/>
                 <br/>
 		  <br/>
