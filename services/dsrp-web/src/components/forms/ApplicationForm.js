@@ -76,6 +76,29 @@ export class ApplicationForm extends Component {
     });
   }
 
+  validateJSONData = (json) => {
+    json.well_sites.forEach((site) => {
+      Object.keys(site.contracted_work).forEach((type) => {
+        let empty = Object.keys(site.contracted_work[type]).every(
+          (x) => site.contracted_work[type][x] === null
+        );
+        if (empty) {
+          delete site.contracted_work[type];
+        } else {
+          Object.keys(site.contracted_work[type]).forEach(
+            (k) => site.contracted_work[type][k] === null && delete site.contracted_work[type][k]
+          );
+        }
+      });
+      Object.keys(site.site_conditions).forEach((cond) => {
+        if (!site.site_conditions[cond]) {
+          delete site.site_conditions[cond];
+        }
+      });
+    });
+    return json;
+  };
+
   getSavedFormData() {
     const data = localStorage.getItem(APPLICATION_FORM);
     return data ? JSON.parse(data) : null;
@@ -86,7 +109,7 @@ export class ApplicationForm extends Component {
   }
 
   handleSubmit = (values, dispatch) => {
-    const application = { json: values, documents: this.state.uploadedDocs };
+    const application = { json: this.validateJSONData(values), documents: this.state.uploadedDocs };
     this.props.createApplication(application).then((response) => {
       this.setState(resetFormState);
       dispatch(initialize(APPLICATION_FORM));
