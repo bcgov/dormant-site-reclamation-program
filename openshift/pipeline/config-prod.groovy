@@ -315,8 +315,8 @@ environments {
                     PATH = "/api"
                 }
                 'dsrp-tusd-backend' {
-                    HOST = "http://dsrp-tusd-backend${vars.deployment.suffix}:5001"
-                    PATH = "/upload"
+                    HOST = "http://tusd${vars.deployment.suffix}:1080"
+                    PATH = "/files/"
                 }
                 'dsrp-redis' {
                     HOST = "http://dsrp-redis${vars.deployment.suffix}"
