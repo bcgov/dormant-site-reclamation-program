@@ -18,7 +18,10 @@ const propTypes = {
 
 const smallestDesktopWidth = 640;
 
-const notProd = (ENVIRONMENT.environment === "development") | (ENVIRONMENT.environment === "test");
+const notProd = () => {
+  if (ENVIRONMENT.environment.match(/^(development|test)$/)) return true;
+  else return false;
+};
 
 export const Header = (props) => (
   <Layout.Header>
@@ -36,7 +39,7 @@ export const Header = (props) => (
                 Dormant Sites Reclamation Program
               </MediaQuery>
               <MediaQuery maxWidth={smallestDesktopWidth - 1}>DSRP</MediaQuery>{" "}
-              {notProd && <Tag color="red">Test Site</Tag>}
+              {notProd() && <Tag color="red">Test Site</Tag>}
             </Link>
           </span>
           <span className="header-menu">
