@@ -24,8 +24,10 @@ const renderDropdownMenu = (option, onClick, record, currentStatus) => (
   <Menu onClick={(item) => onClick(item, record)}>
     {option
       .filter(({ value }) => value !== currentStatus)
-      .map(({ label, value }) => (
-        <Menu.Item key={value}>{label}</Menu.Item>
+      .map(({ label, value, description }) => (
+        <Menu.Item title={description} key={value}>
+          {label}
+        </Menu.Item>
       ))}
   </Menu>
 );
