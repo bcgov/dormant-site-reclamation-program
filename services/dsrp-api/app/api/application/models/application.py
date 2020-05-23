@@ -14,6 +14,52 @@ from app.api.utils.field_template import FieldTemplate
 from .application_status import ApplicationStatus
 
 
+
+
+
+
+def site_condition(name, label):
+    return {
+        "name": name,
+        "label": label
+    }
+
+SITE_CONDITIONS = [
+  site_condition("within_1000m_stream", "Within 1,000 metres of a stream"),
+  site_condition("within_500m_groundwater_well", "Within 500 metres of a groundwater well"),
+  site_condition(
+    "within_environmental_protection",
+    "Within environmental protection and management area or critical habitat"
+  ),
+  site_condition("suspected_offsite_contamination", "Suspected or known to have offsite contamination"),
+  site_condition(
+    "within_1500m_private_residence",
+    "Within 1,500 metres of a private residence or community gathering area"
+  ),
+  site_condition(
+    "within_active_area_trapping",
+    "Within an area actively used for trapping, guide outfitting, range tenure or hunting"
+  ),
+  site_condition("on_crown_land_winter_access", "On Crown land that is winter access only"),
+  site_condition("drilled_abandonded_prior_1997", "Drilled or abandoned prior to 1997"),
+  site_condition(
+    "within_treaty_land_entitlement",
+    "Within Treaty Land Entitlement, cultural lands and/or Indigenous peoples' critical areas"
+  ),
+  site_condition("within_sensitive_watersheds", "Within sensitive watersheds that service communities"),
+  site_condition("on_or_near_reserve_lands", "On or near reserve lands"),
+  site_condition(
+    "permit_holider_notice_dormant",
+    "Permit holder has provided notice that this site is dormant to achieve cost efficiencies for an area-based closure plan"
+  ),
+  site_condition("located_agricultural_land_reserve", "Located inside Agricultural Land Reserve"),
+  site_condition(
+    "permit_holder_work_specified_2020_awp",
+    "Specified work that was included in a permit holder's Dormant Sites 2020 Annual Work Plan"
+  )
+]
+
+
 class Application(Base, AuditMixin):
     __tablename__ = 'application'
 
@@ -190,17 +236,17 @@ class Application(Base, AuditMixin):
             return f"""
             <h2>Company Details<h2>
 
-            <h4>Company Name</h4>
+            <h3>Company Name</h3>
             <p>{company_details.company_name.label}</p>
 
-            <h4>Business Number</h4>
+            <h3>Business Number</h3>
             <p>{company_details.business_number}</p>
 
-            <h4>Indigenous Participation</h4>
+            <h3>Indigenous Participation</h3>
             <p>{"Yes" if company_details.indigenous_participation_ind else "No"}</p>
             <p>{company_details.indigenous_participation_description if company_details.indigenous_participation_ind else ""}</p>
 
-            <h4>Address</h4>
+            <h3>Address</h3>
             <p>
             {company_details.city} {company_details.province} Canada
             <br />
@@ -233,10 +279,50 @@ class Application(Base, AuditMixin):
             <br />
             """
 
+        # TODO: Get the name of the permit holder
+        def create_contract_details(contract_details):
+            return f"""
+            <h2>Contract Details</h2>
+
+            <p>{contract_details.operator_id}</p>
+            <br />
+            """
+
+        def create_well_sites(well_sites):
+
+            def create_well_site(well_site, index):
+                def create_site_condition(definition, site_conditions):
+                    current_app.logger.info(definition)
+                    current_app.logger.info(site_conditions)
+                    return f"<p><b>{definition['label']}</b>: {'Yes' if definition['name'] in site_conditions and site_conditions[definition['name']] == True else 'No'}"
+
+                return f"""
+                <h3>Well Site {index + 1}</h3>
+
+                <h4>Well Authorization Number</h4>
+                <p>{well_site.details.well_authorization_number}</p>
+
+                <h4>Site Conditions</h4>
+                <p>{''.join([create_site_condition(definition, well_site.site_conditions._asdict()) for definition in SITE_CONDITIONS])}</p>
+
+                """
+
+            return f"""
+            <h2>Well Sites</h2>
+
+            {''.join([create_well_site(well_site, index) for index, well_site in enumerate(well_sites)])}
+
+            <br />
+            """            
+
         html = f"""
         {create_company_details(application.company_details)}
         <br />
         {create_company_contact(application.company_contact)}
+        <br />
+        {create_contract_details(application.contract_details)}
+        <br />
+        {create_well_sites(application.well_sites)}
         """
 
         return html
