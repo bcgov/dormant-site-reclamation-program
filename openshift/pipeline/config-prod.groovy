@@ -115,7 +115,7 @@ app {
                             'BASE_PATH': "${vars.modules.'dsrp-frontend'.PATH}",
                             'NODE_ENV': "${vars.deployment.node_env}",
                             'FN_LAYER_URL': "${vars.deployment.fn_layer_url}",
-                            'MATOMO_URL': "${vars.deployment.matomo_url}"
+                            'MATOMO_URL': "${vars.deployment.matomo_url}",
                             'KEYCLOAK_RESOURCE': "${vars.keycloak.resource}",
                             'KEYCLOAK_CLIENT_ID': "${vars.keycloak.clientId_dsrp}",
                             'KEYCLOAK_URL': "${vars.keycloak.url}",
