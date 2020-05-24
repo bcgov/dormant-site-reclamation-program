@@ -91,11 +91,11 @@ const validateStartDate = (date, wellSiteFormValues, contractWorkSection) => {
   const endDate =
     sectionValues && sectionValues.planned_end_date ? moment(sectionValues.planned_end_date) : null;
   if (selectedDate) {
-    if (
-      selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
-      selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD")
-    ) {
-      return "Date cannot be outside of the program";
+    if (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD")) {
+      return `Date cannot be before the program's start date: ${PROGRAM_START_DATE}`;
+    }
+    if (selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD")) {
+      return `Date cannot be after the program's end date: ${PROGRAM_END_DATE}`;
     }
     if (endDate && selectedDate > endDate) {
       return "Planned start date cannot be after end date";
@@ -136,11 +136,11 @@ const validateEndDate = (date, wellSiteFormValues, contractWorkSection) => {
       ? moment(sectionValues.planned_start_date)
       : null;
   if (selectedDate) {
-    if (
-      selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
-      selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD")
-    ) {
-      return "Date cannot be outside of the program";
+    if (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD")) {
+      return `Date cannot be before the program's start date: ${PROGRAM_START_DATE}`;
+    }
+    if (selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD")) {
+      return `Date cannot be after the program's end date: ${PROGRAM_END_DATE}`;
     }
     if (startDate && selectedDate < startDate) {
       return "Planned end date cannot be before start date";
