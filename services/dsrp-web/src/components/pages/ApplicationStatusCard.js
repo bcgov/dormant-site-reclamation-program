@@ -95,7 +95,7 @@ const description = (status) => {
 };
 
 export const ApplicationStatusCard = (props) => (
-  <Row type="flex" align="top" className="landing-header">
+  <Row type="flex" align="top">
     <Title level={1}>Application Progress</Title>
     <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
       <Title level={4}>Received On</Title>
@@ -105,6 +105,7 @@ export const ApplicationStatusCard = (props) => (
         <b>{props.applicationStatusHash[props.application.application_status_code]}</b>
       </Paragraph>
       <Paragraph>{description(props.application.application_status_code)}</Paragraph>
+      <br/>
       <Paragraph>
         If you have any questions regarding your application,{" "}
         <a href="mailto:DormantSite.BC.Government@gov.bc.ca">Contact us</a> and be sure to include

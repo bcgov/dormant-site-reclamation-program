@@ -49,7 +49,7 @@ class ApplicationDocumentListResource(Resource, UserMixin):
             if request.json.get('confirm_final_documents'):
                 new_app_status_change = ApplicationStatusChange(
                     application_status_code="DOC_SUBMITTED",
-                    note="Thank you for uploading all of the required documentation")  #placeholder
+                    note="Thank you for uploading the required documents")  #placeholder
                 application.status_changes.append(new_app_status_change)
                 application.save()
                 db.session.refresh(new_app_status_change)
