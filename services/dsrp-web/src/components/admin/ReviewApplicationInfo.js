@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { Row, Col } from "antd";
+import { Button, Icon } from "antd";
 import { withRouter } from "react-router-dom";
 import { bindActionCreators, compose } from "redux";
 import { set, isEmpty } from "lodash";
@@ -94,6 +94,13 @@ export class ReviewApplicationInfo extends Component {
     );
   };
 
+  handleRefresh = () => {
+    if (!this.state.isLoaded) {
+      return;
+    }
+    this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params));
+  };
+
   handleApplicationsSearch = (params) => {
     this.setState(
       {
@@ -174,6 +181,14 @@ export class ReviewApplicationInfo extends Component {
   render() {
     return (
       <>
+        <Button
+          type="link"
+          onClick={this.handleRefresh}
+          style={{ float: "right", marginTop: 70, zIndex: 1000 }}
+        >
+          <Icon type="reload" className="icon-lg" />
+          Refresh
+        </Button>
         <JumpToApplicationForm
           onSubmit={this.search}
           initialValues={{ guid: this.state.params.guid }}
