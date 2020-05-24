@@ -92,7 +92,10 @@ export class DocumentUploadForm extends Component {
                   </li>
                   <li>A certificate of insurance</li>
                 </ul>
-                <b>NOTE: You will not see documents you may have previously uploaded for this application</b>
+                <b>
+                  NOTE: You will not see documents you may have previously uploaded for this
+                  application
+                </b>
               </Paragraph>
             </>
           )}
