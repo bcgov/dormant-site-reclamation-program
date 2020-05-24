@@ -14,6 +14,8 @@ import LinkButton from "@/components/common/LinkButton";
 import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
 import Loading from "@/components/common/Loading";
 
+import { PageTracker } from "@/utils/trackers";
+
 const { TabPane } = Tabs;
 const propTypes = {
   match: PropTypes.shape({
@@ -50,6 +52,7 @@ export class ViewApplicationPage extends Component {
       <>
         {(this.state.isLoaded && (
           <>
+            <PageTracker title="View Application" />
             <Row type="flex" justify="center" align="top" className="landing-header">
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
                 <LinkButton onClick={this.goBack}>

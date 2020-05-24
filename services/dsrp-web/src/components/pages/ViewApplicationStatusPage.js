@@ -12,6 +12,7 @@ import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
 
 import { fetchApplicationById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
+import { PageTracker } from "@/utils/trackers";
 
 import * as router from "@/constants/routes";
 
@@ -48,8 +49,10 @@ export class ViewApplicationStatusPage extends Component {
       this.props.match.params &&
       this.props.match.params.id &&
       isGuid(this.props.match.params.id)
-    )
-      this.props.fetchApplicationById(this.props.match.params.id);
+    ) {
+      const id = this.props.match.params.id;
+      this.props.fetchApplicationById(id);
+    }
   };
 
   onFormSubmit = (values) => {
@@ -63,6 +66,7 @@ export class ViewApplicationStatusPage extends Component {
   render = () =>
     isEmpty(this.props.loadedApplication) ? (
       <>
+        <PageTracker title="Application Status" />
         <Row type="flex" justify="center" align="top" className="landing-header">
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
             <Title>View Application Status</Title>

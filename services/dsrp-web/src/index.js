@@ -11,18 +11,21 @@ import "./styles/index.scss";
 import fetchEnv from "./fetchEnv";
 import configureStore from "./store/configureStore";
 import { MatomoProvider, createInstance } from "@datapunt/matomo-tracker-react";
+import { ENVIRONMENT } from "./constants/environment";
 
 export const store = configureStore();
 
-const instance = createInstance({
-  urlBase: "https://matomo-eazios-test.pathfinder.gov.bc.ca/",
-});
+var instance = {};
 
 export class Index extends Component {
   constructor() {
     super();
     this.state = { environment: false };
     fetchEnv().then(() => {
+      instance = createInstance({
+        urlBase: ENVIRONMENT.matomoUrl,
+        enableLinkTracking: false,
+      });
       this.setState({ environment: true });
     });
   }

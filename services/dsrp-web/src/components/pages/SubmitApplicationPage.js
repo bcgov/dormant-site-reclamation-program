@@ -10,6 +10,8 @@ import { getAppSettings } from "@/selectors/appSettingsSelectors";
 import * as Strings from "@/constants/strings";
 import Loading from "@/components/common/Loading";
 
+import { PageTracker } from "@/utils/trackers";
+
 const { Title, Paragraph } = Typography;
 
 const propTypes = {
@@ -33,6 +35,7 @@ export class SubmitApplicationPage extends Component {
       )[0].setting_value;
       return apps_disabled ? (
         <>
+          <PageTracker title="Submit Application" />
           <Row
             type="flex"
             justify="center"
