@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.schema import FetchedValue
 from app.config import Config
@@ -12,7 +13,7 @@ class ApplicationStatusChange(Base, AuditMixin):
     application_status_change_id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
     application_guid = db.Column(UUID(as_uuid=True), db.ForeignKey('application.guid'))
     application_status_code = db.Column(db.String, db.ForeignKey('application_status.application_status_code'))
-    change_date = db.Column(db.DateTime, nullable=False, server_default=FetchedValue())
+    change_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     note = db.Column(db.String, nullable=False)
 
     application_status = db.relationship("ApplicationStatus")
