@@ -128,6 +128,9 @@ const renderContractWorkPanel = (
                 );
               }}
               validate={(date) => {
+                if (date === "Invalid date") {
+                  return "This is not a valid date value";
+                }
                 const selectedDate = date ? moment(date) : null;
                 const contractWorkValues = wellSiteFormValues
                   ? wellSiteFormValues.contracted_work
@@ -182,6 +185,9 @@ const renderContractWorkPanel = (
                 );
               }}
               validate={(date) => {
+                if (date === "Invalid date") {
+                  return "This is not a valid date value";
+                }
                 const selectedDate = date ? moment(date) : null;
                 const contractWorkValues = wellSiteFormValues
                   ? wellSiteFormValues.contracted_work

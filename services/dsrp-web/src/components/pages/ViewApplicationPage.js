@@ -37,14 +37,18 @@ export class ViewApplicationPage extends Component {
   state = { isLoaded: false };
 
   componentDidMount() {
-    const { id } = this.props.match.params;
-    this.props.fetchApplicationById(id).then(() => {
-      this.setState({ isLoaded: true });
-    });
+    this.handleGetApplication();
   }
 
   goBack = () => {
     this.props.history.goBack();
+  };
+
+  handleGetApplication = () => {
+    const { id } = this.props.match.params;
+    this.props.fetchApplicationById(id).then(() => {
+      this.setState({ isLoaded: true });
+    });
   };
 
   render() {
@@ -78,7 +82,11 @@ export class ViewApplicationPage extends Component {
                       application_guid={this.props.application.guid}
                       documents={this.props.application.documents}
                     />
-                    <DocumentUploadForm applicationGuid={this.props.application.guid} isAdminView />
+                    <DocumentUploadForm
+                      applicationGuid={this.props.application.guid}
+                      isAdminView
+                      onDocumentUpload={this.handleGetApplication}
+                    />
                   </TabPane>
                 </Tabs>
               </Col>
