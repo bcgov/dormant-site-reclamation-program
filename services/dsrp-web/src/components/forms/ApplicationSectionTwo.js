@@ -458,14 +458,14 @@ const validateWellSites = (wellSites, formValues, props) => {
       // Validate start date
       const startDateError = validateStartDate(startDate, sectionValues, section);
       if (startDateError) {
-        set(errors, `${path}.planned_start_date`, requiredMessage);
+        set(errors, `${path}.planned_start_date`, startDateError);
         sectionErrorCount++;
       }
 
       // Validate end date
       const endDateError = validateEndDate(endDate, sectionValues, section);
       if (endDateError) {
-        set(errors, `${path}.planned_end_date`, requiredMessage);
+        set(errors, `${path}.planned_end_date`, endDateError);
         sectionErrorCount++;
       }
 
