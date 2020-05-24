@@ -69,15 +69,15 @@ const disabledStartDate = (date, wellSiteFormValues, contractWorkSection) => {
   const sectionValues = contractWorkValues
     ? contractWorkValues[contractWorkSection.formSectionName]
     : null;
-  const startDate =
-    sectionValues && sectionValues.planned_start_date
-      ? moment(sectionValues.planned_start_date)
+    const endDate =
+    sectionValues && sectionValues.planned_end_date
+      ? moment(sectionValues.planned_end_date)
       : null;
   return (
     selectedDate &&
     (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
       selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD") ||
-      (startDate && selectedDate < startDate))
+      (endDate && selectedDate > endDate))
   );
 };
 
@@ -90,9 +90,9 @@ const validateStartDate = (date, wellSiteFormValues, contractWorkSection) => {
   const sectionValues = contractWorkValues
     ? contractWorkValues[contractWorkSection.formSectionName]
     : null;
-  const startDate =
-    sectionValues && sectionValues.planned_start_date
-      ? moment(sectionValues.planned_start_date)
+  const endDate =
+    sectionValues && sectionValues.planned_end_date
+      ? moment(sectionValues.planned_end_date)
       : null;
   if (selectedDate) {
     if (
@@ -101,8 +101,8 @@ const validateStartDate = (date, wellSiteFormValues, contractWorkSection) => {
     ) {
       return "Date cannot be outside of the program";
     }
-    if (startDate && selectedDate < startDate) {
-      return "Planned end date cannot be before start date";
+    if (endDate && selectedDate > endDate) {
+      return "Planned start date cannot be after end date";
     }
   }
   return undefined;
