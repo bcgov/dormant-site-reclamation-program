@@ -69,10 +69,8 @@ const disabledStartDate = (date, wellSiteFormValues, contractWorkSection) => {
   const sectionValues = contractWorkValues
     ? contractWorkValues[contractWorkSection.formSectionName]
     : null;
-    const endDate =
-    sectionValues && sectionValues.planned_end_date
-      ? moment(sectionValues.planned_end_date)
-      : null;
+  const endDate =
+    sectionValues && sectionValues.planned_end_date ? moment(sectionValues.planned_end_date) : null;
   return (
     selectedDate &&
     (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
@@ -91,9 +89,7 @@ const validateStartDate = (date, wellSiteFormValues, contractWorkSection) => {
     ? contractWorkValues[contractWorkSection.formSectionName]
     : null;
   const endDate =
-    sectionValues && sectionValues.planned_end_date
-      ? moment(sectionValues.planned_end_date)
-      : null;
+    sectionValues && sectionValues.planned_end_date ? moment(sectionValues.planned_end_date) : null;
   if (selectedDate) {
     if (
       selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
@@ -198,10 +194,10 @@ const renderContractWorkPanel = (
               error={wellSectionErrors && wellSectionErrors.planned_start_date}
               component={renderConfig.DATE}
               disabled={!isEditable}
-              disabledDate={(date) =>
-                disabledStartDate(date, wellSiteFormValues, contractWorkSection)
-              }
-              validate={(date) => validateStartDate(date, wellSiteFormValues, contractWorkSection)}
+              // disabledDate={(date) =>
+              //   disabledStartDate(date, wellSiteFormValues, contractWorkSection)
+              // }
+              // validate={(date) => validateStartDate(date, wellSiteFormValues, contractWorkSection)}
             />
           </Col>
           <Col span={12}>
@@ -212,10 +208,10 @@ const renderContractWorkPanel = (
               error={wellSectionErrors && wellSectionErrors.planned_end_date}
               component={renderConfig.DATE}
               disabled={!isEditable}
-              disabledDate={(date) =>
-                disabledEndDate(date, wellSiteFormValues, contractWorkSection)
-              }
-              validate={(date) => validateEndDate(date, wellSiteFormValues, contractWorkSection)}
+              // disabledDate={(date) =>
+              //   disabledEndDate(date, wellSiteFormValues, contractWorkSection)
+              // }
+              // validate={(date) => validateEndDate(date, wellSiteFormValues, contractWorkSection)}
             />
           </Col>
         </Row>
@@ -399,11 +395,6 @@ const validateWellSites = (wellSites, formValues, props) => {
   }
 
   wellSites.map((wellSite, index) => {
-    // console.log("wellSite", wellSite);
-
-    // TODO: LUKE: Blur the planned start and end date fields to trigger field-level validation
-    // wellSite.map()
-
     // Check that the well authorization number is valid.
     const validateRequired = required(get(wellSite, "details.well_authorization_number", null));
     if (validateRequired) {
@@ -461,6 +452,21 @@ const validateWellSites = (wellSites, formValues, props) => {
       // The sum of the estimated work can't be 0/invalid if either of the dates are provided.
       if (!costSum && (startDate || endDate)) {
         set(errors, `${path}.error`, "Total estimated cost cannot be $0.");
+        sectionErrorCount++;
+      }
+
+      // Validate start date
+      const startDateError = validateStartDate(startDate, sectionValues, section);
+      // console.log("startDateError", startDateError)
+      if (startDateError) {
+        set(errors, `${path}.planned_start_date`, requiredMessage);
+        sectionErrorCount++;
+      }
+
+      // Validate end date
+      const endDateError = validateEndDate(endDate, sectionValues, section);
+      if (endDateError) {
+        set(errors, `${path}.planned_end_date`, requiredMessage);
         sectionErrorCount++;
       }
 
@@ -706,7 +712,7 @@ const defaultState = {
   contractedWorkTotals: { grandTotal: 0, wellTotals: {} },
 };
 
-const getWellName = (wellNumber, formValues) => {
+const getWellName = (wellNumber, formValues, selectedWells) => {
   const wellAuthNumber =
     formValues &&
     formValues.well_sites &&
@@ -840,7 +846,11 @@ class ApplicationSectionTwo extends Component {
           <Row gutter={16} type="flex" justify="start" align="bottom">
             <Col style={{ textAlign: "right" }}>
               {wellTotalsValues.map((wellTotal, index) => {
-                const actualName = getWellName(index, this.props.formValues);
+                const actualName = getWellName(
+                  index,
+                  this.props.formValues,
+                  this.props.selectedWells
+                );
                 let wellName = `Well Site ${index + 1}`;
                 wellName += actualName ? ` (${actualName})` : "";
                 return (
@@ -942,6 +952,7 @@ export default compose(
         return;
       }
       const newErrors = prepareErrors(errors);
+      console.log("newErrors", newErrors);
       openRequiredPanels(newErrors).then(() => scrollToFirstError(newErrors));
     },
   }),
