@@ -297,22 +297,31 @@ const asyncValidateWell = async (values, field) => {
   });
 };
 
-const asyncValidate = (values, dispatch, props, field) => {
-  if (!field || field === "contract_details.operator_id") {
-    return Promise.all(
-      values.well_sites.map((well, index) =>
-        asyncValidateWell(
-          values,
-          `well_sites[${index}].details.well_authorization_number`
-        ).then(() => {})
-      )
-    );
-  }
+const asyncValidate = debounce(
+  function(values, dispatch, props, field) {
+    if (!field || field === "contract_details.operator_id") {
+      return Promise.all(
+        values.well_sites.map((well, index) =>
+          asyncValidateWell(
+            values,
+            `well_sites[${index}].details.well_authorization_number`
+          ).then(() => {})
+        )
+      ).then(() => {});
+    }
 
-  if (field.includes("well_authorization_number") && get(values, field)) {
-    return asyncValidateWell(values, field);
+    if (field.includes("well_authorization_number") && get(values, field)) {
+      return asyncValidateWell(values, field).then(() => {});
+    } else {
+      return Promise.resolve();
+    }
+  },
+  2000,
+  {
+    leading: true,
+    trailing: true,
   }
-};
+);
 
 // Unfortunately, FieldArray validation places the returned errors into an object under a key called "_error"
 // which we don't want because we want to use the path in the object to determine the correct field to target.
@@ -937,10 +946,7 @@ export default compose(
     enableReinitialize: true,
     updateUnregisteredFields: true,
     shouldAsyncValidate,
-    asyncValidate: debounce(asyncValidate, 2000, {
-      leading: false,
-      trailing: true,
-    }),
+    asyncValidate,
     asyncChangeFields: [
       "contract_details.operator_id",
       "well_sites[].details.well_authorization_number",
