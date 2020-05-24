@@ -110,7 +110,9 @@ const renderContractWorkPanel = (
               disabled={!isEditable}
               disabledDate={(date) => {
                 const selectedDate = date ? moment(date) : null;
-                const contractWorkValues = wellSiteFormValues.contracted_work;
+                const contractWorkValues = wellSiteFormValues
+                  ? wellSiteFormValues.contracted_work
+                  : null;
                 const sectionValues = contractWorkValues
                   ? contractWorkValues[contractWorkSection.formSectionName]
                   : null;
@@ -125,6 +127,31 @@ const renderContractWorkPanel = (
                     (endDate && selectedDate > endDate))
                 );
               }}
+              validate={(date) => {
+                const selectedDate = date ? moment(date) : null;
+                const contractWorkValues = wellSiteFormValues
+                  ? wellSiteFormValues.contracted_work
+                  : null;
+                const sectionValues = contractWorkValues
+                  ? contractWorkValues[contractWorkSection.formSectionName]
+                  : null;
+                const endDate =
+                  sectionValues && sectionValues.planned_end_date
+                    ? moment(sectionValues.planned_end_date)
+                    : null;
+                if (selectedDate) {
+                  if (
+                    selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
+                    selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD")
+                  ) {
+                    return "Date cannot be outside of the program";
+                  }
+                  if (endDate && selectedDate > endDate) {
+                    return "Planned start date cannot be after end date";
+                  }
+                }
+                return undefined;
+              }}
             />
           </Col>
           <Col span={12}>
@@ -137,7 +164,9 @@ const renderContractWorkPanel = (
               disabled={!isEditable}
               disabledDate={(date) => {
                 const selectedDate = date ? moment(date) : null;
-                const contractWorkValues = wellSiteFormValues.contracted_work;
+                const contractWorkValues = wellSiteFormValues
+                  ? wellSiteFormValues.contracted_work
+                  : null;
                 const sectionValues = contractWorkValues
                   ? contractWorkValues[contractWorkSection.formSectionName]
                   : null;
@@ -151,6 +180,31 @@ const renderContractWorkPanel = (
                     selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD") ||
                     (startDate && selectedDate < startDate))
                 );
+              }}
+              validate={(date) => {
+                const selectedDate = date ? moment(date) : null;
+                const contractWorkValues = wellSiteFormValues
+                  ? wellSiteFormValues.contracted_work
+                  : null;
+                const sectionValues = contractWorkValues
+                  ? contractWorkValues[contractWorkSection.formSectionName]
+                  : null;
+                const startDate =
+                  sectionValues && sectionValues.planned_start_date
+                    ? moment(sectionValues.planned_start_date)
+                    : null;
+                if (selectedDate) {
+                  if (
+                    selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
+                    selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD")
+                  ) {
+                    return "Date cannot be outside of the program";
+                  }
+                  if (startDate && selectedDate < startDate) {
+                    return "Planned end date cannot be before start date";
+                  }
+                }
+                return undefined;
               }}
             />
           </Col>
@@ -850,7 +904,6 @@ ApplicationSectionTwo.propTypes = propTypes;
 ApplicationSectionTwo.defaultProps = defaultProps;
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: FORM.APPLICATION_FORM,
     destroyOnUnmount: false,
@@ -871,5 +924,6 @@ export default compose(
       const newErrors = prepareErrors(errors);
       openRequiredPanels(newErrors).then(() => scrollToFirstError(newErrors));
     },
-  })
+  }),
+  connect(mapStateToProps, mapDispatchToProps)
 )(ApplicationSectionTwo);

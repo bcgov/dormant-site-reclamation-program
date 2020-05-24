@@ -1,8 +1,10 @@
 import React from "react";
-import { Row, Col, Typography } from "antd";
+import { Typography } from "antd";
 import PropTypes from "prop-types";
 import { document } from "@/customPropTypes/documents";
 import { DocumentTable } from "@/components/common/DocumentTable";
+
+const { Title, Text } = Typography;
 const propTypes = {
   application_guid: PropTypes.string,
   documents: PropTypes.arrayOf(document).isRequired,
@@ -10,9 +12,10 @@ const propTypes = {
 
 export const ViewApplicationDocuments = (props) => (
   <>
-    <Typography.Title level={3} className="documents-section">
+    <Title level={3} className="documents-section">
       Documents
-    </Typography.Title>
+    </Title>
+    <Text> {props.documents.length} Documents Uploaded</Text>
     <DocumentTable {...props} />
   </>
 );

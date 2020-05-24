@@ -12,6 +12,7 @@ import OrgBookSearch from "@/components/common/OrgBookSearch";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import { ORGBOOK_URL } from "@/constants/routes";
+import { PROGRAM_TAC } from "@/constants/assets";
 
 const { Title, Paragraph } = Typography;
 
@@ -319,7 +320,7 @@ class ApplicationSectionOne extends Component {
                 <Col>
                   <Paragraph>
                     <title level={3}>TODO: ADD REAL PDF</title>
-                    <a href="#" target="_blank" rel="noopener noreferrer">
+                    <a href={PROGRAM_TAC} target="_blank" rel="noopener noreferrer">
                       Review program details and requirements
                     </a>
                   </Paragraph>
