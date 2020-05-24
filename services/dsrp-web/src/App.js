@@ -17,6 +17,7 @@ import configureStore from "./store/configureStore";
 import ScrollToTopWrapper from "@/components/common/wrappers/ScrollToTopWrapper";
 import { loadBulkStaticContent } from "@/actionCreators/staticContentActionCreator";
 import { getStaticContentLoadingIsComplete } from "@/selectors/staticContentSelectors";
+import { MatomoLinkTracing } from "@/utils/trackers";
 
 export const store = configureStore();
 
@@ -57,6 +58,7 @@ class App extends Component {
     return (
       <BrowserRouter basename={process.env.BASE_PATH}>
         <ScrollToTopWrapper>
+          <MatomoLinkTracing />
           <Layout>
             <Header xs={xs} lg={lg} xl={xl} xxl={xxl} />
             <Layout>
