@@ -188,10 +188,9 @@ const renderContractWorkPanel = (
               error={wellSectionErrors && wellSectionErrors.planned_start_date}
               component={renderConfig.DATE}
               disabled={!isEditable}
-              // disabledDate={(date) =>
-              //   disabledStartDate(date, wellSiteFormValues, contractWorkSection)
-              // }
-              // validate={(date) => validateStartDate(date, wellSiteFormValues, contractWorkSection)}
+              disabledDate={(date) =>
+                disabledStartDate(date, wellSiteFormValues, contractWorkSection)
+              }
             />
           </Col>
           <Col span={12}>
@@ -202,10 +201,9 @@ const renderContractWorkPanel = (
               error={wellSectionErrors && wellSectionErrors.planned_end_date}
               component={renderConfig.DATE}
               disabled={!isEditable}
-              // disabledDate={(date) =>
-              //   disabledEndDate(date, wellSiteFormValues, contractWorkSection)
-              // }
-              // validate={(date) => validateEndDate(date, wellSiteFormValues, contractWorkSection)}
+              disabledDate={(date) =>
+                disabledEndDate(date, wellSiteFormValues, contractWorkSection)
+              }
             />
           </Col>
         </Row>
