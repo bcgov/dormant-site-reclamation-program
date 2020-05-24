@@ -489,17 +489,11 @@ const validateWellSites = (wellSites, formValues, props) => {
   return isEmpty(errors) ? undefined : errors;
 };
 
-const renderWells = ({
-  fields,
-  meta,
-  isEditable,
-  formValues,
-  submitFailed,
-  contractedWorkTotals,
-}) => {
+const renderWells = (props) => {
+  console.log(JSON.stringify(props));
   // Ensure that there is always at least one well site.
-  if (fields.length === 0) {
-    fields.push({});
+  if (props.fields.length === 0) {
+    props.fields.push({});
   }
   return (
     <>
@@ -516,16 +510,16 @@ const renderWells = ({
         )}
         defaultActiveKey={[0]}
       >
-        {fields.map((member, index) => {
-          const wellTotals = contractedWorkTotals.wellTotals[index];
+        {props.fields.map((member, index) => {
+          const wellTotals = props.contractedWorkTotals.wellTotals[index];
           const wellSectionTotals = wellTotals ? wellTotals.sections : {};
           const wellTotal = wellTotals ? wellTotals.wellTotal : 0;
 
-          const actualName = getWellName(index, formValues);
+          const actualName = getWellName(index, props.formValues);
           let wellName = `Well Site ${index + 1}`;
           wellName += actualName ? ` (${actualName})` : "";
 
-          const wellSiteErrors = get(meta, `error.well_sites[${index}]`, null);
+          const wellSiteErrors = get(props.meta, `error.well_sites[${index}]`, null);
 
           return (
             <Panel
@@ -534,7 +528,7 @@ const renderWells = ({
               header={
                 <Title level={3} style={{ margin: 0, marginLeft: 8 }}>
                   {wellName}
-                  {submitFailed && !isEmpty(wellSiteErrors) && (
+                  {props.parentSubmitFailed && !isEmpty(wellSiteErrors) && (
                     <Text
                       className="font-size-base font-weight-normal color-error"
                       style={{ marginLeft: 16 }}
@@ -542,7 +536,7 @@ const renderWells = ({
                       This well site has missing or incorrect information
                     </Text>
                   )}
-                  {isEditable && (
+                  {props.isEditable && (
                     <span onClick={(e) => e.stopPropagation()}>
                       <Popconfirm
                         title="Are you sure you want to remove this well site?"
@@ -572,11 +566,11 @@ const renderWells = ({
                       placeholder="Well Authorization Number"
                       component={WellField}
                       validate={[required]}
-                      disabled={!isEditable}
+                      disabled={!props.isEditable}
                       label={
                         <>
                           Authorization Number
-                          {isEditable && (
+                          {props.isEditable && (
                             <>
                               <ApplicationFormTooltip content="Only wells that are classfied as Dormant with the Oil and Gas Commission can be entered." />
                               <a
@@ -609,11 +603,11 @@ const renderWells = ({
                         key={condition.fieldName}
                         name={condition.fieldName}
                         label={condition.fieldLabel}
-                        disabled={!isEditable}
+                        disabled={!props.isEditable}
                         component={renderConfig.CHECKBOX}
                       />
                     ))}
-                    {submitFailed &&
+                    {props.parentSubmitFailed &&
                       wellSiteErrors &&
                       wellSiteErrors.site_conditions &&
                       wellSiteErrors.site_conditions.error && (
@@ -636,7 +630,7 @@ const renderWells = ({
                   Enter the estimated cost of every work component your company will perform for
                   this contract.
                 </Paragraph>
-                {submitFailed &&
+                {props.parentSubmitFailed &&
                   wellSiteErrors &&
                   wellSiteErrors.contracted_work &&
                   wellSiteErrors.contracted_work.error && (
@@ -660,9 +654,11 @@ const renderWells = ({
                         renderContractWorkPanel(
                           contractWorkSection,
                           wellSectionTotals[contractWorkSection.formSectionName],
-                          isEditable,
-                          formValues && formValues.well_sites ? formValues.well_sites[index] : null,
-                          submitFailed,
+                          props.isEditable,
+                          props.formValues && props.formValues.well_sites
+                            ? props.formValues.well_sites[index]
+                            : null,
+                          props.parentSubmitFailed,
                           index,
                           get(
                             wellSiteErrors,
@@ -681,8 +677,8 @@ const renderWells = ({
         })}
       </Collapse>
       <br />
-      {isEditable && (
-        <Button type="primary" onClick={() => fields.push({})}>
+      {props.isEditable && (
+        <Button type="primary" onClick={() => props.fields.push({})}>
           Add Well Site
         </Button>
       )}
@@ -831,7 +827,7 @@ class ApplicationSectionTwo extends Component {
               component={renderWells}
               isEditable={this.props.isEditable}
               formValues={this.props.formValues}
-              submitFailed={this.props.submitFailed}
+              parentSubmitFailed={this.props.submitFailed}
               contractedWorkTotals={this.state.contractedWorkTotals}
             />
           </Col>
