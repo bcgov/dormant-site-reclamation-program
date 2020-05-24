@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Row, Col, Form, Select, Spin, Icon, Button, Descriptions } from "antd";
-import { throttle } from "lodash";
+import { Row, Col, Form, Select, Spin, Icon, Button, Input, Descriptions } from "antd";
+import { debounce } from "lodash";
 import RenderField from "@/components/common/RenderField";
 import { fetchSelectedWell } from "@/actionCreators/OGCActionCreator";
 import { getSelectedWells } from "@/selectors/OGCSelectors";
@@ -18,24 +18,23 @@ const defaultProps = {};
 export class WellField extends Component {
   constructor(props) {
     super(props);
-    this.fetchSelectedWellThrottled = throttle(this.props.fetchSelectedWell, 2000, {
-      leading: true,
-      trailing: true,
-    });
+    this.fetchSelectedWellThrottled = debounce(this.props.fetchSelectedWell, 1000);
   }
 
-  componentWillReceiveProps = (nextProps) => {
-    if (nextProps.input.value !== this.props.input.value) {
-      this.fetchSelectedWellThrottled({ well_auth_number: nextProps.input.value });
+  handleSearch(search) {
+    if (search.length === 0) {
+      return;
     }
-  };
 
-  render = () => {
+    this.fetchSelectedWellThrottled({ well_auth_number: search });
+  }
+
+  render() {
     return (
       <>
         <Row>
           <Col>
-            <RenderField {...this.props} />
+            <Input onChange={(e) => this.handleSearch(e.target.value)} />
           </Col>
         </Row>
         <Row>
@@ -63,7 +62,7 @@ export class WellField extends Component {
         </Row>
       </>
     );
-  };
+  }
 }
 
 const mapStateToProps = (state) => ({
