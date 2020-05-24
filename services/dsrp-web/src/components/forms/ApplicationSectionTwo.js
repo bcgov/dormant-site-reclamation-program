@@ -788,8 +788,8 @@ class ApplicationSectionTwo extends Component {
           <Row gutter={48}>
             <Col>
               <Paragraph>
-                Select the permit holder for whom the proposed work will be performed. You must a
-                contract with the permit holder for this work in order to be eligible.
+                Select the permit holder for whom the proposed work will be performed. You must have
+                a contract with the permit holder for this work in order to be eligible.
               </Paragraph>
               <Field
                 id="operator_id"
