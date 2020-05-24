@@ -185,11 +185,7 @@ export class ReviewApplicationInfo extends Component {
   render() {
     return (
       <>
-        <Button
-          type="link"
-          onClick={this.handleRefresh}
-          style={{ float: "right", marginTop: 70, zIndex: 1000 }}
-        >
+        <Button type="link" onClick={this.handleRefresh} style={{ float: "right", marginTop: 70 }}>
           <Icon type="reload" className="icon-lg" />
           Refresh
         </Button>
