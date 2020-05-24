@@ -28,6 +28,7 @@ import WellField from "@/components/forms/WellField";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
 import { validateWell } from "@/actionCreators/OGCActionCreator";
 import { getSelectedWells } from "@/selectors/OGCSelectors";
+import { debounce } from "lodash";
 
 const { Text, Paragraph, Title } = Typography;
 const { Panel } = Collapse;
@@ -936,7 +937,10 @@ export default compose(
     enableReinitialize: true,
     updateUnregisteredFields: true,
     shouldAsyncValidate,
-    asyncValidate,
+    asyncValidate: debounce(asyncValidate, 2000, {
+      leading: false,
+      trailing: true,
+    }),
     asyncChangeFields: [
       "contract_details.operator_id",
       "well_sites[].details.well_authorization_number",
