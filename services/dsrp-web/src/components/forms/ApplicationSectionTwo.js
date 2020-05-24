@@ -395,6 +395,11 @@ const validateWellSites = (wellSites, formValues, props) => {
   }
 
   wellSites.map((wellSite, index) => {
+    // console.log("wellSite", wellSite);
+
+    // TODO: LUKE: Blur the planned start and end date fields to trigger field-level validation
+    // wellSite.map()
+
     // Check that the well authorization number is valid.
     const validateRequired = required(get(wellSite, "details.well_authorization_number", null));
     if (validateRequired) {
