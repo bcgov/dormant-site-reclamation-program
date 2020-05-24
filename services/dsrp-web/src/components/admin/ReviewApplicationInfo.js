@@ -174,11 +174,10 @@ export class ReviewApplicationInfo extends Component {
   render() {
     return (
       <>
-        <Row type="flex" justify="center" align="top">
-          <Col xl={{ span: 12 }} md={{ span: 20 }} sm={{ span: 24 }}>
-            <JumpToApplicationForm onSubmit={this.search} />
-          </Col>
-        </Row>
+        <JumpToApplicationForm
+          onSubmit={this.search}
+          initialValues={{ guid: this.state.params.guid }}
+        />
         <ApplicationTable
           applications={this.props.applications}
           applicationsWellSitesContractedWork={this.props.applicationsWellSitesContractedWork}

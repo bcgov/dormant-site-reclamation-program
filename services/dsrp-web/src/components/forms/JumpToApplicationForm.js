@@ -25,30 +25,29 @@ class JumpToApplicationForm extends Component {
     this.props.reset(FORM.JUMP_TO_APPLICATION_FORM);
     this.props.onSubmit({ guid: "" });
   };
+
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
-        <Row gutter={48}>
-          <Col span={16}>
-            <Field
-              id="guid"
-              name="guid"
-              label="Application Reference Number"
-              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-              component={renderConfig.FIELD}
-              validate={[exactLength(36)]}
-              {...guidMask}
-            />
-          </Col>
-          <Col span={4}>
-            <Button type="primary" htmlType="submit" style={{ marginTop: "30px" }}>
-              Search
-            </Button>
-          </Col>
-          <Col span={4}>
-            <Button type="secondary" style={{ marginTop: "30px" }} onClick={this.clear}>
-              clear
-            </Button>
+        <Row gutter={48} type="flex" justify="center" align="middle">
+          <Col>
+            <Form.Item label="Application Reference Number">
+              <Field
+                id="guid"
+                name="guid"
+                placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                component={renderConfig.FIELD}
+                validate={[exactLength(36)]}
+                {...guidMask}
+                style={{ display: "inline-block", width: 340 }}
+              />
+              <Button type="primary" htmlType="submit" style={{ marginLeft: 16 }}>
+                Search
+              </Button>
+              <Button onClick={this.clear} style={{ marginLeft: 16 }}>
+                Clear
+              </Button>
+            </Form.Item>
           </Col>
         </Row>
       </Form>
@@ -71,5 +70,6 @@ export default compose(
   connect(mapDispatchToProps),
   reduxForm({
     form: FORM.JUMP_TO_APPLICATION_FORM,
+    enableReinitialize: true,
   })
 )(JumpToApplicationForm);
