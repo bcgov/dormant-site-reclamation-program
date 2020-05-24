@@ -110,7 +110,9 @@ const renderContractWorkPanel = (
               disabled={!isEditable}
               disabledDate={(date) => {
                 const selectedDate = date ? moment(date) : null;
-                const contractWorkValues = wellSiteFormValues.contracted_work;
+                const contractWorkValues = wellSiteFormValues
+                  ? wellSiteFormValues.contracted_work
+                  : null;
                 const sectionValues = contractWorkValues
                   ? contractWorkValues[contractWorkSection.formSectionName]
                   : null;
@@ -127,7 +129,9 @@ const renderContractWorkPanel = (
               }}
               validate={(date) => {
                 const selectedDate = date ? moment(date) : null;
-                const contractWorkValues = wellSiteFormValues.contracted_work;
+                const contractWorkValues = wellSiteFormValues
+                  ? wellSiteFormValues.contracted_work
+                  : null;
                 const sectionValues = contractWorkValues
                   ? contractWorkValues[contractWorkSection.formSectionName]
                   : null;
@@ -160,7 +164,9 @@ const renderContractWorkPanel = (
               disabled={!isEditable}
               disabledDate={(date) => {
                 const selectedDate = date ? moment(date) : null;
-                const contractWorkValues = wellSiteFormValues.contracted_work;
+                const contractWorkValues = wellSiteFormValues
+                  ? wellSiteFormValues.contracted_work
+                  : null;
                 const sectionValues = contractWorkValues
                   ? contractWorkValues[contractWorkSection.formSectionName]
                   : null;
@@ -177,7 +183,9 @@ const renderContractWorkPanel = (
               }}
               validate={(date) => {
                 const selectedDate = date ? moment(date) : null;
-                const contractWorkValues = wellSiteFormValues.contracted_work;
+                const contractWorkValues = wellSiteFormValues
+                  ? wellSiteFormValues.contracted_work
+                  : null;
                 const sectionValues = contractWorkValues
                   ? contractWorkValues[contractWorkSection.formSectionName]
                   : null;
@@ -896,7 +904,6 @@ ApplicationSectionTwo.propTypes = propTypes;
 ApplicationSectionTwo.defaultProps = defaultProps;
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: FORM.APPLICATION_FORM,
     destroyOnUnmount: false,
