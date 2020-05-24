@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Row, Col, Typography } from "antd";
+import { Row, Col, Typography, Button } from "antd";
 import PropTypes from "prop-types";
 import { bindActionCreators, compose } from "redux";
 import { withRouter } from "react-router-dom";
@@ -24,13 +24,17 @@ const propTypes = {
     application_status_code: PropTypes.string,
     submission_date: PropTypes.string,
     json: PropTypes.any,
-  }).isRequired,
+  }),
   match: PropTypes.shape({
     params: {
       id: PropTypes.string,
     },
   }).isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
+};
+
+const defaultProps = {
+  loadedApplication: { guid: "" },
 };
 
 const isGuid = (input) => {
@@ -42,23 +46,26 @@ const isGuid = (input) => {
 };
 
 export class ViewApplicationStatusPage extends Component {
+  state = { guid: "" };
   componentDidMount = () => {
-    alert(JSON.stringify(this.props.match));
     if (
       this.props.match &&
       this.props.match.params &&
       this.props.match.params.id &&
       isGuid(this.props.match.params.id)
-    )
+    ) {
       this.props.fetchApplicationSummaryById(this.props.match.params.id);
+      this.setState({ guid: this.props.match.params.id });
+    }
   };
 
   onFormSubmit = (values) => {
     this.props.fetchApplicationSummaryById(values.guid);
+    this.setState({ guid: values.guid });
   };
 
   render = () =>
-    isEmpty(this.props.loadedApplication) ? (
+    this.props.loadedApplication.guid !== this.state.guid ? (
       <>
         <Row type="flex" justify="center" align="top" className="landing-header">
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
@@ -81,12 +88,14 @@ export class ViewApplicationStatusPage extends Component {
               <DocumentUploadForm applicationGuid={this.props.loadedApplication.guid} />
             </>
           )}
+          <Button onClick={() => this.setState({ guid: "" })}>Check another Application</Button>
         </Col>
       </Row>
     );
 }
 
 ViewApplicationStatusPage.propTypes = propTypes;
+ViewApplicationStatusPage.defaultProps = defaultProps;
 
 const mapStateToProps = (state) => ({
   loadedApplication: getApplication(state),

@@ -1,7 +1,7 @@
 from flask_restplus import Resource
 from flask import request
 from sqlalchemy_filters import apply_pagination, apply_sort
-from sqlalchemy import desc, func, or_, and_
+from sqlalchemy import desc, asc, func, or_, and_
 from werkzeug.exceptions import BadRequest, NotFound
 from marshmallow.exceptions import MarshmallowError
 
@@ -11,21 +11,26 @@ from app.api.utils.access_decorators import requires_role_view_all, requires_rol
 from app.api.utils.resources_mixins import UserMixin
 from app.api.application.response_models import APPLICATION, APPLICATION_LIST
 from app.api.application.models.application import Application
+from app.api.application.models.application_status_change import ApplicationStatusChange
 from app.api.constants import PAGE_DEFAULT, PER_PAGE_DEFAULT, DISABLE_APP_SUBMIT_SETTING
 from app.api.dsrp_settings.models.dsrp_settings import DSRPSettings
 
 
 class ApplicationListResource(Resource, UserMixin):
-    @api.doc(description='Get all applications. Default order: submission_date asc')
+    @api.doc(
+        description='Get all applications. Default order: submission_date asc')
     @api.marshal_with(APPLICATION_LIST, code=200)
     @requires_role_view_all
     def get(self):
         records, pagination_details = self._apply_filters_and_pagination(
             page_number=request.args.get('page', PAGE_DEFAULT, type=int),
             page_size=request.args.get('per_page', PER_PAGE_DEFAULT, type=int),
-            sort_field=request.args.get('sort_field', 'submission_date', type=str),
+            sort_field=request.args.get('sort_field',
+                                        'submission_date',
+                                        type=str),
             sort_dir=request.args.get('sort_dir', 'asc', type=str),
-            application_status_code=request.args.getlist('application_status_code', type=str),
+            application_status_code=request.args.getlist(
+                'application_status_code', type=str),
             guid=request.args.get('guid', type=str),
             company_name=request.args.get('company_name', type=str))
 
@@ -56,22 +61,42 @@ class ApplicationListResource(Resource, UserMixin):
             filters.append(Application.guid == guid)
 
         if application_status_code:
-            filters.append(Application.application_status_code.in_(application_status_code))
+            base_query = base_query.outerjoin(
+                ApplicationStatusChange,
+                ApplicationStatusChange.application_guid == Application.guid)
+            base_query = base_query.filter(
+                func.coalesce(ApplicationStatusChange.application_status_code,
+                              'NOT_STARTED').in_(application_status_code))
 
         if company_name:
-            filters.append(
-                Application.json['company_details']['company_name']['label'].astext.contains(
-                    company_name.upper()))
+            filters.append(Application.json['company_details']['company_name']
+                           ['label'].astext.contains(company_name.upper()))
 
         base_query = base_query.filter(*filters)
 
         if sort_field and sort_dir:
-            sort_criteria = [{
-                'model': 'Application',
-                'field': sort_field,
-                'direction': sort_dir,
-            }]
-            base_query = apply_sort(base_query, sort_criteria)
+            sort_criteria = None
+            if sort_field == 'application_status_code':
+                if not application_status_code:
+                    base_query = base_query.outerjoin(
+                        ApplicationStatusChange,
+                        ApplicationStatusChange.application_guid ==
+                        Application.guid)
+                if sort_dir == 'asc':
+                    base_query = base_query.order_by(
+                        asc(ApplicationStatusChange.application_status_code))
+                else:
+                    base_query = base_query.order_by(
+                        desc(ApplicationStatusChange.application_status_code))
+            else:
+                sort_criteria = [{
+                    'model': 'Application',
+                    'field': sort_field,
+                    'direction': sort_dir,
+                }]
+
+            if (sort_criteria):
+                base_query = apply_sort(base_query, sort_criteria)
 
         return apply_pagination(base_query, page_number, page_size)
 
@@ -82,10 +107,12 @@ class ApplicationListResource(Resource, UserMixin):
         applications_disabled = DSRPSettings.find_by_setting(
             DISABLE_APP_SUBMIT_SETTING).setting_value
         if applications_disabled:
-            raise BadRequest("Application Submissions are disabled at this time.")
+            raise BadRequest(
+                "Application Submissions are disabled at this time.")
 
         try:
-            application = Application._schema().load(request.json['application'])
+            application = Application._schema().load(
+                request.json['application'])
             #get ip from NGINX (or direct for local devs)
             application.submitter_ip = request.headers.getlist(
                 'X-Forwarded-For')[0] if request.headers.getlist(
@@ -120,7 +147,8 @@ class ApplicationResource(Resource, UserMixin):
     def put(self, application_guid):
         try:
             application = Application._schema().load(
-                request.json, instance=Application.find_by_guid(application_guid))
+                request.json,
+                instance=Application.find_by_guid(application_guid))
         except MarshmallowError as e:
             raise BadRequest(e)
 

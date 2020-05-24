@@ -3,6 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import validates
 from sqlalchemy.schema import FetchedValue
+from sqlalchemy import select, desc, func
 from marshmallow import fields, validate
 
 from app.config import Config
@@ -11,6 +12,7 @@ from app.api.utils.models_mixins import Base, AuditMixin
 from app.api.utils.field_template import FieldTemplate
 from app.api.constants import WELL_SITE_CONTRACTED_WORK, APPLICATION_JSON, COMPANY_NAME_JSON_KEYS
 from .application_status import ApplicationStatus
+from .application_status_change import ApplicationStatusChange
 from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK
 from app.api.permit_holder.resources.permit_holder import PermitHolderResource
 
@@ -22,13 +24,17 @@ class Application(Base, AuditMixin):
         id = fields.Integer(dump_only=True)
         guid = fields.String(dump_only=True)
         submission_date = fields.String(dump_only=True)
-        status_changes = fields.Raw(dump_only=True) ##DO NOT INJEST ON POST
-
+        status_changes = fields.Raw(dump_only=True)  ##DO NOT INJEST ON POST
 
     id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
-    guid = db.Column(UUID(as_uuid=True), nullable=False, unique=True, server_default=FetchedValue())
+    guid = db.Column(UUID(as_uuid=True),
+                     nullable=False,
+                     unique=True,
+                     server_default=FetchedValue())
 
-    submission_date = db.Column(db.DateTime, nullable=False, server_default=FetchedValue())
+    submission_date = db.Column(db.DateTime,
+                                nullable=False,
+                                server_default=FetchedValue())
     json = db.Column(JSONB, nullable=False)
     review_json = db.Column(JSONB)
     submitter_ip = db.Column(db.String)
@@ -56,10 +62,13 @@ class Application(Base, AuditMixin):
         well_sites = json.get('well_sites')
         for site in well_sites:
             contracted_work = site.get('contracted_work')
-            work = list(set(list(WELL_SITE_CONTRACTED_WORK.keys())).intersection(contracted_work))
+            work = list(
+                set(list(WELL_SITE_CONTRACTED_WORK.keys())).intersection(
+                    contracted_work))
             if len(work) == 0:
                 raise AssertionError(
-                    'Application must contain at least one piece of contracted work.')
+                    'Application must contain at least one piece of contracted work.'
+                )
             for i in work:
                 work_item = contracted_work.get(i)
                 total = [
@@ -67,7 +76,8 @@ class Application(Base, AuditMixin):
                     if key in WELL_SITE_CONTRACTED_WORK.get(i)
                 ]
                 if sum(total) == 0:
-                    raise AssertionError('Contracted works must have an amount greater than $0')
+                    raise AssertionError(
+                        'Contracted works must have an amount greater than $0')
         for key, value in APPLICATION_JSON.items():
             k = json.get(key, None)
             if k:
@@ -77,7 +87,8 @@ class Application(Base, AuditMixin):
                         if company_name:
                             for i in COMPANY_NAME_JSON_KEYS:
                                 if not company_name.get(i, None):
-                                    raise AssertionError(f'{i} must not be None')
+                                    raise AssertionError(
+                                        f'{i} must not be None')
                         else:
                             raise AssertionError(f'{item} must not be None')
                     if not k.get(item, None):
@@ -97,6 +108,14 @@ class Application(Base, AuditMixin):
             return self.status_changes[0].application_status_code
         else:
             return 'NOT_STARTED'
+
+    @application_status_code.expression
+    def application_status_code(cls):
+        return func.coalesce(
+            select([ApplicationStatusChange.application_status_code]).where(
+                ApplicationStatusChange.application_guid == cls.guid).order_by(
+                    desc(ApplicationStatusChange.change_date)).limit(
+                        1).as_scalar(), 'NOT_STARTED')
 
     def send_confirmation_email(self, email_service):
         if not self.submitter_email:
@@ -226,12 +245,13 @@ class Application(Base, AuditMixin):
   <p class="MsoNormal"><span>&nbsp;</span></p>
 </div>
         """
-        email_service.send_email(self.submitter_email, 'Application Confirmation', html_body)
+        email_service.send_email(self.submitter_email,
+                                 'Application Confirmation', html_body)
 
     def get_application_html(self):
         def create_company_details(company_details):
-            indigenous_participation_ind = company_details.get("indigenous_participation_ind",
-                                                               False) == True
+            indigenous_participation_ind = company_details.get(
+                "indigenous_participation_ind", False) == True
             return f"""
             <h1>Company Details</h1>
 
@@ -274,10 +294,12 @@ class Application(Base, AuditMixin):
         def create_contract_details(contract_details):
             try:
                 permit_holder = PermitHolderResource.get(
-                    self, operator_id=contract_details["operator_id"])["records"][0]
+                    self,
+                    operator_id=contract_details["operator_id"])["records"][0]
             except:
                 current_app.logger.warning(
-                    'Failed to find the permit holder. Displaying operator ID instead.')
+                    'Failed to find the permit holder. Displaying operator ID instead.'
+                )
 
             return f"""
             <h1>Contract Details</h1>
@@ -292,8 +314,10 @@ class Application(Base, AuditMixin):
                     return f"<li><b>{condition['label']}</b>: {'Yes' if condition['name'] in site_conditions and site_conditions[condition['name']] == True else 'No'}</li>"
 
                 def create_contracted_work_section(section, contracted_work):
-                    def create_sub_section(sub_section, section, contracted_work):
-                        def create_amount_field(amount_field, section, contracted_work):
+                    def create_sub_section(sub_section, section,
+                                           contracted_work):
+                        def create_amount_field(amount_field, section,
+                                                contracted_work):
                             return f"""
                                 <tr>
                                 <td style="padding-left: 10px;">{amount_field["label"]}:</td>
