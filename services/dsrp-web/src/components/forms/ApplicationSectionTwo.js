@@ -457,7 +457,6 @@ const validateWellSites = (wellSites, formValues, props) => {
 
       // Validate start date
       const startDateError = validateStartDate(startDate, sectionValues, section);
-      // console.log("startDateError", startDateError)
       if (startDateError) {
         set(errors, `${path}.planned_start_date`, requiredMessage);
         sectionErrorCount++;
@@ -952,7 +951,6 @@ export default compose(
         return;
       }
       const newErrors = prepareErrors(errors);
-      console.log("newErrors", newErrors);
       openRequiredPanels(newErrors).then(() => scrollToFirstError(newErrors));
     },
   }),
