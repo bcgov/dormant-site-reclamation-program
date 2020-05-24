@@ -32,7 +32,7 @@ DISABLE_APP_SUBMIT_SETTING = 'disable_applications'
 
 WELL_SITE_CONTRACTED_WORK = {
     'abandonment': [
-        'well_file_review', 'abandonment_plan', 'mob_demob_site', 'camp_lodging'
+        'well_file_review', 'abandonment_plan', 'mob_demob_site', 'camp_lodging',
         'permanent_plugging_wellbore', 'cut_and_cap', 'removal_of_facilities'
     ],
     'preliminary_site_investigation': [
