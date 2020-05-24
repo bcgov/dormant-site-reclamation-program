@@ -403,7 +403,6 @@ export const scrollToFirstError = (errors) => {
   const errorPaths = getPathsToLeaves(errors);
   const errorElements = getPathElements(errorPaths);
   const firstErrorElement = getFirstPathElement(errorElements).element;
-
   if (firstErrorElement) {
     firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
     return true;

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Row, Col, Form, Select, Spin, Icon, Button, Descriptions } from "antd";
-import { throttle } from "lodash";
+import { debounce } from "lodash";
 import RenderField from "@/components/common/RenderField";
 import { fetchSelectedWell } from "@/actionCreators/OGCActionCreator";
 import { getSelectedWells } from "@/selectors/OGCSelectors";
@@ -18,8 +18,8 @@ const defaultProps = {};
 export class WellField extends Component {
   constructor(props) {
     super(props);
-    this.fetchSelectedWellThrottled = throttle(this.props.fetchSelectedWell, 2000, {
-      leading: true,
+    this.fetchSelectedWellThrottled = debounce(this.props.fetchSelectedWell, 1000, {
+      leading: false,
       trailing: true,
     });
   }
