@@ -136,7 +136,9 @@ class ApplicationResource(Resource, UserMixin):
         application = Application.find_by_guid(application_guid)
 
         if application is None:
-            raise NotFound('No application was found with the guid provided.')
+            raise NotFound(
+                'No application was found matching the provided reference number.'
+            )
 
         return application
 
@@ -164,7 +166,9 @@ class ApplicationReviewResource(Resource, UserMixin):
     def put(self, application_guid):
         application = Application.find_by_guid(application_guid)
         if application is None:
-            raise NotFound('No application was found with the guid provided.')
+            raise NotFound(
+                'No application was found matching the provided reference number.'
+            )
 
         try:
             review_json = request.json['review_json']
