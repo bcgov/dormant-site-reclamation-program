@@ -18,6 +18,7 @@ export const APPLICATION = (params) =>
   params ? `/application?${queryString.stringify(params)}` : "/application";
 export const STATUS = (guid) => `/application/${guid}/status`;
 export const APPLICATION_BY_ID = (guid) => `/application/${guid}`;
+export const APPLICATION_SUMMARY_BY_ID = (guid) => `/application/${guid}/summary`;
 export const APPLICATION_REVIEW = (guid) => `${APPLICATION_BY_ID(guid)}/review`;
 export const APPLICATION_DOCUMENT = (guid) => `${APPLICATION_BY_ID(guid)}/documents`;
 

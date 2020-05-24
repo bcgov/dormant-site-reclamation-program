@@ -515,6 +515,7 @@ class ApplicationSectionTwo extends Component {
     return (
       <>
         <Collapse
+          defaultActiveKey={["0"]}
           bordered={false}
           accordion
           expandIcon={(panelProps) => (
@@ -716,6 +717,10 @@ class ApplicationSectionTwo extends Component {
           </Title>
           <Row gutter={48}>
             <Col>
+              <Paragraph>
+                Select the permit holder for whom the proposed work will be performed. You must a
+                contract with the permit holder for this work in order to be eligible.
+              </Paragraph>
               <Field
                 id="operator_id"
                 name="operator_id"
@@ -739,6 +744,10 @@ class ApplicationSectionTwo extends Component {
         <Title level={3} className="application-section">
           Well Sites
         </Title>
+        <Paragraph>
+          Identify each well site in your contract with the permit holder and provide the relevant
+          work details.
+        </Paragraph>
         <Row gutter={[48, 48]}>
           <Col>
             <FieldArray

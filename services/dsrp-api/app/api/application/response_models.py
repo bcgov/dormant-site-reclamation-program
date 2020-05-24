@@ -9,12 +9,12 @@ PAGINATED_LIST = api.model(
         'total': fields.Integer
     })
 
-APPLICATION_STATUS = api.model('ApplicationStatus', {
-    'application_status_code': fields.String,
-    'description': fields.String,
-    'long_description':fields.String
-})
-
+APPLICATION_STATUS = api.model(
+    'ApplicationStatus', {
+        'application_status_code': fields.String,
+        'description': fields.String,
+        'long_description': fields.String
+    })
 
 APPLICATION_DOCUMENT = api.model(
     "ApplicationDocument", {
@@ -24,10 +24,7 @@ APPLICATION_DOCUMENT = api.model(
     })
 
 APPLICATION_DOCUMENT_LIST = api.model(
-    "ApplicationDocumentList",{
-        'documents':fields.List(fields.Nested(APPLICATION_DOCUMENT))
-    }
-)
+    "ApplicationDocumentList", {'documents': fields.List(fields.Nested(APPLICATION_DOCUMENT))})
 
 APPLICATION = api.model(
     'Application', {
@@ -42,3 +39,11 @@ APPLICATION = api.model(
 
 APPLICATION_LIST = api.inherit('ApplicationList', PAGINATED_LIST,
                                {'records': fields.List(fields.Nested(APPLICATION))})
+
+APPLICATION_SUMMARY = api.model(
+    'ApplicationSummary', {
+        'id': fields.Integer,
+        'guid': fields.String,
+        'application_status_code': fields.String,
+        'submission_date': fields.DateTime
+    })
