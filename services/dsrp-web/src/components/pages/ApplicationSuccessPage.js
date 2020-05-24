@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { bindActionCreators, compose } from "redux";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { PageTracker } from "@/utils/trackers";
 
 import { Row, Col, Typography, Icon, Result } from "antd";
 
@@ -21,6 +22,7 @@ export class ApplicationSuccessPage extends Component {
   render() {
     return (
       <Row type="flex" justify="center" align="top" className="landing-header">
+        <PageTracker title="Application Success" />
         <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
           <Result
             icon={<Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" />}
@@ -28,7 +30,7 @@ export class ApplicationSuccessPage extends Component {
           />
 
           <Typography>
-            <Title level={4}>Your reference code is: {this.props.match.params.id}</Title>
+            <Title level={4}>Your reference number is: {this.props.match.params.id}</Title>
 
             <Paragraph>
               Please <Text strong>print this code</Text> for future reference and to check the

@@ -3,10 +3,13 @@ import { Link } from "react-router-dom";
 import { Row, Col, Button, Typography } from "antd";
 import * as routes from "@/constants/routes";
 
+import { PageTracker } from "@/utils/trackers";
+
 const { Paragraph, Text, Title } = Typography;
 
 export const LandingPage = (props) => (
   <>
+    <PageTracker title="Landing Page" />
     <Row type="flex" justify="center" align="top" className="landing-header">
       <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
         <Title level={1}>Dormant Sites Reclamation Program</Title>

@@ -10,6 +10,7 @@ import { getAppSettings } from "@/selectors/appSettingsSelectors";
 import * as Strings from "@/constants/strings";
 import Loading from "@/components/common/Loading";
 import WarningBanner from "@/components/common/WarningBanner";
+import { PageTracker } from "@/utils/trackers";
 
 const { Paragraph, Title } = Typography;
 
@@ -54,6 +55,7 @@ export class ReviewApplicationsPage extends Component {
       )[0].setting_value;
       return (
         <>
+          <PageTracker title="Application List" />
           {appsDisabled && <WarningBanner type="disabled" />}
           <Drawer
             title="Admin Options"

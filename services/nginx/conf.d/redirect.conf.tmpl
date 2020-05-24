@@ -13,6 +13,12 @@ if ($domain = dormant-site-reclamation.gov.bc.ca) {
 if ($http_dsrp_bypass = true) {
   set $prod 0;
 }
+if ( $uri ~ ^/api(.*) ) {
+  set $prod 0;
+}
+if ( $uri ~ ^/files(.*) ) {
+  set $prod 0;
+}
 add_header X-prod "$prod";
 
 if ($prod = 1) {

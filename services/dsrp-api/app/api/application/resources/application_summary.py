@@ -19,6 +19,8 @@ class ApplicationSummaryResource(Resource, UserMixin):
         application = Application.find_by_guid(application_guid)
 
         if application is None:
-            raise NotFound('No application was found with the guid provided.')
+            raise NotFound(
+                'No application was found matching the provided reference number.'
+            )
 
         return application

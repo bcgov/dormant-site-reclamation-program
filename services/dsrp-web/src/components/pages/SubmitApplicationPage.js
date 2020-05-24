@@ -4,12 +4,13 @@ import { connect } from "react-redux";
 import { Row, Col, Typography } from "antd";
 import PropTypes from "prop-types";
 
-import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import ApplicationForm from "@/components/forms/ApplicationForm";
 import { fetchAppSettings } from "@/actionCreators/appSettingsActionCreator";
 import { getAppSettings } from "@/selectors/appSettingsSelectors";
 import * as Strings from "@/constants/strings";
 import Loading from "@/components/common/Loading";
+
+import { PageTracker } from "@/utils/trackers";
 
 const { Title, Paragraph } = Typography;
 
@@ -34,6 +35,7 @@ export class SubmitApplicationPage extends Component {
       )[0].setting_value;
       return apps_disabled ? (
         <>
+          <PageTracker title="Submit Application" />
           <Row
             type="flex"
             justify="center"
@@ -93,8 +95,4 @@ const mapDispatchToProps = (dispatch) =>
 
 SubmitApplicationPage.propTypes = propTypes;
 
-// TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
-export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
-  AuthorizationGuard()
-)(SubmitApplicationPage);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(SubmitApplicationPage);

@@ -12,6 +12,7 @@ import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
 
 import { fetchApplicationSummaryById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
+import { PageTracker } from "@/utils/trackers";
 
 import * as router from "@/constants/routes";
 
@@ -67,6 +68,7 @@ export class ViewApplicationStatusPage extends Component {
   render = () =>
     this.props.loadedApplication.guid !== this.state.guid ? (
       <>
+        <PageTracker title="Application Status" />
         <Row type="flex" justify="center" align="top" className="landing-header">
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
             <Title>View Application Status</Title>

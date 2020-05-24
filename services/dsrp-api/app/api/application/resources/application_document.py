@@ -24,7 +24,6 @@ from app.api.application.models.application_status_change import ApplicationStat
 from app.api.services.object_store_storage_service import ObjectStoreStorageService
 from app.api.services.email_service import EmailService
 
-
 from app.api.application.response_models import APPLICATION_DOCUMENT, APPLICATION_DOCUMENT_LIST
 from app.api.documents.response_models import DOWNLOAD_TOKEN_MODEL
 
@@ -38,7 +37,7 @@ class ApplicationDocumentListResource(Resource, UserMixin):
         if not application:
             raise NotFound("Not found")
 
-        if application.application_status_code == "WAIT_FOR_DOCS" or jwt.validate_roles(ADMIN):
+        if application.application_status_code == "WAIT_FOR_DOCS" or jwt.validate_roles([ADMIN]):
             ##Admin or public if waiting for docs, otherwise reject
             docs = request.json['documents']
 
@@ -47,12 +46,10 @@ class ApplicationDocumentListResource(Resource, UserMixin):
                     document_name=doc['document_name'], object_store_path=doc['object_store_path'])
                 application.documents.append(new_doc)
 
-
             if request.json.get('confirm_final_documents'):
                 new_app_status_change = ApplicationStatusChange(
                     application_status_code="DOC_SUBMITTED",
-                    note="Thank you for uploading all of the required documentation"
-                ) #placeholder 
+                    note="Thank you for uploading all of the required documentation")  #placeholder
                 application.status_changes.append(new_app_status_change)
                 application.save()
                 db.session.refresh(new_app_status_change)

@@ -1,0 +1,29 @@
+import React from "react";
+import { useMatomo } from "@datapunt/matomo-tracker-react";
+
+export const trackEvent = (category, action) => {
+  const { trackEvent } = useMatomo();
+  trackEvent({ category: category, action: action });
+};
+
+const trackPageView = (title) => {
+  const { trackPageView } = useMatomo();
+
+  React.useEffect(() => {
+    trackPageView({
+      documentTitle: title,
+    });
+  }, []);
+};
+
+export const PageTracker = (props) => {
+  trackPageView(props.title);
+  return null;
+};
+
+export const MatomoLinkTracing = () => {
+  const { enableLinkTracking } = useMatomo();
+
+  enableLinkTracking();
+  return null;
+};
