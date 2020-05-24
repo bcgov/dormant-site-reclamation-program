@@ -63,7 +63,7 @@ const renderMoneyTotal = (label, amount, style) => (
   </Row>
 );
 
-const disabledDate = (date, wellSiteFormValues, contractWorkSection) => {
+const disabledStartDate = (date, wellSiteFormValues, contractWorkSection) => {
   const selectedDate = date ? moment(date) : null;
   const contractWorkValues = wellSiteFormValues ? wellSiteFormValues.contracted_work : null;
   const sectionValues = contractWorkValues
@@ -81,7 +81,52 @@ const disabledDate = (date, wellSiteFormValues, contractWorkSection) => {
   );
 };
 
-const validateDate = (date, wellSiteFormValues, contractWorkSection) => {
+const validateStartDate = (date, wellSiteFormValues, contractWorkSection) => {
+  if (date === "Invalid date") {
+    return "This is not a valid date value";
+  }
+  const selectedDate = date ? moment(date) : null;
+  const contractWorkValues = wellSiteFormValues ? wellSiteFormValues.contracted_work : null;
+  const sectionValues = contractWorkValues
+    ? contractWorkValues[contractWorkSection.formSectionName]
+    : null;
+  const startDate =
+    sectionValues && sectionValues.planned_start_date
+      ? moment(sectionValues.planned_start_date)
+      : null;
+  if (selectedDate) {
+    if (
+      selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
+      selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD")
+    ) {
+      return "Date cannot be outside of the program";
+    }
+    if (startDate && selectedDate < startDate) {
+      return "Planned end date cannot be before start date";
+    }
+  }
+  return undefined;
+};
+
+const disabledEndDate = (date, wellSiteFormValues, contractWorkSection) => {
+  const selectedDate = date ? moment(date) : null;
+  const contractWorkValues = wellSiteFormValues ? wellSiteFormValues.contracted_work : null;
+  const sectionValues = contractWorkValues
+    ? contractWorkValues[contractWorkSection.formSectionName]
+    : null;
+  const startDate =
+    sectionValues && sectionValues.planned_start_date
+      ? moment(sectionValues.planned_start_date)
+      : null;
+  return (
+    selectedDate &&
+    (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
+      selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD") ||
+      (startDate && selectedDate < startDate))
+  );
+};
+
+const validateEndDate = (date, wellSiteFormValues, contractWorkSection) => {
   if (date === "Invalid date") {
     return "This is not a valid date value";
   }
@@ -153,8 +198,10 @@ const renderContractWorkPanel = (
               error={wellSectionErrors && wellSectionErrors.planned_start_date}
               component={renderConfig.DATE}
               disabled={!isEditable}
-              disabledDate={(date) => disabledDate(date, wellSiteFormValues, contractWorkSection)}
-              validate={(date) => validateDate(date, wellSiteFormValues, contractWorkSection)}
+              disabledDate={(date) =>
+                disabledStartDate(date, wellSiteFormValues, contractWorkSection)
+              }
+              validate={(date) => validateStartDate(date, wellSiteFormValues, contractWorkSection)}
             />
           </Col>
           <Col span={12}>
@@ -165,53 +212,10 @@ const renderContractWorkPanel = (
               error={wellSectionErrors && wellSectionErrors.planned_end_date}
               component={renderConfig.DATE}
               disabled={!isEditable}
-              disabledDate={(date) => {
-                const selectedDate = date ? moment(date) : null;
-                const contractWorkValues = wellSiteFormValues
-                  ? wellSiteFormValues.contracted_work
-                  : null;
-                const sectionValues = contractWorkValues
-                  ? contractWorkValues[contractWorkSection.formSectionName]
-                  : null;
-                const startDate =
-                  sectionValues && sectionValues.planned_start_date
-                    ? moment(sectionValues.planned_start_date)
-                    : null;
-                return (
-                  selectedDate &&
-                  (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
-                    selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD") ||
-                    (startDate && selectedDate < startDate))
-                );
-              }}
-              validate={(date) => {
-                if (date === "Invalid date") {
-                  return "This is not a valid date value";
-                }
-                const selectedDate = date ? moment(date) : null;
-                const contractWorkValues = wellSiteFormValues
-                  ? wellSiteFormValues.contracted_work
-                  : null;
-                const sectionValues = contractWorkValues
-                  ? contractWorkValues[contractWorkSection.formSectionName]
-                  : null;
-                const startDate =
-                  sectionValues && sectionValues.planned_start_date
-                    ? moment(sectionValues.planned_start_date)
-                    : null;
-                if (selectedDate) {
-                  if (
-                    selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
-                    selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD")
-                  ) {
-                    return "Date cannot be outside of the program";
-                  }
-                  if (startDate && selectedDate < startDate) {
-                    return "Planned end date cannot be before start date";
-                  }
-                }
-                return undefined;
-              }}
+              disabledDate={(date) =>
+                disabledEndDate(date, wellSiteFormValues, contractWorkSection)
+              }
+              validate={(date) => validateEndDate(date, wellSiteFormValues, contractWorkSection)}
             />
           </Col>
         </Row>
