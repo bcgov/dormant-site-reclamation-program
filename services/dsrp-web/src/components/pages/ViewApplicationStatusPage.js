@@ -90,7 +90,7 @@ export class ViewApplicationStatusPage extends Component {
               <DocumentUploadForm applicationGuid={this.props.loadedApplication.guid} />
             </>
           )}
-          <br/>
+          <br />
           <Button onClick={() => this.setState({ guid: "" })}>Check another Application</Button>
         </Col>
       </Row>
