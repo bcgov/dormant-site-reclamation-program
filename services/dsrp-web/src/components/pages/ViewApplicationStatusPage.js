@@ -75,14 +75,14 @@ export class ViewApplicationStatusPage extends Component {
             <Paragraph />
           </Col>
         </Row>
-        <Row type="flex" justify="center" align="top" className="landing-section">
+        <Row type="flex" justify="center" align="top">
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
             <ViewApplicationStatusForm onSubmit={this.onFormSubmit} />
           </Col>
         </Row>
       </>
     ) : (
-      <Row type="flex" justify="center" align="top" className="landing-section">
+      <Row type="flex" justify="center" align="top" className="landing-header">
         <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
           <ApplicationStatusCard application={this.props.loadedApplication} />
           {this.props.loadedApplication.application_status_code === "WAIT_FOR_DOCS" && (
@@ -90,6 +90,7 @@ export class ViewApplicationStatusPage extends Component {
               <DocumentUploadForm applicationGuid={this.props.loadedApplication.guid} />
             </>
           )}
+          <br/>
           <Button onClick={() => this.setState({ guid: "" })}>Check another Application</Button>
         </Col>
       </Row>
