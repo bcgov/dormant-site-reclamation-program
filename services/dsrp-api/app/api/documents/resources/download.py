@@ -15,10 +15,6 @@ from app.api.services.object_store_storage_service import ObjectStoreStorageServ
 
 
 class DocumentDownloadResource(Resource, UserMixin):
-
-    def on_get(self, req, resp):
-        del(req.env['wsgi.file_wrapper'])
-
     @api.doc(description='Retrieve a file from document storage with token')
     def get(self):
         token_guid = request.args.get('token', '')

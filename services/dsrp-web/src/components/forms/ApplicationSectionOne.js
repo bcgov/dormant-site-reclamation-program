@@ -6,7 +6,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { renderConfig } from "@/components/common/config";
 import { required, email, maxLength, postalCode, exactLength } from "@/utils/validate";
-import { phoneMask, postalCodeMask, businessNumberMask, scrollToFirstError } from "@/utils/helpers";
+import { phoneMask, postalCodeMask, scrollToFirstError, businessNumberMask } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
@@ -55,6 +55,11 @@ class ApplicationSectionOne extends Component {
           <Title level={3} className="application-section">
             Company Details
           </Title>
+          <Paragraph>
+            Enter your business name, BC address and contact information for this application. The
+            contact information provided will be used for all communication regarding this
+            application.
+          </Paragraph>
           <Row gutter={48}>
             <Col>
               <Field
@@ -120,7 +125,7 @@ class ApplicationSectionOne extends Component {
                 <Field
                   id="indigenous_participation_description"
                   name="indigenous_participation_description"
-                  label="Please describe: (Do not include any personal information)"
+                  label="Please describe (Do not include any personal information):"
                   component={renderConfig.AUTO_SIZE_FIELD}
                   validate={[required, maxLength(65536)]}
                   disabled={!this.props.isEditable}

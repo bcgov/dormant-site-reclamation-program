@@ -36,17 +36,17 @@ export class ApplicationSuccessPage extends Component {
             </Paragraph>
             <Title level={4}>What happens next</Title>
             <Paragraph>
-              If any of the work applied for is approved, you must upload the following:
+              If any of the work applied for is approved, you will receive an agreement that you
+              must sign and upload along with:
               <ul>
                 <li>
-                  A signed copy of the agreement you received from the Province of British Columbia
-                </li>
-                <li>
-                  A copy of the contract between your company and the permit holder named in the
+                  A copy of the contract between your company and the permit holder named in your
                   application
                 </li>
-                <li>A certificate of insurance</li>
+                <li>A certificate of Insurance</li>
               </ul>
+              When the files have been uploaded, you may begin work and the initial payment will be
+              processed and sent to you at the address provided.
             </Paragraph>
           </Typography>
         </Col>
