@@ -48,18 +48,20 @@ const isGuid = (input) => {
 export class ViewApplicationStatusPage extends Component {
   state = { guid: "" };
   componentDidMount = () => {
-    alert(JSON.stringify(this.props.match));
     if (
       this.props.match &&
       this.props.match.params &&
       this.props.match.params.id &&
       isGuid(this.props.match.params.id)
-    )
+    ) {
       this.props.fetchApplicationSummaryById(this.props.match.params.id);
+      this.setState({ guid: this.props.match.params.id });
+    }
   };
 
   onFormSubmit = (values) => {
     this.props.fetchApplicationSummaryById(values.guid);
+    this.setState({ guid: values.guid });
   };
 
   render = () =>
