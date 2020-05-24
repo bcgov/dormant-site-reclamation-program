@@ -539,7 +539,7 @@ const renderWells = (props) => {
                     <span onClick={(e) => e.stopPropagation()}>
                       <Popconfirm
                         title="Are you sure you want to remove this well site?"
-                        onConfirm={(e) => fields.remove(index)}
+                        onConfirm={(e) => props.fields.remove(index)}
                         okText="Yes"
                         cancelText="No"
                         placement="topRight"
