@@ -69,10 +69,8 @@ const disabledStartDate = (date, wellSiteFormValues, contractWorkSection) => {
   const sectionValues = contractWorkValues
     ? contractWorkValues[contractWorkSection.formSectionName]
     : null;
-    const endDate =
-    sectionValues && sectionValues.planned_end_date
-      ? moment(sectionValues.planned_end_date)
-      : null;
+  const endDate =
+    sectionValues && sectionValues.planned_end_date ? moment(sectionValues.planned_end_date) : null;
   return (
     selectedDate &&
     (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
@@ -91,9 +89,7 @@ const validateStartDate = (date, wellSiteFormValues, contractWorkSection) => {
     ? contractWorkValues[contractWorkSection.formSectionName]
     : null;
   const endDate =
-    sectionValues && sectionValues.planned_end_date
-      ? moment(sectionValues.planned_end_date)
-      : null;
+    sectionValues && sectionValues.planned_end_date ? moment(sectionValues.planned_end_date) : null;
   if (selectedDate) {
     if (
       selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
@@ -706,7 +702,7 @@ const defaultState = {
   contractedWorkTotals: { grandTotal: 0, wellTotals: {} },
 };
 
-const getWellName = (wellNumber, formValues) => {
+const getWellName = (wellNumber, formValues, selectedWells) => {
   const wellAuthNumber =
     formValues &&
     formValues.well_sites &&
@@ -840,7 +836,11 @@ class ApplicationSectionTwo extends Component {
           <Row gutter={16} type="flex" justify="start" align="bottom">
             <Col style={{ textAlign: "right" }}>
               {wellTotalsValues.map((wellTotal, index) => {
-                const actualName = getWellName(index, this.props.formValues);
+                const actualName = getWellName(
+                  index,
+                  this.props.formValues,
+                  this.props.selectedWells
+                );
                 let wellName = `Well Site ${index + 1}`;
                 wellName += actualName ? ` (${actualName})` : "";
                 return (
