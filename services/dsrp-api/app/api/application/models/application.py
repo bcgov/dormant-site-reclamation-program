@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import current_app
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -34,7 +35,7 @@ class Application(Base, AuditMixin):
 
     submission_date = db.Column(db.DateTime,
                                 nullable=False,
-                                server_default=FetchedValue())
+                                default=datetime.utcnow)
     json = db.Column(JSONB, nullable=False)
     review_json = db.Column(JSONB)
     submitter_ip = db.Column(db.String)
@@ -43,7 +44,7 @@ class Application(Base, AuditMixin):
     status_changes = db.relationship(
         'ApplicationStatusChange',
         lazy='joined',
-        order_by='desc(ApplicationStatusChange.change_date)',
+        order_by='desc(ApplicationStatusChange.application_status_change_id)',
     )
 
     def __repr__(self):

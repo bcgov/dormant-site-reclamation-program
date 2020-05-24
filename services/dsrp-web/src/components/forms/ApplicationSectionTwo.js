@@ -80,17 +80,14 @@ const disabledStartDate = (date, wellSiteFormValues, contractWorkSection) => {
   );
 };
 
-const validateStartDate = (date, wellSiteFormValues, contractWorkSection) => {
+const validateStartDate = (date, sectionValues) => {
   if (date === "Invalid date") {
     return "This is not a valid date value";
   }
   const selectedDate = date ? moment(date) : null;
-  const contractWorkValues = wellSiteFormValues ? wellSiteFormValues.contracted_work : null;
-  const sectionValues = contractWorkValues
-    ? contractWorkValues[contractWorkSection.formSectionName]
-    : null;
   const endDate =
     sectionValues && sectionValues.planned_end_date ? moment(sectionValues.planned_end_date) : null;
+
   if (selectedDate) {
     if (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD")) {
       return `Date cannot be before the program's start date: ${PROGRAM_START_DATE}`;
@@ -123,15 +120,11 @@ const disabledEndDate = (date, wellSiteFormValues, contractWorkSection) => {
   );
 };
 
-const validateEndDate = (date, wellSiteFormValues, contractWorkSection) => {
+const validateEndDate = (date, sectionValues) => {
   if (date === "Invalid date") {
     return "This is not a valid date value";
   }
   const selectedDate = date ? moment(date) : null;
-  const contractWorkValues = wellSiteFormValues ? wellSiteFormValues.contracted_work : null;
-  const sectionValues = contractWorkValues
-    ? contractWorkValues[contractWorkSection.formSectionName]
-    : null;
   const startDate =
     sectionValues && sectionValues.planned_start_date
       ? moment(sectionValues.planned_start_date)
@@ -195,10 +188,9 @@ const renderContractWorkPanel = (
               error={wellSectionErrors && wellSectionErrors.planned_start_date}
               component={renderConfig.DATE}
               disabled={!isEditable}
-              // disabledDate={(date) =>
-              //   disabledStartDate(date, wellSiteFormValues, contractWorkSection)
-              // }
-              // validate={(date) => validateStartDate(date, wellSiteFormValues, contractWorkSection)}
+              disabledDate={(date) =>
+                disabledStartDate(date, wellSiteFormValues, contractWorkSection)
+              }
             />
           </Col>
           <Col span={12}>
@@ -209,10 +201,9 @@ const renderContractWorkPanel = (
               error={wellSectionErrors && wellSectionErrors.planned_end_date}
               component={renderConfig.DATE}
               disabled={!isEditable}
-              // disabledDate={(date) =>
-              //   disabledEndDate(date, wellSiteFormValues, contractWorkSection)
-              // }
-              // validate={(date) => validateEndDate(date, wellSiteFormValues, contractWorkSection)}
+              disabledDate={(date) =>
+                disabledEndDate(date, wellSiteFormValues, contractWorkSection)
+              }
             />
           </Col>
         </Row>
@@ -405,6 +396,9 @@ const validateWellSites = (wellSites, formValues, props) => {
   }
 
   wellSites.map((wellSite, index) => {
+    if (index !== 0) {
+      return;
+    }
     // Check that the well authorization number is valid.
     const validateRequired = required(get(wellSite, "details.well_authorization_number", null));
     if (validateRequired) {
@@ -466,14 +460,14 @@ const validateWellSites = (wellSites, formValues, props) => {
       }
 
       // Validate start date
-      const startDateError = validateStartDate(startDate, sectionValues, section);
+      const startDateError = validateStartDate(startDate, sectionValues);
       if (startDateError) {
         set(errors, `${path}.planned_start_date`, startDateError);
         sectionErrorCount++;
       }
 
       // Validate end date
-      const endDateError = validateEndDate(endDate, sectionValues, section);
+      const endDateError = validateEndDate(endDate, sectionValues);
       if (endDateError) {
         set(errors, `${path}.planned_end_date`, endDateError);
         sectionErrorCount++;
@@ -529,7 +523,6 @@ const renderWells = (props) => {
           wellName += actualName ? ` (${actualName})` : "";
 
           const wellSiteErrors = get(props.meta, `error.well_sites[${index}]`, null);
-
           return (
             <Panel
               key={index}

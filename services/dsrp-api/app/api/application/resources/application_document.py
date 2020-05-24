@@ -30,16 +30,14 @@ from app.api.documents.response_models import DOWNLOAD_TOKEN_MODEL
 
 class ApplicationDocumentListResource(Resource, UserMixin):
     @api.doc(description='Register files that have been uploaded to the document store')
-    @api.marshal_with(APPLICATION_DOCUMENT_LIST, code=201)
     def post(self, application_guid):
-
         application = Application.find_by_guid(application_guid)
         if not application:
             raise NotFound("Not found")
 
         if application.application_status_code == "WAIT_FOR_DOCS" or jwt.validate_roles([ADMIN]):
             ##Admin or public if waiting for docs, otherwise reject
-            docs = request.json['documents']
+            docs = request.json.get('documents',[])
 
             for doc in docs:
                 new_doc = ApplicationDocument(
@@ -49,7 +47,7 @@ class ApplicationDocumentListResource(Resource, UserMixin):
             if request.json.get('confirm_final_documents'):
                 new_app_status_change = ApplicationStatusChange(
                     application_status_code="DOC_SUBMITTED",
-                    note="Thank you for uploading the required documents")  #placeholder
+                    note="Thank you for uploading the required documents") 
                 application.status_changes.append(new_app_status_change)
                 application.save()
                 db.session.refresh(new_app_status_change)
@@ -57,7 +55,7 @@ class ApplicationDocumentListResource(Resource, UserMixin):
                     new_app_status_change.send_status_change_email(es)
 
             application.save()
-            return application.documents
+            return "", 204
         raise Unauthorized("Not currently accepting documents on this application")
 
 
