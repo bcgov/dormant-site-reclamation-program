@@ -30,7 +30,7 @@ export class ApplicationSuccessPage extends Component {
           />
 
           <Typography>
-            <Title level={4}>Your reference code is: {this.props.match.params.id}</Title>
+            <Title level={4}>Your reference number is: {this.props.match.params.id}</Title>
 
             <Paragraph>
               Please <Text strong>print this code</Text> for future reference and to check the
