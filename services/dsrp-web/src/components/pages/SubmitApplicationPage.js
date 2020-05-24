@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { bindActionCreators } from "redux";
+import { bindActionCreators, compose } from "redux";
 import { connect } from "react-redux";
 import { Row, Col, Typography } from "antd";
 import PropTypes from "prop-types";
 
+import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import ApplicationForm from "@/components/forms/ApplicationForm";
 import { fetchAppSettings } from "@/actionCreators/appSettingsActionCreator";
 import { getAppSettings } from "@/selectors/appSettingsSelectors";
@@ -58,9 +59,9 @@ export class SubmitApplicationPage extends Component {
             <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
               <Title>Submit Application</Title>
               <Paragraph>
-                Enter your business name, BC address and contact information for this application.
-                The contact information provided will be used for all communication regarding this
-                application.
+                You must submit a separate application for each contract you have with an eligible
+                contract holder. Any work in an application that is not in the contract, cannot
+                qualify for the program.
               </Paragraph>
             </Col>
           </Row>
@@ -71,12 +72,13 @@ export class SubmitApplicationPage extends Component {
           </Row>
         </>
       );
+    } else {
+      return (
+        <>
+          <Loading />
+        </>
+      );
     }
-    return (
-      <>
-        <Loading />
-      </>
-    );
   }
 }
 
@@ -94,4 +96,8 @@ const mapDispatchToProps = (dispatch) =>
 
 SubmitApplicationPage.propTypes = propTypes;
 
-export default connect(mapStateToProps, mapDispatchToProps)(SubmitApplicationPage);
+// TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  AuthorizationGuard()
+)(SubmitApplicationPage);

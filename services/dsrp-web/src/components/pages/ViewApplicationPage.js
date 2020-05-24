@@ -78,7 +78,7 @@ export class ViewApplicationPage extends Component {
                       application_guid={this.props.application.guid}
                       documents={this.props.application.documents}
                     />
-                    <DocumentUploadForm applicationGuid={this.props.application.guid} />
+                    <DocumentUploadForm applicationGuid={this.props.application.guid} isAdminView />
                   </TabPane>
                 </Tabs>
               </Col>

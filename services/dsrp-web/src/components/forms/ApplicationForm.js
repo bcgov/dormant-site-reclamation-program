@@ -76,6 +76,29 @@ export class ApplicationForm extends Component {
     });
   }
 
+  validateJSONData = (json) => {
+    json.well_sites.forEach((site) => {
+      Object.keys(site.contracted_work).forEach((type) => {
+        let empty = Object.keys(site.contracted_work[type]).every(
+          (x) => site.contracted_work[type][x] === null
+        );
+        if (empty) {
+          delete site.contracted_work[type];
+        } else {
+          Object.keys(site.contracted_work[type]).forEach(
+            (k) => site.contracted_work[type][k] === null && delete site.contracted_work[type][k]
+          );
+        }
+      });
+      Object.keys(site.site_conditions).forEach((cond) => {
+        if (!site.site_conditions[cond]) {
+          delete site.site_conditions[cond];
+        }
+      });
+    });
+    return json;
+  };
+
   getSavedFormData() {
     const data = localStorage.getItem(APPLICATION_FORM);
     return data ? JSON.parse(data) : null;
@@ -86,7 +109,7 @@ export class ApplicationForm extends Component {
   }
 
   handleSubmit = (values, dispatch) => {
-    const application = { json: values, documents: this.state.uploadedDocs };
+    const application = { json: this.validateJSONData(values), documents: this.state.uploadedDocs };
     this.props.createApplication(application).then((response) => {
       this.setState(resetFormState);
       dispatch(initialize(APPLICATION_FORM));
@@ -154,13 +177,15 @@ export class ApplicationForm extends Component {
           <React.Fragment>
             <Row>
               <Col>
+                <Title level={3}>Review Application</Title>
                 <Title level={4}>Before you submit</Title>
                 <Paragraph>
                   Review your application details below to make sure all information provided is
-                  accurate.
+                  accurate. If you need to change any information, use the “Previous” button at the
+                  bottom of the page to get to the correct step.
                 </Paragraph>
                 <Paragraph>
-                  <b>You will not be able to edit your application after it is submitted</b>
+                  <b>You will not be able to edit your application after it is submitted.</b>
                 </Paragraph>
                 <Paragraph>
                   <ul>
@@ -179,21 +204,18 @@ export class ApplicationForm extends Component {
                   you can use to check the status of your application at any time by clicking Check
                   Application Status at the top of the page.
                 </Paragraph>
+
                 <Paragraph>
-                  If any of the work applied for is approved, you will receive an agreement that you
-                  must sign and upload along with:
+                  If any of the work applied for is approved, you must upload the following:
                   <ul>
                     <li>
-                      A copy of the contract between your company and the permit holder named in
-                      your application
+                      A signed copy of the agreement you received from the Province of British
+                      Columbia
                     </li>
                     <li>A certificate of Insurance</li>
-                    <li>
-                      A signed copy of the agreement between your company and the Province of
-                      British Columbia
-                    </li>
                   </ul>
                 </Paragraph>
+
                 <Paragraph>
                   When the files have been uploaded, you may begin work and the initial payment will
                   be processed and sent to you at the address provided.
@@ -202,7 +224,6 @@ export class ApplicationForm extends Component {
                   Once approved work begins, you will be required to submit regular reports and
                   invoices documenting contributions of employees who are residents of British
                   Columbia. This information will be used to process the payments that follow.
-                  Application Review
                 </Paragraph>
               </Col>
             </Row>

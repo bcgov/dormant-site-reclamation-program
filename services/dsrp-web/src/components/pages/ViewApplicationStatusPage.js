@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Row, Col, Typography } from "antd";
+import { Row, Col, Typography, Button } from "antd";
 import PropTypes from "prop-types";
 import { bindActionCreators, compose } from "redux";
 import { withRouter } from "react-router-dom";
@@ -10,7 +10,7 @@ import ViewApplicationStatusForm from "@/components/forms/ViewApplicationStatusF
 import ApplicationStatusCard from "@/components/pages/ApplicationStatusCard";
 import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
 
-import { fetchApplicationById } from "@/actionCreators/applicationActionCreator";
+import { fetchApplicationSummaryById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
 import { PageTracker } from "@/utils/trackers";
 
@@ -19,19 +19,23 @@ import * as router from "@/constants/routes";
 const { Paragraph, Title } = Typography;
 
 const propTypes = {
-  fetchApplicationById: PropTypes.func.isRequired,
+  fetchApplicationSummaryById: PropTypes.func.isRequired,
   loadedApplication: PropTypes.shape({
     guid: PropTypes.string,
     application_status_code: PropTypes.string,
     submission_date: PropTypes.string,
     json: PropTypes.any,
-  }).isRequired,
+  }),
   match: PropTypes.shape({
     params: {
       id: PropTypes.string,
     },
   }).isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
+};
+
+const defaultProps = {
+  loadedApplication: { guid: "" },
 };
 
 const isGuid = (input) => {
@@ -43,6 +47,7 @@ const isGuid = (input) => {
 };
 
 export class ViewApplicationStatusPage extends Component {
+  state = { guid: "" };
   componentDidMount = () => {
     if (
       this.props.match &&
@@ -50,21 +55,18 @@ export class ViewApplicationStatusPage extends Component {
       this.props.match.params.id &&
       isGuid(this.props.match.params.id)
     ) {
-      const id = this.props.match.params.id;
-      this.props.fetchApplicationById(id);
+      this.props.fetchApplicationSummaryById(this.props.match.params.id);
+      this.setState({ guid: this.props.match.params.id });
     }
   };
 
   onFormSubmit = (values) => {
-    this.props.fetchApplicationById(values.guid);
-  };
-
-  onDocumentUpload = () => {
-    // this.props.history.push(router.VIEW_APPLICATION_STATUS);
+    this.props.fetchApplicationSummaryById(values.guid);
+    this.setState({ guid: values.guid });
   };
 
   render = () =>
-    isEmpty(this.props.loadedApplication) ? (
+    this.props.loadedApplication.guid !== this.state.guid ? (
       <>
         <PageTracker title="Application Status" />
         <Row type="flex" justify="center" align="top" className="landing-header">
@@ -85,23 +87,17 @@ export class ViewApplicationStatusPage extends Component {
           <ApplicationStatusCard application={this.props.loadedApplication} />
           {this.props.loadedApplication.application_status_code === "WAIT_FOR_DOCS" && (
             <>
-              <Title level={3}>Upload Required Files</Title>
-              <p>
-                Use the document submission form below <strong>only</strong> if you have been
-                requested to provide additional documentation related to your application.
-              </p>
-              <DocumentUploadForm
-                onDocumentUpload={this.onDocumentUpload}
-                applicationGuid={this.props.loadedApplication.guid}
-              />
+              <DocumentUploadForm applicationGuid={this.props.loadedApplication.guid} />
             </>
           )}
+          <Button onClick={() => this.setState({ guid: "" })}>Check another Application</Button>
         </Col>
       </Row>
     );
 }
 
 ViewApplicationStatusPage.propTypes = propTypes;
+ViewApplicationStatusPage.defaultProps = defaultProps;
 
 const mapStateToProps = (state) => ({
   loadedApplication: getApplication(state),
@@ -110,7 +106,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      fetchApplicationById,
+      fetchApplicationSummaryById,
     },
     dispatch
   );
