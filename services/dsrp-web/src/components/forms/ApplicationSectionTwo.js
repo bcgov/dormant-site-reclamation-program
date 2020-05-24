@@ -917,5 +917,6 @@ export default compose(
       const newErrors = prepareErrors(errors);
       openRequiredPanels(newErrors).then(() => scrollToFirstError(newErrors));
     },
-  })
+  }),
+  connect(mapStateToProps, mapDispatchToProps)
 )(ApplicationSectionTwo);
