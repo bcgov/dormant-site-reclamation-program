@@ -20,89 +20,92 @@ const description = (status) => {
   switch (status) {
     case "NOT_STARTED":
       return (
-        <>
-          <Paragraph>Your application has been received but has not been reviewed.</Paragraph>
-          <Paragraph>
+        <Paragraph>
+          Your application has been received but has not been reviewed.
+          <br />
+          <i>
             To view your application details, please refer to the email received when your
             application was originally submitted.
-          </Paragraph>
-        </>
+          </i>
+        </Paragraph>
       );
     case "IN_PROGRESS":
       return (
-        <>
-          <Paragraph>Your application is being reviewed.</Paragraph>
-          <Paragraph>
+        <Paragraph>
+          Your application is being reviewed.
+          <br />
+          <i>
             To view your application details, please refer to the email received when your
             application was originally submitted.
-          </Paragraph>
-        </>
+          </i>
+        </Paragraph>
       );
     case "WAIT_FOR_DOCS":
       return (
-        <>
-          <Paragraph>
-            Your application has been reviewed. Please attach the files requested below.
-          </Paragraph>
-          <Paragraph>
+        <Paragraph>
+          Your application has been reviewed. Please attach the files requested below.
+          <br />
+          <i>
             To see the work that has been approved for this application, please refer to the
             agreement you have been asked to sign and upload.
-          </Paragraph>
-        </>
+          </i>
+        </Paragraph>
       );
     case "DOC_SUBMITTED":
       return (
-        <>
-          <Paragraph>Your documents have been received and are being reviewed.</Paragraph>
-          <Paragraph>
+        <Paragraph>
+          Your documents have been received and are being reviewed.
+          <br />
+          <i>
             To view your application details, please refer to the email received when your
             application was originally submitted.
-          </Paragraph>
-        </>
+          </i>
+        </Paragraph>
       );
     case "FIRST_PAY_APPROVED":
       return (
-        <>
-          <Paragraph>
-            Your application has been approved and payment will be processed shortly.
-          </Paragraph>
-        </>
+        <Paragraph>
+          Your application has been approved and payment will be processed shortly.
+        </Paragraph>
       );
     case "REJECTED":
       return (
-        <>
-          <Paragraph>Your application has been rejected.</Paragraph>
-          <Paragraph>
+        <Paragraph>
+          Your application has been rejected.
+          <br />
+          <i>
             Please refer to the email you received for any additional information regarding your
             application.
-          </Paragraph>
-        </>
+          </i>
+        </Paragraph>
       );
     case "WITHDRAWN":
       return (
-        <>
-          <Paragraph>Your application has been withdrawn as requested.</Paragraph>
-          <Paragraph>
+        <Paragraph>
+          Your application has been withdrawn as requested.
+          <br />
+          <i>
             Please refer to the email you received for any additional information regarding your
             application
-          </Paragraph>
-        </>
+          </i>
+        </Paragraph>
       );
     default:
   }
 };
 
 export const ApplicationStatusCard = (props) => (
-  <Row type="flex" align="top" className="landing-header">
+  <Row type="flex" align="top">
     <Title level={1}>Application Progress</Title>
     <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
       <Title level={4}>Received On</Title>
       <Paragraph>{formatDateTime(props.application.submission_date)}</Paragraph>
       <Title level={4}>Application Status</Title>
       <Paragraph>
-        {props.applicationStatusHash[props.application.application_status_code]}
+        <b>{props.applicationStatusHash[props.application.application_status_code]}</b>
       </Paragraph>
       <Paragraph>{description(props.application.application_status_code)}</Paragraph>
+      <br/>
       <Paragraph>
         If you have any questions regarding your application,{" "}
         <a href="mailto:DormantSite.BC.Government@gov.bc.ca">Contact us</a> and be sure to include

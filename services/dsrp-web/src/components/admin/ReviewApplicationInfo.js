@@ -174,7 +174,11 @@ export class ReviewApplicationInfo extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.location !== this.props.location) {
-      this.renderDataFromURL(nextProps.location.search);
+      if (nextProps.location.search) {
+        this.renderDataFromURL(nextProps.location.search);
+      } else {
+        this.renderDataFromURL(queryString.stringify(defaultParams));
+      }
     }
   }
 
