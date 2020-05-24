@@ -490,7 +490,6 @@ const validateWellSites = (wellSites, formValues, props) => {
 };
 
 const renderWells = (props) => {
-  console.log(JSON.stringify(props));
   // Ensure that there is always at least one well site.
   if (props.fields.length === 0) {
     props.fields.push({});
