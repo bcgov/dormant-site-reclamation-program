@@ -133,18 +133,29 @@ export class ReviewApplicationInfo extends Component {
   };
 
   handleContractedWorkStatusChange = (item, contractedWork) => {
-    const reviewJson = contractedWork.review_json || {};
+    const reviewJson = contractedWork.review_json || { well_sites: [] };
 
     // NOTE: Manually doing this here because using set() thinks integers are array indexes (well_authorization_number).
-    if (isEmpty(reviewJson.well_sites)) {
-      reviewJson.well_sites = {};
+    // if (isEmpty(reviewJson.well_sites)) {
+    //   reviewJson.well_sites = [];
+    // }
+
+    if (isEmpty(reviewJson.well_sites[contractedWork.well_index])) {
+      reviewJson.well_sites[contractedWork.well_index] = {};
     }
-    if (isEmpty(reviewJson.well_sites[contractedWork.well_authorization_number])) {
-      reviewJson.well_sites[contractedWork.well_authorization_number] = {};
+
+    if (
+      isEmpty(
+        reviewJson.well_sites[contractedWork.well_index][contractedWork.well_authorization_number]
+      )
+    ) {
+      reviewJson.well_sites[contractedWork.well_index][
+        contractedWork.well_authorization_number
+      ] = {};
     }
 
     set(
-      reviewJson.well_sites[contractedWork.well_authorization_number],
+      reviewJson.well_sites[contractedWork.well_index][contractedWork.well_authorization_number],
       `contracted_work.${contractedWork.contracted_work_type}.contracted_work_status_code`,
       item.key
     );
@@ -152,7 +163,6 @@ export class ReviewApplicationInfo extends Component {
     const payload = {
       review_json: reviewJson,
     };
-
     this.props.updateApplicationReview(contractedWork.application_guid, payload).then(() => {
       this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params));
     });
