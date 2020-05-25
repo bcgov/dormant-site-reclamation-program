@@ -27,7 +27,7 @@ def generate_static_content_dict():
 class StaticContentResource(Resource):
     @api.doc(
         description=
-        'Returns static content in bulk instead of calling endpoints individually, keys are custom for current store in CORE/Minespace'
+        'Returns static content in bulk instead of calling endpoints individually, keys are custom for current store'
     )
     def get(self):
         content_json = cache.get(STATIC_CONTENT_KEY)
