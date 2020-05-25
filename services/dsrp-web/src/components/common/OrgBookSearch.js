@@ -26,7 +26,7 @@ const defaultProps = {
 export class OrgBookSearch extends Component {
   constructor(props) {
     super(props);
-    this.searchOrgBookDebounced = debounce(this.props.searchOrgBook, 300);
+    this.searchOrgBookDebounced = debounce(this.props.searchOrgBook, 2000);
   }
 
   state = {
