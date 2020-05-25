@@ -161,7 +161,7 @@ const renderContractWorkPanel = (
     sectionValues && sectionValues.planned_start_date
       ? moment(sectionValues.planned_start_date)
       : null;
-  const defaultEndDatePickerValue = startDate ? moment(startDate, "YYYY-MM-DD") : moment();
+  const defaultEndDatePickerValue = startDate ? startDate : moment();
 
   return (
     <Panel
