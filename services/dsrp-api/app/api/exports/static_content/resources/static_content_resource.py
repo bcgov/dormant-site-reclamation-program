@@ -36,7 +36,7 @@ class StaticContentResource(Resource):
         if not content_json:
             current_app.logger.debug('CACHE MISS - static-content')
             content = generate_static_content_dict()
-            assert content
+            assert content, "Generating static content failed"
             content_dict = marshal(content, STATIC_CONTENT)
             content_json = json.dumps(content_dict, separators=(',', ':'))
             cache.set(STATIC_CONTENT_KEY, content_json, TIMEOUT_60_MINUTES)
