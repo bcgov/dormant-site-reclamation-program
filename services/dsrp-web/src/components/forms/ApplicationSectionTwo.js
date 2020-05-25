@@ -262,7 +262,10 @@ const asyncValidateWell = async (values, field) => {
   if (isNaN(get(values, field))) {
     asyncValidateError(field, "Input must be a number.");
   }
-  return validateWell({ well_auth_number: get(values, field) }).then((response) => {
+  if (parseInt(get(values, field)) <= 0) {
+    return;
+  }
+  return validateWell({ well_auth_number: parseInt(get(values, field)) }).then((response) => {
     if (response.data.records.length === 0)
       asyncValidateError(
         field,
@@ -289,7 +292,7 @@ const asyncValidateWell = async (values, field) => {
 };
 
 const asyncValidate = debounce(
-  function(values, dispatch, props, field) {
+  async (values, dispatch, props, field) => {
     if (!field || field === "contract_details.operator_id") {
       return Promise.all(
         values.well_sites.map((well, index) =>
@@ -303,9 +306,9 @@ const asyncValidate = debounce(
 
     if (field.includes("well_authorization_number") && get(values, field)) {
       return asyncValidateWell(values, field).then(() => {});
-    } else {
-      return Promise.resolve();
     }
+
+    return Promise.resolve();
   },
   2000,
   {
@@ -940,7 +943,7 @@ export default compose(
     updateUnregisteredFields: true,
     shouldAsyncValidate,
     asyncValidate,
-    asyncChangeFields: [
+    asyncBlurFields: [
       "contract_details.operator_id",
       "well_sites[].details.well_authorization_number",
     ],

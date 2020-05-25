@@ -6,6 +6,7 @@ import * as API from "../constants/api";
 import { ENVIRONMENT } from "../constants/environment";
 import { createRequestHeader } from "../utils/requestHeaders";
 import CustomAxios from "../customAxios";
+import { debounce } from "lodash";
 
 export const fetchPermitHolders = () => (dispatch) => {
   dispatch(request(reducerTypes.FETCH_PERMIT_HOLDERS));
