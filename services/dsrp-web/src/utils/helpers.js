@@ -390,7 +390,7 @@ export const getFirstPathElement = (pathsElements) => {
   return { path: paths[0], element: pathsElements[paths[0]] };
 };
 
-export const scrollToFirstError = (errors) => {
+export const scrollToFirstError = (errors, fallbackElement = null) => {
   if (!isObjectLike(errors)) {
     return false;
   }
@@ -402,13 +402,15 @@ export const scrollToFirstError = (errors) => {
 
   const errorPaths = getPathsToLeaves(errors);
   const errorElements = getPathElements(errorPaths);
-  const firstErrorElement = getFirstPathElement(errorElements).element;
-  if (firstErrorElement) {
-    firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
-    return true;
+  let firstErrorElement = getFirstPathElement(errorElements).element;
+  firstErrorElement = firstErrorElement ? firstErrorElement : fallbackElement;
+
+  if (!firstErrorElement) {
+    return false;
   }
 
-  return false;
+  firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+  return true;
 };
 
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

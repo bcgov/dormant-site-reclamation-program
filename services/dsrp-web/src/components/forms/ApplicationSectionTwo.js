@@ -169,7 +169,8 @@ const renderContractWorkPanel = (
         </Col>
       </Row>
     }
-    forceRender={wellSectionErrors !== null}
+    // NOTE: Uncomment this if you want "scroll to error" to automatically open this panel if it's not loaded in the DOM.
+    // forceRender={wellSectionErrors !== null}
   >
     <FormSection name={contractWorkSection.formSectionName}>
       <Form.Item
@@ -341,13 +342,19 @@ const contractedWorkFormSectionNames = CONTRACT_WORK_SECTIONS.reduce(
 
 const openRequiredPanels = async (errors) => {
   let waitForAnimations = Promise.resolve();
-  const paths = getPathsToLeaves(errors);
+
+  let paths = getPathsToLeaves(errors);
   const elements = getPathElements(paths);
   const firstElement = getFirstPathElement(elements);
-  const path = firstElement.path;
+  let path = firstElement.path;
 
   if (!path) {
-    return waitForAnimations;
+    // Workaround to get rid of well sites with no errors, they will appear in the list as "well_sites[0]", e.g., and have "undefined" as their error.
+    paths = paths.filter((p) => p.length > 13);
+    if (isEmpty(paths)) {
+      return waitForAnimations;
+    }
+    path = paths[0];
   }
 
   // If this error is not for an element within a well site, there is no panels to open.
@@ -379,13 +386,17 @@ const openRequiredPanels = async (errors) => {
     const contractedWorkPanelHeaderElement = document.getElementById(
       `well_sites[${wellSiteIndex}].contracted_work.${contractedWorkSection}-panel-header`
     );
-    if (!contractedWorkPanelHeaderElement.classList.contains("ant-collapse-item-active")) {
+    if (
+      contractedWorkPanelHeaderElement &&
+      !contractedWorkPanelHeaderElement.classList.contains("ant-collapse-item-active")
+    ) {
       contractedWorkPanelHeaderElement.firstChild.click();
       waitForAnimations = !waitForAnimations ? sleep(animationDelayInMs) : waitForAnimations;
     }
   }
 
-  return waitForAnimations;
+  await waitForAnimations;
+  return Promise.resolve(wellSitePanelHeaderElement.firstChild);
 };
 
 const validateWellSites = (wellSites, formValues, props) => {
@@ -553,7 +564,8 @@ const renderWells = (props) => {
                   )}
                 </Title>
               }
-              forceRender={wellSiteErrors !== null}
+              // NOTE: Uncomment this if you want "scroll to error" to automatically open this panel if it's not loaded in the DOM.
+              // forceRender={wellSiteErrors !== null}
             >
               <FormSection name={createMemberName(member, "details")}>
                 <Title level={4}>Details</Title>
@@ -946,7 +958,9 @@ export default compose(
         return;
       }
       const newErrors = prepareErrors(errors);
-      openRequiredPanels(newErrors).then(() => scrollToFirstError(newErrors));
+      openRequiredPanels(newErrors).then((fallbackElement) => {
+        scrollToFirstError(newErrors, fallbackElement);
+      });
     },
   }),
   connect(mapStateToProps, mapDispatchToProps)
