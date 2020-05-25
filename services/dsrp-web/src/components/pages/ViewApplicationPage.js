@@ -77,7 +77,11 @@ export class ViewApplicationPage extends Component {
                       initialValues={this.props.application.json}
                     />
                   </TabPane>
-                  <TabPane tab="Documents" key="2" style={{ padding: "20px" }}>
+                  <TabPane
+                    tab={`Documents (${this.props.application.documents.length})`}
+                    key="2"
+                    style={{ padding: "20px" }}
+                  >
                     <ViewApplicationDocuments
                       application_guid={this.props.application.guid}
                       documents={this.props.application.documents}

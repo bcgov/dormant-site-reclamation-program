@@ -126,21 +126,17 @@ export class DocumentUploadForm extends Component {
                     submitted
                   </Text>
                 )}
-                <Form.Item>
-                  <Field
-                    id="confirm_final_documents"
-                    name="confirm_final_documents"
-                    label={
-                      this.props.isAdminView ? (
-                        "All files have been received from applicant"
-                      ) : (
-                        <b>I have finished submitting all requested documents</b>
-                      )
-                    }
-                    type="checkbox"
-                    component={renderConfig.CHECKBOX}
-                  />
-                </Form.Item>
+                {!this.props.isAdminView && (
+                  <Form.Item>
+                    <Field
+                      id="confirm_final_documents"
+                      name="confirm_final_documents"
+                      label={<b>I have finished submitting all requested documents</b>}
+                      type="checkbox"
+                      component={renderConfig.CHECKBOX}
+                    />
+                  </Form.Item>
+                )}
               </Col>
             </Row>
             <Row>

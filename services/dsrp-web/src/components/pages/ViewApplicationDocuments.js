@@ -15,7 +15,6 @@ export const ViewApplicationDocuments = (props) => (
     <Title level={3} className="documents-section">
       Documents
     </Title>
-    <Text> {props.documents.length} Documents Uploaded</Text>
     <DocumentTable {...props} />
   </>
 );
