@@ -164,7 +164,7 @@ export class ReviewApplicationInfo extends Component {
       review_json: reviewJson,
     };
     this.props.updateApplicationReview(contractedWork.application_guid, payload).then(() => {
-      this.props.fetchApplications();
+      this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params));
     });
   };
 

@@ -212,6 +212,10 @@ export class ApplicationForm extends Component {
                       A signed copy of the agreement you received from the Province of British
                       Columbia
                     </li>
+                    <li>
+                      A copy of the contract between your company and the permit holder named in the
+                      application
+                    </li>
                     <li>A certificate of Insurance</li>
                   </ul>
                 </Paragraph>
