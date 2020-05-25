@@ -543,7 +543,8 @@ const renderWells = (props) => {
           const wellSectionTotals = wellTotals ? wellTotals.sections : {};
           const wellTotal = wellTotals ? wellTotals.wellTotal : 0;
 
-          const actualName = getWellName(index, props.formValues);
+          // NOTE: Currently, selectedWells is only populated if the user interacts with the well auth input.
+          const actualName = getWellName(index, props.formValues, props.selectedWells);
           let wellName = `Well Site ${index + 1}`;
           wellName += actualName ? ` (${actualName})` : "";
 
@@ -867,6 +868,7 @@ class ApplicationSectionTwo extends Component {
               isEditable={this.props.isEditable}
               formValues={this.props.formValues}
               parentSubmitFailed={this.props.submitFailed}
+              selectedWells={this.props.selectedWells}
               contractedWorkTotals={this.state.contractedWorkTotals}
             />
           </Col>
