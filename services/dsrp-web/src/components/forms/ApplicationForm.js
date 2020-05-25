@@ -53,11 +53,7 @@ export class ApplicationForm extends Component {
   };
 
   saveFormData() {
-    if (
-      (this.props.isPristine ||
-        isEqual(this.props.formValues, this.state.previouslySavedFormValues)) &&
-      this.state.currentStep === this.state.previouslySavedFormStep
-    ) {
+    if (this.props.isPristine && this.state.currentStep === this.state.previouslySavedFormStep) {
       return;
     }
 
@@ -131,7 +127,7 @@ export class ApplicationForm extends Component {
         currentStep: data.currentStep || 0,
       });
     }
-    this.autoSaveForm = setInterval(() => this.saveFormData(), 1000);
+    this.autoSaveForm = setInterval(() => this.saveFormData(), 10000);
   }
 
   componentWillUnmount() {
