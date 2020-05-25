@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { compose } from "redux";
 import moment from "moment";
-import { Row, Col, Typography, Form, Button, Collapse, Icon, Popconfirm } from "antd";
+import { Row, Col, Typography, Form, Button, Collapse, Icon, Popconfirm, notification } from "antd";
 import { sum, get, set, isEqual, isArrayLike, isEmpty, isObjectLike } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
@@ -719,6 +719,7 @@ const shouldAsyncValidate = ({ trigger, syncValidationPasses }) => {
 
 const defaultState = {
   contractedWorkTotals: { grandTotal: 0, wellTotals: {} },
+  renderedWarning: false,
 };
 
 const getWellName = (wellNumber, formValues, selectedWells) => {
@@ -735,7 +736,11 @@ const getWellName = (wellNumber, formValues, selectedWells) => {
 };
 
 class ApplicationSectionTwo extends Component {
-  state = defaultState;
+  constructor(props) {
+    super(props);
+    this.state = defaultState;
+    this.debounceCalculateContractWorkTotals = debounce(this.calculateContractWorkTotals, 500);
+  }
 
   handleReset = () => {
     this.props.initialize();
@@ -743,13 +748,19 @@ class ApplicationSectionTwo extends Component {
   };
 
   componentWillReceiveProps = (nextProps) => {
-    if (!isEqual(nextProps.formValues, this.props.formValues)) {
-      this.calculateContractWorkTotals(nextProps.formValues);
+    this.debounceCalculateContractWorkTotals(nextProps.formValues);
+
+    if (nextProps.formValues.well_sites.length > 15 && !this.state.renderedWarning) {
+      notification.warning({
+        message: "Warning: Adding a large number of wells may impact application performance.",
+        duration: 0,
+      });
+      this.setState({ renderedWarning: true });
     }
   };
 
   componentWillMount = () => {
-    this.calculateContractWorkTotals(this.props.formValues);
+    this.debounceCalculateContractWorkTotals(this.props.formValues);
   };
 
   componentWillUnmount() {
