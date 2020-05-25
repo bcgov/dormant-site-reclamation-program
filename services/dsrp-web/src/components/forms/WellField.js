@@ -18,15 +18,16 @@ const defaultProps = {};
 export class WellField extends Component {
   constructor(props) {
     super(props);
-    this.fetchSelectedWellThrottled = debounce(this.props.fetchSelectedWell, 1000, {
-      leading: false,
+    this.fetchSelectedWellThrottled = debounce(this.props.fetchSelectedWell, 2000, {
+      leading: true,
       trailing: true,
     });
   }
 
   componentWillReceiveProps = (nextProps) => {
     if (nextProps.input.value !== this.props.input.value) {
-      this.fetchSelectedWellThrottled({ well_auth_number: nextProps.input.value });
+      if (parseInt(nextProps.input.value) > 0)
+        this.fetchSelectedWellThrottled({ well_auth_number: parseInt(nextProps.input.value) });
     }
   };
 
@@ -40,22 +41,22 @@ export class WellField extends Component {
         </Row>
         <Row>
           <Col>
-            {this.props.selectedWells[this.props.input.value] && (
+            {this.props.selectedWells[parseInt(this.props.input.value)] && (
               <Descriptions column={1} title="Well Site Details">
                 <Descriptions.Item label="Well Name">
-                  {this.props.selectedWells[this.props.input.value].well_name}
+                  {this.props.selectedWells[parseInt(this.props.input.value)].well_name}
                 </Descriptions.Item>
                 <Descriptions.Item label="Operator">
-                  {this.props.selectedWells[this.props.input.value].operator_name}
+                  {this.props.selectedWells[parseInt(this.props.input.value)].operator_name}
                 </Descriptions.Item>
                 <Descriptions.Item label="Current Status">
-                  {this.props.selectedWells[this.props.input.value].current_status}
+                  {this.props.selectedWells[parseInt(this.props.input.value)].current_status}
                 </Descriptions.Item>
                 <Descriptions.Item label="Location">
-                  {this.props.selectedWells[this.props.input.value].surface_location}
+                  {this.props.selectedWells[parseInt(this.props.input.value)].surface_location}
                 </Descriptions.Item>
                 <Descriptions.Item label="Field">
-                  {this.props.selectedWells[this.props.input.value].field}
+                  {this.props.selectedWells[parseInt(this.props.input.value)].field}
                 </Descriptions.Item>
               </Descriptions>
             )}
