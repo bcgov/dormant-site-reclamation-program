@@ -79,7 +79,7 @@ export class ApplicationForm extends Component {
   validateJSONData = (json) => {
     json.well_sites.forEach((site) => {
       Object.keys(site.contracted_work).forEach((type) => {
-        let empty = Object.keys(site.contracted_work[type]).every(
+        const empty = Object.keys(site.contracted_work[type]).every(
           (x) => site.contracted_work[type][x] === null
         );
         if (empty) {
