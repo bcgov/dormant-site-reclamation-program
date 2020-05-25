@@ -53,7 +53,7 @@ export const getApplicationsWellSitesContractedWork = createSelector(
 
       const reviewJson = (isObjectLike(application.review_json) && application.review_json) || null;
 
-      wellSites.map((site) => {
+      wellSites.map((site, index) => {
         if (isEmpty(site)) {
           return;
         }
@@ -67,12 +67,13 @@ export const getApplicationsWellSitesContractedWork = createSelector(
         const reviewJsonWellSite =
           (reviewJson &&
             wellAuthorizationNumber &&
-            isObjectLike(reviewJson.well_sites) &&
-            reviewJson.well_sites[wellAuthorizationNumber]) ||
+            isArrayLike(reviewJson.well_sites) &&
+            isObjectLike(reviewJson.well_sites[index]) &&
+            reviewJson.well_sites[index][wellAuthorizationNumber]) ||
           null;
 
         const contractedWork = (isObjectLike(site.contracted_work) && site.contracted_work) || {};
-        Object.keys(contractedWork).map((type) => {
+        Object.keys(contractedWork).map((type, ind) => {
           const estimatedCostArray = Object.values(contractedWork[type]).filter(
             (value) => !isNaN(value)
           );
@@ -98,6 +99,7 @@ export const getApplicationsWellSitesContractedWork = createSelector(
             : null;
           const wellSiteContractedWorkType = {
             key: `${application.guid}.${wellAuthorizationNumber}.${type}`,
+            well_index: index,
             application_guid: application.guid || null,
             well_authorization_number: wellAuthorizationNumber,
             contracted_work_type: type,
