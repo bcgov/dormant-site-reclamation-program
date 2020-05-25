@@ -1,5 +1,6 @@
 import React from "react";
 import { useMatomo } from "@datapunt/matomo-tracker-react";
+import { ENVIRONMENT } from "@/constants/environment";
 
 export const trackEvent = (category, action) => {
   const { trackEvent } = useMatomo();
@@ -11,6 +12,7 @@ const trackPageView = (title) => {
 
   React.useEffect(() => {
     trackPageView({
+      href: ENVIRONMENT.apiUrl,
       documentTitle: title,
     });
   }, []);

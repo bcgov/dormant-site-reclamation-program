@@ -48,6 +48,7 @@ const isGuid = (input) => {
 
 export class ViewApplicationStatusPage extends Component {
   state = { guid: "" };
+
   componentDidMount = () => {
     if (
       this.props.match &&

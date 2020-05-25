@@ -79,7 +79,7 @@ export class ApplicationForm extends Component {
   validateJSONData = (json) => {
     json.well_sites.forEach((site) => {
       Object.keys(site.contracted_work).forEach((type) => {
-        let empty = Object.keys(site.contracted_work[type]).every(
+        const empty = Object.keys(site.contracted_work[type]).every(
           (x) => site.contracted_work[type][x] === null
         );
         if (empty) {
@@ -211,6 +211,10 @@ export class ApplicationForm extends Component {
                     <li>
                       A signed copy of the agreement you received from the Province of British
                       Columbia
+                    </li>
+                    <li>
+                      A copy of the contract between your company and the permit holder named in the
+                      application
                     </li>
                     <li>A certificate of Insurance</li>
                   </ul>

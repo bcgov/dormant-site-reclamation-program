@@ -431,7 +431,6 @@ export class ApplicationTable extends Component {
               )
             )}
             style={{ backgroundColor: "#f7f8fa" }}
-            loading={!this.props.isLoaded}
           />
         </div>
       );
