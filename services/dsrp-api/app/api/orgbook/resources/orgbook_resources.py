@@ -1,6 +1,7 @@
 import json
 import requests
-from flask import request
+
+from flask import request, current_app
 from flask_restplus import Resource
 
 from app.extensions import api
@@ -13,30 +14,37 @@ class SearchResource(Resource):
     @api.doc(
         description='Search OrgBook.',
         params={'search': 'The search term to use when searching OrgBook.'})
-    #@requires_role_view_all
     def get(self):
         search = request.args.get('search')
         resp = OrgBookService.search(search)
 
         if resp.status_code != requests.codes.ok:
-            raise BadGateway(f'OrgBook API responded with {resp.status_code}: {resp.reason}')
+            message = f'OrgBook API responded with {resp.status_code}: {resp.reason}'
+            current_app.logger.error(
+                f'SearchResource.get: {message}\nresp.text:\n{resp.text}')
+            raise BadGateway(message)
 
         try:
             results = json.loads(resp.text)['results']
         except:
-            raise BadGateway('OrgBook API responded with unexpected data.')
+            message = 'OrgBook API responded with unexpected data.'
+            current_app.logger.error(
+                f'SearchResource.get: {message}\nresp.text:\n{resp.text}')
+            raise BadGateway(message)
 
         return results
 
 
 class CredentialResource(Resource):
     @api.doc(description='Get information on an OrgBook credential.')
-    #@requires_role_view_all
     def get(self, credential_id):
         resp = OrgBookService.get_credential(credential_id)
 
         if resp.status_code != requests.codes.ok:
-            raise BadGateway(f'OrgBook API responded with {resp.status_code}: {resp.reason}')
+            message = f'OrgBook API responded with {resp.status_code}: {resp.reason}'
+            current_app.logger.error(
+                f'CredentialResource.get: {message}\nresp.text:\n{resp.text}')
+            raise BadGateway(message)
 
         credential = json.loads(resp.text)
         return credential

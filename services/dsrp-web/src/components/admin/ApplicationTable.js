@@ -52,9 +52,9 @@ const handleTableChange = (updateApplications, tableFilters) => (pagination, fil
   updateApplications(params);
 };
 
-export const toolTip = (title) => (
+export const toolTip = (title, extraClassName) => (
   <Tooltip title={title} placement="right" mouseEnterDelay={0.3}>
-    <Icon type="info-circle" className="icon-sm" style={{ marginLeft: 4 }} />
+    <Icon type="info-circle" className={`icon-sm ${extraClassName}`} style={{ marginLeft: 4 }} />
   </Tooltip>
 );
 
@@ -359,9 +359,12 @@ export class ApplicationTable extends Component {
         title: "Est. Cost",
         key: "est_cost",
         dataIndex: "est_cost",
-        render: (text) => (
+        render: (text, record) => (
           <div style={{ textAlign: "right" }} title="Est. Cost">
             {formatMoney(text) || Strings.DASH}
+            {Number(text) * 1.15 >= parseFloat(record.LMR.replace(/[^0-9.-]+/g, ""))
+              ? toolTip("Est. Cost exceeds LMR by 15% or more", "color-error")
+              : ""}
           </div>
         ),
       },

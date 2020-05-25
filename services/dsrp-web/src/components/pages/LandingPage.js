@@ -65,11 +65,11 @@ export const LandingPage = (props) => (
         <br />
         <Row type="flex" justify="center">
           <Col>
-            <Button type="primary" size="large">
-              <Link to={routes.SUBMIT_APPLICATION.route} style={{ textDecoration: "none" }}>
+            <Link to={routes.SUBMIT_APPLICATION.route} style={{ textDecoration: "none" }}>
+              <Button type="primary" size="large">
                 Apply Now
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </Col>
         </Row>
       </Col>

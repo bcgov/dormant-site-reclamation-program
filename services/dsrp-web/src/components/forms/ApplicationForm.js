@@ -53,11 +53,7 @@ export class ApplicationForm extends Component {
   };
 
   saveFormData() {
-    if (
-      (this.props.isPristine ||
-        isEqual(this.props.formValues, this.state.previouslySavedFormValues)) &&
-      this.state.currentStep === this.state.previouslySavedFormStep
-    ) {
+    if (this.props.isPristine && this.state.currentStep === this.state.previouslySavedFormStep) {
       return;
     }
 
@@ -80,13 +76,13 @@ export class ApplicationForm extends Component {
     json.well_sites.forEach((site) => {
       Object.keys(site.contracted_work).forEach((type) => {
         const empty = Object.keys(site.contracted_work[type]).every(
-          (x) => site.contracted_work[type][x] === null
+          (x) => !site.contracted_work[type][x]
         );
         if (empty) {
           delete site.contracted_work[type];
         } else {
           Object.keys(site.contracted_work[type]).forEach(
-            (k) => site.contracted_work[type][k] === null && delete site.contracted_work[type][k]
+            (k) => !site.contracted_work[type][k] && delete site.contracted_work[type][k]
           );
         }
       });
@@ -131,7 +127,7 @@ export class ApplicationForm extends Component {
         currentStep: data.currentStep || 0,
       });
     }
-    this.autoSaveForm = setInterval(() => this.saveFormData(), 1000);
+    this.autoSaveForm = setInterval(() => this.saveFormData(), 10000);
   }
 
   componentWillUnmount() {

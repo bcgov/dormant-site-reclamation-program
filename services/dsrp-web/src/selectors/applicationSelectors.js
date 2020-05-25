@@ -77,17 +77,18 @@ export const getApplicationsWellSitesContractedWork = createSelector(
           const estimatedCostArray = Object.values(contractedWork[type]).filter(
             (value) => !isNaN(value)
           );
-
-          const maxSharedCost = 100000;
-          const calculatedSharedCost = (sum(estimatedCostArray) / 2).toFixed(2);
-          const sharedCost =
-            calculatedSharedCost > maxSharedCost ? maxSharedCost : calculatedSharedCost;
-
           const contractedWorkStatusCode = get(
             reviewJsonWellSite,
             `contracted_work.${type}.contracted_work_status_code`,
             null
           );
+          const maxSharedCost = 100000;
+          const calculatedSharedCost = (sum(estimatedCostArray) / 2).toFixed(2);
+          const sharedCost =
+            calculatedSharedCost > maxSharedCost ? maxSharedCost : calculatedSharedCost;
+          const shouldSharedCostBeZero =
+            contractedWorkStatusCode === "WITHDRAWN" || contractedWorkStatusCode === "REJECTED";
+          const sharedCostByStatus = shouldSharedCostBeZero ? 0 : sharedCost;
           const OGCStatus = !isEmpty(wells[wellAuthorizationNumber])
             ? wells[wellAuthorizationNumber].current_status
             : null;
@@ -107,7 +108,7 @@ export const getApplicationsWellSitesContractedWork = createSelector(
             priority_criteria: priorityCriteria,
             completion_date: contractedWork[type].planned_end_date || null,
             est_cost: sum(estimatedCostArray),
-            est_shared_cost: sharedCost,
+            est_shared_cost: sharedCostByStatus,
             LMR: getLMR(type, liability),
             OGC_status: OGCStatus,
             location,

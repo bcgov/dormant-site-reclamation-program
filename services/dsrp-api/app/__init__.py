@@ -116,6 +116,8 @@ def register_routes(app):
     @api.errorhandler(AssertionError)
     def assertion_error_handler(error):
         app.logger.error(str(error))
+        app.logger.error('REQUEST\n' + str(request))
+        app.logger.error('HEADERS\n ' + str(request.headers))
         return {
             'status': getattr(error, 'code', 400),
             'message': str(error),
@@ -142,6 +144,8 @@ def register_routes(app):
     @api.errorhandler(Exception)
     def default_error_handler(error):
         app.logger.error(str(error))
+        app.logger.error('REQUEST\n' + str(request))
+        app.logger.error('HEADERS\n ' + str(request.headers))
         return {
             'status': getattr(error, 'code', 500),
             'message': str(error),

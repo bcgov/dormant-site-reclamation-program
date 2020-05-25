@@ -151,107 +151,121 @@ const renderContractWorkPanel = (
   submitFailed,
   wellNumber,
   wellSectionErrors
-) => (
-  <Panel
-    key={contractWorkSection.sectionHeader}
-    id={`well_sites[${wellNumber}].contracted_work.${contractWorkSection.formSectionName}-panel-header`}
-    header={
-      <Row type="flex" align="middle" justify="space-between">
-        <Col>
-          <Text className="color-primary font-size-large" strong>
-            {contractWorkSection.sectionHeader}
-          </Text>
-        </Col>
-        <Col>
-          {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, {
-            marginRight: 24,
-          })}
-        </Col>
-      </Row>
-    }
-    // NOTE: Uncomment this if you want "scroll to error" to automatically open this panel if it's not loaded in the DOM.
-    // forceRender={wellSectionErrors !== null}
-  >
-    <FormSection name={contractWorkSection.formSectionName}>
-      <Form.Item
-        label={
-          <Text className="color-primary" strong>
-            Planned Start and End Dates
-          </Text>
-        }
-      >
-        <Row gutter={48}>
-          <Col span={12}>
-            <Field
-              name="planned_start_date"
-              label="Planned Start Date"
-              placeholder="Select Planned Start Date"
-              error={wellSectionErrors && wellSectionErrors.planned_start_date}
-              component={renderConfig.DATE}
-              disabled={!isEditable}
-              disabledDate={(date) =>
-                disabledStartDate(date, wellSiteFormValues, contractWorkSection)
-              }
-            />
+) => {
+  // Calculate the end date's default picker date to be the start date if the start date exists and is valid.
+  const contractWorkValues = wellSiteFormValues ? wellSiteFormValues.contracted_work : null;
+  const sectionValues = contractWorkValues
+    ? contractWorkValues[contractWorkSection.formSectionName]
+    : null;
+  const startDate =
+    sectionValues && sectionValues.planned_start_date
+      ? moment(sectionValues.planned_start_date)
+      : null;
+  const defaultEndDatePickerValue = startDate ? startDate : moment();
+
+  return (
+    <Panel
+      key={contractWorkSection.sectionHeader}
+      id={`well_sites[${wellNumber}].contracted_work.${contractWorkSection.formSectionName}-panel-header`}
+      header={
+        <Row type="flex" align="middle" justify="space-between">
+          <Col>
+            <Text className="color-primary font-size-large" strong>
+              {contractWorkSection.sectionHeader}
+            </Text>
           </Col>
-          <Col span={12}>
-            <Field
-              name="planned_end_date"
-              label="Planned End Date"
-              placeholder="Select Planned End Date"
-              error={wellSectionErrors && wellSectionErrors.planned_end_date}
-              component={renderConfig.DATE}
-              disabled={!isEditable}
-              disabledDate={(date) =>
-                disabledEndDate(date, wellSiteFormValues, contractWorkSection)
-              }
-            />
+          <Col>
+            {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, {
+              marginRight: 24,
+            })}
           </Col>
         </Row>
-      </Form.Item>
-      {contractWorkSection.subSections.map((subSection) => (
+      }
+      // NOTE: Uncomment this if you want "scroll to error" to automatically open this panel if it's not loaded in the DOM.
+      // forceRender={wellSectionErrors !== null}
+    >
+      <FormSection name={contractWorkSection.formSectionName}>
         <Form.Item
-          key={subSection.subSectionHeader}
           label={
             <Text className="color-primary" strong>
-              {subSection.subSectionHeader}
+              Planned Start and End Dates
             </Text>
           }
         >
-          {subSection.amountFields.map((amountField) => (
-            <Field
-              key={amountField.fieldName}
-              name={amountField.fieldName}
-              label={amountField.fieldLabel}
-              labelAlign="left"
-              labelCol={{ md: { span: 14 } }}
-              wrapperCol={{ md: { span: 8, offset: 2 } }}
-              inputStyle={{ textAlign: "right" }}
-              placeholder="$0.00"
-              component={renderConfig.FIELD}
-              disabled={!isEditable}
-              {...currencyMask}
-              onChange={(event, newValue) => {
-                if (newValue && newValue.toString().split(".")[0].length > 8) {
-                  event.preventDefault();
+          <Row gutter={48}>
+            <Col span={12}>
+              <Field
+                name="planned_start_date"
+                label="Planned Start Date"
+                placeholder="Select Planned Start Date"
+                error={wellSectionErrors && wellSectionErrors.planned_start_date}
+                component={renderConfig.DATE}
+                disabled={!isEditable}
+                disabledDate={(date) =>
+                  disabledStartDate(date, wellSiteFormValues, contractWorkSection)
                 }
-              }}
-            />
-          ))}
+              />
+            </Col>
+            <Col span={12}>
+              <Field
+                name="planned_end_date"
+                label="Planned End Date"
+                placeholder="Select Planned End Date"
+                error={wellSectionErrors && wellSectionErrors.planned_end_date}
+                defaultPickerValue={defaultEndDatePickerValue}
+                component={renderConfig.DATE}
+                disabled={!isEditable}
+                disabledDate={(date) =>
+                  disabledEndDate(date, wellSiteFormValues, contractWorkSection)
+                }
+              />
+            </Col>
+          </Row>
         </Form.Item>
-      ))}
-      {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, { marginRight: 24 })}
-      {submitFailed && wellSectionErrors && wellSectionErrors.error && (
-        <span
-          id={`well_sites[${wellNumber}].contracted_work.${contractWorkSection.formSectionName}.error`}
-          className="color-error"
-        >
-          {wellSectionErrors.error}
-        </span>
-      )}
-    </FormSection>
-  </Panel>
-);
+        {contractWorkSection.subSections.map((subSection) => (
+          <Form.Item
+            key={subSection.subSectionHeader}
+            label={
+              <Text className="color-primary" strong>
+                {subSection.subSectionHeader}
+              </Text>
+            }
+          >
+            {subSection.amountFields.map((amountField) => (
+              <Field
+                key={amountField.fieldName}
+                name={amountField.fieldName}
+                label={amountField.fieldLabel}
+                labelAlign="left"
+                labelCol={{ md: { span: 14 } }}
+                wrapperCol={{ md: { span: 8, offset: 2 } }}
+                inputStyle={{ textAlign: "right" }}
+                placeholder="$0.00"
+                component={renderConfig.FIELD}
+                disabled={!isEditable}
+                {...currencyMask}
+                onChange={(event, newValue) => {
+                  if (newValue && newValue.toString().split(".")[0].length > 8) {
+                    event.preventDefault();
+                  }
+                }}
+              />
+            ))}
+          </Form.Item>
+        ))}
+        {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, { marginRight: 24 })}
+        {submitFailed && wellSectionErrors && wellSectionErrors.error && (
+          <span
+            id={`well_sites[${wellNumber}].contracted_work.${contractWorkSection.formSectionName}.error`}
+            className="color-error"
+          >
+            {wellSectionErrors.error}
+          </span>
+        )}
+      </FormSection>
+    </Panel>
+  );
+};
 
 const asyncValidateError = (field, message) => {
   const errors = {};
@@ -529,7 +543,8 @@ const renderWells = (props) => {
           const wellSectionTotals = wellTotals ? wellTotals.sections : {};
           const wellTotal = wellTotals ? wellTotals.wellTotal : 0;
 
-          const actualName = getWellName(index, props.formValues);
+          // NOTE: Currently, selectedWells is only populated if the user interacts with the well auth input.
+          const actualName = getWellName(index, props.formValues, props.selectedWells);
           let wellName = `Well Site ${index + 1}`;
           wellName += actualName ? ` (${actualName})` : "";
 
@@ -853,6 +868,7 @@ class ApplicationSectionTwo extends Component {
               isEditable={this.props.isEditable}
               formValues={this.props.formValues}
               parentSubmitFailed={this.props.submitFailed}
+              selectedWells={this.props.selectedWells}
               contractedWorkTotals={this.state.contractedWorkTotals}
             />
           </Col>
