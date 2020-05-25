@@ -70,6 +70,8 @@ export class DocumentUploadForm extends Component {
   };
 
   render() {
+    const finalDocuments = has(this.props.formValues, "confirm_final_documents");
+    const disableSubmission = this.state.uploadedDocs.length === 0 && !finalDocuments;
     return !this.state.submitted ? (
       <Row>
         <Col>
@@ -143,11 +145,7 @@ export class DocumentUploadForm extends Component {
             </Row>
             <Row>
               <Col>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  disabled={this.state.uploadedDocs.length === 0}
-                >
+                <Button type="primary" htmlType="submit" disabled={disableSubmission}>
                   Submit Files
                 </Button>
               </Col>
