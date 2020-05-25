@@ -76,13 +76,13 @@ export class ApplicationForm extends Component {
     json.well_sites.forEach((site) => {
       Object.keys(site.contracted_work).forEach((type) => {
         const empty = Object.keys(site.contracted_work[type]).every(
-          (x) => site.contracted_work[type][x] === null
+          (x) => !site.contracted_work[type][x]
         );
         if (empty) {
           delete site.contracted_work[type];
         } else {
           Object.keys(site.contracted_work[type]).forEach(
-            (k) => site.contracted_work[type][k] === null && delete site.contracted_work[type][k]
+            (k) => !site.contracted_work[type][k] && delete site.contracted_work[type][k]
           );
         }
       });
