@@ -360,12 +360,12 @@ export class ApplicationTable extends Component {
         key: "est_cost",
         dataIndex: "est_cost",
         render: (text, record) => {
-          // NOTE: LMR is returned formatted, e.g., $50,000, so remove special characters.
+          // NOTE: LMR is returned formatted, e.g., $50,000, so remove non-numeric characters.
           const lmr = record.LMR && parseFloat(record.LMR.replace(/[^0-9.-]+/g, ""));
           return (
             <div style={{ textAlign: "right" }} title="Est. Cost">
               {formatMoney(text) || Strings.DASH}
-              {!isNaN(lmr) &&
+              {(lmr || lmr === 0) &&
                 Number(text) * 1.15 >= lmr &&
                 toolTip("Est. Cost exceeds LMR by 15% or more", "color-error")}
             </div>
