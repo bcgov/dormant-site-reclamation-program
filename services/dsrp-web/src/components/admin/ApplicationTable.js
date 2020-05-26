@@ -359,12 +359,12 @@ export class ApplicationTable extends Component {
         title: "Est. Cost",
         key: "est_cost",
         dataIndex: "est_cost",
-        render: (text, record) => (
+        render: (text) => (
           <div style={{ textAlign: "right" }} title="Est. Cost">
             {formatMoney(text) || Strings.DASH}
-            {Number(text) * 1.15 >= parseFloat(record.LMR.replace(/[^0-9.-]+/g, ""))
+            {/* {Number(text) * 1.15 >= parseFloat(record.LMR.replace(/[^0-9.-]+/g, ""))
               ? toolTip("Est. Cost exceeds LMR by 15% or more", "color-error")
-              : ""}
+              : ""} */}
           </div>
         ),
       },
