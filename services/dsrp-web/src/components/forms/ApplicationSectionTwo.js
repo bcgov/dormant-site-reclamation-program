@@ -4,20 +4,31 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { compose } from "redux";
 import moment from "moment";
-import { Row, Col, Typography, Form, Button, Collapse, Icon, Popconfirm } from "antd";
-import { sum, get, set, isEmpty, isEqual } from "lodash";
+import { Row, Col, Typography, Form, Button, Collapse, Icon, Popconfirm, notification } from "antd";
+import { sum, get, set, isEqual, isArrayLike, isEmpty, isObjectLike } from "lodash";
 import { renderConfig } from "@/components/common/config";
-import { required, number } from "@/utils/validate";
+import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 import { PROGRAM_START_DATE, PROGRAM_END_DATE } from "@/constants/strings";
-import { currencyMask, formatMoney, scrollToFirstError } from "@/utils/helpers";
+import {
+  currencyMask,
+  formatMoney,
+  scrollToFirstError,
+  getPathsToLeaves,
+  getFirstPathElement,
+  getPathElements,
+  wellAuthorizationNumberMask,
+  sleep,
+} from "@/utils/helpers";
 import CONTRACT_WORK_SECTIONS from "@/constants/contract_work_sections";
+import SITE_CONDITIONS from "@/constants/site_conditions";
 import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import WellField from "@/components/forms/WellField";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
 import { validateWell } from "@/actionCreators/OGCActionCreator";
 import { getSelectedWells } from "@/selectors/OGCSelectors";
+import { debounce } from "lodash";
 
 const { Text, Paragraph, Title } = Typography;
 const { Panel } = Collapse;
@@ -27,7 +38,7 @@ const propTypes = {
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   formValues: PropTypes.objectOf(PropTypes.any).isRequired,
-  selectedWells: PropTypes.arrayOf(PropTypes.any),
+  selectedWells: PropTypes.objectOf(PropTypes.any),
   isViewingSubmission: PropTypes.bool,
   isEditable: PropTypes.bool,
 };
@@ -39,20 +50,6 @@ const defaultProps = {
 };
 
 const createMemberName = (member, name) => `${member}.${name}`;
-
-const wellSiteConditions = [
-  "Within 1000 m of a stream (defined in WSA and includes all water bodies)",
-  "Within 500 m of a groundwater drinking well",
-  "Sensitive habitat",
-  "Suspected or known to have offsite contamination",
-  "Within 1500 m of a school or residence",
-  "On Traditional Lands Entitlement, cultural lands and/or First Nations critical area",
-  "On Agricultural Land Reserve",
-  "On range tenure, trapping licence, guide outfitting, and/or hunting area",
-  "Winter only access",
-  "On Private land",
-  "Drilled or abandoned prior to 1997",
-];
 
 const renderMoneyTotal = (label, amount, style) => (
   <Row type="flex" justify="end" gutter={16} style={style}>
@@ -67,122 +64,208 @@ const renderMoneyTotal = (label, amount, style) => (
   </Row>
 );
 
+const disabledStartDate = (date, wellSiteFormValues, contractWorkSection) => {
+  const selectedDate = date ? moment(date) : null;
+  const contractWorkValues = wellSiteFormValues ? wellSiteFormValues.contracted_work : null;
+  const sectionValues = contractWorkValues
+    ? contractWorkValues[contractWorkSection.formSectionName]
+    : null;
+  const endDate =
+    sectionValues && sectionValues.planned_end_date ? moment(sectionValues.planned_end_date) : null;
+  return (
+    selectedDate &&
+    (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
+      selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD") ||
+      (endDate && selectedDate > endDate))
+  );
+};
+
+const validateStartDate = (date, sectionValues) => {
+  if (date === "Invalid date") {
+    return "This is not a valid date value";
+  }
+  const selectedDate = date ? moment(date) : null;
+  const endDate =
+    sectionValues && sectionValues.planned_end_date ? moment(sectionValues.planned_end_date) : null;
+
+  if (selectedDate) {
+    if (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD")) {
+      return `Date cannot be before the program's start date: ${PROGRAM_START_DATE}`;
+    }
+    if (selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD")) {
+      return `Date cannot be after the program's end date: ${PROGRAM_END_DATE}`;
+    }
+    if (endDate && selectedDate > endDate) {
+      return "Planned start date cannot be after end date";
+    }
+  }
+  return undefined;
+};
+
+const disabledEndDate = (date, wellSiteFormValues, contractWorkSection) => {
+  const selectedDate = date ? moment(date) : null;
+  const contractWorkValues = wellSiteFormValues ? wellSiteFormValues.contracted_work : null;
+  const sectionValues = contractWorkValues
+    ? contractWorkValues[contractWorkSection.formSectionName]
+    : null;
+  const startDate =
+    sectionValues && sectionValues.planned_start_date
+      ? moment(sectionValues.planned_start_date)
+      : null;
+  return (
+    selectedDate &&
+    (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
+      selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD") ||
+      (startDate && selectedDate < startDate))
+  );
+};
+
+const validateEndDate = (date, sectionValues) => {
+  if (date === "Invalid date") {
+    return "This is not a valid date value";
+  }
+  const selectedDate = date ? moment(date) : null;
+  const startDate =
+    sectionValues && sectionValues.planned_start_date
+      ? moment(sectionValues.planned_start_date)
+      : null;
+  if (selectedDate) {
+    if (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD")) {
+      return `Date cannot be before the program's start date: ${PROGRAM_START_DATE}`;
+    }
+    if (selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD")) {
+      return `Date cannot be after the program's end date: ${PROGRAM_END_DATE}`;
+    }
+    if (startDate && selectedDate < startDate) {
+      return "Planned end date cannot be before start date";
+    }
+  }
+  return undefined;
+};
+
 const renderContractWorkPanel = (
   contractWorkSection,
   wellSectionTotal,
   isEditable,
-  wellSiteFormValues
-) => (
-  <Panel
-    key={contractWorkSection.sectionHeader}
-    header={
-      <Row type="flex" align="middle" justify="space-between">
-        <Col>
-          <Text className="color-primary font-size-large" strong>
-            {contractWorkSection.sectionHeader}
-          </Text>
-        </Col>
-        <Col>
-          {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, {
-            marginRight: 24,
-          })}
-        </Col>
-      </Row>
-    }
-  >
-    <FormSection name={contractWorkSection.formSectionName}>
-      <Form.Item
-        label={
-          <Text className="color-primary" strong>
-            Planned Start and End Dates
-          </Text>
-        }
-      >
-        <Row gutter={48}>
-          <Col span={12}>
-            <Field
-              name="planned_start_date"
-              label="Planned Start Date"
-              placeholder="Select Planned Start Date"
-              component={renderConfig.DATE}
-              disabled={!isEditable}
-              disabledDate={(date) => {
-                const selectedDate = date ? moment(date) : null;
-                const contractWorkValues = wellSiteFormValues.contracted_work;
-                const sectionValues = contractWorkValues
-                  ? contractWorkValues[contractWorkSection.formSectionName]
-                  : null;
-                const endDate =
-                  sectionValues && sectionValues.planned_end_date
-                    ? moment(sectionValues.planned_end_date)
-                    : null;
-                return (
-                  selectedDate &&
-                  (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
-                    selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD") ||
-                    (endDate && selectedDate > endDate))
-                );
-              }}
-            />
+  wellSiteFormValues,
+  submitFailed,
+  wellNumber,
+  wellSectionErrors
+) => {
+  // Calculate the end date's default picker date to be the start date if the start date exists and is valid.
+  const contractWorkValues = wellSiteFormValues ? wellSiteFormValues.contracted_work : null;
+  const sectionValues = contractWorkValues
+    ? contractWorkValues[contractWorkSection.formSectionName]
+    : null;
+  const startDate =
+    sectionValues && sectionValues.planned_start_date
+      ? moment(sectionValues.planned_start_date)
+      : null;
+  const defaultEndDatePickerValue = startDate ? startDate : moment();
+
+  return (
+    <Panel
+      key={contractWorkSection.sectionHeader}
+      id={`well_sites[${wellNumber}].contracted_work.${contractWorkSection.formSectionName}-panel-header`}
+      header={
+        <Row type="flex" align="middle" justify="space-between">
+          <Col>
+            <Text className="color-primary font-size-large" strong>
+              {contractWorkSection.sectionHeader}
+            </Text>
           </Col>
-          <Col span={12}>
-            <Field
-              name="planned_end_date"
-              label="Planned End Date"
-              placeholder="Select Planned End Date"
-              component={renderConfig.DATE}
-              disabled={!isEditable}
-              disabledDate={(date) => {
-                const selectedDate = date ? moment(date) : null;
-                const contractWorkValues = wellSiteFormValues.contracted_work;
-                const sectionValues = contractWorkValues
-                  ? contractWorkValues[contractWorkSection.formSectionName]
-                  : null;
-                const startDate =
-                  sectionValues && sectionValues.planned_start_date
-                    ? moment(sectionValues.planned_start_date)
-                    : null;
-                return (
-                  selectedDate &&
-                  (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
-                    selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD") ||
-                    (startDate && selectedDate < startDate))
-                );
-              }}
-            />
+          <Col>
+            {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, {
+              marginRight: 24,
+            })}
           </Col>
         </Row>
-      </Form.Item>
-      {contractWorkSection.subSections.map((subSection) => (
+      }
+      // NOTE: Uncomment this if you want "scroll to error" to automatically open this panel if it's not loaded in the DOM.
+      // forceRender={wellSectionErrors !== null}
+    >
+      <FormSection name={contractWorkSection.formSectionName}>
         <Form.Item
-          key={subSection.subSectionHeader}
           label={
             <Text className="color-primary" strong>
-              {subSection.subSectionHeader}
+              Planned Start and End Dates
             </Text>
           }
         >
-          {subSection.amountFields.map((amountField) => (
-            <Field
-              key={amountField.fieldName}
-              name={amountField.fieldName}
-              label={amountField.fieldLabel}
-              labelAlign="left"
-              labelCol={{ md: { span: 14 } }}
-              wrapperCol={{ md: { span: 8, offset: 2 } }}
-              inputStyle={{ textAlign: "right" }}
-              placeholder="$0.00"
-              component={renderConfig.FIELD}
-              disabled={!isEditable}
-              {...currencyMask}
-            />
-          ))}
+          <Row gutter={48}>
+            <Col span={12}>
+              <Field
+                name="planned_start_date"
+                label="Planned Start Date"
+                placeholder="Select Planned Start Date"
+                error={wellSectionErrors && wellSectionErrors.planned_start_date}
+                component={renderConfig.DATE}
+                disabled={!isEditable}
+                disabledDate={(date) =>
+                  disabledStartDate(date, wellSiteFormValues, contractWorkSection)
+                }
+              />
+            </Col>
+            <Col span={12}>
+              <Field
+                name="planned_end_date"
+                label="Planned End Date"
+                placeholder="Select Planned End Date"
+                error={wellSectionErrors && wellSectionErrors.planned_end_date}
+                defaultPickerValue={defaultEndDatePickerValue}
+                component={renderConfig.DATE}
+                disabled={!isEditable}
+                disabledDate={(date) =>
+                  disabledEndDate(date, wellSiteFormValues, contractWorkSection)
+                }
+              />
+            </Col>
+          </Row>
         </Form.Item>
-      ))}
-      {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, { marginRight: 24 })}
-    </FormSection>
-  </Panel>
-);
+        {contractWorkSection.subSections.map((subSection) => (
+          <Form.Item
+            key={subSection.subSectionHeader}
+            label={
+              <Text className="color-primary" strong>
+                {subSection.subSectionHeader}
+              </Text>
+            }
+          >
+            {subSection.amountFields.map((amountField) => (
+              <Field
+                key={amountField.fieldName}
+                name={amountField.fieldName}
+                label={amountField.fieldLabel}
+                labelAlign="left"
+                labelCol={{ md: { span: 14 } }}
+                wrapperCol={{ md: { span: 8, offset: 2 } }}
+                inputStyle={{ textAlign: "right" }}
+                placeholder="$0.00"
+                component={renderConfig.FIELD}
+                disabled={!isEditable}
+                {...currencyMask}
+                onChange={(event, newValue) => {
+                  if (newValue && newValue.toString().split(".")[0].length > 8) {
+                    event.preventDefault();
+                  }
+                }}
+              />
+            ))}
+          </Form.Item>
+        ))}
+        {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, { marginRight: 24 })}
+        {submitFailed && wellSectionErrors && wellSectionErrors.error && (
+          <span
+            id={`well_sites[${wellNumber}].contracted_work.${contractWorkSection.formSectionName}.error`}
+            className="color-error"
+          >
+            {wellSectionErrors.error}
+          </span>
+        )}
+      </FormSection>
+    </Panel>
+  );
+};
 
 const asyncValidateError = (field, message) => {
   const errors = {};
@@ -194,7 +277,10 @@ const asyncValidateWell = async (values, field) => {
   if (isNaN(get(values, field))) {
     asyncValidateError(field, "Input must be a number.");
   }
-  return validateWell({ well_auth_number: get(values, field) }).then((response) => {
+  if (parseInt(get(values, field)) <= 0) {
+    return;
+  }
+  return validateWell({ well_auth_number: parseInt(get(values, field)) }).then((response) => {
     if (response.data.records.length === 0)
       asyncValidateError(
         field,
@@ -215,26 +301,418 @@ const asyncValidateWell = async (values, field) => {
     if (response.data.records.length > 1)
       asyncValidateError(
         field,
-        "Multiple results for this Authorization Number. Please contact us for further assistance."
+        "Multiple results for this Authorization Number. Please contact us for further assistance at DormantSite.BC.Government@gov.bc.ca"
       );
   });
 };
 
-const asyncValidate = (values, dispatch, props, field) => {
-  if (!field || field === "contract_details.operator_id") {
-    return Promise.all(
-      values.well_sites.map((well, index) =>
-        asyncValidateWell(
-          values,
-          `well_sites[${index}].details.well_authorization_number`
-        ).then(() => {})
-      )
-    );
+const asyncValidate = debounce(
+  async (values, dispatch, props, field) => {
+    if (!field || field === "contract_details.operator_id") {
+      return Promise.all(
+        values.well_sites.map((well, index) =>
+          asyncValidateWell(
+            values,
+            `well_sites[${index}].details.well_authorization_number`
+          ).then(() => {})
+        )
+      ).then(() => {});
+    }
+
+    if (field.includes("well_authorization_number") && get(values, field)) {
+      return asyncValidateWell(values, field).then(() => {});
+    }
+
+    return Promise.resolve();
+  },
+  2000,
+  {
+    leading: true,
+    trailing: true,
+  }
+);
+
+// Unfortunately, FieldArray validation places the returned errors into an object under a key called "_error"
+// which we don't want because we want to use the path in the object to determine the correct field to target.
+const prepareErrors = (errors) => {
+  if (isEmpty(errors)) {
+    return errors;
   }
 
-  if (field.includes("well_authorization_number") && get(values, field)) {
-    return asyncValidateWell(values, field);
+  const newErrors = errors;
+  if (errors.well_sites && errors.well_sites._error) {
+    const wellSitesErrors = errors.well_sites._error.well_sites;
+    delete newErrors.well_sites;
+    newErrors.well_sites = wellSitesErrors;
   }
+
+  return newErrors;
+};
+
+const contractedWorkFormSectionNames = CONTRACT_WORK_SECTIONS.reduce(
+  (list, { formSectionName }) => {
+    list.push(formSectionName);
+    return list;
+  },
+  []
+);
+
+const openRequiredPanels = async (errors) => {
+  let waitForAnimations = Promise.resolve();
+
+  let paths = getPathsToLeaves(errors);
+  const elements = getPathElements(paths);
+  const firstElement = getFirstPathElement(elements);
+  let path = firstElement.path;
+
+  if (!path) {
+    // Workaround to get rid of well sites with no errors, they will appear in the list as "well_sites[0]", e.g., and have "undefined" as their error.
+    paths = paths.filter((p) => p.length > 13);
+    if (isEmpty(paths)) {
+      return waitForAnimations;
+    }
+    path = paths[0];
+  }
+
+  // If this error is not for an element within a well site, there is no panels to open.
+  const isWellSiteError = path.substring(0, 10) === "well_sites";
+  if (!isWellSiteError) {
+    return waitForAnimations;
+  }
+
+  // Get the well site index and element for this well site panel.
+  const wellSiteIndex = parseInt(path.substring(path.indexOf("[") + 1, path.indexOf("]")));
+  const wellSitePanelHeaderElement = document.getElementById(
+    `well_sites[${wellSiteIndex}]-panel-header`
+  );
+
+  // Open the panel for this well site (if its not already).
+  const animationDelayInMs = 600;
+  if (!wellSitePanelHeaderElement.classList.contains("ant-collapse-item-active")) {
+    wellSitePanelHeaderElement.firstChild.click();
+    waitForAnimations = sleep(animationDelayInMs);
+  }
+
+  // If this element is also within a contracted work section panel, open that too.
+  const pathSections = path.split(".");
+  const isContractedWorkSectionError =
+    pathSections[2] && contractedWorkFormSectionNames.indexOf(pathSections[2]) !== -1;
+
+  if (isContractedWorkSectionError) {
+    const contractedWorkSection = pathSections[2];
+    const contractedWorkPanelHeaderElement = document.getElementById(
+      `well_sites[${wellSiteIndex}].contracted_work.${contractedWorkSection}-panel-header`
+    );
+    if (
+      contractedWorkPanelHeaderElement &&
+      !contractedWorkPanelHeaderElement.classList.contains("ant-collapse-item-active")
+    ) {
+      contractedWorkPanelHeaderElement.firstChild.click();
+      waitForAnimations = !waitForAnimations ? sleep(animationDelayInMs) : waitForAnimations;
+    }
+  }
+
+  await waitForAnimations;
+  return Promise.resolve(wellSitePanelHeaderElement.firstChild);
+};
+
+const validateWellSites = (wellSites, formValues, props) => {
+  const errors = {};
+
+  if (!isArrayLike(wellSites) || isEmpty(wellSites)) {
+    return undefined;
+  }
+
+  wellSites.map((wellSite, index) => {
+    // Check that the well authorization number is valid.
+    const validateRequired = required(get(wellSite, "details.well_authorization_number", null));
+    if (validateRequired) {
+      set(errors, `well_sites[${index}].details.well_authorization_number`, validateRequired);
+    }
+
+    // Check that there is at least one site condition checked.
+    const siteConditions = get(wellSite, "site_conditions", null);
+    const isAtleastOneSelected =
+      !isEmpty(siteConditions) && !Object.values(siteConditions).every((condition) => !condition);
+    if (!isAtleastOneSelected) {
+      set(
+        errors,
+        `well_sites[${index}].site_conditions.error`,
+        "Sites must meet at least one of the Eligibility Criteria to qualify for the program."
+      );
+    }
+
+    // Check that at least one contracted work section is valid.
+    let emptySectionsCount = 0;
+    let validSectionsCount = 0;
+    CONTRACT_WORK_SECTIONS.map((section) => {
+      const sectionValues = get(wellSite, `contracted_work.${section.formSectionName}`, null);
+      if (!isObjectLike(sectionValues) || isEmpty(sectionValues)) {
+        emptySectionsCount++;
+        return;
+      }
+
+      const requiredMessage = "This is a required field";
+      const path = `well_sites[${index}].contracted_work.${section.formSectionName}`;
+      const costSum = sum(Object.values(sectionValues).filter((value) => !isNaN(value)));
+      const startDate = sectionValues.planned_start_date;
+      const endDate = sectionValues.planned_end_date;
+
+      // If this is a blank section.
+      if (!costSum && !startDate && !endDate) {
+        emptySectionsCount++;
+        return;
+      }
+
+      let sectionErrorCount = 0;
+
+      // Start date is required if end date is provided or the cost sum is valid.
+      if (!startDate && (endDate || costSum)) {
+        set(errors, `${path}.planned_start_date`, requiredMessage);
+        sectionErrorCount++;
+      }
+
+      // End date is required if start date is provided or the cost sum is valid.
+      if (!endDate && (startDate || costSum)) {
+        set(errors, `${path}.planned_end_date`, requiredMessage);
+        sectionErrorCount++;
+      }
+
+      // The sum of the estimated work can't be 0/invalid if either of the dates are provided.
+      if (!costSum && (startDate || endDate)) {
+        set(errors, `${path}.error`, "Total estimated cost cannot be $0.");
+        sectionErrorCount++;
+      }
+
+      // Validate start date
+      const startDateError = validateStartDate(startDate, sectionValues);
+      if (startDateError) {
+        set(errors, `${path}.planned_start_date`, startDateError);
+        sectionErrorCount++;
+      }
+
+      // Validate end date
+      const endDateError = validateEndDate(endDate, sectionValues);
+      if (endDateError) {
+        set(errors, `${path}.planned_end_date`, endDateError);
+        sectionErrorCount++;
+      }
+
+      if (sectionErrorCount === 0) {
+        validSectionsCount++;
+      }
+    });
+
+    if (emptySectionsCount === CONTRACT_WORK_SECTIONS.length) {
+      set(
+        errors,
+        `well_sites[${index}].contracted_work.error`,
+        "Sites must contain at least one valid contracted work section."
+      );
+    }
+    // TODO: Use this for something? E.g., "3/5 entered sections are valid in the header of the well site".
+    if (validSectionsCount === 0) {
+    }
+  });
+
+  return isEmpty(errors) ? undefined : errors;
+};
+
+const renderWells = (props) => {
+  // Ensure that there is always at least one well site.
+  if (props.fields.length === 0) {
+    props.fields.push({});
+  }
+  return (
+    <>
+      <Collapse
+        defaultActiveKey={["0"]}
+        bordered={false}
+        accordion
+        expandIcon={(panelProps) => (
+          <Icon
+            type={panelProps.isActive ? "minus-square" : "plus-square"}
+            theme="filled"
+            className="icon-lg"
+          />
+        )}
+        defaultActiveKey={[0]}
+      >
+        {props.fields.map((member, index) => {
+          const wellTotals = props.contractedWorkTotals.wellTotals[index];
+          const wellSectionTotals = wellTotals ? wellTotals.sections : {};
+          const wellTotal = wellTotals ? wellTotals.wellTotal : 0;
+
+          // NOTE: Currently, selectedWells is only populated if the user interacts with the well auth input.
+          const actualName = getWellName(index, props.formValues, props.selectedWells);
+          let wellName = `Well Site ${index + 1}`;
+          wellName += actualName ? ` (${actualName})` : "";
+
+          const wellSiteErrors = get(props.meta, `error.well_sites[${index}]`, null);
+          return (
+            <Panel
+              key={index}
+              id={`well_sites[${index}]-panel-header`}
+              header={
+                <Title level={3} style={{ margin: 0, marginLeft: 8 }}>
+                  {wellName}
+                  {props.parentSubmitFailed && !isEmpty(wellSiteErrors) && (
+                    <Text
+                      className="font-size-base font-weight-normal color-error"
+                      style={{ marginLeft: 16 }}
+                    >
+                      This well site has missing or incorrect information
+                    </Text>
+                  )}
+                  {props.isEditable && (
+                    <span onClick={(e) => e.stopPropagation()}>
+                      <Popconfirm
+                        title="Are you sure you want to remove this well site?"
+                        onConfirm={(e) => props.fields.remove(index)}
+                        okText="Yes"
+                        cancelText="No"
+                        placement="topRight"
+                        arrowPointAtCenter
+                      >
+                        <Button type="link" className="color-primary" style={{ float: "right" }}>
+                          <Icon type="delete" theme="filled" className="icon-lg" />
+                        </Button>
+                      </Popconfirm>
+                    </span>
+                  )}
+                </Title>
+              }
+              // NOTE: Uncomment this if you want "scroll to error" to automatically open this panel if it's not loaded in the DOM.
+              // forceRender={wellSiteErrors !== null}
+            >
+              <FormSection name={createMemberName(member, "details")}>
+                <Title level={4}>Details</Title>
+                <Row gutter={48}>
+                  <Col>
+                    <Field
+                      name="well_authorization_number"
+                      label="Well Authorization Number"
+                      placeholder="Well Authorization Number"
+                      component={WellField}
+                      validate={[required]}
+                      disabled={!props.isEditable}
+                      label={
+                        <>
+                          Authorization Number
+                          {props.isEditable && (
+                            <>
+                              <ApplicationFormTooltip content="Only wells that are classfied as Dormant with the Oil and Gas Commission can be entered." />
+                              <a
+                                style={{ float: "right" }}
+                                href="https://reports.bcogc.ca/ogc/f?p=200:81:16594283755468"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                Look up well
+                              </a>
+                            </>
+                          )}
+                        </>
+                      }
+                      {...wellAuthorizationNumberMask}
+                    />
+                  </Col>
+                </Row>
+              </FormSection>
+
+              <FormSection name={createMemberName(member, "site_conditions")}>
+                <Title level={4} className="application-subsection">
+                  Eligibility Criteria
+                </Title>
+                <Paragraph>Select all criteria that apply to this site:</Paragraph>
+                <Row gutter={48}>
+                  <Col className="application-checkbox-section">
+                    {SITE_CONDITIONS.map((condition) => (
+                      <Field
+                        key={condition.fieldName}
+                        name={condition.fieldName}
+                        label={condition.fieldLabel}
+                        disabled={!props.isEditable}
+                        component={renderConfig.CHECKBOX}
+                      />
+                    ))}
+                    {props.parentSubmitFailed &&
+                      wellSiteErrors &&
+                      wellSiteErrors.site_conditions &&
+                      wellSiteErrors.site_conditions.error && (
+                        <span
+                          id={`well_sites[${index}].site_conditions.error`}
+                          className="color-error"
+                        >
+                          {wellSiteErrors.site_conditions.error}
+                        </span>
+                      )}
+                  </Col>
+                </Row>
+              </FormSection>
+
+              <FormSection name={createMemberName(member, "contracted_work")}>
+                <Title level={4} className="application-subsection">
+                  Contracted Work
+                </Title>
+                <Paragraph>
+                  Enter the estimated cost of every work component your company will perform for
+                  this contract.
+                </Paragraph>
+                {props.parentSubmitFailed &&
+                  wellSiteErrors &&
+                  wellSiteErrors.contracted_work &&
+                  wellSiteErrors.contracted_work.error && (
+                    <span id={`well_sites[${index}].contracted_work.error`} className="color-error">
+                      {wellSiteErrors.contracted_work.error}
+                    </span>
+                  )}
+                <Row gutter={48}>
+                  <Col>
+                    <Collapse
+                      bordered={false}
+                      expandIcon={(panelProps) => (
+                        <Icon
+                          type={panelProps.isActive ? "minus-square" : "plus-square"}
+                          theme="filled"
+                          className="icon-md"
+                        />
+                      )}
+                    >
+                      {CONTRACT_WORK_SECTIONS.map((contractWorkSection) =>
+                        renderContractWorkPanel(
+                          contractWorkSection,
+                          wellSectionTotals[contractWorkSection.formSectionName],
+                          props.isEditable,
+                          props.formValues && props.formValues.well_sites
+                            ? props.formValues.well_sites[index]
+                            : null,
+                          props.parentSubmitFailed,
+                          index,
+                          get(
+                            wellSiteErrors,
+                            `contracted_work.${contractWorkSection.formSectionName}`,
+                            null
+                          )
+                        )
+                      )}
+                    </Collapse>
+                    {renderMoneyTotal("Well", wellTotal, { marginRight: 40, marginTop: 8 })}
+                  </Col>
+                </Row>
+              </FormSection>
+            </Panel>
+          );
+        })}
+      </Collapse>
+      <br />
+      {props.isEditable && (
+        <Button type="primary" onClick={() => props.fields.push({})}>
+          Add Well Site
+        </Button>
+      )}
+    </>
+  );
 };
 
 // NOTE: We want to async validate ALWAYS for the three possible triggers. By default the submit trigger
@@ -254,19 +732,30 @@ const shouldAsyncValidate = ({ trigger, syncValidationPasses }) => {
   }
 };
 
-const validateWellSites = (value) => {
-  if (isEmpty(value)) {
-    return "Your application must contain at least one well site.";
-  }
-  return undefined;
-};
-
 const defaultState = {
   contractedWorkTotals: { grandTotal: 0, wellTotals: {} },
+  renderedWarning: false,
+};
+
+const getWellName = (wellNumber, formValues, selectedWells) => {
+  const wellAuthNumber =
+    formValues &&
+    formValues.well_sites &&
+    formValues.well_sites[wellNumber] &&
+    formValues.well_sites[wellNumber].details
+      ? formValues.well_sites[wellNumber].details.well_authorization_number
+      : null;
+  return wellAuthNumber && selectedWells && selectedWells[wellAuthNumber]
+    ? selectedWells[wellAuthNumber].well_name
+    : null;
 };
 
 class ApplicationSectionTwo extends Component {
-  state = defaultState;
+  constructor(props) {
+    super(props);
+    this.state = defaultState;
+    this.debounceCalculateContractWorkTotals = debounce(this.calculateContractWorkTotals, 500);
+  }
 
   handleReset = () => {
     this.props.initialize();
@@ -274,13 +763,19 @@ class ApplicationSectionTwo extends Component {
   };
 
   componentWillReceiveProps = (nextProps) => {
-    if (!isEqual(nextProps.formValues, this.props.formValues)) {
-      this.calculateContractWorkTotals(nextProps.formValues);
+    this.debounceCalculateContractWorkTotals(nextProps.formValues);
+
+    if (nextProps.formValues.well_sites.length > 15 && !this.state.renderedWarning) {
+      notification.warning({
+        message: "Warning: Adding a large number of wells may impact application performance.",
+        duration: 0,
+      });
+      this.setState({ renderedWarning: true });
     }
   };
 
   componentWillMount = () => {
-    this.calculateContractWorkTotals(this.props.formValues);
+    this.debounceCalculateContractWorkTotals(this.props.formValues);
   };
 
   componentWillUnmount() {
@@ -322,182 +817,21 @@ class ApplicationSectionTwo extends Component {
     this.setState({ contractedWorkTotals });
   };
 
-  getWellName(wellNumber) {
-    const wellAuthNumber =
-      this.props.formValues &&
-      this.props.formValues.well_sites &&
-      this.props.formValues.well_sites[wellNumber] &&
-      this.props.formValues.well_sites[wellNumber].details
-        ? this.props.formValues.well_sites[wellNumber].details.well_authorization_number
-        : null;
-    return wellAuthNumber && this.props.selectedWells && this.props.selectedWells[wellAuthNumber]
-      ? this.props.selectedWells[wellAuthNumber].well_name
-      : null;
-  }
-
-  renderWells = ({ fields, meta }) => (
-    <>
-      {this.props.anyTouched &&
-        ((meta.error && <span className="color-error">{meta.error}</span>) ||
-          (meta.warning && <span className="color-warning">{meta.warning}</span>))}
-      <Collapse
-        bordered={false}
-        accordion
-        expandIcon={(panelProps) => (
-          <Icon
-            type={panelProps.isActive ? "minus-square" : "plus-square"}
-            theme="filled"
-            className="icon-lg"
-          />
-        )}
-      >
-        {fields.map((member, index) => {
-          const wellTotals = this.state.contractedWorkTotals.wellTotals[index];
-          const wellSectionTotals = wellTotals ? wellTotals.sections : {};
-          const wellTotal = wellTotals ? wellTotals.wellTotal : 0;
-
-          const actualName = this.getWellName(index);
-          let wellName = `Well Site #${index + 1}`;
-          wellName += actualName ? ` (${actualName})` : "";
-
-          return (
-            <Panel
-              key={index}
-              header={
-                <Title level={3} style={{ margin: 0, marginLeft: 8 }}>
-                  {wellName}
-                  {this.props.isEditable && (
-                    <span onClick={(e) => e.stopPropagation()}>
-                      <Popconfirm
-                        title="Are you sure you want to remove this well site?"
-                        onConfirm={(e) => fields.remove(index)}
-                        okText="Yes"
-                        cancelText="No"
-                        placement="topRight"
-                        arrowPointAtCenter
-                      >
-                        <Button type="link" className="color-primary" style={{ float: "right" }}>
-                          <Icon type="delete" theme="filled" className="icon-lg" />
-                        </Button>
-                      </Popconfirm>
-                    </span>
-                  )}
-                </Title>
-              }
-            >
-              <FormSection name={createMemberName(member, "details")}>
-                <Title level={4}>Details</Title>
-                <Row gutter={48}>
-                  <Col>
-                    <Field
-                      name="well_authorization_number"
-                      label="Well Authorization Number"
-                      placeholder="Well Authorization Number"
-                      component={WellField}
-                      validate={[required, number]}
-                      disabled={!this.props.isEditable}
-                      label={
-                        <>
-                          Authorization Number
-                          {this.props.isEditable && (
-                            <>
-                              <ApplicationFormTooltip content="Only wells that are classfied as Dormant with the Oil and Gas Commission can be entered." />
-                              <a
-                                style={{ float: "right" }}
-                                href="https://reports.bcogc.ca/ogc/f?p=200:81:16594283755468"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                Look up well
-                              </a>
-                            </>
-                          )}
-                        </>
-                      }
-                    />
-                  </Col>
-                </Row>
-              </FormSection>
-
-              <FormSection name={createMemberName(member, "site_conditions")}>
-                <Title level={4} className="application-subsection">
-                  Site Conditions
-                </Title>
-                <Paragraph>Reasons for site nomination (select all that apply):</Paragraph>
-                <Row gutter={48}>
-                  <Col className="application-checkbox-section">
-                    {wellSiteConditions.map((condition, index) => (
-                      <Field
-                        key={index}
-                        name={`site_condition_${index}`}
-                        label={condition}
-                        disabled={!this.props.isEditable}
-                        component={renderConfig.CHECKBOX}
-                      />
-                    ))}
-                  </Col>
-                </Row>
-              </FormSection>
-
-              <FormSection name={createMemberName(member, "contracted_work")}>
-                <Title level={4} className="application-subsection">
-                  Contracted Work
-                </Title>
-                <Paragraph>
-                  Enter the estimated cost of every work component your company will perform for
-                  this contract.
-                </Paragraph>
-                <Row gutter={48}>
-                  <Col>
-                    <Collapse
-                      bordered={false}
-                      expandIcon={(panelProps) => (
-                        <Icon
-                          type={panelProps.isActive ? "minus-square" : "plus-square"}
-                          theme="filled"
-                          className="icon-md"
-                        />
-                      )}
-                    >
-                      {CONTRACT_WORK_SECTIONS.map((contractWorkSection) =>
-                        renderContractWorkPanel(
-                          contractWorkSection,
-                          wellSectionTotals[contractWorkSection.formSectionName],
-                          this.props.isEditable,
-                          this.props.formValues && this.props.formValues.well_sites
-                            ? this.props.formValues.well_sites[index]
-                            : null
-                        )
-                      )}
-                    </Collapse>
-                    {renderMoneyTotal("Well", wellTotal, { marginRight: 40, marginTop: 8 })}
-                  </Col>
-                </Row>
-              </FormSection>
-            </Panel>
-          );
-        })}
-      </Collapse>
-      <br />
-      {this.props.isEditable && (
-        <Button type="primary" onClick={() => fields.push({})}>
-          Add Well Site
-        </Button>
-      )}
-    </>
-  );
-
   render() {
     const wellTotalsValues = Object.values(this.state.contractedWorkTotals.wellTotals);
 
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="contract_details">
-          <Title level={2} className="application-section">
+          <Title level={3} className="application-section">
             Contract Information
           </Title>
           <Row gutter={48}>
             <Col>
+              <Paragraph>
+                Select the permit holder for whom the proposed work will be performed. You must have
+                a contract with the permit holder for this work in order to be eligible.
+              </Paragraph>
               <Field
                 id="operator_id"
                 name="operator_id"
@@ -505,7 +839,7 @@ class ApplicationSectionTwo extends Component {
                   <>
                     Permit Holder
                     {this.props.isEditable && (
-                      <ApplicationFormTooltip content="Only businesses with permits for dormant wells can be entered." />
+                      <ApplicationFormTooltip content="Only businesses with permits for dormant well sites can be selected." />
                     )}
                   </>
                 }
@@ -518,33 +852,46 @@ class ApplicationSectionTwo extends Component {
           </Row>
         </FormSection>
 
-        <Title level={2} className="application-section">
+        <Title level={3} className="application-section">
           Well Sites
         </Title>
+        <Paragraph>
+          Identify each well site in your contract with the permit holder and provide the relevant
+          work details.
+        </Paragraph>
         <Row gutter={[48, 48]}>
           <Col>
             <FieldArray
               name="well_sites"
               validate={validateWellSites}
-              component={this.renderWells}
+              component={renderWells}
+              isEditable={this.props.isEditable}
+              formValues={this.props.formValues}
+              parentSubmitFailed={this.props.submitFailed}
+              selectedWells={this.props.selectedWells}
+              contractedWorkTotals={this.state.contractedWorkTotals}
             />
           </Col>
         </Row>
 
         <br />
-        <Title level={2} className="application-section">
+        <Title level={3} className="application-section">
           Estimated Cost Summary
         </Title>
         {(wellTotalsValues.length > 0 && (
           <Row gutter={16} type="flex" justify="start" align="bottom">
             <Col style={{ textAlign: "right" }}>
               {wellTotalsValues.map((wellTotal, index) => {
-                const actualName = this.getWellName(index);
-                let wellName = `Well Site #${index + 1}`;
+                const actualName = getWellName(
+                  index,
+                  this.props.formValues,
+                  this.props.selectedWells
+                );
+                let wellName = `Well Site ${index + 1}`;
                 wellName += actualName ? ` (${actualName})` : "";
                 return (
                   <>
-                    <Paragraph key={index} className="color-primary" strong>
+                    <Paragraph key={`${wellName}.${index}`} className="color-primary" strong>
                       {`${wellName} total:`}&nbsp;
                     </Paragraph>
                     {wellTotal.sections &&
@@ -553,7 +900,10 @@ class ApplicationSectionTwo extends Component {
                           wellTotal.sections[section.formSectionName] &&
                           wellTotal.sections[section.formSectionName] > 0
                       ).map((section) => (
-                        <Paragraph key={index} className="color-primary">
+                        <Paragraph
+                          key={`${section.sectionHeader}.${index}`}
+                          className="color-primary"
+                        >
                           {`${section.sectionHeader} total:`}&nbsp;
                         </Paragraph>
                       ))}
@@ -567,14 +917,16 @@ class ApplicationSectionTwo extends Component {
             <Col style={{ textAlign: "right" }}>
               {wellTotalsValues.map((wellTotal, index) => (
                 <>
-                  <Paragraph key={index}>{formatMoney(wellTotal.wellTotal || 0)}</Paragraph>
+                  <Paragraph key={`well-total.${index}`}>
+                    {formatMoney(wellTotal.wellTotal || 0)}
+                  </Paragraph>
                   {wellTotal.sections &&
                     CONTRACT_WORK_SECTIONS.filter(
                       (section) =>
                         wellTotal.sections[section.formSectionName] &&
                         wellTotal.sections[section.formSectionName] > 0
                     ).map((section) => (
-                      <Paragraph key={index}>
+                      <Paragraph key={`${section.formSectionName}.${index}`}>
                         {formatMoney(wellTotal.sections[section.formSectionName] || 0)}
                       </Paragraph>
                     ))}
@@ -618,7 +970,6 @@ ApplicationSectionTwo.propTypes = propTypes;
 ApplicationSectionTwo.defaultProps = defaultProps;
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: FORM.APPLICATION_FORM,
     destroyOnUnmount: false,
@@ -628,10 +979,19 @@ export default compose(
     updateUnregisteredFields: true,
     shouldAsyncValidate,
     asyncValidate,
-    asyncChangeFields: [
+    asyncBlurFields: [
       "contract_details.operator_id",
       "well_sites[].details.well_authorization_number",
     ],
-    onSubmitFail: (errors) => scrollToFirstError(errors),
-  })
+    onSubmitFail: (errors) => {
+      if (!isObjectLike(errors)) {
+        return;
+      }
+      const newErrors = prepareErrors(errors);
+      openRequiredPanels(newErrors).then((fallbackElement) => {
+        scrollToFirstError(newErrors, fallbackElement);
+      });
+    },
+  }),
+  connect(mapStateToProps, mapDispatchToProps)
 )(ApplicationSectionTwo);

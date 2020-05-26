@@ -3,6 +3,7 @@ import moment from "moment";
 import { reset } from "redux-form";
 import { createNumberMask, createTextMask } from "redux-form-input-masks";
 import { notification } from "antd";
+import { isObjectLike, forEach, isArray, isPlainObject } from "lodash";
 
 /**
  * Helper function to clear redux form after submission
@@ -40,6 +41,21 @@ export const createItemIdsArray = (array, idField) => array.map((item) => item[i
 
 export const createDropDownList = (array, labelField, valueField) =>
   array.map((item) => ({ value: item[valueField], label: item[labelField] }));
+
+export const createDropDownListWithDescriptions = (
+  array,
+  labelField,
+  valueField,
+  descriptionValue
+) =>
+  array.map((item) => ({
+    value: item[valueField],
+    label: item[labelField],
+    description: item[descriptionValue],
+  }));
+
+export const createFilterList = (array, labelField, valueField) =>
+  array.map((item) => ({ value: item[valueField], text: item[labelField] }));
 
 // Function to create a hash given an array of values and labels
 export const createLabelHash = (arr) =>
@@ -110,6 +126,20 @@ export const guidMask = createTextMask({
   allowEmpty: true,
   // onChange: value => {},
   // onCompletePattern: value => {},
+});
+
+export const wellAuthorizationNumberMask = createTextMask({
+  pattern: "99999",
+  guide: false,
+  stripMask: true,
+  allowEmpty: true,
+});
+
+export const businessNumberMask = createTextMask({
+  pattern: "999999999",
+  guide: false,
+  stripMask: true,
+  allowEmpty: true,
 });
 
 export const dateSorter = (key) => (a, b) => {
@@ -313,48 +343,82 @@ export const formatMoney = (value) => {
     : number.toLocaleString("en-US", { style: "currency", currency: "USD" });
 };
 
-// Scroll to error helper for redux forms
-export const scrollToFirstError = (errors) => {
-  notification.warning({
-    message: "Application contains errors. Please correct any issues and try again.",
-    duration: 10,
-  });
-  console.log(JSON.stringify(errors));
-  const errorEls = [];
-  const collectErrEls = function collectErrElsRec(fieldPrefix, target, errEls) {
-    Object.keys(target).forEach((innerKey) => {
-      if (typeof target[innerKey] === "string") {
-        const nameVal = `${fieldPrefix}${innerKey}`;
-        const selectorStr = `input[name="${nameVal}"], select[name="${nameVal}"]`;
-        const elem = document.querySelector(selectorStr);
-        if (elem) {
-          errEls.push(elem);
-        }
-      } else if (!isNaN(innerKey)) {
-        const prefixPre =
-          fieldPrefix === "" ? "" : `${fieldPrefix.substring(0, fieldPrefix.length - 1)}[`;
-        collectErrElsRec(`${prefixPre}${innerKey}]`, target[innerKey], errorEls);
+export const getPathsToLeaves = (obj = {}) => {
+  const result = [];
+
+  const flatten = (collection, prefix = "", suffix = "") => {
+    forEach(collection, (value, key) => {
+      const path = `${prefix}${key}${suffix}`;
+
+      if (isArray(value)) {
+        flatten(value, `${path}[`, "]");
+      } else if (isPlainObject(value)) {
+        flatten(value, `${path}.`);
       } else {
-        const prefixPre = fieldPrefix === "" ? "" : `${fieldPrefix}.`;
-        collectErrElsRec(`${prefixPre}${innerKey}.`, target[innerKey], errorEls);
+        result.push(path);
       }
     });
   };
 
-  collectErrEls("", errors, errorEls);
-  const firstErrElement = errorEls.reduce((firstErrEl, errEl) => {
-    if (firstErrEl === null || nodeBefore(errEl, firstErrEl)) {
-      return errEl;
-    }
-    return firstErrEl;
-  });
+  flatten(obj);
 
-  if (firstErrElement) {
-    firstErrElement.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
-    return true;
-  }
-  return false;
+  return result;
 };
 
-const nodeBefore = (errEl, firstErrEl) =>
-  firstErrEl.compareDocumentPosition(errEl) === Node.DOCUMENT_POSITION_PRECEDING;
+export const getPathElements = (paths) => {
+  const elements = {};
+  paths.map((path) => {
+    const query = `[id="${path}"], [name="${path}"]`;
+    const element = document.querySelector(query);
+    if (element) {
+      elements[path] = element;
+    }
+  });
+  return elements;
+};
+
+export const getFirstPathElement = (pathsElements) => {
+  const paths = Object.keys(pathsElements);
+  const nodeBefore = (a, b) => b.compareDocumentPosition(a) === Node.DOCUMENT_POSITION_PRECEDING;
+  paths.sort((a, b) => {
+    if (pathsElements[a] === null || nodeBefore(pathsElements[b], pathsElements[a])) {
+      return b;
+    }
+    return a;
+  });
+
+  return { path: paths[0], element: pathsElements[paths[0]] };
+};
+
+export const scrollToFirstError = (errors, fallbackElement = null) => {
+  if (!isObjectLike(errors)) {
+    return false;
+  }
+
+  notification.warning({
+    message: "Application contains errors. Please correct any issues and try again.",
+    duration: 10,
+  });
+
+  const errorPaths = getPathsToLeaves(errors);
+  const errorElements = getPathElements(errorPaths);
+  let firstErrorElement = getFirstPathElement(errorElements).element;
+  firstErrorElement = firstErrorElement ? firstErrorElement : fallbackElement;
+
+  if (!firstErrorElement) {
+    return false;
+  }
+
+  firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+  return true;
+};
+
+export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export const createUuidv4 = () => {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+    var r = (Math.random() * 16) | 0,
+      v = c == "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};

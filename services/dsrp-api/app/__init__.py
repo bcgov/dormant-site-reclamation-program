@@ -17,6 +17,8 @@ from app.api.permit_holder.namespace import api as permit_holder_api
 from app.api.well.namespace import api as well_api
 from app.api.liability.namespace import api as liability_api
 from app.api.orgbook.namespace import api as orgbook_api
+from app.api.documents.namespace import api as download_api
+from app.api.dsrp_settings.namespace import api as dsrp_settings_api
 
 from app.commands import register_commands
 from app.config import Config
@@ -46,6 +48,9 @@ def create_app(test_config=None):
         from sqlalchemy.orm import configure_mappers
         configure_mappers()
 
+        from app.api.services.ogc_data_service import OGCDataService
+        OGCDataService.refreshAllData()
+
     return app
 
 
@@ -73,8 +78,10 @@ def register_routes(app):
     # Set URL rules for resources
     app.add_url_rule('/', endpoint='index')
 
+    api.add_namespace(dsrp_settings_api)
     api.add_namespace(exports_api)
     api.add_namespace(application_api)
+    api.add_namespace(download_api)
     api.add_namespace(permit_holder_api)
     api.add_namespace(well_api)
     api.add_namespace(liability_api)
@@ -109,6 +116,8 @@ def register_routes(app):
     @api.errorhandler(AssertionError)
     def assertion_error_handler(error):
         app.logger.error(str(error))
+        app.logger.error('REQUEST\n' + str(request))
+        app.logger.error('HEADERS\n ' + str(request.headers))
         return {
             'status': getattr(error, 'code', 400),
             'message': str(error),
@@ -135,6 +144,8 @@ def register_routes(app):
     @api.errorhandler(Exception)
     def default_error_handler(error):
         app.logger.error(str(error))
+        app.logger.error('REQUEST\n' + str(request))
+        app.logger.error('HEADERS\n ' + str(request.headers))
         return {
             'status': getattr(error, 'code', 500),
             'message': str(error),

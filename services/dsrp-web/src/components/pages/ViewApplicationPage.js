@@ -3,14 +3,20 @@ import { bindActionCreators, compose } from "redux";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import { Row, Col, Typography, Icon } from "antd";
+import { Row, Col, Typography, Icon, Tabs } from "antd";
 import { reset } from "redux-form";
 import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import { fetchApplicationById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/selectors/applicationSelectors";
 import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm";
+import ViewApplicationDocuments from "@/components/pages/ViewApplicationDocuments";
 import LinkButton from "@/components/common/LinkButton";
+import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
+import Loading from "@/components/common/Loading";
 
+import { PageTracker } from "@/utils/trackers";
+
+const { TabPane } = Tabs;
 const propTypes = {
   match: PropTypes.shape({
     params: {
@@ -25,20 +31,24 @@ const defaultProps = {
   application: {},
 };
 
-const { Paragraph, Title, Text } = Typography;
+const { Title } = Typography;
 
 export class ViewApplicationPage extends Component {
   state = { isLoaded: false };
 
   componentDidMount() {
-    const { id } = this.props.match.params;
-    this.props.fetchApplicationById(id).then(() => {
-      this.setState({ isLoaded: true });
-    });
+    this.handleGetApplication();
   }
 
   goBack = () => {
     this.props.history.goBack();
+  };
+
+  handleGetApplication = () => {
+    const { id } = this.props.match.params;
+    this.props.fetchApplicationById(id).then(() => {
+      this.setState({ isLoaded: true });
+    });
   };
 
   render() {
@@ -46,6 +56,7 @@ export class ViewApplicationPage extends Component {
       <>
         {(this.state.isLoaded && (
           <>
+            <PageTracker title="View Application" />
             <Row type="flex" justify="center" align="top" className="landing-header">
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
                 <LinkButton onClick={this.goBack}>
@@ -54,19 +65,38 @@ export class ViewApplicationPage extends Component {
                 </LinkButton>
               </Col>
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-                <Title>Application ID: {this.props.application.id}</Title>
+                <Title>Application Reference Number: {this.props.application.guid}</Title>
               </Col>
             </Row>
-            <Row type="flex" justify="center" align="top" className="landing-section">
+            <Row type="flex" justify="center" align="top" className="landing-header">
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-                <ViewOnlyApplicationForm
-                  isViewingSubmission
-                  initialValues={this.props.application.json}
-                />
+                <Tabs type="card">
+                  <TabPane tab="Application" key="1" style={{ padding: "20px" }}>
+                    <ViewOnlyApplicationForm
+                      isViewingSubmission
+                      initialValues={this.props.application.json}
+                    />
+                  </TabPane>
+                  <TabPane
+                    tab={`Documents (${this.props.application.documents.length})`}
+                    key="2"
+                    style={{ padding: "20px" }}
+                  >
+                    <ViewApplicationDocuments
+                      application_guid={this.props.application.guid}
+                      documents={this.props.application.documents}
+                    />
+                    <DocumentUploadForm
+                      applicationGuid={this.props.application.guid}
+                      isAdminView
+                      onDocumentUpload={this.handleGetApplication}
+                    />
+                  </TabPane>
+                </Tabs>
               </Col>
             </Row>
           </>
-        )) || <div>Loading...</div>}
+        )) || <Loading />}
       </>
     );
   }

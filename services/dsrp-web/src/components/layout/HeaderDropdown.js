@@ -7,7 +7,6 @@ import PropTypes from "prop-types";
 import * as routes from "@/constants/routes";
 import { signOutFromSiteMinder } from "@/utils/authenticationHelpers";
 import { isAuthenticated, getUserInfo, getIsViewOnly } from "@/selectors/authenticationSelectors";
-import { MENU } from "@/constants/assets";
 import AuthorizationWrapper from "@/components/common/wrappers/AuthorizationWrapper";
 
 const propTypes = {
@@ -40,10 +39,9 @@ export class HeaderDropdown extends Component {
       </Menu.Item>
     );
 
-    // TODO: WHEN LAUNCH - REPLACE `isViewOnly` with `!isAuthenticated`
     const dropdownMenuMobile = (
-      <Menu className="header-dropdown-menu">
-        {this.props.isViewOnly && (
+      <Menu className="header-dropdown-menu" forceSubMenuRender>
+        {!this.props.isAuthenticated && (
           <>
             <Menu.Item key="submit-application" className="custom-menu-item">
               <Button className="header-dropdown-item-button">
@@ -58,12 +56,14 @@ export class HeaderDropdown extends Component {
           </>
         )}
         <AuthorizationWrapper>
-          <Divider className="bg-color-table-seperator" style={{ margin: 0 }} />
-          <Menu.Item key="review-applications" className="custom-menu-item">
-            <Button className="header-dropdown-item-button">
-              <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
-            </Button>
-          </Menu.Item>
+          <React.Fragment>
+            <Divider className="bg-color-table-seperator" style={{ margin: 0 }} />
+            <Menu.Item key="review-applications" className="custom-menu-item">
+              <Button className="header-dropdown-item-button">
+                <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
+              </Button>
+            </Menu.Item>
+          </React.Fragment>
         </AuthorizationWrapper>
         {this.props.isAuthenticated && (
           <>
@@ -75,9 +75,9 @@ export class HeaderDropdown extends Component {
     );
 
     const dropdownMenuDesktop = (
-      <Menu className="header-dropdown-menu">
+      <Menu className="header-dropdown-menu" forceSubMenuRender>
         <AuthorizationWrapper>
-          <Menu.Item key="review-applications" className="custom-menu-item">
+          <Menu.Item key="review-applications" className="custom-menu-item" onItemHover={() => {}}>
             <Button className="header-dropdown-item-button">
               <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
             </Button>
@@ -87,42 +87,56 @@ export class HeaderDropdown extends Component {
       </Menu>
     );
 
-    const smallestDesktopWidth = 1280;
+    const smallestDesktopWidth = 1560;
     return (
-      // TODO: WHEN LAUNCH - REPLACE `isViewOnly` with `!isAuthenticated`
       <>
         <MediaQuery minWidth={smallestDesktopWidth}>
-          <span>
-            {this.props.isViewOnly && (
+          <>
+            {!this.props.isAuthenticated && (
               <>
                 <Link
                   to={routes.SUBMIT_APPLICATION.route}
                   className={this.setActiveLink(routes.SUBMIT_APPLICATION.route)}
                 >
-                  Apply
+                  New Application
                 </Link>
                 <Link
                   to={routes.VIEW_APPLICATION_STATUS.route}
                   className={this.setActiveLink(routes.VIEW_APPLICATION_STATUS.route)}
                 >
-                  Status
+                  Check Application Status
                 </Link>
               </>
             )}
             {this.props.isAuthenticated && (
-              <Dropdown overlay={dropdownMenuDesktop}>
+              <Dropdown
+                overlay={dropdownMenuDesktop}
+                placement="bottomRight"
+                trigger={["hover", "click"]}
+                forceRender
+              >
                 <Button className="header-dropdown-button">
                   {this.props.userInfo.email}
                   <Icon type="caret-down" />
                 </Button>
               </Dropdown>
             )}
-          </span>
+          </>
         </MediaQuery>
         <MediaQuery maxWidth={smallestDesktopWidth - 1}>
-          <Dropdown overlay={dropdownMenuMobile} placement="bottomRight">
-            <Button id="dropdown-menu-mobile-trigger" className="header-dropdown-button">
-              <img src={MENU} alt="Menu" />
+          <Dropdown
+            overlay={dropdownMenuMobile}
+            placement="bottomRight"
+            trigger={["hover", "click"]}
+            forceRender
+          >
+            <Button id="dropdown-menu-mobile-button">
+              <Icon
+                type="menu"
+                theme="outlined"
+                id="dropdown-menu-mobile-icon"
+                className="icon-lg color-white"
+              />
             </Button>
           </Dropdown>
         </MediaQuery>

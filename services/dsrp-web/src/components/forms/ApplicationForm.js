@@ -30,21 +30,15 @@ const defaultProps = {
 };
 
 const resetFormState = {
+  currentStep: 0,
   initialValues: {},
   previouslySavedFormValues: null,
   previouslySavedFormStep: 0,
   saveTimestamp: null,
-  currentStep: 0,
 };
 
 export class ApplicationForm extends Component {
-  state = {
-    currentStep: 0,
-    initialValues: {},
-    previouslySavedFormValues: null,
-    previouslySavedFormStep: 0,
-    saveTimestamp: null,
-  };
+  state = resetFormState;
 
   nextFormStep = () => {
     const currentStep = this.state.currentStep + 1;
@@ -59,11 +53,7 @@ export class ApplicationForm extends Component {
   };
 
   saveFormData() {
-    if (
-      (this.props.isPristine ||
-        isEqual(this.props.formValues, this.state.previouslySavedFormValues)) &&
-      this.state.currentStep === this.state.previouslySavedFormStep
-    ) {
+    if (this.props.isPristine && this.state.currentStep === this.state.previouslySavedFormStep) {
       return;
     }
 
@@ -82,6 +72,29 @@ export class ApplicationForm extends Component {
     });
   }
 
+  validateJSONData = (json) => {
+    json.well_sites.forEach((site) => {
+      Object.keys(site.contracted_work).forEach((type) => {
+        const empty = Object.keys(site.contracted_work[type]).every(
+          (x) => !site.contracted_work[type][x]
+        );
+        if (empty) {
+          delete site.contracted_work[type];
+        } else {
+          Object.keys(site.contracted_work[type]).forEach(
+            (k) => !site.contracted_work[type][k] && delete site.contracted_work[type][k]
+          );
+        }
+      });
+      Object.keys(site.site_conditions).forEach((cond) => {
+        if (!site.site_conditions[cond]) {
+          delete site.site_conditions[cond];
+        }
+      });
+    });
+    return json;
+  };
+
   getSavedFormData() {
     const data = localStorage.getItem(APPLICATION_FORM);
     return data ? JSON.parse(data) : null;
@@ -92,7 +105,7 @@ export class ApplicationForm extends Component {
   }
 
   handleSubmit = (values, dispatch) => {
-    const application = { json: values };
+    const application = { json: this.validateJSONData(values), documents: this.state.uploadedDocs };
     this.props.createApplication(application).then((response) => {
       this.setState(resetFormState);
       dispatch(initialize(APPLICATION_FORM));
@@ -114,7 +127,7 @@ export class ApplicationForm extends Component {
         currentStep: data.currentStep || 0,
       });
     }
-    this.autoSaveForm = setInterval(() => this.saveFormData(), 1000);
+    this.autoSaveForm = setInterval(() => this.saveFormData(), 10000);
   }
 
   componentWillUnmount() {
@@ -139,6 +152,7 @@ export class ApplicationForm extends Component {
             onSubmit={this.nextFormStep}
             handleReset={this.handleReset}
             initialValues={this.state.initialValues}
+            fileGuid={this.state.fileGuid}
           />
         ),
       },
@@ -156,12 +170,64 @@ export class ApplicationForm extends Component {
       {
         title: "Review",
         content: (
-          <>
-            <Title level={2}>Review Application</Title>
-            <Paragraph>
-              Please review your application below and confirm that its information is correct.
-            </Paragraph>
-            <Row gutter={48} style={{ marginTop: "-40px" }}>
+          <React.Fragment>
+            <Row>
+              <Col>
+                <Title level={3}>Review Application</Title>
+                <Title level={4}>Before you submit</Title>
+                <Paragraph>
+                  Review your application details below to make sure all information provided is
+                  accurate. If you need to change any information, use the “Previous” button at the
+                  bottom of the page to get to the correct step.
+                </Paragraph>
+                <Paragraph>
+                  <b>You will not be able to edit your application after it is submitted.</b>
+                </Paragraph>
+                <Paragraph>
+                  <ul>
+                    <li>Applications can be approved in part or in their entirety</li>
+                    <li>
+                      Any work on well sites that does not qualify or contains errors will be
+                      rejected
+                    </li>
+                    <li>You must re-apply for any rejected work in order to be considered again</li>
+                  </ul>
+                </Paragraph>
+                <Title level={4}>What happens next?</Title>
+                <Paragraph>Make sure the email address provided is correct!</Paragraph>
+                <Paragraph>
+                  After completing your application, you will receive a unique confirmation number
+                  you can use to check the status of your application at any time by clicking Check
+                  Application Status at the top of the page.
+                </Paragraph>
+
+                <Paragraph>
+                  If any of the work applied for is approved, you must upload the following:
+                  <ul>
+                    <li>
+                      A signed copy of the agreement you received from the Province of British
+                      Columbia
+                    </li>
+                    <li>
+                      A copy of the contract between your company and the permit holder named in the
+                      application
+                    </li>
+                    <li>A certificate of Insurance</li>
+                  </ul>
+                </Paragraph>
+
+                <Paragraph>
+                  When the files have been uploaded, you may begin work and the initial payment will
+                  be processed and sent to you at the address provided.
+                </Paragraph>
+                <Paragraph>
+                  Once approved work begins, you will be required to submit regular reports and
+                  invoices documenting contributions of employees who are residents of British
+                  Columbia. This information will be used to process the payments that follow.
+                </Paragraph>
+              </Col>
+            </Row>
+            <Row>
               <Col>
                 <ViewOnlyApplicationForm isEditable={false} noRenderStep3 />
               </Col>
@@ -172,7 +238,7 @@ export class ApplicationForm extends Component {
               handleReset={this.handleReset}
               initialValues={this.state.initialValues}
             />
-          </>
+          </React.Fragment>
         ),
       },
     ];
@@ -180,7 +246,7 @@ export class ApplicationForm extends Component {
     return (
       <Row>
         <Col>
-          <div style={{ minWidth: "90vw" }}>
+          <div>
             <Steps current={this.state.currentStep}>
               {steps.map((item) => (
                 <Step key={item.title} title={item.title} />

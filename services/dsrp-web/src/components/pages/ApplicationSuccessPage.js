@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { bindActionCreators, compose } from "redux";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { PageTracker } from "@/utils/trackers";
 
 import { Row, Col, Typography, Icon, Result } from "antd";
 
@@ -21,6 +22,7 @@ export class ApplicationSuccessPage extends Component {
   render() {
     return (
       <Row type="flex" justify="center" align="top" className="landing-header">
+        <PageTracker title="Application Success" />
         <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
           <Result
             icon={<Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" />}
@@ -28,22 +30,29 @@ export class ApplicationSuccessPage extends Component {
           />
 
           <Typography>
-            <Title level={4}>Your reference code is: {this.props.match.params.id}</Title>
+            <Title level={4}>Your reference number is: {this.props.match.params.id}</Title>
 
             <Paragraph>
-              Please <Text strong>write this code down</Text> for future reference and to check the
+              Please <Text strong>print this code</Text> for future reference and to check the
               status of your application.
             </Paragraph>
             <Title level={4}>What happens next</Title>
             <Paragraph>
-              If your application is approved, you will need to submit the following:
-              <ul>
-                <li>Contract with Permit Holder</li>
-                <li>Criminal Records Check</li>
-                <li>Certificate of Insurance</li>
-              </ul>
-              You will also be sent Shared Cost Arrangement (Schedule A) to sign and return before
-              first payment can be processed.
+              If any of the work applied for is approved, you will receive an agreement that you
+              must sign and upload along with:
+              <ul className="landing-list">
+                  <li>
+                    A signed copy of the agreement you received from the Province of British
+                    Columbia
+                  </li>
+                  <li>
+                    A copy of the contract between your company and the permit holder named in the
+                    application
+                  </li>
+                  <li>A certificate of insurance</li>
+                </ul>
+              When the files have been uploaded, you may begin work and the initial payment will be
+              processed and sent to you at the address provided.
             </Paragraph>
           </Typography>
         </Col>
@@ -59,5 +68,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({}, dispatch);
 ApplicationSuccessPage.propTypes = propTypes;
 ApplicationSuccessPage.defaultProps = defaultProps;
 
-// TODO: WHEN LAUNCH - REMOVE AuthorizationGuard()
 export default compose(connect(mapStateToProps, mapDispatchToProps))(ApplicationSuccessPage);

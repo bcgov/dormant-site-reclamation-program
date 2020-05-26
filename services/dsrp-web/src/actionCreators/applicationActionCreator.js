@@ -21,14 +21,13 @@ export const createApplication = (application) => (dispatch) => {
       dispatch(success(reducerTypes.CREATE_APPLICATION));
       return response;
     })
-    .catch((error) => {
+    .catch((err) => {
       dispatch(error(reducerTypes.CREATE_APPLICATION));
-      throw new Error(error);
+      throw new Error(err);
     });
 };
 
-export const fetchApplications = (page, per_page) => (dispatch) => {
-  const params = page ? { page, per_page } : {};
+export const fetchApplications = (params) => (dispatch) => {
   dispatch(request(reducerTypes.GET_APPLICATIONS));
   return CustomAxios()
     .get(ENVIRONMENT.apiUrl + API.APPLICATION(params), createRequestHeader())
@@ -55,6 +54,22 @@ export const fetchApplicationById = (guid) => (dispatch) => {
     })
     .catch((error) => {
       dispatch(error(reducerTypes.GET_APPLICATION));
+      throw new Error(error);
+    })
+    .finally(() => dispatch(hideLoading()));
+};
+
+export const fetchApplicationSummaryById = (guid) => (dispatch) => {
+  dispatch(request(reducerTypes.GET_APPLICATION_SUMMARY));
+  return CustomAxios()
+    .get(ENVIRONMENT.apiUrl + API.APPLICATION_SUMMARY_BY_ID(guid), createRequestHeader())
+    .then((response) => {
+      dispatch(success(reducerTypes.GET_APPLICATION_SUMMARY));
+      dispatch(applicationActions.storeApplication(response.data));
+      return response;
+    })
+    .catch((error) => {
+      dispatch(error(reducerTypes.GET_APPLICATION_SUMMARY));
       throw new Error(error);
     })
     .finally(() => dispatch(hideLoading()));
@@ -88,4 +103,22 @@ export const updateApplicationReview = (guid, payload) => (dispatch) => {
       throw new Error(error);
     })
     .finally(() => dispatch(hideLoading()));
+};
+
+export const createApplicationStatus = (guid, payload) => (dispatch) => {
+  dispatch(request(reducerTypes.CREATE_APPLICATION_STATUS));
+  return CustomAxios()
+    .post(ENVIRONMENT.apiUrl + API.STATUS(guid), payload, createRequestHeader())
+    .then((response) => {
+      notification.success({
+        message: `Sucessfully updated status of the application and informed applicant via email`,
+        duration: 10,
+      });
+      dispatch(success(reducerTypes.CREATE_APPLICATION_STATUS));
+      return response;
+    })
+    .catch((err) => {
+      dispatch(error(reducerTypes.CREATE_APPLICATION_STATUS));
+      throw new Error(err);
+    });
 };

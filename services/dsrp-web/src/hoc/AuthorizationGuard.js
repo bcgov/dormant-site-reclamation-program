@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import hoistNonReactStatics from "hoist-non-react-statics";
 import UnauthenticatedNotice from "@/components/common/UnauthenticatedNotice";
 import * as Permission from "@/constants/permissions";
-import { getIsAdmin, isAuthenticated } from "@/selectors/authenticationSelectors";
+import { getIsAdmin } from "@/selectors/authenticationSelectors";
 import { detectDevelopmentEnvironment, detectProdEnvironment } from "@/utils/environmentUtils";
 
 /**
@@ -19,7 +19,7 @@ const propTypes = {
 export const AuthorizationGuard = (permission) => (WrappedComponent) => {
   const authorizationGuard = (props) => {
     if (
-      props.isAuthenticated ||
+      props.isAdmin ||
       (permission === Permission.IN_DEVELOPMENT && detectDevelopmentEnvironment()) ||
       (permission === Permission.IN_TESTING && !detectProdEnvironment())
     ) {
@@ -32,7 +32,6 @@ export const AuthorizationGuard = (permission) => (WrappedComponent) => {
 
   const mapStateToProps = (state) => ({
     isAdmin: getIsAdmin(state),
-    isAuthenticated: isAuthenticated(state),
   });
 
   authorizationGuard.propTypes = propTypes;

@@ -41,7 +41,7 @@ class ApplicationSectionThree extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="review">
-          <Title level={2} className="application-section">
+          <Title level={3} className="application-section">
             Submit Application
           </Title>
           <Row gutter={48}>
@@ -49,7 +49,7 @@ class ApplicationSectionThree extends Component {
               <Field
                 id="reviewed_and_verified"
                 name="reviewed_and_verified"
-                label="I have reviewed and verified that this application's information is correct."
+                label="I confirm that all information provided as part of this application are true and correct."
                 component={renderConfig.CHECKBOX}
                 validate={[required]}
                 disabled={!this.props.isEditable}

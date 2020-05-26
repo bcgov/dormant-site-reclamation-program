@@ -12,6 +12,7 @@ __pycache__
 *tmp*.tar
 *.pgCustom
 *.sw*
-microservices/document_manager/backend/document_uploads/
 *last-backup
 venv*
+.vscode/
+!.vscode/settings.json.default

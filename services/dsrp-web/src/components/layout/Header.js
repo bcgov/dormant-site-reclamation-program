@@ -1,11 +1,13 @@
 import React from "react";
-import { Layout, Row, Col } from "antd";
+import { Layout, Row, Col, Tag } from "antd";
 import { Link } from "react-router-dom";
 import MediaQuery from "react-responsive";
 import PropTypes from "prop-types";
 import HeaderDropdown from "@/components/layout/HeaderDropdown";
 import * as routes from "@/constants/routes";
 import { BC_GOV } from "@/constants/assets";
+
+import { ENVIRONMENT } from "@/constants/environment";
 
 const propTypes = {
   xs: PropTypes.number.isRequired,
@@ -16,6 +18,11 @@ const propTypes = {
 
 const smallestDesktopWidth = 640;
 
+const notProd = () => {
+  if (ENVIRONMENT.environment.match(/^(development|test)$/)) return true;
+  else return false;
+};
+
 export const Header = (props) => (
   <Layout.Header>
     <Row type="flex" justify="center" align="top">
@@ -23,7 +30,7 @@ export const Header = (props) => (
         <div className="header-content">
           <span className="header-logo">
             <a href="https://gov.bc.ca/">
-              <img alt="BC Government Logo" src={BC_GOV} width={154} />
+              <img id="bc-gov-header-img" alt="BC Government Logo" src={BC_GOV} />
             </a>
           </span>
           <span className="header-title">
@@ -31,7 +38,8 @@ export const Header = (props) => (
               <MediaQuery minWidth={smallestDesktopWidth}>
                 Dormant Sites Reclamation Program
               </MediaQuery>
-              <MediaQuery maxWidth={smallestDesktopWidth - 1}>DSRP</MediaQuery>
+              <MediaQuery maxWidth={smallestDesktopWidth - 1}>DSRP</MediaQuery>{" "}
+              {notProd() && <Tag color="red">Test Site</Tag>}
             </Link>
           </span>
           <span className="header-menu">

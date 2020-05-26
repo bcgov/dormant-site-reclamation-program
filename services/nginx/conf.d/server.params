@@ -16,8 +16,7 @@ add_header X-XSS-Protection 1;
 # Import additional configuration files
 include       /opt/app-root/etc/nginx.conf.d/*.common.conf;
 
-#error pages
-error_page 503 /maintenance_on.html;
-location = /maintenance_on.html {
-    root /opt/app-root/src/html/;
+error_page 503 /errorPages/maintenance_on.html;
+location /errorPages/ {
+  root  /opt/app-root/src/html/;
 }

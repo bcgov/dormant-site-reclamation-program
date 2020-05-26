@@ -6,6 +6,7 @@ import * as API from "../constants/api";
 import { ENVIRONMENT } from "../constants/environment";
 import { createRequestHeader } from "../utils/requestHeaders";
 import CustomAxios from "../customAxios";
+import { debounce } from "lodash";
 
 export const fetchPermitHolders = () => (dispatch) => {
   dispatch(request(reducerTypes.FETCH_PERMIT_HOLDERS));
@@ -47,11 +48,11 @@ export const fetchSelectedWell = (params = {}) => (dispatch) => {
     .finally(() => dispatch(hideLoading()));
 };
 
-export const fetchLiabilities = () => (dispatch) => {
+export const fetchLiabilities = (guid = "") => (dispatch) => {
   dispatch(request(reducerTypes.FETCH_LIABILITIES));
   dispatch(showLoading());
   return CustomAxios()
-    .get(ENVIRONMENT.apiUrl + API.LIABILITY(), createRequestHeader())
+    .get(ENVIRONMENT.apiUrl + API.LIABILITY(guid), createRequestHeader())
     .then((response) => {
       dispatch(success(reducerTypes.FETCH_LIABILITIES));
       dispatch(OGCActions.storeLiabilities(response.data));

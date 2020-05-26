@@ -5,13 +5,14 @@ import PropTypes from "prop-types";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { renderConfig } from "@/components/common/config";
-import { required, email, maxLength } from "@/utils/validate";
-import { phoneMask, postalCodeMask, scrollToFirstError } from "@/utils/helpers";
+import { required, email, maxLength, postalCode, exactLength } from "@/utils/validate";
+import { phoneMask, postalCodeMask, scrollToFirstError, businessNumberMask } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import { ORGBOOK_URL } from "@/constants/routes";
+import { PROGRAM_TAC } from "@/constants/assets";
 
 const { Title, Paragraph } = Typography;
 
@@ -26,6 +27,14 @@ const propTypes = {
 const defaultProps = {
   isViewingSubmission: false,
   isEditable: true,
+};
+
+const validate = (values) => {
+  const errors = {};
+  if (values.company_contact && values.company_contact.email !== values.company_contact.email2) {
+    errors.company_contact = { email2: "Email does not match" };
+  }
+  return errors;
 };
 
 class ApplicationSectionOne extends Component {
@@ -44,9 +53,14 @@ class ApplicationSectionOne extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="company_details">
-          <Title level={2} className="application-section">
+          <Title level={3} className="application-section">
             Company Details
           </Title>
+          <Paragraph>
+            Enter your business name, BC address and contact information for this application. The
+            contact information provided will be used for all communication regarding this
+            application.
+          </Paragraph>
           <Row gutter={48}>
             <Col>
               <Field
@@ -92,18 +106,27 @@ class ApplicationSectionOne extends Component {
                 format={null}
               />
               <Field
+                id="business_number"
+                name="business_number"
+                label="Business Number"
+                placeholder="Business Number"
+                component={renderConfig.FIELD}
+                disabled={!this.props.isEditable}
+                validate={[required, exactLength(9)]}
+                {...businessNumberMask}
+              />
+              <Field
                 id="indigenous_participation_ind"
                 name="indigenous_participation_ind"
-                label="Do you wish to self‑identify as including Indigenous participation in completing the work outlined within this application?"
+                label="My proposal, as outlined in this application, includes Indigenous participation in completing the work."
                 disabled={!this.props.isEditable}
                 component={renderConfig.CHECKBOX}
-                disabled={!this.props.isEditable}
               />
               {this.props.indigenousParticipationCheckbox && (
                 <Field
                   id="indigenous_participation_description"
                   name="indigenous_participation_description"
-                  label="If so, please describe:"
+                  label="Please describe (Do not include any personal information):"
                   component={renderConfig.AUTO_SIZE_FIELD}
                   validate={[required, maxLength(65536)]}
                   disabled={!this.props.isEditable}
@@ -122,7 +145,7 @@ class ApplicationSectionOne extends Component {
                 id="address_line_2"
                 name="address_line_2"
                 label="Address Line 2 (Optional)"
-                placeholder="Address Line 2 (Optional)"
+                placeholder={this.props.isEditable ? "Address Line 2 (Optional)" : ""}
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
                 validate={[maxLength(1024)]}
@@ -160,7 +183,7 @@ class ApplicationSectionOne extends Component {
                 placeholder="Postal Code"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
-                validate={[required]}
+                validate={[required, postalCode]}
                 {...postalCodeMask}
               />
             </Col>
@@ -168,7 +191,7 @@ class ApplicationSectionOne extends Component {
         </FormSection>
 
         <FormSection name="company_contact">
-          <Title level={2} className="application-section">
+          <Title level={3} className="application-section">
             Company Contact
           </Title>
           <Row gutter={48}>
@@ -206,7 +229,7 @@ class ApplicationSectionOne extends Component {
                     placeholder="Phone Number 1"
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
-                    validate={[required]}
+                    validate={[required, exactLength(10)]}
                     {...phoneMask}
                   />
                 </Col>
@@ -215,7 +238,7 @@ class ApplicationSectionOne extends Component {
                     id="phone_ext_1"
                     name="phone_ext_1"
                     label="Ext. 1 (Optional)"
-                    placeholder="Ext. 1  (Optional)"
+                    placeholder={this.props.isEditable ? "Ext. 1  (Optional)" : ""}
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
                     validate={[maxLength(6)]}
@@ -230,9 +253,10 @@ class ApplicationSectionOne extends Component {
                     id="phone_number_2"
                     name="phone_number_2"
                     label="Phone Number 2 (Optional)"
-                    placeholder="Phone Number 2 (Optional)"
+                    placeholder={this.props.isEditable ? "Phone Number 2 (Optional)" : ""}
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
+                    validate={[exactLength(10)]}
                     {...phoneMask}
                   />
                 </Col>
@@ -241,7 +265,7 @@ class ApplicationSectionOne extends Component {
                     id="phone_ext_2"
                     name="phone_ext_2"
                     label="Ext. 2 (Optional)"
-                    placeholder="Ext. 2 (Optional)"
+                    placeholder={this.props.isEditable ? "Ext. 2 (Optional)" : ""}
                     component={renderConfig.FIELD}
                     disabled={!this.props.isEditable}
                     validate={[maxLength(6)]}
@@ -261,15 +285,25 @@ class ApplicationSectionOne extends Component {
                 disabled={!this.props.isEditable}
                 validate={[required, email, maxLength(1024)]}
               />
+              <Field
+                id="email2"
+                name="email2"
+                label="Confirm Email"
+                placeholder="Confirm Email"
+                component={renderConfig.FIELD}
+                disabled={!this.props.isEditable}
+                validate={[required, email, maxLength(1024)]}
+              />
             </Col>
             <Col xs={24} sm={12}>
               <Field
                 id="fax"
                 name="fax"
                 label="Fax (Optional)"
-                placeholder="Fax (Optional)"
+                placeholder={this.props.isEditable ? "Fax (Optional)" : ""}
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
+                validate={[exactLength(10)]}
                 {...phoneMask}
               />
             </Col>
@@ -279,20 +313,26 @@ class ApplicationSectionOne extends Component {
         {this.props.isEditable && (
           <>
             <FormSection name="review_program_conditions">
-              <Title level={2} className="application-section">
+              <Title level={3} className="application-section">
                 Review Program Requirements
               </Title>
               <Row gutter={48}>
                 <Col>
                   <Paragraph>
-                    <a href="#" target="_blank" rel="noopener noreferrer">
+                    <title level={3}>TODO: ADD REAL PDF</title>
+                    <a href={PROGRAM_TAC} target="_blank" rel="noopener noreferrer">
                       Review program details and requirements
                     </a>
                   </Paragraph>
                   <Field
                     id="accept_program_details_and_requirements"
                     name="accept_program_details_and_requirements"
-                    label="I have read and understand all of the conditions required to qualify for this program."
+                    label={
+                      "I understand that in order to receive funding I must agree to the General \
+                    Terms and Conditions for the Dormant Sites Reclamation Program, as will be \
+                    supplemented by additional terms contained within any offer letter that may \
+                    be provided by the Province."
+                    }
                     component={renderConfig.CHECKBOX}
                     validate={[required]}
                   />
@@ -330,6 +370,7 @@ export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: FORM.APPLICATION_FORM,
+    validate,
     destroyOnUnmount: false,
     forceUnregisterOnUnmount: true,
     keepDirtyOnReinitialize: true,

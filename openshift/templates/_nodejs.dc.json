@@ -86,7 +86,13 @@
       "value": "http://localhost:3000"
     },
     {
-      "name": "DOCUMENT_MANAGER_URL",
+      "name": "MATOMO_URL",
+      "displayName": "Matomo Url",
+      "description": "URL for the tracking component",
+      "value": "https://matomo-eazios-test.pathfinder.gov.bc.ca/"
+    },
+    {
+      "name": "TUSD_URL",
       "displayName": "Document Manager Url",
       "description": "URL for the document manager",
       "value": "http://localhost:5001"
@@ -213,8 +219,12 @@
                     "value": "${API_URL}"
                   },
                   {
-                    "name": "DOCUMENT_MANAGER_URL",
-                    "value": "${DOCUMENT_MANAGER_URL}"
+                    "name": "MATOMO_URL",
+                    "value": "${MATOMO_URL}"
+                  },
+                  {
+                    "name": "TUSD_URL",
+                    "value": "${TUSD_URL}"
                   },
                   {
                     "name": "FN_LAYER_URL",

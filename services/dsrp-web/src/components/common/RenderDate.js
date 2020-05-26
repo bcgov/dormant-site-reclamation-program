@@ -13,6 +13,8 @@ const propTypes = {
   meta: PropTypes.objectOf(PropTypes.any).isRequired,
   label: PropTypes.string,
   placeholder: PropTypes.string,
+  error: PropTypes.string,
+  defaultPickerValue: PropTypes.any,
   disabled: PropTypes.bool,
   showTime: PropTypes.bool,
 };
@@ -20,6 +22,8 @@ const propTypes = {
 const defaultProps = {
   label: "",
   placeholder: "",
+  error: "",
+  defaultPickerValue: moment(),
   disabled: false,
   showTime: false,
 };
@@ -28,11 +32,14 @@ const RenderDate = (props) => (
   <Form.Item
     label={props.label}
     validateStatus={
-      props.meta.touched ? (props.meta.error && "error") || (props.meta.warning && "warning") : ""
+      props.meta.touched
+        ? ((props.meta.error || props.error) && "error") || (props.meta.warning && "warning")
+        : ""
     }
     help={
       props.meta.touched &&
       ((props.meta.error && <span>{props.meta.error}</span>) ||
+        (props.error && <span>{props.error}</span>) ||
         (props.meta.warning && <span>{props.meta.warning}</span>))
     }
   >
@@ -42,6 +49,7 @@ const RenderDate = (props) => (
       {...props.input}
       placeholder={props.placeholder}
       disabledDate={props.disabledDate}
+      defaultPickerValue={props.defaultPickerValue}
       onChange={(date, dateString) => props.input.onChange(dateString || null)}
       value={props.input.value ? moment(props.input.value) : null}
       showTime={props.showTime && { format: "HH:mm" }}

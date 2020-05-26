@@ -17,6 +17,7 @@ import configureStore from "./store/configureStore";
 import ScrollToTopWrapper from "@/components/common/wrappers/ScrollToTopWrapper";
 import { loadBulkStaticContent } from "@/actionCreators/staticContentActionCreator";
 import { getStaticContentLoadingIsComplete } from "@/selectors/staticContentSelectors";
+import { MatomoLinkTracing } from "@/utils/trackers";
 
 export const store = configureStore();
 
@@ -24,7 +25,11 @@ Spin.setDefaultIndicator(<Icon type="loading" style={{ fontSize: 40 }} />);
 
 const propTypes = {
   loadBulkStaticContent: PropTypes.func.isRequired,
-  getStaticContentLoadingIsComplete: PropTypes.func.isRequired,
+  getStaticContentLoadingIsComplete: PropTypes.func,
+};
+
+const defaultProps = {
+  getStaticContentLoadingIsComplete: () => {},
 };
 
 class App extends Component {
@@ -53,6 +58,7 @@ class App extends Component {
     return (
       <BrowserRouter basename={process.env.BASE_PATH}>
         <ScrollToTopWrapper>
+          <MatomoLinkTracing />
           <Layout>
             <Header xs={xs} lg={lg} xl={xl} xxl={xxl} />
             <Layout>
@@ -93,6 +99,7 @@ const mapDispatchToProps = (dispatch) =>
   );
 
 App.propTypes = propTypes;
+App.defaultProps = defaultProps;
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

@@ -1,8 +1,14 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { bindActionCreators } from "redux";
+import { Button, Icon } from "antd";
+import { withRouter } from "react-router-dom";
+import { bindActionCreators, compose } from "redux";
 import { set, isEmpty } from "lodash";
+import queryString from "query-string";
+import { openModal, closeModal } from "@/actions/modalActions";
+import * as routes from "@/constants/routes";
+import * as Strings from "@/constants/strings";
 import {
   getApplications,
   getApplicationsWellSitesContractedWork,
@@ -12,6 +18,7 @@ import {
   fetchApplications,
   updateApplication,
   updateApplicationReview,
+  createApplicationStatus,
 } from "@/actionCreators/applicationActionCreator";
 import {
   getDropdownApplicationStatusOptions,
@@ -19,7 +26,15 @@ import {
   getDropdownContractedWorkStatusOptions,
   getContractedWorkStatusOptionsHash,
 } from "@/selectors/staticContentSelectors";
+import { getPermitHoldersHash } from "@/selectors/OGCSelectors";
+import {
+  fetchLiabilities,
+  fetchWells,
+  fetchPermitHolders,
+} from "@/actionCreators/OGCActionCreator";
 import ApplicationTable from "@/components/admin/ApplicationTable";
+import JumpToApplicationForm from "@/components/forms/JumpToApplicationForm";
+import { modalConfig } from "@/components/modalContent/config";
 
 const propTypes = {
   applications: PropTypes.any.isRequired,
@@ -36,35 +51,111 @@ const propTypes = {
 
 const defaultProps = {};
 
+const defaultParams = {
+  page: Strings.DEFAULT_PAGE,
+  per_page: Strings.DEFAULT_PER_PAGE,
+  sort_field: "submission_date",
+  sort_dir: "asc",
+  guid: undefined,
+  company_name: undefined,
+  application_status_code: [],
+};
+
 export class ReviewApplicationInfo extends Component {
-  componentDidMount() {
-    this.props.fetchApplications();
-  }
+  state = { isLoaded: false, params: defaultParams };
 
-  handleApplicationStatusChange = (item, application) => {
-    const payload = {
-      ...application,
-      application_status_code: item.key,
-    };
+  renderDataFromURL = (params) => {
+    const parsedParams = queryString.parse(params);
+    this.setState(
+      {
+        params: parsedParams,
+        isLoaded: false,
+      },
+      () =>
+        this.props.fetchApplications(this.state.params).then(() => {
+          this.setState({ isLoaded: true });
+        })
+    );
+  };
 
-    this.props.updateApplication(application.guid, payload).then(() => {
-      this.props.fetchApplications();
+  onPageChange = (page, per_page) => {
+    this.props.history.replace(
+      routes.REVIEW_APPLICATIONS.dynamicRoute({ ...this.state.params, page, per_page })
+    );
+  };
+
+  search = (values) => {
+    const params = { ...defaultParams, guid: values.guid };
+    this.setState(
+      {
+        params,
+      },
+      () => this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params))
+    );
+  };
+
+  handleRefresh = () => {
+    if (!this.state.isLoaded) {
+      return;
+    }
+    this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params));
+  };
+
+  handleApplicationsSearch = (params) => {
+    this.setState(
+      {
+        params,
+      },
+      () => this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params))
+    );
+  };
+
+  handleApplicationStatusChange = (guid, payload) => {
+    this.props.createApplicationStatus(guid, payload).then(() => {
+      this.props.fetchApplications(this.state.params);
+      this.props.closeModal();
+    });
+  };
+
+  openUpdateStatusModal = (item, record) => {
+    event.preventDefault();
+    this.props.openModal({
+      props: {
+        title: `Update Status of ${record.company_name} to: ${
+          this.props.applicationStatusOptionsHash[item.key]
+        }`,
+        status: item.key,
+        application: record,
+        onSubmit: this.handleApplicationStatusChange,
+      },
+      content: modalConfig.UPDATE_APPLICATION_STATUS,
     });
   };
 
   handleContractedWorkStatusChange = (item, contractedWork) => {
-    const reviewJson = contractedWork.review_json || {};
+    const reviewJson = contractedWork.review_json || { well_sites: [] };
 
     // NOTE: Manually doing this here because using set() thinks integers are array indexes (well_authorization_number).
-    if (isEmpty(reviewJson.well_sites)) {
-      reviewJson.well_sites = {};
+    // if (isEmpty(reviewJson.well_sites)) {
+    //   reviewJson.well_sites = [];
+    // }
+
+    if (isEmpty(reviewJson.well_sites[contractedWork.well_index])) {
+      reviewJson.well_sites[contractedWork.well_index] = {};
     }
-    if (isEmpty(reviewJson.well_sites[contractedWork.well_authorization_number])) {
-      reviewJson.well_sites[contractedWork.well_authorization_number] = {};
+
+    if (
+      isEmpty(
+        reviewJson.well_sites[contractedWork.well_index][contractedWork.well_authorization_number]
+      )
+    ) {
+      reviewJson.well_sites[contractedWork.well_index][
+        contractedWork.well_authorization_number
+      ] = {};
     }
 
     set(
-      reviewJson.well_sites[contractedWork.well_authorization_number],
+      reviewJson.well_sites[contractedWork.well_index][contractedWork.well_authorization_number],
       `contracted_work.${contractedWork.contracted_work_type}.contracted_work_status_code`,
       item.key
     );
@@ -72,26 +163,65 @@ export class ReviewApplicationInfo extends Component {
     const payload = {
       review_json: reviewJson,
     };
-
     this.props.updateApplicationReview(contractedWork.application_guid, payload).then(() => {
-      this.props.fetchApplications();
+      this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params));
     });
   };
 
+  componentDidMount() {
+    const params = queryString.parse(this.props.location.search);
+    this.setState(
+      {
+        params: {
+          ...defaultParams,
+          ...params,
+        },
+      },
+      () => this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params))
+    );
+    this.props.fetchPermitHolders();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.location !== this.props.location) {
+      if (nextProps.location.search) {
+        this.renderDataFromURL(nextProps.location.search);
+      } else {
+        this.renderDataFromURL(queryString.stringify(defaultParams));
+      }
+    }
+  }
+
   render() {
     return (
-      <ApplicationTable
-        applications={this.props.applications}
-        applicationsWellSitesContractedWork={this.props.applicationsWellSitesContractedWork}
-        pageData={this.props.pageData}
-        fetchApplications={this.props.fetchApplications}
-        applicationStatusDropdownOptions={this.props.applicationStatusDropdownOptions}
-        applicationStatusOptionsHash={this.props.applicationStatusOptionsHash}
-        contractedWorkStatusDropdownOptions={this.props.contractedWorkStatusDropdownOptions}
-        contractedWorkStatusOptionsHash={this.props.contractedWorkStatusOptionsHash}
-        handleApplicationStatusChange={this.handleApplicationStatusChange}
-        handleContractedWorkStatusChange={this.handleContractedWorkStatusChange}
-      />
+      <>
+        <Button type="link" onClick={this.handleRefresh} style={{ float: "right", marginTop: 70 }}>
+          <Icon type="reload" className="icon-lg" />
+          Refresh
+        </Button>
+        <JumpToApplicationForm
+          onSubmit={this.search}
+          initialValues={{ guid: this.state.params.guid }}
+        />
+        <ApplicationTable
+          applications={this.props.applications}
+          applicationsWellSitesContractedWork={this.props.applicationsWellSitesContractedWork}
+          pageData={this.props.pageData}
+          params={this.state.params}
+          handleTableChange={this.handleApplicationsSearch}
+          onPageChange={this.onPageChange}
+          isLoaded={this.state.isLoaded}
+          applicationStatusDropdownOptions={this.props.applicationStatusDropdownOptions}
+          applicationStatusOptionsHash={this.props.applicationStatusOptionsHash}
+          contractedWorkStatusDropdownOptions={this.props.contractedWorkStatusDropdownOptions}
+          contractedWorkStatusOptionsHash={this.props.contractedWorkStatusOptionsHash}
+          handleApplicationStatusChange={this.openUpdateStatusModal}
+          handleContractedWorkStatusChange={this.handleContractedWorkStatusChange}
+          permitHoldersHash={this.props.permitHoldersHash}
+          fetchLiabilities={this.props.fetchLiabilities}
+          fetchWells={this.props.fetchWells}
+        />
+      </>
     );
   }
 }
@@ -104,6 +234,7 @@ const mapStateToProps = (state) => ({
   applicationStatusOptionsHash: getApplicationStatusOptionsHash(state),
   contractedWorkStatusDropdownOptions: getDropdownContractedWorkStatusOptions(state),
   contractedWorkStatusOptionsHash: getContractedWorkStatusOptionsHash(state),
+  permitHoldersHash: getPermitHoldersHash(state),
 });
 
 const mapDispatchToProps = (dispatch) =>
@@ -112,6 +243,12 @@ const mapDispatchToProps = (dispatch) =>
       fetchApplications,
       updateApplication,
       updateApplicationReview,
+      fetchLiabilities,
+      fetchWells,
+      fetchPermitHolders,
+      createApplicationStatus,
+      openModal,
+      closeModal,
     },
     dispatch
   );
@@ -119,4 +256,7 @@ const mapDispatchToProps = (dispatch) =>
 ReviewApplicationInfo.propTypes = propTypes;
 ReviewApplicationInfo.defaultProps = defaultProps;
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReviewApplicationInfo);
+export default compose(
+  withRouter,
+  connect(mapStateToProps, mapDispatchToProps)
+)(ReviewApplicationInfo);

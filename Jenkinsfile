@@ -14,10 +14,10 @@ pipeline {
 
                     // Grab any files under the pipeline directory
                     // Verify they match the trusted version
-                    files = findFiles(glob: 'openshift/pipeline/**')
-                    for (def file : files) {
-                        readTrusted file.path
-                    }
+                    // files = findFiles(glob: 'openshift/pipeline/**')
+                    // for (def file : files) {
+                    //     readTrusted file.path
+                    // }
                 }
             }
         }
@@ -48,8 +48,15 @@ pipeline {
               environment name: 'CHANGE_TARGET', value: 'master'
             }
             steps {
-                echo "Deploy (TEST)"
-                sh 'unset JAVA_OPTS; openshift/pipeline/gradlew --no-build-cache --console=plain --no-daemon -b openshift/pipeline/build.gradle cd-deploy -Pargs.--config=openshift/pipeline/config-test.groovy -Pargs.--pr=${CHANGE_ID} -Pargs.--env=test'
+                script {
+                    def IS_APPROVED = input(message: "Deploy to TEST?", ok: "yes", parameters: [string(name: 'IS_APPROVED', defaultValue: 'yes', description: 'Deploy to TEST?')])
+                    if (IS_APPROVED != 'yes') {
+                        currentBuild.result = "ABORTED"
+                        error "User cancelled"
+                    }
+                    echo "Deploy (TEST)"
+                    sh 'unset JAVA_OPTS; openshift/pipeline/gradlew --no-build-cache --console=plain --no-daemon -b openshift/pipeline/build.gradle cd-deploy -Pargs.--config=openshift/pipeline/config-test.groovy -Pargs.--pr=${CHANGE_ID} -Pargs.--env=test'
+                }
             }
         }
         stage('Deploy (PROD)') {
