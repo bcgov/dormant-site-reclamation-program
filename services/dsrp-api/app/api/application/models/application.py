@@ -137,7 +137,7 @@ class Application(Base, AuditMixin):
         result['applicant_name'] = _applicant_name
         result['applicant_address'] = f'{addr1}\n{addr2}{post_cd}\n{city}, {prov}'
 
-        result['funding_amount'] = '${:,}'.format(self.calc_total_prov_contribution())
+        result['funding_amount'] = '${:,.2f}'.format(self.calc_total_prov_contribution())
         result['province_contact_details'] = "PROVINCE CONTACT DETAILS" #TODO get from business
         result['recipient_contact_details'] = f'{_applicant_name}, {addr1} {post_cd} {city} {prov}, {self.submitter_email}, {self.submitter_phone_1}'
 
@@ -154,8 +154,8 @@ class Application(Base, AuditMixin):
                 if worktype == "site_conditions": continue ##all other sections
                 current_app.logger.debug(wt_details)
                 site += f'Work Type: {worktype.capitalize()}\n'
-                site += f' Applicant\'s Estimated Cost: {"${:,}".format(worktype_est_cost(wt_details))}\n'
-                site += f' Provincial Financial Contribution: {"${:,}".format(worktype_prov_contribution(wt_details))}\n'
+                site += f' Applicant\'s Estimated Cost: {"${:,.2f}".format(worktype_est_cost(wt_details))}\n'
+                site += f' Provincial Financial Contribution: {"${:,.2f}".format(worktype_prov_contribution(wt_details))}\n'
                 site += f' Planned Start Date: {wt_details["planned_start_date"]}\n'
                 site += f' Planned End Date: {wt_details["planned_end_date"]}\n'
                 result['formatted_well_sites'] += site
