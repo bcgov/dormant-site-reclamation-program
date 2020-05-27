@@ -48,7 +48,7 @@ class Application(Base, AuditMixin):
     )
 
     def __repr__(self):
-        return f'<{self.__name__} {self.guid}>'
+        return f'<Application: {self.guid}>'
 
     @classmethod
     def get_all(cls):
@@ -99,28 +99,57 @@ class Application(Base, AuditMixin):
 
         return json
 
+    def calc_funding_amount(self):
+        return '100,000,000'
+
+        
     @hybrid_property
     def _doc_gen_json(self):
+        def worktype_est_cost(contracted_work_dict):
+            est_cost = sum([v for k,v in contracted_work_dict.items() if k not in ('planned_start_date', 'planned_end_date')])
+            return '${:,}'.format(round(est_cost,2))
+
+        def worktype_prov_contribution(contracted_work_dict):
+            fifty_percent = sum([v for k,v in contracted_work_dict.items() if k not in ('planned_start_date', 'planned_end_date')]) / 2
+            contribution = fifty_percent if fifty_percent <= 100000 else 100000
+            return '${:,}'.format(round(contribution,2))
+
+
         result = self.json
+        result['agreement_no'] = str(self.guid)
         #CREATE SOME FORMATTED MEMBERS FOR DOCUMENT_GENERATION
         _company_details = self.json.get('company_details')
         addr1 = _company_details.get('address_line_1')
-        #TODO addr2 = _company_details.get('address_line_2')
+        addr2 = _company_details.get('address_line_2') + '\n' if _company_details.get('address_line_2') else ""
         city = _company_details.get('city')
         post_cd = _company_details.get('postal_code')
         prov = _company_details.get('province')
-        result['formatted_address'] = f'{addr1}\n{post_cd}\n{city}, {prov}'
+        result['applicant_name'] = f"{self.json['company_contact']['first_name']} {self.json['company_contact']['last_name']}" 
+        result['applicant_address'] = f'{addr1}\n{addr2}{post_cd}\n{city}, {prov}'
+
+        result['funding_amount'] = self.calc_funding_amount()
+        result['province_contact_details'] = "PROVINCE DETAILS"
+        result['recipient_contact_details'] = "RECIPIENT DETAILS"
+
+
+
 
         well_sites = self.json.get('well_sites', {})
         result['formatted_well_sites'] = ""
         for ws in well_sites:
             site_details = ws.get('details', {})
             wan = site_details.get('well_authorization_number')
-            site = f'Well Authorization Number: {wan}\nConditions:\n'
-            for condition, value in ws.get('site_conditions', []).items():
-                if value:
-                    site += '-' + condition + '\n'
-            result['formatted_well_sites'] += site
+            site = f'\nWell Authorization Number: {wan}\n'
+            for worktype, wt_details in ws.get('contracted_work', {}).items():
+                if worktype == "site_conditions": continue ##all other sections
+                current_app.logger.debug(wt_details)
+                site += f'Work Type: {worktype.capitalize()}\n'
+                site += f' Applicant\'s Estimated Cost: {worktype_est_cost(wt_details)}\n'
+                site += f' Provincial Financial Contribution: {worktype_prov_contribution(wt_details)}\n'
+                site += f' Planned Start Date: {wt_details["planned_start_date"]}\n'
+                site += f' Planned End Date: {wt_details["planned_end_date"]}\n'
+                result['formatted_well_sites'] += site
+        current_app.logger.debug(result)
         return result
 
     @hybrid_property
