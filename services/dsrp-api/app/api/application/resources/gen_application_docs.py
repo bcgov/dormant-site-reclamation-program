@@ -5,7 +5,7 @@ from flask_restplus import Resource
 from app.extensions import api
 from werkzeug.exceptions import BadRequest, NotFound
 
-from app.api.utils.access_decorators import requires_role_view_all
+from app.api.utils.access_decorators import requires_role_view_all,requires_role_admin
 from app.api.utils.resources_mixins import UserMixin
 
 from app.api.services.document_generator_service import DocumentGeneratorService
@@ -18,6 +18,7 @@ document_type_file_map = {"shared-cost-agreement": "shared_cost_agreement_templa
 
 class GenerateApplicationDocumentResource(Resource, UserMixin):
     @api.doc(description='Generate a document of a specific type for a given application')
+    #TODO @requires_role_admin
     def get(self, application_guid, document_type):
         application = Application.find_by_guid(application_guid)
         if not application:

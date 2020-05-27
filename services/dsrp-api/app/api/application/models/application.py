@@ -18,6 +18,18 @@ from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK
 from app.api.permit_holder.resources.permit_holder import PermitHolderResource
 
 
+def _worktype_est_cost_value(contracted_work_dict):
+    return sum([v for k,v in contracted_work_dict.items() if k not in ('planned_start_date', 'planned_end_date')])
+
+def worktype_est_cost(contracted_work_dict):
+    est_cost = _worktype_est_cost_value(contracted_work_dict)
+    return round(est_cost,2)
+    
+def worktype_prov_contribution(contracted_work_dict):
+    fifty_percent = _worktype_est_cost_value(contracted_work_dict) / 2.0
+    contribution = fifty_percent if fifty_percent <= 100000 else 100000
+    return round(contribution,2)
+
 class Application(Base, AuditMixin):
     __tablename__ = 'application'
 
@@ -99,22 +111,19 @@ class Application(Base, AuditMixin):
 
         return json
 
-    def calc_funding_amount(self):
-        return '100,000,000'
 
-        
+
+
+    def calc_total_prov_contribution(self):
+        total_prov_contribution = 0
+        well_sites = self.json.get('well_sites', {})
+        for ws in well_sites:
+            for worktype, wt_details in ws.get('contracted_work', {}).items():
+                total_prov_contribution += worktype_prov_contribution(wt_details)
+        return total_prov_contribution
+
     @hybrid_property
     def _doc_gen_json(self):
-        def worktype_est_cost(contracted_work_dict):
-            est_cost = sum([v for k,v in contracted_work_dict.items() if k not in ('planned_start_date', 'planned_end_date')])
-            return '${:,}'.format(round(est_cost,2))
-
-        def worktype_prov_contribution(contracted_work_dict):
-            fifty_percent = sum([v for k,v in contracted_work_dict.items() if k not in ('planned_start_date', 'planned_end_date')]) / 2
-            contribution = fifty_percent if fifty_percent <= 100000 else 100000
-            return '${:,}'.format(round(contribution,2))
-
-
         result = self.json
         result['agreement_no'] = str(self.guid)
         #CREATE SOME FORMATTED MEMBERS FOR DOCUMENT_GENERATION
@@ -124,12 +133,13 @@ class Application(Base, AuditMixin):
         city = _company_details.get('city')
         post_cd = _company_details.get('postal_code')
         prov = _company_details.get('province')
-        result['applicant_name'] = f"{self.json['company_contact']['first_name']} {self.json['company_contact']['last_name']}" 
+        _applicant_name = f"{self.json['company_contact']['first_name']} {self.json['company_contact']['last_name']}" 
+        result['applicant_name'] = _applicant_name
         result['applicant_address'] = f'{addr1}\n{addr2}{post_cd}\n{city}, {prov}'
 
-        result['funding_amount'] = self.calc_funding_amount()
-        result['province_contact_details'] = "PROVINCE DETAILS"
-        result['recipient_contact_details'] = "RECIPIENT DETAILS"
+        result['funding_amount'] = '${:,}'.format(self.calc_total_prov_contribution())
+        result['province_contact_details'] = "PROVINCE CONTACT DETAILS" #TODO get from business
+        result['recipient_contact_details'] = f'{_applicant_name}, {addr1} {post_cd} {city} {prov}, {self.submitter_email}, {self.submitter_phone_1}'
 
 
 
@@ -144,8 +154,8 @@ class Application(Base, AuditMixin):
                 if worktype == "site_conditions": continue ##all other sections
                 current_app.logger.debug(wt_details)
                 site += f'Work Type: {worktype.capitalize()}\n'
-                site += f' Applicant\'s Estimated Cost: {worktype_est_cost(wt_details)}\n'
-                site += f' Provincial Financial Contribution: {worktype_prov_contribution(wt_details)}\n'
+                site += f' Applicant\'s Estimated Cost: {"${:,}".format(worktype_est_cost(wt_details))}\n'
+                site += f' Provincial Financial Contribution: {"${:,}".format(worktype_prov_contribution(wt_details))}\n'
                 site += f' Planned Start Date: {wt_details["planned_start_date"]}\n'
                 site += f' Planned End Date: {wt_details["planned_end_date"]}\n'
                 result['formatted_well_sites'] += site
@@ -155,6 +165,13 @@ class Application(Base, AuditMixin):
     @hybrid_property
     def submitter_email(self):
         return self.json.get('company_contact', {}).get('email')
+
+    @hybrid_property
+    def submitter_phone_1(self):
+        ph1 = self.json.get('company_contact', {}).get('phone_number_1')
+        ph1_ext = self.json.get('company_contact', {}).get('phone_number_1_ext')
+
+        return ph1 if not ph1_ext else f'{ph1} ext.{ph1_ext}'
 
     @hybrid_property
     def application_status_code(self):
