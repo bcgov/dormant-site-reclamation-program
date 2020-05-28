@@ -19,14 +19,14 @@ export const ViewApplicationDocuments = (props) => (
       Documents
     </Title>
     <LinkButton
-              title='Download Shared Cost Agreement Letter'
+              title='shared_cost_agreement'
               onClick={() =>
                 downloadGeneratedApplicationLetter(
                   props.application_guid,
                 )
               }
     >
-      Download Shared Cost Agreement Letter
+      Shared Cost Agreement Letter Draft
     </LinkButton>
     <DocumentTable {...props} />
   </>

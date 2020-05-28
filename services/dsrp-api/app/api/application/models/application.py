@@ -37,7 +37,7 @@ class Application(Base, AuditMixin):
         id = fields.Integer(dump_only=True)
         guid = fields.String(dump_only=True)
         submission_date = fields.String(dump_only=True)
-        status_changes = fields.Raw(dump_only=True)  ##DO NOT INJEST ON POST
+        status_changes = fields.Raw(dump_only=True)  ##DO NOT INGEST ON POST
 
     id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
     guid = db.Column(UUID(as_uuid=True),
@@ -183,10 +183,10 @@ class Application(Base, AuditMixin):
             return 'NOT_STARTED'
 
     @application_status_code.expression
-    def application_status_code(cls):
+    def application_status_code(self):
         return func.coalesce(
             select([ApplicationStatusChange.application_status_code]).where(
-                ApplicationStatusChange.application_guid == cls.guid).order_by(
+                ApplicationStatusChange.application_guid == self.guid).order_by(
                     desc(ApplicationStatusChange.change_date)).limit(
                         1).as_scalar(), 'NOT_STARTED')
 

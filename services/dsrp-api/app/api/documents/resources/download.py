@@ -45,7 +45,7 @@ class DocumentDownloadResource(Resource, UserMixin):
 
             file_resp = Response(
                 stream_with_context(docgen_resp.iter_content(chunk_size=2048)),
-                headers=dict(docgen_resp.headers))
+                headers=headers)
             
         #S3 Download Token
         else:
