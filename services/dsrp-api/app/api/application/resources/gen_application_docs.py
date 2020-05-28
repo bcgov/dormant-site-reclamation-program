@@ -15,8 +15,11 @@ from app.api.services.document_generator_service import DocumentGeneratorService
 from app.api.application.models.application import Application
 
 
-templates_base_path = "/app/app/templates/"
+
 document_type_file_map = {"shared-cost-agreement": "shared_cost_agreement_template.docx"}
+
+def get_template_file_path(document_type):
+ return os.path.join(current_app.instance_path, 'app', 'templates', document_type_file_map[document_type])
 
 
 class GenerateApplicationDocumentResource(Resource, UserMixin):
@@ -29,7 +32,7 @@ class GenerateApplicationDocumentResource(Resource, UserMixin):
         if document_type not in document_type_file_map.keys():
             raise NotFound(f'document_type of \'{document_type}\' not found')
 
-        template_path = templates_base_path + document_type_file_map[document_type]
+        template_path = get_template_file_path(document_type)
 
         if not os.path.isfile(template_path):
             raise Exception('template file not found')
