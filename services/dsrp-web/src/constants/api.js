@@ -7,6 +7,7 @@ export const STATIC_CONTENT = "/exports/static-content";
 export const GET_TOKEN_FOR_DOC = (app_guid, doc_guid) =>
   `${APPLICATION_DOCUMENT(app_guid)}/${doc_guid}`;
 export const GET_FILE_WITH_TOKEN = (token) => `/documents?${queryString.stringify(token)}`;
+export const GET_TOKEN_FOR_SHARED_COST_AGREE_LETTER = (app_guid) => `/application/${app_guid}/generate-doc/shared-cost-agreement`
 
 // OrgBook
 export const ORGBOOK_SEARCH = (search) => `/orgbook/search?${queryString.stringify({ search })}`;

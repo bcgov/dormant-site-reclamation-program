@@ -15,10 +15,8 @@ from app.api.services.document_generator_service import DocumentGeneratorService
 from app.api.application.models.application import Application
 
 
-
 templates_base_path = "/app/app/templates/"
 document_type_file_map = {"shared-cost-agreement": "shared_cost_agreement_template.docx"}
-
 
 
 class GenerateApplicationDocumentResource(Resource, UserMixin):

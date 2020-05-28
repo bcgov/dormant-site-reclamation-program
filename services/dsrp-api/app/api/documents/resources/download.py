@@ -39,7 +39,9 @@ class DocumentDownloadResource(Resource, UserMixin):
             docgen_resp = DocumentGeneratorService.generate_document_and_stream_response(
             template_path, application._doc_gen_json)
             # Return the generated document
-            current_app.logger.info(docgen_resp.headers)
+
+            headers = dict(docgen_resp.headers)
+            headers['Content-Disposition']=f'attachment; filename=shared_cost_agreement_{application.company_name}_draft.docx'
 
             file_resp = Response(
                 stream_with_context(docgen_resp.iter_content(chunk_size=2048)),
