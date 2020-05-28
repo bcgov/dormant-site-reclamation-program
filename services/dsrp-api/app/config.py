@@ -77,6 +77,8 @@ class Config(object):
     # OrgBook
     ORGBOOK_API_URL = os.environ.get('ORGBOOK_API_URL', 'https://orgbook.gov.bc.ca/api/v2/')
 
+    #Doc Gen
+    DOCUMENT_GENERATOR_URL = os.environ.get('DOCUMENT_GENERATOR_URL', 'http://docgen-api:3030')
     # Document hosting settings
     OBJECT_STORE_ENABLED = os.environ.get('OBJECT_STORE_ENABLED', False)
     OBJECT_STORE_HOST = os.environ.get('OBJECT_STORE_HOST', '')
@@ -86,7 +88,6 @@ class Config(object):
 
     #SMTP
     SMTP_CRED_HOST = os.environ.get('SMTP_CRED_HOST', None)
-
     SMTP_ENABLED = SMTP_CRED_HOST is not None
 
     SMTP_CRED = {'host': SMTP_CRED_HOST, 'port': 25, 'user': None, 'pwrd': None}

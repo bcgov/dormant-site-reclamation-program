@@ -3,6 +3,9 @@ import { Typography } from "antd";
 import PropTypes from "prop-types";
 import { document } from "@/customPropTypes/documents";
 import { DocumentTable } from "@/components/common/DocumentTable";
+import { downloadGeneratedApplicationLetter } from "@/utils/actionlessNetworkCalls";
+import LinkButton from "@/components/common/LinkButton";
+
 
 const { Title, Text } = Typography;
 const propTypes = {
@@ -15,6 +18,16 @@ export const ViewApplicationDocuments = (props) => (
     <Title level={3} className="documents-section">
       Documents
     </Title>
+    <LinkButton
+              title='Download Shared Cost Agreement Letter'
+              onClick={() =>
+                downloadGeneratedApplicationLetter(
+                  props.application_guid,
+                )
+              }
+    >
+      Download Shared Cost Agreement Letter
+    </LinkButton>
     <DocumentTable {...props} />
   </>
 );
