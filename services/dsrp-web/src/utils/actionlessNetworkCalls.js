@@ -1,7 +1,7 @@
 import CustomAxios from "../customAxios";
 import { createRequestHeader } from "./requestHeaders";
 import { ENVIRONMENT } from "../constants/environment";
-import { GET_TOKEN_FOR_DOC, GET_FILE_WITH_TOKEN } from "../constants/api";
+import { GET_TOKEN_FOR_SHARED_COST_AGREE_LETTER, GET_FILE_WITH_TOKEN } from "../constants/api";
 
 export const downloadFileFromDocumentManager = (
   application_guid,
@@ -26,3 +26,19 @@ export const downloadFileFromDocumentManager = (
       }
     });
 };
+
+
+export const downloadGeneratedApplicationLetter = (
+    application_guid,
+  ) => {
+    CustomAxios()
+      .get(
+        `${ENVIRONMENT.apiUrl + GET_TOKEN_FOR_SHARED_COST_AGREE_LETTER(application_guid)}`,
+        createRequestHeader()
+      )
+      .then((response) => {
+        const token = { token: response.data.token_guid };
+        window.location = `${ENVIRONMENT.apiUrl + GET_FILE_WITH_TOKEN(token)}`;
+      });
+  };
+  
