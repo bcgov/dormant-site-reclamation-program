@@ -19,7 +19,7 @@ from app.api.application.models.application import Application
 document_type_file_map = {"shared-cost-agreement": "shared_cost_agreement_template.docx"}
 
 def get_template_file_path(document_type):
- return os.path.join(current_app.instance_path, 'app', 'templates', document_type_file_map[document_type])
+ return os.path.join(current_app.root_path, 'templates', document_type_file_map[document_type])
 
 
 class GenerateApplicationDocumentResource(Resource, UserMixin):
@@ -35,7 +35,7 @@ class GenerateApplicationDocumentResource(Resource, UserMixin):
         template_path = get_template_file_path(document_type)
 
         if not os.path.isfile(template_path):
-            raise Exception('template file not found')
+            raise Exception(f'template file not found: {template_path}')
             
         token_data = {
             "template_path" : template_path,
