@@ -149,6 +149,26 @@ app {
                             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
                             'URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}",
                             'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/api",
+                            'DOCUMENT_GENERATOR_URL': "${vars.modules.'dsrp-docgen-api'.HOST}",
+
+                    ]
+                ],
+                [
+                    'file':'openshift/templates/docgen.dc.json',
+                    'params':[
+                            'NAME':"docgen",
+                            'SUFFIX': "${vars.deployment.suffix}",
+                            'VERSION':"${app.deployment.version}",
+                            'APPLICATION_SUFFIX': "${vars.deployment.application_suffix}",
+                            'PORT':3030,
+                            'CPU_REQUEST':"${vars.resources.docgen.cpu_request}",
+                            'CPU_LIMIT':"${vars.resources.docgen.cpu_limit}",
+                            'MEMORY_REQUEST':"${vars.resources.docgen.memory_request}",
+                            'MEMORY_LIMIT':"${vars.resources.docgen.memory_limit}",
+                            'REPLICA_MIN':"${vars.resources.docgen.replica_min}",
+                            'REPLICA_MAX':"${vars.resources.docgen.replica_max}",
+                            'BASE_PATH': "${vars.modules.'dsrp-docgen-api'.PATH}",
+                            'NODE_ENV': "${vars.deployment.node_env}"
                     ]
                 ],
                 [
@@ -242,6 +262,14 @@ environments {
                     cpu_request = "10m"
                     cpu_limit = "30m"
                     memory_request = "64Mi"
+                    memory_limit = "256Mi"
+                    replica_min = 1
+                    replica_max = 1
+                }
+                docgen {
+                    cpu_request = "50m"
+                    cpu_limit = "200m"
+                    memory_request = "128Mi"
                     memory_limit = "256Mi"
                     replica_min = 1
                     replica_max = 1
@@ -345,6 +373,9 @@ environments {
                 }
                 'metabase' {
                     HOST = "dsrp-metabase-${vars.deployment.namespace}.pathfinder.gov.bc.ca"
+                }
+                'dsrp-docgen-api' {
+                    HOST = "http://docgen${vars.deployment.suffix}:3030"
                 }
             }
         }
