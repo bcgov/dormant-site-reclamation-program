@@ -115,6 +115,10 @@
       "required": true
     },
     {
+      "name": "DOCUMENT_GENERATOR_URL",
+      "value": "${DOCUMENT_GENERATOR_URL}"
+    },
+    {
       "name": "SMTP_CREDENTIALS",
       "value": "smtp-credentials"
     },
@@ -351,6 +355,10 @@
                   {
                     "name": "METABASE_SITE_URL",
                     "value": "${METABASE_SITE_URL}"
+                  },
+                  {
+                    "name": "DOCUMENT_GENERATOR_URL",
+                    "value": "${DOCUMENT_GENERATOR_URL}"
                   },
                   {
                     "name": "OBJECT_STORE_ENABLED",
