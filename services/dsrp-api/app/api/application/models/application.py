@@ -127,7 +127,9 @@ class Application(Base, AuditMixin):
     @hybrid_property
     def _doc_gen_json(self):
         result = self.json
-        result['agreement_no'] = str(self.guid)
+        result['agreement_no'] = 1 #TODO: generate agreement no
+        result['application_guid'] = str(self.guid)
+        result['agreement_date'] = datetime.now().strftime("%d, %b, %Y")
         #CREATE SOME FORMATTED MEMBERS FOR DOCUMENT_GENERATION
         _company_details = self.json.get('company_details')
         addr1 = _company_details.get('address_line_1')
@@ -140,11 +142,7 @@ class Application(Base, AuditMixin):
         result['applicant_address'] = f'{addr1}\n{addr2}{post_cd}\n{city}, {prov}'
 
         result['funding_amount'] = '${:,.2f}'.format(self.calc_total_prov_contribution())
-        result['province_contact_details'] = "PROVINCE CONTACT DETAILS" #TODO get from business
         result['recipient_contact_details'] = f'{_applicant_name}, {addr1} {post_cd} {city} {prov}, {self.submitter_email}, {self.submitter_phone_1}'
-
-
-
 
         well_sites = self.json.get('well_sites', {})
         result['formatted_well_sites'] = ""

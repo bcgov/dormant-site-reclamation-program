@@ -41,7 +41,7 @@ class DocumentDownloadResource(Resource, UserMixin):
             # Return the generated document
 
             headers = dict(docgen_resp.headers)
-            headers['Content-Disposition']=f'attachment; filename=shared_cost_agreement_{application.company_name}_draft.docx'
+            headers['Content-Disposition']=f'attachment; filename=shared_cost_agreement_{application.company_name}.pdf'
 
             file_resp = Response(
                 stream_with_context(docgen_resp.iter_content(chunk_size=2048)),

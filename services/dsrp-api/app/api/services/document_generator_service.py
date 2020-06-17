@@ -32,7 +32,8 @@ class DocumentGeneratorService():
         body = {
             'data': data,
             'options': {
-                'reportName': f'{file_name_no_ext}-{datetime.date.today().strftime("%d%m%Y")}.docx',
+                'reportName': f'{file_name_no_ext}-{datetime.date.today().strftime("%d%m%Y")}.pdf',
+                'convertTo': 'pdf'
             }
         }
 

@@ -24,7 +24,7 @@ def get_template_file_path(document_type):
 
 class GenerateApplicationDocumentResource(Resource, UserMixin):
     @api.doc(description='Generate a document of a specific type for a given application')
-    #@requires_role_admin
+    @requires_role_admin
     def get(self, application_guid, document_type):
         application = Application.find_by_guid(application_guid)
         if not application:
