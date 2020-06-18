@@ -19,16 +19,22 @@ from app.api.permit_holder.resources.permit_holder import PermitHolderResource
 
 
 def _worktype_est_cost_value(contracted_work_dict):
-    return sum([v for k,v in contracted_work_dict.items() if k not in ('planned_start_date', 'planned_end_date')])
+    return sum([
+        v for k, v in contracted_work_dict.items()
+        if k not in ('planned_start_date', 'planned_end_date')
+    ])
+
 
 def worktype_est_cost(contracted_work_dict):
     est_cost = _worktype_est_cost_value(contracted_work_dict)
-    return round(est_cost,2)
-    
+    return round(est_cost, 2)
+
+
 def worktype_prov_contribution(contracted_work_dict):
     fifty_percent = _worktype_est_cost_value(contracted_work_dict) / 2.0
     contribution = fifty_percent if fifty_percent <= 100000 else 100000
-    return round(contribution,2)
+    return round(contribution, 2)
+
 
 class Application(Base, AuditMixin):
     __tablename__ = 'application'
@@ -40,14 +46,9 @@ class Application(Base, AuditMixin):
         status_changes = fields.Raw(dump_only=True)  ##DO NOT INGEST ON POST
 
     id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
-    guid = db.Column(UUID(as_uuid=True),
-                     nullable=False,
-                     unique=True,
-                     server_default=FetchedValue())
+    guid = db.Column(UUID(as_uuid=True), nullable=False, unique=True, server_default=FetchedValue())
 
-    submission_date = db.Column(db.DateTime,
-                                nullable=False,
-                                default=datetime.utcnow)
+    submission_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     json = db.Column(JSONB, nullable=False)
     review_json = db.Column(JSONB)
     submitter_ip = db.Column(db.String)
@@ -75,13 +76,10 @@ class Application(Base, AuditMixin):
         well_sites = json.get('well_sites')
         for site in well_sites:
             contracted_work = site.get('contracted_work')
-            work = list(
-                set(list(WELL_SITE_CONTRACTED_WORK.keys())).intersection(
-                    contracted_work))
+            work = list(set(list(WELL_SITE_CONTRACTED_WORK.keys())).intersection(contracted_work))
             if len(work) == 0:
                 raise AssertionError(
-                    'Application must contain at least one piece of contracted work.'
-                )
+                    'Application must contain at least one piece of contracted work.')
             for i in work:
                 work_item = contracted_work.get(i)
                 total = [
@@ -89,8 +87,7 @@ class Application(Base, AuditMixin):
                     if key in WELL_SITE_CONTRACTED_WORK.get(i)
                 ]
                 if sum(total) == 0:
-                    raise AssertionError(
-                        'Contracted works must have an amount greater than $0')
+                    raise AssertionError('Contracted works must have an amount greater than $0')
         for key, value in APPLICATION_JSON.items():
             k = json.get(key, None)
             if k:
@@ -100,8 +97,7 @@ class Application(Base, AuditMixin):
                         if company_name:
                             for i in COMPANY_NAME_JSON_KEYS:
                                 if not company_name.get(i, None):
-                                    raise AssertionError(
-                                        f'{i} must not be None')
+                                    raise AssertionError(f'{i} must not be None')
                         else:
                             raise AssertionError(f'{item} must not be None')
                     if not k.get(item, None):
@@ -111,10 +107,9 @@ class Application(Base, AuditMixin):
 
         return json
 
-
     @hybrid_property
     def company_name(self):
-        self.json.get('company_details', {}).get('company_name',{}).get('label')
+        self.json.get('company_details', {}).get('company_name', {}).get('label')
 
     def calc_total_prov_contribution(self):
         total_prov_contribution = 0
@@ -127,22 +122,24 @@ class Application(Base, AuditMixin):
     @hybrid_property
     def _doc_gen_json(self):
         result = self.json
-        result['agreement_no'] = 1 #TODO: generate agreement no
+        result['agreement_no'] = str(self.id).zfill(4)
         result['application_guid'] = str(self.guid)
         result['agreement_date'] = datetime.now().strftime("%d, %b, %Y")
         #CREATE SOME FORMATTED MEMBERS FOR DOCUMENT_GENERATION
         _company_details = self.json.get('company_details')
         addr1 = _company_details.get('address_line_1')
-        addr2 = _company_details.get('address_line_2') + '\n' if _company_details.get('address_line_2') else ""
+        addr2 = _company_details.get('address_line_2') + '\n' if _company_details.get(
+            'address_line_2') else ""
         city = _company_details.get('city')
         post_cd = _company_details.get('postal_code')
         prov = _company_details.get('province')
-        _applicant_name = f"{self.json['company_contact']['first_name']} {self.json['company_contact']['last_name']}" 
+        _applicant_name = f"{self.json['company_contact']['first_name']} {self.json['company_contact']['last_name']}"
         result['applicant_name'] = _applicant_name
         result['applicant_address'] = f'{addr1}\n{addr2}{post_cd}\n{city}, {prov}'
 
         result['funding_amount'] = '${:,.2f}'.format(self.calc_total_prov_contribution())
-        result['recipient_contact_details'] = f'{_applicant_name}, {addr1} {post_cd} {city} {prov}, {self.submitter_email}, {self.submitter_phone_1}'
+        result[
+            'recipient_contact_details'] = f'{_applicant_name}, {addr1} {post_cd} {city} {prov}, {self.submitter_email}, {self.submitter_phone_1}'
 
         well_sites = self.json.get('well_sites', {})
         result['formatted_well_sites'] = ""
@@ -151,7 +148,7 @@ class Application(Base, AuditMixin):
             wan = site_details.get('well_authorization_number')
             site = f'\nWell Authorization Number: {wan}\n'
             for worktype, wt_details in ws.get('contracted_work', {}).items():
-                if worktype == "site_conditions": continue ##all other sections
+                if worktype == "site_conditions": continue  ##all other sections
                 current_app.logger.debug(wt_details)
                 site += f'Work Type: {worktype.capitalize()}\n'
                 site += f' Applicant\'s Estimated Cost: {"${:,.2f}".format(worktype_est_cost(wt_details))}\n'
@@ -183,10 +180,10 @@ class Application(Base, AuditMixin):
     @application_status_code.expression
     def application_status_code(self):
         return func.coalesce(
-            select([ApplicationStatusChange.application_status_code]).where(
-                ApplicationStatusChange.application_guid == self.guid).order_by(
-                    desc(ApplicationStatusChange.change_date)).limit(
-                        1).as_scalar(), 'NOT_STARTED')
+            select([ApplicationStatusChange.application_status_code
+                    ]).where(ApplicationStatusChange.application_guid == self.guid).order_by(
+                        desc(ApplicationStatusChange.change_date)).limit(1).as_scalar(),
+            'NOT_STARTED')
 
     def send_confirmation_email(self, email_service):
         if not self.submitter_email:
@@ -316,13 +313,12 @@ class Application(Base, AuditMixin):
   <p class="MsoNormal"><span>&nbsp;</span></p>
 </div>
         """
-        email_service.send_email(self.submitter_email,
-                                 'Application Confirmation', html_body)
+        email_service.send_email(self.submitter_email, 'Application Confirmation', html_body)
 
     def get_application_html(self):
         def create_company_details(company_details):
-            indigenous_participation_ind = company_details.get(
-                "indigenous_participation_ind", False) == True
+            indigenous_participation_ind = company_details.get("indigenous_participation_ind",
+                                                               False) == True
             return f"""
             <h1>Company Details</h1>
 
@@ -365,12 +361,10 @@ class Application(Base, AuditMixin):
         def create_contract_details(contract_details):
             try:
                 permit_holder = PermitHolderResource.get(
-                    self,
-                    operator_id=contract_details["operator_id"])["records"][0]
+                    self, operator_id=contract_details["operator_id"])["records"][0]
             except:
                 current_app.logger.warning(
-                    'Failed to find the permit holder. Displaying operator ID instead.'
-                )
+                    'Failed to find the permit holder. Displaying operator ID instead.')
 
             return f"""
             <h1>Contract Details</h1>
@@ -385,10 +379,8 @@ class Application(Base, AuditMixin):
                     return f"<li><b>{condition['label']}</b>: {'Yes' if condition['name'] in site_conditions and site_conditions[condition['name']] == True else 'No'}</li>"
 
                 def create_contracted_work_section(section, contracted_work):
-                    def create_sub_section(sub_section, section,
-                                           contracted_work):
-                        def create_amount_field(amount_field, section,
-                                                contracted_work):
+                    def create_sub_section(sub_section, section, contracted_work):
+                        def create_amount_field(amount_field, section, contracted_work):
                             return f"""
                                 <tr>
                                 <td style="padding-left: 10px;">{amount_field["label"]}:</td>
