@@ -87,6 +87,5 @@ class EmailService():
             if Config.SMTP_ENABLED:
                 self._smtp.send_message(msg)
             self._sent_mail['success_count'] += 1
-            current_app.logger.debug(msg)
         except Exception as e:
             self._sent_mail['errors'].append((msg['To']) + 'THREW' + str(e))
