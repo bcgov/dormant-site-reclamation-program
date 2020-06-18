@@ -1,3 +1,4 @@
+from os.path import basename
 from urllib.request import urlopen
 from app.extensions import cache
 from app.api.constants import PERMIT_HOLDER_CACHE, DORMANT_WELLS_CACHE, LIABILITY_PER_WELL_CACHE, TIMEOUT_12_HOURS, TIMEOUT_1_YEAR
@@ -12,6 +13,7 @@ from string import Template
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
 
 session = requests.session()
 
@@ -61,7 +63,7 @@ class EmailService():
         if Config.SMTP_ENABLED:
             self._smtp.quit()
 
-    def send_email(self, to_email, subject, html_body):
+    def send_email(self, to_email, subject, html_body, attachment=None, filename=None):
         if Config.SMTP_ENABLED and not self._smtp:
             raise Exception('Initialize EmailService() as context manager using \'with\' keyword')
 
@@ -75,10 +77,16 @@ class EmailService():
         html = "<html><head></head><body>" + html_body + self.signature + "</body></html>"
         msg.attach(MIMEText(html, 'html'))
 
+        if attachment:
+            file_to_attach = MIMEApplication(attachment.getvalue(), Name=filename)
+            file_to_attach['Content-Disposition'] = 'attachment; filename="%s"' % filename
+            msg.attach(file_to_attach)
+
         # send the message via the server set up earlier.
         try:
             if Config.SMTP_ENABLED:
                 self._smtp.send_message(msg)
             self._sent_mail['success_count'] += 1
+            current_app.logger.debug(msg)
         except Exception as e:
             self._sent_mail['errors'].append((msg['To']) + 'THREW' + str(e))
