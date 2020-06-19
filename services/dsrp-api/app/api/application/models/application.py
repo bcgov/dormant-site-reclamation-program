@@ -150,8 +150,9 @@ class Application(Base, AuditMixin):
             ws_review = [i for i in self.review_json['well_sites'] if str(wan) in i.keys()]
             ws_review_dict = {} 
             if ws_review:
-                ws_review_dict = ws_review[0]
+                ws_review_dict = ws_review[0][str(wan)]
             
+            current_app.logger.debug(ws_review_dict)
 
             for worktype, wt_details in ws.get('contracted_work', {}).items():
                 if worktype == "site_conditions": continue  ##all other sections
