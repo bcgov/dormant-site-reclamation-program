@@ -146,11 +146,20 @@ class Application(Base, AuditMixin):
         for ws in well_sites:
             site_details = ws.get('details', {})
             wan = site_details.get('well_authorization_number')
-            site = f'\nWell Authorization Number: {wan}\n'
+            ##get review
+            ws_review = [i for i in self.review_json['well_sites'] if str(wan) in i.keys()]
+            ws_review_dict = {} 
+            if ws_review:
+                ws_review_dict = ws_review[0]
+            
+
             for worktype, wt_details in ws.get('contracted_work', {}).items():
                 if worktype == "site_conditions": continue  ##all other sections
+                if ws_review_dict.get('contracted_work',{}).get(worktype,{}).get('contracted_work_status_code') != 'APPROVED':
+                    continue
                 current_app.logger.debug(wt_details)
-                site += f'Work Type: {worktype.capitalize()}\n'
+                site = f'\nWell Authorization Number: {wan}\n'
+                site += f' Eligible Activities as described in Application: {worktype.replace("_"," ").capitalize()}\n'
                 site += f' Applicant\'s Estimated Cost: {"${:,.2f}".format(worktype_est_cost(wt_details))}\n'
                 site += f' Provincial Financial Contribution: {"${:,.2f}".format(worktype_prov_contribution(wt_details))}\n'
                 site += f' Planned Start Date: {wt_details["planned_start_date"]}\n'
