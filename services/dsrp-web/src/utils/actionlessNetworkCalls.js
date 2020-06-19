@@ -1,7 +1,7 @@
 import CustomAxios from "../customAxios";
 import { createRequestHeader } from "./requestHeaders";
 import { ENVIRONMENT } from "../constants/environment";
-import { GET_TOKEN_FOR_SHARED_COST_AGREE_LETTER, GET_FILE_WITH_TOKEN } from "../constants/api";
+import { GET_TOKEN_FOR_SHARED_COST_AGREE_LETTER, GET_FILE_WITH_TOKEN, GET_TOKEN_FOR_DOC } from "../constants/api";
 
 export const downloadFileFromDocumentManager = (
   application_guid,
