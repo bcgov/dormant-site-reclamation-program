@@ -1,3 +1,5 @@
+import io, os, cgi
+from flask import current_app
 from datetime import datetime
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.schema import FetchedValue
@@ -5,14 +7,22 @@ from app.config import Config
 
 from app.extensions import db
 from app.api.utils.models_mixins import Base, AuditMixin
+from app.api.services.document_generator_service import DocumentGeneratorService
+
+
+def get_template_file_path():
+    return os.path.join(current_app.root_path, 'templates', 'shared_cost_agreement.docx')
 
 
 class ApplicationStatusChange(Base, AuditMixin):
     __tablename__ = "application_status_change"
 
-    application_status_change_id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
+    application_status_change_id = db.Column(db.Integer,
+                                             primary_key=True,
+                                             server_default=FetchedValue())
     application_guid = db.Column(UUID(as_uuid=True), db.ForeignKey('application.guid'))
-    application_status_code = db.Column(db.String, db.ForeignKey('application_status.application_status_code'))
+    application_status_code = db.Column(db.String,
+                                        db.ForeignKey('application_status.application_status_code'))
     change_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     note = db.Column(db.String, nullable=False)
 
@@ -21,7 +31,6 @@ class ApplicationStatusChange(Base, AuditMixin):
 
     def __repr__(self):
         return f'<{self.__name__} {self.application_status_code}>'
-
 
     def send_status_change_email(self, email_service):
         if not self.application.submitter_email:
@@ -148,5 +157,14 @@ class ApplicationStatusChange(Base, AuditMixin):
   <p class="MsoNormal"><span>&nbsp;</span></p>
 </div>
         """
+        attachment = None
+        filename = None
+        if self.application_status.application_status_code == 'WAIT_FOR_DOCS':
+            doc = DocumentGeneratorService.generate_document_and_stream_response(
+                get_template_file_path(), self.application._doc_gen_json)
+            value, params = cgi.parse_header(doc.headers['content-disposition'])
+            filename = params['filename']
+            attachment = io.BytesIO(doc.content)
 
-        email_service.send_email(self.application.submitter_email, 'Application Status Change', html_body)
+        email_service.send_email(self.application.submitter_email, 'Application Status Change',
+                                 html_body, attachment, filename)

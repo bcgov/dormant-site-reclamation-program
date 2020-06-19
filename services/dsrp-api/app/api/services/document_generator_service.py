@@ -32,15 +32,16 @@ class DocumentGeneratorService():
         body = {
             'data': data,
             'options': {
-                'reportName': f'{file_name_no_ext}-{datetime.date.today().strftime("%d%m%Y")}.docx',
+                'reportName': f'{file_name_no_ext}-{datetime.date.today().strftime("%d%m%Y")}.pdf',
+                'convertTo': 'pdf'
             }
         }
 
         # Send the document generation request and return the response
-        resp = requests.post(
-            url=f'{cls.document_generator_url}/{file_sha}/render',
-            data=json.dumps(body),
-            headers={'Content-Type': 'application/json'})
+        resp = requests.post(url=f'{cls.document_generator_url}/{file_sha}/render',
+                             data=json.dumps(body),
+                             headers={'Content-Type': 'application/json'},
+                             stream=True)
         if resp.status_code != 200:
             current_app.logger.warn(f'Docgen-api/generate replied with {str(resp.content)}')
 
