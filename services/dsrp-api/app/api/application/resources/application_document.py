@@ -69,5 +69,5 @@ class ApplicationDocumentResource(Resource, UserMixin):
             raise NotFound('Not found')
 
         token_guid = uuid.uuid4()
-        cache.set(DOWNLOAD_TOKEN(token_guid), document_guid, TIMEOUT_5_MINUTES)
+        cache.set(DOWNLOAD_TOKEN(token_guid), {'document_guid':document_guid}, TIMEOUT_5_MINUTES)
         return {'token_guid': token_guid}

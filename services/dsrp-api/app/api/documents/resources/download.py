@@ -25,6 +25,7 @@ class DocumentDownloadResource(Resource, UserMixin):
         token_data = cache.get(DOWNLOAD_TOKEN(token_guid))
         cache.delete(DOWNLOAD_TOKEN(token_guid))
         file_resp = None
+        current_app.logger.debug('redis_data' + token_data)
 
         if not token_data:
             raise BadRequest('Valid token required for download')
@@ -46,6 +47,7 @@ class DocumentDownloadResource(Resource, UserMixin):
 
         #S3 Download Token
         else:
+            document_guid = token_data['document_guid']
             app_doc = ApplicationDocument.query.filter_by(
                 application_document_guid=token_data).first()
             if not app_doc:
