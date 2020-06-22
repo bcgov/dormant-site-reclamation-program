@@ -25,7 +25,7 @@ class DocumentDownloadResource(Resource, UserMixin):
         token_data = cache.get(DOWNLOAD_TOKEN(token_guid))
         cache.delete(DOWNLOAD_TOKEN(token_guid))
         file_resp = None
-        current_app.logger.debug('redis_data' + token_data)
+        current_app.logger.debug('redis_data' + str(token_data))
 
         if not token_data:
             raise BadRequest('Valid token required for download')
