@@ -49,7 +49,7 @@ class DocumentDownloadResource(Resource, UserMixin):
         else:
             document_guid = token_data['document_guid']
             app_doc = ApplicationDocument.query.filter_by(
-                application_document_guid=token_data).first()
+                application_document_guid=document_guid).first()
             if not app_doc:
                 raise NotFound('Could not find the document corresponding to the token')
             if attachment is not None:

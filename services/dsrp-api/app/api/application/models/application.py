@@ -147,8 +147,10 @@ class Application(Base, AuditMixin):
             site_details = ws.get('details', {})
             wan = site_details.get('well_authorization_number')
             ##get review
-            ws_review = [i for i in self.review_json['well_sites'] if str(wan) in i.keys()]
             ws_review_dict = {} 
+            ws_review = []
+            if self.review_json:
+                ws_review = [i for i in self.review_json['well_sites'] if str(wan) in i.keys()]
             if ws_review:
                 ws_review_dict = ws_review[0][str(wan)]
             
