@@ -192,6 +192,14 @@ export class ApplicationTable extends Component {
   render() {
     const columns = [
       {
+        title: "Application ID",
+        key: "id",
+        dataIndex: "id",
+        sortField: "id",
+        sorter: true,
+        render: (text) => <div title={`Application ID: ${text}`}>{text}</div>,
+      },
+      {
         title: "Company",
         key: "company_name",
         dataIndex: "company_name",
