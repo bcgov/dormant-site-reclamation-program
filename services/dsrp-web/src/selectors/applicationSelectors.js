@@ -102,6 +102,7 @@ export const getApplicationsWellSitesContractedWork = createSelector(
             key: `${application.guid}.${wellAuthorizationNumber}.${type}`,
             well_index: index,
             application_guid: application.guid || null,
+            work_id: contractedWork[type].work_id || null,
             well_authorization_number: wellAuthorizationNumber,
             contracted_work_type: type,
             contracted_work_type_description: startCase(camelCase(type)),

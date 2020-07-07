@@ -318,6 +318,16 @@ export class ApplicationTable extends Component {
 
     const nestedColumns = [
       {
+        title: "Work ID",
+        key: "work_id",
+        dataIndex: "work_id",
+        render: (text) => (
+          <div style={{ textAlign: "right" }} title="Work ID">
+            {text || Strings.DASH}
+          </div>
+        ),
+      },
+      {
         title: "Well Auth No.",
         key: "well_authorization_number",
         dataIndex: "well_authorization_number",
