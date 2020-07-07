@@ -18,7 +18,10 @@ SELECT
 		PARTITION BY application_well_site_contracted_work.id, application_well_site_contracted_work.well_authorization_number
 		ORDER BY application_well_site_contracted_work.id, application_well_site_contracted_work.well_authorization_number, contracted_work_type
 	)-1 as work_index,
-    row_number() over (ORDER BY application_well_site_contracted_work.id, application_well_site_contracted_work.well_authorization_number, contracted_work_type) as "work_id"
+	concat(application_well_site_contracted_work.id, '.', ROW_NUMBER () OVER (
+		PARTITION BY application_well_site_contracted_work.id, application_well_site_contracted_work.well_authorization_number
+		ORDER BY application_well_site_contracted_work.id, application_well_site_contracted_work.well_authorization_number, contracted_work_type
+	)) as work_id
 FROM (
     SELECT
         *,
