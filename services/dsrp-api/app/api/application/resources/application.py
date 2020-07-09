@@ -17,20 +17,16 @@ from app.api.dsrp_settings.models.dsrp_settings import DSRPSettings
 
 
 class ApplicationListResource(Resource, UserMixin):
-    @api.doc(
-        description='Get all applications. Default order: submission_date asc')
+    @api.doc(description='Get all applications. Default order: submission_date asc')
     @api.marshal_with(APPLICATION_LIST, code=200)
     @requires_role_view_all
     def get(self):
         records, pagination_details = self._apply_filters_and_pagination(
             page_number=request.args.get('page', PAGE_DEFAULT, type=int),
             page_size=request.args.get('per_page', PER_PAGE_DEFAULT, type=int),
-            sort_field=request.args.get('sort_field',
-                                        'submission_date',
-                                        type=str),
+            sort_field=request.args.get('sort_field', 'submission_date', type=str),
             sort_dir=request.args.get('sort_dir', 'asc', type=str),
-            application_status_code=request.args.getlist(
-                'application_status_code', type=str),
+            application_status_code=request.args.getlist('application_status_code', type=str),
             guid=request.args.get('guid', type=str),
             company_name=request.args.get('company_name', type=str))
 
@@ -69,8 +65,9 @@ class ApplicationListResource(Resource, UserMixin):
                               'NOT_STARTED').in_(application_status_code))
 
         if company_name:
-            filters.append(Application.json['company_details']['company_name']
-                           ['label'].astext.contains(company_name.upper()))
+            filters.append(
+                Application.json['company_details']['company_name']['label'].astext.contains(
+                    company_name.upper()))
 
         base_query = base_query.filter(*filters)
 
@@ -80,8 +77,7 @@ class ApplicationListResource(Resource, UserMixin):
                 if not application_status_code:
                     base_query = base_query.outerjoin(
                         ApplicationStatusChange,
-                        ApplicationStatusChange.application_guid ==
-                        Application.guid)
+                        ApplicationStatusChange.application_guid == Application.guid)
                 if sort_dir == 'asc':
                     base_query = base_query.order_by(
                         asc(ApplicationStatusChange.application_status_code))
@@ -107,12 +103,10 @@ class ApplicationListResource(Resource, UserMixin):
         applications_disabled = DSRPSettings.find_by_setting(
             DISABLE_APP_SUBMIT_SETTING).setting_value
         if applications_disabled:
-            raise BadRequest(
-                "Application Submissions are disabled at this time.")
+            raise BadRequest("Application Submissions are disabled at this time.")
 
         try:
-            application = Application._schema().load(
-                request.json['application'])
+            application = Application._schema().load(request.json['application'])
             #get ip from NGINX (or direct for local devs)
             application.submitter_ip = request.headers.getlist(
                 'X-Forwarded-For')[0] if request.headers.getlist(
@@ -136,9 +130,7 @@ class ApplicationResource(Resource, UserMixin):
         application = Application.find_by_guid(application_guid)
 
         if application is None:
-            raise NotFound(
-                'No application was found matching the provided reference number.'
-            )
+            raise NotFound('No application was found matching the provided reference number.')
 
         return application
 
@@ -149,8 +141,7 @@ class ApplicationResource(Resource, UserMixin):
     def put(self, application_guid):
         try:
             application = Application._schema().load(
-                request.json,
-                instance=Application.find_by_guid(application_guid))
+                request.json, instance=Application.find_by_guid(application_guid))
         except MarshmallowError as e:
             raise BadRequest(e)
 
@@ -166,9 +157,7 @@ class ApplicationReviewResource(Resource, UserMixin):
     def put(self, application_guid):
         application = Application.find_by_guid(application_guid)
         if application is None:
-            raise NotFound(
-                'No application was found matching the provided reference number.'
-            )
+            raise NotFound('No application was found matching the provided reference number.')
 
         try:
             review_json = request.json['review_json']
