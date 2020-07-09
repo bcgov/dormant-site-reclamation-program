@@ -21,7 +21,7 @@ from app.api.permit_holder.resources.permit_holder import PermitHolderResource
 def _worktype_est_cost_value(contracted_work_dict):
     return sum([
         v for k, v in contracted_work_dict.items()
-        if k not in ('planned_start_date', 'planned_end_date')
+        if k not in ('planned_start_date', 'planned_end_date', 'work_id')
     ])
 
 
@@ -147,18 +147,19 @@ class Application(Base, AuditMixin):
             site_details = ws.get('details', {})
             wan = site_details.get('well_authorization_number')
             ##get review
-            ws_review_dict = {} 
+            ws_review_dict = {}
             ws_review = []
             if self.review_json:
                 ws_review = [i for i in self.review_json['well_sites'] if str(wan) in i.keys()]
             if ws_review:
                 ws_review_dict = ws_review[0][str(wan)]
-            
+
             current_app.logger.debug(ws_review_dict)
 
             for worktype, wt_details in ws.get('contracted_work', {}).items():
                 if worktype == "site_conditions": continue  ##all other sections
-                if ws_review_dict.get('contracted_work',{}).get(worktype,{}).get('contracted_work_status_code') != 'APPROVED':
+                if ws_review_dict.get('contracted_work', {}).get(
+                        worktype, {}).get('contracted_work_status_code') != 'APPROVED':
                     continue
                 current_app.logger.debug(wt_details)
                 site = f'\nWell Authorization Number: {wan}\n'
@@ -192,10 +193,10 @@ class Application(Base, AuditMixin):
     @application_status_code.expression
     def application_status_code(self):
         return func.coalesce(
-            select([ApplicationStatusChange.application_status_code
-                    ]).where(ApplicationStatusChange.application_guid == self.guid).order_by(
-                        desc(ApplicationStatusChange.change_date)).limit(1).as_scalar(),
-            'NOT_STARTED')
+            select([
+                ApplicationStatusChange.application_status_code
+            ]).where(ApplicationStatusChange.application_guid == self.guid).order_by(
+                desc(ApplicationStatusChange.change_date)).limit(1).as_scalar(), 'NOT_STARTED')
 
     def send_confirmation_email(self, email_service):
         if not self.submitter_email:
