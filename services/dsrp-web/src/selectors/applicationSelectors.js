@@ -75,7 +75,7 @@ export const getApplicationsWellSitesContractedWork = createSelector(
         const contractedWork = (isObjectLike(site.contracted_work) && site.contracted_work) || {};
         Object.keys(contractedWork).map((type, ind) => {
           const estimatedCostArray = Object.values(contractedWork[type]).filter(
-            (value) => !isNaN(value)
+            (value) => !isNaN(value) && !(typeof value === "string")
           );
           const contractedWorkStatusCode = get(
             reviewJsonWellSite,
