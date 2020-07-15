@@ -68,7 +68,7 @@ const description = (status) => {
           Your application has been approved and payment will be processed shortly.
         </Paragraph>
       );
-    case "REJECTED":
+    case "NOT_APPROVED":
       return (
         <Paragraph>
           Your application has been rejected.
@@ -105,7 +105,7 @@ export const ApplicationStatusCard = (props) => (
         <b>{props.applicationStatusHash[props.application.application_status_code]}</b>
       </Paragraph>
       <Paragraph>{description(props.application.application_status_code)}</Paragraph>
-      <br/>
+      <br />
       <Paragraph>
         If you have any questions regarding your application,{" "}
         <a href="mailto:DormantSite.BC.Government@gov.bc.ca">Contact us</a> and be sure to include

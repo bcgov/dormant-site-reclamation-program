@@ -265,7 +265,7 @@ export class ApplicationTable extends Component {
           <>
             Total Est. Shared Cost
             {toolTip(
-              `Estimated Shared Cost:\nThis value is calculated as 50% of estimated cost of each work type or a maximum of ${formatMoney(
+              `Estimated Shared Cost:\nThis value is calculated as 50% of estimated cost of each approved work type or a maximum of ${formatMoney(
                 100000
               )}`
             )}

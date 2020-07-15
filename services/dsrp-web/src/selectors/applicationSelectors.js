@@ -86,8 +86,7 @@ export const getApplicationsWellSitesContractedWork = createSelector(
           const calculatedSharedCost = (sum(estimatedCostArray) / 2).toFixed(2);
           const sharedCost =
             calculatedSharedCost > maxSharedCost ? maxSharedCost : calculatedSharedCost;
-          const shouldSharedCostBeZero =
-            contractedWorkStatusCode === "WITHDRAWN" || contractedWorkStatusCode === "REJECTED";
+          const shouldSharedCostBeZero = !(contractedWorkStatusCode === "APPROVED");
           const sharedCostByStatus = shouldSharedCostBeZero ? 0 : sharedCost;
           const OGCStatus = !isEmpty(wells[wellAuthorizationNumber])
             ? wells[wellAuthorizationNumber].current_status

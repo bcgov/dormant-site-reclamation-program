@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { compose } from "redux";
 import moment from "moment";
 import { Row, Col, Typography, Form, Button, Collapse, Icon, Popconfirm, notification } from "antd";
-import { sum, get, set, isEqual, isArrayLike, isEmpty, isObjectLike } from "lodash";
+import { sum, get, set, isEqual, isArrayLike, isEmpty, isObjectLike, debounce } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
@@ -28,7 +28,6 @@ import WellField from "@/components/forms/WellField";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
 import { validateWell } from "@/actionCreators/OGCActionCreator";
 import { getSelectedWells } from "@/selectors/OGCSelectors";
-import { debounce } from "lodash";
 
 const { Text, Paragraph, Title } = Typography;
 const { Panel } = Collapse;
@@ -161,7 +160,7 @@ const renderContractWorkPanel = (
     sectionValues && sectionValues.planned_start_date
       ? moment(sectionValues.planned_start_date)
       : null;
-  const defaultEndDatePickerValue = startDate ? startDate : moment();
+  const defaultEndDatePickerValue = startDate || moment();
 
   return (
     <Panel
@@ -363,7 +362,7 @@ const openRequiredPanels = async (errors) => {
   let paths = getPathsToLeaves(errors);
   const elements = getPathElements(paths);
   const firstElement = getFirstPathElement(elements);
-  let path = firstElement.path;
+  let { path } = firstElement;
 
   if (!path) {
     // Workaround to get rid of well sites with no errors, they will appear in the list as "well_sites[0]", e.g., and have "undefined" as their error.
@@ -804,7 +803,9 @@ class ApplicationSectionTwo extends Component {
 
       let wellTotal = 0;
       sectionValues.map((section, sectionIndex) => {
-        const sectionTotal = sum(Object.values(section).filter((value) => !isNaN(value)));
+        const sectionTotal = sum(
+          Object.values(section).filter((value) => !isNaN(value) && !(typeof value === "string"))
+        );
         wellTotals[wellIndex].sections[sectionNames[sectionIndex]] = sectionTotal;
         wellTotal += sectionTotal;
       });
