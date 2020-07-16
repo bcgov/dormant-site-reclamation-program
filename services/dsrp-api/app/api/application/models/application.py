@@ -151,10 +151,12 @@ class Application(Base, AuditMixin):
         _applicant_name = f"{self.json['company_contact']['first_name']} {self.json['company_contact']['last_name']}"
         result['applicant_name'] = _applicant_name
         result['applicant_address'] = f'{addr1}\n{addr2}{post_cd}\n{city}, {prov}'
+        _company_name = _company_details['company_name']['label']
+        result['applicant_company_name'] = _company_name
 
         result['funding_amount'] = '${:,.2f}'.format(self.calc_total_prov_contribution())
         result[
-            'recipient_contact_details'] = f'{_applicant_name}, {addr1} {post_cd} {city} {prov}, {self.submitter_email}, {self.submitter_phone_1}'
+            'recipient_contact_details'] = f'{_applicant_name},\n{_company_name},\n{addr1} {post_cd} {city} {prov},\n{self.submitter_email},\n{self.submitter_phone_1}'
 
         well_sites = self.json.get('well_sites', {})
         result['formatted_well_sites'] = ""
