@@ -52,6 +52,7 @@ class Application(Base, AuditMixin):
     json = db.Column(JSONB, nullable=False)
     review_json = db.Column(JSONB)
     submitter_ip = db.Column(db.String)
+    edit_notes = db.Column(db.String)
 
     documents = db.relationship('ApplicationDocument', lazy='select')
     status_changes = db.relationship(

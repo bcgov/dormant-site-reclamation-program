@@ -1,0 +1,1 @@
+ALTER TABLE "application" ADD COLUMN IF NOT EXISTS edit_notes varchar NULL;
