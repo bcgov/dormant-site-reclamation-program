@@ -166,12 +166,12 @@ const renderContractWorkPanel = (
       : null;
   const defaultEndDatePickerValue = startDate || moment();
 
+  // Only render the empty contracted work sections if the applicant is filling out their application
   const estimatedCostValues = sectionValues
     ? Object.values(sectionValues).filter((value) => !isNaN(value) && !(typeof value === "string"))
     : [];
   if (
-    isViewingSubmission &&
-    !isEditable &&
+    (isViewingSubmission || !isEditable) &&
     estimatedCostValues &&
     estimatedCostValues.length === 0
   ) {
