@@ -39,12 +39,14 @@ const propTypes = {
   formValues: PropTypes.objectOf(PropTypes.any).isRequired,
   selectedWells: PropTypes.objectOf(PropTypes.any),
   isViewingSubmission: PropTypes.bool,
+  isAdminEditMode: PropTypes.bool,
   isEditable: PropTypes.bool,
 };
 
 const defaultProps = {
   selectedWells: [],
   isViewingSubmission: false,
+  isAdminEditMode: false,
   isEditable: true,
 };
 
@@ -146,6 +148,8 @@ const renderContractWorkPanel = (
   contractWorkSection,
   wellSectionTotal,
   isEditable,
+  isAdminEditMode,
+  isViewingSubmission,
   wellSiteFormValues,
   submitFailed,
   wellNumber,
@@ -161,6 +165,18 @@ const renderContractWorkPanel = (
       ? moment(sectionValues.planned_start_date)
       : null;
   const defaultEndDatePickerValue = startDate || moment();
+
+  const estimatedCostValues = sectionValues
+    ? Object.values(sectionValues).filter((value) => !isNaN(value) && !(typeof value === "string"))
+    : [];
+  if (
+    isViewingSubmission &&
+    !isEditable &&
+    estimatedCostValues &&
+    estimatedCostValues.length === 0
+  ) {
+    return;
+  }
 
   return (
     <Panel
@@ -199,7 +215,7 @@ const renderContractWorkPanel = (
                 placeholder="Select Planned Start Date"
                 error={wellSectionErrors && wellSectionErrors.planned_start_date}
                 component={renderConfig.DATE}
-                disabled={!isEditable}
+                disabled={!isEditable && !isAdminEditMode}
                 disabledDate={(date) =>
                   disabledStartDate(date, wellSiteFormValues, contractWorkSection)
                 }
@@ -213,7 +229,7 @@ const renderContractWorkPanel = (
                 error={wellSectionErrors && wellSectionErrors.planned_end_date}
                 defaultPickerValue={defaultEndDatePickerValue}
                 component={renderConfig.DATE}
-                disabled={!isEditable}
+                disabled={!isEditable && !isAdminEditMode}
                 disabledDate={(date) =>
                   disabledEndDate(date, wellSiteFormValues, contractWorkSection)
                 }
@@ -683,6 +699,8 @@ const renderWells = (props) => {
                           contractWorkSection,
                           wellSectionTotals[contractWorkSection.formSectionName],
                           props.isEditable,
+                          props.isAdminEditMode,
+                          props.isViewingSubmission,
                           props.formValues && props.formValues.well_sites
                             ? props.formValues.well_sites[index]
                             : null,
@@ -867,6 +885,8 @@ class ApplicationSectionTwo extends Component {
               validate={validateWellSites}
               component={renderWells}
               isEditable={this.props.isEditable}
+              isAdminEditMode={this.props.isAdminEditMode}
+              isViewingSubmission={this.props.isViewingSubmission}
               formValues={this.props.formValues}
               parentSubmitFailed={this.props.submitFailed}
               selectedWells={this.props.selectedWells}

@@ -9,12 +9,14 @@ const propTypes = {
   initialValues: PropTypes.objectOf(PropTypes.any),
   noRenderStep3: PropTypes.bool,
   isViewingSubmission: PropTypes.bool,
+  isAdminEditMode: PropTypes.bool,
 };
 
 const defaultProps = {
   initialValues: undefined,
   noRenderStep3: false,
   isViewingSubmission: false,
+  isAdminEditMode: false,
 };
 
 const ViewOnlyApplicationForm = (props) => (
@@ -22,11 +24,13 @@ const ViewOnlyApplicationForm = (props) => (
     <ApplicationSectionOne
       isViewingSubmission={props.isViewingSubmission}
       isEditable={false}
+      isAdminEditMode={props.isAdminEditMode}
       initialValues={props.initialValues}
     />
     <ApplicationSectionTwo
       isViewingSubmission={props.isViewingSubmission}
       isEditable={false}
+      isAdminEditMode={props.isAdminEditMode}
       initialValues={props.initialValues}
     />
     {!props.noRenderStep3 && (

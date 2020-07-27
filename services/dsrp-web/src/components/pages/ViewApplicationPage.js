@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import { bindActionCreators, compose } from "redux";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-
-import { Row, Col, Typography, Icon, Tabs } from "antd";
+import { Row, Col, Typography, Icon, Tabs, Button } from "antd";
 import { reset } from "redux-form";
 import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import { fetchApplicationById } from "@/actionCreators/applicationActionCreator";
@@ -34,7 +33,7 @@ const defaultProps = {
 const { Title } = Typography;
 
 export class ViewApplicationPage extends Component {
-  state = { isLoaded: false };
+  state = { isLoaded: false, editApplication: false };
 
   componentDidMount() {
     this.handleGetApplication();
@@ -49,6 +48,12 @@ export class ViewApplicationPage extends Component {
     this.props.fetchApplicationById(id).then(() => {
       this.setState({ isLoaded: true });
     });
+  };
+
+  handleEditApplicationButtonClick = () => {
+    this.setState((prevState) => ({
+      editApplication: !prevState.editApplication,
+    }));
   };
 
   render() {
@@ -72,9 +77,18 @@ export class ViewApplicationPage extends Component {
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
                 <Tabs type="card">
                   <TabPane tab="Application" key="1" style={{ padding: "20px" }}>
+                    <Button
+                      type="primary"
+                      onClick={this.handleEditApplicationButtonClick}
+                      style={{ display: "block" }}
+                    >
+                      <Icon type="edit" className="icon-lg" />
+                      {(this.state.editApplication && "Finish Editing") || "Enter Edit Mode"}
+                    </Button>
                     <ViewOnlyApplicationForm
                       isViewingSubmission
                       initialValues={this.props.application.json}
+                      isAdminEditMode={this.state.editApplication}
                     />
                   </TabPane>
                   <TabPane

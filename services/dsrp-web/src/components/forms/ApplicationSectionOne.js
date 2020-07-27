@@ -21,11 +21,13 @@ const propTypes = {
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   indigenousParticipationCheckbox: PropTypes.bool.isRequired,
   isViewingSubmission: PropTypes.bool,
+  isAdminEditMode: PropTypes.bool,
   isEditable: PropTypes.bool,
 };
 
 const defaultProps = {
   isViewingSubmission: false,
+  isAdminEditMode: false,
   isEditable: true,
 };
 
@@ -202,7 +204,7 @@ class ApplicationSectionOne extends Component {
                 label="First Name"
                 placeholder="First Name"
                 component={renderConfig.FIELD}
-                disabled={!this.props.isEditable}
+                disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                 validate={[required, maxLength(1024)]}
               />
             </Col>
@@ -213,7 +215,7 @@ class ApplicationSectionOne extends Component {
                 label="Last Name"
                 placeholder="Last Name"
                 component={renderConfig.FIELD}
-                disabled={!this.props.isEditable}
+                disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                 validate={[required, maxLength(1024)]}
               />
             </Col>
@@ -228,7 +230,7 @@ class ApplicationSectionOne extends Component {
                     label="Phone Number 1"
                     placeholder="Phone Number 1"
                     component={renderConfig.FIELD}
-                    disabled={!this.props.isEditable}
+                    disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                     validate={[required, exactLength(10)]}
                     {...phoneMask}
                   />
@@ -240,7 +242,7 @@ class ApplicationSectionOne extends Component {
                     label="Ext. 1 (Optional)"
                     placeholder={this.props.isEditable ? "Ext. 1  (Optional)" : ""}
                     component={renderConfig.FIELD}
-                    disabled={!this.props.isEditable}
+                    disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                     validate={[maxLength(6)]}
                   />
                 </Col>
@@ -255,7 +257,7 @@ class ApplicationSectionOne extends Component {
                     label="Phone Number 2 (Optional)"
                     placeholder={this.props.isEditable ? "Phone Number 2 (Optional)" : ""}
                     component={renderConfig.FIELD}
-                    disabled={!this.props.isEditable}
+                    disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                     validate={[exactLength(10)]}
                     {...phoneMask}
                   />
@@ -267,7 +269,7 @@ class ApplicationSectionOne extends Component {
                     label="Ext. 2 (Optional)"
                     placeholder={this.props.isEditable ? "Ext. 2 (Optional)" : ""}
                     component={renderConfig.FIELD}
-                    disabled={!this.props.isEditable}
+                    disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                     validate={[maxLength(6)]}
                   />
                 </Col>
@@ -282,7 +284,7 @@ class ApplicationSectionOne extends Component {
                 label="Email"
                 placeholder="Email"
                 component={renderConfig.FIELD}
-                disabled={!this.props.isEditable}
+                disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                 validate={[required, email, maxLength(1024)]}
               />
               <Field
@@ -291,7 +293,7 @@ class ApplicationSectionOne extends Component {
                 label="Confirm Email"
                 placeholder="Confirm Email"
                 component={renderConfig.FIELD}
-                disabled={!this.props.isEditable}
+                disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                 validate={[required, email, maxLength(1024)]}
               />
             </Col>
@@ -302,7 +304,7 @@ class ApplicationSectionOne extends Component {
                 label="Fax (Optional)"
                 placeholder={this.props.isEditable ? "Fax (Optional)" : ""}
                 component={renderConfig.FIELD}
-                disabled={!this.props.isEditable}
+                disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                 validate={[exactLength(10)]}
                 {...phoneMask}
               />
