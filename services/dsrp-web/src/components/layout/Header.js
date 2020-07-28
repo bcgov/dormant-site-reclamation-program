@@ -39,7 +39,11 @@ export const Header = (props) => (
                 Dormant Sites Reclamation Program
               </MediaQuery>
               <MediaQuery maxWidth={smallestDesktopWidth - 1}>DSRP</MediaQuery>{" "}
-              {notProd() && <Tag color="red">Test Site</Tag>}
+              {notProd() && (
+                <Tag color="red" style={{ marginLeft: 5 }}>
+                  Test Site
+                </Tag>
+              )}
             </Link>
           </span>
           <span className="header-menu">
