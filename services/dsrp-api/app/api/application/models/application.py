@@ -6,6 +6,7 @@ from sqlalchemy.orm import validates
 from sqlalchemy.schema import FetchedValue
 from sqlalchemy import select, desc, func
 from marshmallow import fields, validate
+from flask_restplus import marshal
 
 from app.config import Config
 from app.extensions import db
@@ -16,6 +17,8 @@ from .application_status import ApplicationStatus
 from .application_status_change import ApplicationStatusChange
 from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK
 from app.api.permit_holder.resources.permit_holder import PermitHolderResource
+from app.api.application.response_models import APPLICATION
+from app.api.application.models.application_history import ApplicationHistory
 
 
 def _worktype_est_cost_value(contracted_work_dict):
@@ -43,7 +46,7 @@ class Application(Base, AuditMixin):
         id = fields.Integer(dump_only=True)
         guid = fields.String(dump_only=True)
         submission_date = fields.String(dump_only=True)
-        status_changes = fields.Raw(dump_only=True)  ##DO NOT INGEST ON POST
+        status_changes = fields.Raw(dump_only=True) ##DO NOT INGEST ON POST
 
     id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
     guid = db.Column(UUID(as_uuid=True), nullable=False, unique=True, server_default=FetchedValue())
@@ -52,7 +55,7 @@ class Application(Base, AuditMixin):
     json = db.Column(JSONB, nullable=False)
     review_json = db.Column(JSONB)
     submitter_ip = db.Column(db.String)
-    edit_notes = db.Column(db.String)
+    edit_note = db.Column(db.String)
 
     documents = db.relationship('ApplicationDocument', lazy='select')
     status_changes = db.relationship(
@@ -175,7 +178,7 @@ class Application(Base, AuditMixin):
             current_app.logger.debug(ws_review_dict)
 
             for worktype, wt_details in ws.get('contracted_work', {}).items():
-                if worktype == "site_conditions": continue  ##all other sections
+                if worktype == "site_conditions": continue        ##all other sections
                 if ws_review_dict.get('contracted_work', {}).get(
                         worktype, {}).get('contracted_work_status_code') != 'APPROVED':
                     continue
@@ -462,3 +465,10 @@ class Application(Base, AuditMixin):
         """
 
         return html
+
+    def save_application_history(self):
+        application_json = marshal(self, APPLICATION)
+        application_json["application_id"] = self.id
+        application_history = ApplicationHistory._schema().load(application_json)
+        application_history.save()
+        return application_history
