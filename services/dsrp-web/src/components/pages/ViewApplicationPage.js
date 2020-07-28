@@ -82,6 +82,7 @@ export class ViewApplicationPage extends Component {
   };
 
   handleAdminEditApplication = (guid, values) => {
+    // TODO: Verify with FORM.APPLICATION_FORM validation function(s).
     const payload = {
       edit_note: values.edit_note,
       json: this.props.editedApplication,
@@ -116,7 +117,7 @@ export class ViewApplicationPage extends Component {
                       style={{ display: "block" }}
                     >
                       <Icon type="edit" className="icon-lg" />
-                      {(this.state.editApplication && "Finish Editing") || "Enter Edit Mode"}
+                      {(this.state.editApplication && "Finish Editing") || "Edit Application"}
                     </Button>
                     <ViewOnlyApplicationForm
                       isViewingSubmission
