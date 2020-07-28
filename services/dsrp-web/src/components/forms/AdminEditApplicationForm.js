@@ -9,6 +9,7 @@ const { Text } = Typography;
 
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
+  handleResume: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
   submitting: PropTypes.bool.isRequired,
 };
@@ -24,6 +25,14 @@ export const AdminEditApplicationForm = (props) => (
       </Col>
     </Row>
     <div className="right">
+      <Button
+        type="primary"
+        style={{ float: "left" }}
+        disabled={props.submitting}
+        onClick={props.handleResume}
+      >
+        Resume Editing
+      </Button>
       <Popconfirm
         placement="topRight"
         title="Are you sure you want to discard your changes?"

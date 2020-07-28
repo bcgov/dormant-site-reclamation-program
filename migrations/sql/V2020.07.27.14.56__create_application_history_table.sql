@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS application_history (
     create_timestamp timestamptz NOT NULL DEFAULT now(),
     update_user varchar NOT NULL,
     update_timestamp timestamptz NOT NULL DEFAULT now(),
-    FOREIGN KEY (id) REFERENCES application(id) DEFERRABLE INITIALLY DEFERRED
+    FOREIGN KEY (application_id) REFERENCES application(id) DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE INDEX application_history_json_idx ON application_history USING gin (json);

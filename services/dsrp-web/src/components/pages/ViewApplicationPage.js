@@ -4,7 +4,7 @@ import { reset, getFormValues } from "redux-form";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Row, Col, Typography, Icon, Tabs, Button } from "antd";
-import { openModal } from "@/actions/modalActions";
+import { openModal, closeModal } from "@/actions/modalActions";
 import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import { fetchApplicationById, updateApplication } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/selectors/applicationSelectors";
@@ -51,13 +51,14 @@ export class ViewApplicationPage extends Component {
   };
 
   handleGetApplication = () => {
+    this.setState({ isLoaded: false });
     const { id } = this.props.match.params;
     return this.props.fetchApplicationById(id).then(() => {
       this.setState({ isLoaded: true });
     });
   };
 
-  handleAdminEditApplicationButtonClick = () => {
+  handleSubmitAdminEditApplicationButtonClick = () => {
     if (this.state.editApplication) {
       this.openAdminEditApplicationModal();
       return;
@@ -65,30 +66,51 @@ export class ViewApplicationPage extends Component {
     this.setState({ editApplication: true });
   };
 
-  afterCloseAdminEditApplicationModal = () => {
+  handleDiscardAdminEditApplication = () => {
     this.setState({ editApplication: false }, () => this.props.reset(FORM.APPLICATION_FORM));
+  };
+
+  handleResumeAdminEditApplication = () => {
+    this.props.closeModal();
   };
 
   openAdminEditApplicationModal = () => {
     return this.props.openModal({
       props: {
         title: "Edit Application",
-        onSubmit: this.handleAdminEditApplication,
-        afterClose: this.afterCloseAdminEditApplicationModal,
+        onSubmit: this.handleSubmitAdminEditApplication,
+        afterClose: this.handleDiscardAdminEditApplication,
+        handleResume: this.handleResumeAdminEditApplication,
         application: this.props.application,
       },
       content: modalConfig.ADMIN_EDIT_APPLICATION,
     });
   };
 
-  handleAdminEditApplication = (guid, values) => {
+  handleSubmitAdminEditApplication = (guid, values) => {
     // TODO: Verify with FORM.APPLICATION_FORM validation function(s).
     const payload = {
       edit_note: values.edit_note,
       json: this.props.editedApplication,
     };
-    return this.props.updateApplication(guid, payload);
+    return this.props
+      .updateApplication(guid, payload)
+      .then(() => this.props.closeModal())
+      .then(() => this.handleGetApplication())
+      .then(() => this.handleDiscardAdminEditApplication());
   };
+
+  renderAdminEditButton = () => (
+    <Button
+      type="primary"
+      onClick={this.handleSubmitAdminEditApplicationButtonClick}
+      style={{ display: "block" }}
+      disabled={!this.state.isLoaded}
+    >
+      <Icon type="edit" className="icon-lg" />
+      {(this.state.editApplication && "Finish Editing") || "Edit Application"}
+    </Button>
+  );
 
   render() {
     return (
@@ -111,19 +133,13 @@ export class ViewApplicationPage extends Component {
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
                 <Tabs type="card">
                   <TabPane tab="Application" key="1" style={{ padding: "20px" }}>
-                    <Button
-                      type="primary"
-                      onClick={this.handleAdminEditApplicationButtonClick}
-                      style={{ display: "block" }}
-                    >
-                      <Icon type="edit" className="icon-lg" />
-                      {(this.state.editApplication && "Finish Editing") || "Edit Application"}
-                    </Button>
+                    {this.renderAdminEditButton()}
                     <ViewOnlyApplicationForm
                       isViewingSubmission
                       initialValues={this.props.application.json}
                       isAdminEditMode={this.state.editApplication}
                     />
+                    {this.renderAdminEditButton()}
                   </TabPane>
                   <TabPane
                     tab={`Documents (${this.props.application.documents.length})`}
@@ -161,6 +177,7 @@ const mapDispatchToProps = (dispatch) =>
       fetchApplicationById,
       updateApplication,
       openModal,
+      closeModal,
       reset,
     },
     dispatch
