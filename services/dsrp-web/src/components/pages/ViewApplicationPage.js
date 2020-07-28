@@ -82,8 +82,11 @@ export class ViewApplicationPage extends Component {
   };
 
   handleAdminEditApplication = (guid, values) => {
-    const application
-    return this.props.updateApplication("fake guid", {});
+    const payload = {
+      edit_note: values.edit_note,
+      json: this.props.editedApplication,
+    };
+    return this.props.updateApplication(guid, payload);
   };
 
   render() {
