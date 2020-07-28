@@ -1,19 +1,21 @@
 import React, { Component } from "react";
 import { bindActionCreators, compose } from "redux";
-import PropTypes from "prop-types";
+import { reset, getFormValues } from "redux-form";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import { Row, Col, Typography, Icon, Tabs, Button } from "antd";
-import { reset } from "redux-form";
+import { openModal } from "@/actions/modalActions";
 import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
-import { fetchApplicationById } from "@/actionCreators/applicationActionCreator";
+import { fetchApplicationById, updateApplication } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/selectors/applicationSelectors";
 import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm";
 import ViewApplicationDocuments from "@/components/pages/ViewApplicationDocuments";
 import LinkButton from "@/components/common/LinkButton";
 import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
 import Loading from "@/components/common/Loading";
-
+import { modalConfig } from "@/components/modalContent/config";
 import { PageTracker } from "@/utils/trackers";
+import * as FORM from "@/constants/forms";
 
 const { TabPane } = Tabs;
 const propTypes = {
@@ -23,11 +25,16 @@ const propTypes = {
     },
   }).isRequired,
   fetchApplicationById: PropTypes.func.isRequired,
+  updateApplication: PropTypes.func.isRequired,
+  openModal: PropTypes.func.isRequired,
+  reset: PropTypes.func.isRequired,
   application: PropTypes.any,
+  editedApplication: PropTypes.any,
 };
 
 const defaultProps = {
   application: {},
+  editedApplication: {},
 };
 
 const { Title } = Typography;
@@ -45,15 +52,38 @@ export class ViewApplicationPage extends Component {
 
   handleGetApplication = () => {
     const { id } = this.props.match.params;
-    this.props.fetchApplicationById(id).then(() => {
+    return this.props.fetchApplicationById(id).then(() => {
       this.setState({ isLoaded: true });
     });
   };
 
-  handleEditApplicationButtonClick = () => {
-    this.setState((prevState) => ({
-      editApplication: !prevState.editApplication,
-    }));
+  handleAdminEditApplicationButtonClick = () => {
+    if (this.state.editApplication) {
+      this.openAdminEditApplicationModal();
+      return;
+    }
+    this.setState({ editApplication: true });
+  };
+
+  afterCloseAdminEditApplicationModal = () => {
+    this.setState({ editApplication: false }, () => this.props.reset(FORM.APPLICATION_FORM));
+  };
+
+  openAdminEditApplicationModal = () => {
+    return this.props.openModal({
+      props: {
+        title: "Edit Application",
+        onSubmit: this.handleAdminEditApplication,
+        afterClose: this.afterCloseAdminEditApplicationModal,
+        application: this.props.application,
+      },
+      content: modalConfig.ADMIN_EDIT_APPLICATION,
+    });
+  };
+
+  handleAdminEditApplication = (guid, values) => {
+    const application
+    return this.props.updateApplication("fake guid", {});
   };
 
   render() {
@@ -79,7 +109,7 @@ export class ViewApplicationPage extends Component {
                   <TabPane tab="Application" key="1" style={{ padding: "20px" }}>
                     <Button
                       type="primary"
-                      onClick={this.handleEditApplicationButtonClick}
+                      onClick={this.handleAdminEditApplicationButtonClick}
                       style={{ display: "block" }}
                     >
                       <Icon type="edit" className="icon-lg" />
@@ -118,12 +148,15 @@ export class ViewApplicationPage extends Component {
 
 const mapStateToProps = (state) => ({
   application: getApplication(state),
+  editedApplication: getFormValues(FORM.APPLICATION_FORM)(state),
 });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchApplicationById,
+      updateApplication,
+      openModal,
       reset,
     },
     dispatch
