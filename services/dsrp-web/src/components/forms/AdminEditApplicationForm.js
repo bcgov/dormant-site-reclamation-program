@@ -15,7 +15,7 @@ const propTypes = {
 
 export const AdminEditApplicationForm = (props) => (
   <Form layout="vertical" onSubmit={props.handleSubmit}>
-    <Text>Foobar biz baz bizzle bazzle</Text>
+    <Text>Please provide a note indicating the reason for editing the application.</Text>
     <br />
     <br />
     <Row gutter={48}>
@@ -26,14 +26,14 @@ export const AdminEditApplicationForm = (props) => (
     <div className="right">
       <Popconfirm
         placement="topRight"
-        title="Are you sure you want to cancel?"
+        title="Are you sure you want to discard your changes?"
         onConfirm={props.closeModal}
         okText="Yes"
         cancelText="No"
         disabled={props.submitting}
       >
         <Button type="secondary" disabled={props.submitting}>
-          Cancel
+          Discard Changes
         </Button>
       </Popconfirm>
       <Button
@@ -42,7 +42,7 @@ export const AdminEditApplicationForm = (props) => (
         style={{ marginLeft: "5px" }}
         loading={props.submitting}
       >
-        Update
+        Save Changes
       </Button>
     </div>
   </Form>
