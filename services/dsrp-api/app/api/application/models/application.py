@@ -472,3 +472,32 @@ class Application(Base, AuditMixin):
         application_history = ApplicationHistory._schema().load(application_json)
         application_history.save()
         return application_history
+
+    def process_well_sites_work_items(self, well_sites_json, func, **args):
+        def perform(self, fun, **args):
+            fun(**args)
+
+        for site in well_sites_json:
+            contracted_work = site.get('contracted_work')
+            works = list(set(list(WELL_SITE_CONTRACTED_WORK.keys())).intersection(contracted_work))
+            for i in works:
+                work_item = contracted_work.get(i)
+                if args is not None:
+                    args["work_item"] = work_item
+
+                perform(self, func, **args)
+
+    def update_work_item_action(self, work_item, id, planned_start_date, planned_end_date):
+        if work_item["work_id"] == id:
+            work_item["planned_start_date"] = planned_start_date
+            work_item["planned_end_date"] = planned_end_date
+
+    def iterate_application_work_items_action(self, work_item):
+        application_json = marshal(self, APPLICATION)
+        json = application_json["json"]["well_sites"]
+        args = {
+            "id": work_item["work_id"],
+            "planned_start_date": work_item["planned_start_date"],
+            "planned_end_date": work_item["planned_end_date"]
+        }
+        self.process_well_sites_work_items(json, self.update_work_item_action, **args)
