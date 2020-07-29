@@ -109,7 +109,7 @@ class Application(Base, AuditMixin):
 
     @hybrid_property
     def company_name(self):
-        self.json.get('company_details', {}).get('company_name', {}).get('label')
+        return self.json.get('company_details', {}).get('company_name', {}).get('label')
 
     def calc_total_prov_contribution(self):
         total_prov_contribution = 0
