@@ -152,7 +152,6 @@ export class ApplicationForm extends Component {
             onSubmit={this.nextFormStep}
             handleReset={this.handleReset}
             initialValues={this.state.initialValues}
-            fileGuid={this.state.fileGuid}
           />
         ),
       },
