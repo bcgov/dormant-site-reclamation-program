@@ -67,7 +67,10 @@ export class ViewApplicationPage extends Component {
   };
 
   handleDiscardAdminEditApplication = () => {
-    this.setState({ editApplication: false }, () => this.props.reset(FORM.APPLICATION_FORM));
+    this.setState({ editApplication: false }, () => {
+      this.props.reset(FORM.ADMIN_EDIT_APPLICATION_FORM);
+      this.props.reset(FORM.APPLICATION_FORM);
+    });
   };
 
   handleResumeAdminEditApplication = () => {

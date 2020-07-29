@@ -61,4 +61,5 @@ AdminEditApplicationForm.propTypes = propTypes;
 
 export default reduxForm({
   form: FORM.ADMIN_EDIT_APPLICATION_FORM,
+  destroyOnUnmount: false,
 })(AdminEditApplicationForm);
