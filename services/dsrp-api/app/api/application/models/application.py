@@ -138,12 +138,11 @@ class Application(Base, AuditMixin):
         est_shared_cost = half_est_cost if half_est_cost <= 100000 else 100000
         return est_shared_cost
 
-    def calc_total_prov_contribution(self):
-        """Calculates this application's contribution to the Provincial Financial Contribution total."""
+    def calc_total_est_shared_cost(self):
+        """Calculates this application's contribution (sum of all contracted work Estimated Shared Cost) to the Provincial Financial Contribution total."""
 
-        well_sites = self.well_sites_with_review_data
         total_prov_contribution = 0
-        for ws in well_sites:
+        for ws in self.well_sites_with_review_data:
             for worktype, wt_details in ws.get('contracted_work', {}).items():
                 if wt_details.get('contracted_work_status_code', None) != 'APPROVED':
                     continue
@@ -176,13 +175,12 @@ class Application(Base, AuditMixin):
         result['applicant_name'] = _applicant_name
         result['applicant_address'] = f'{addr1}\n{addr2}{post_cd}\n{city}, {prov}'
         result['applicant_company_name'] = _company_name
-        result['funding_amount'] = '${:,.2f}'.format(self.calc_total_prov_contribution())
+        result['funding_amount'] = '${:,.2f}'.format(self.calc_total_est_shared_cost())
         result['recipient_contact_details'] = f'{_applicant_name},\n{_company_name},\n{addr1} {post_cd} {city} {prov},\n{self.submitter_email},\n{self.submitter_phone_1}'
 
         # Create detailed info for each well site's contracted work items
-        well_sites = self.well_sites_with_review_data
         result['formatted_well_sites'] = ""
-        for ws in well_sites:
+        for ws in self.well_sites_with_review_data:
             site_details = ws.get('details', {})
             wan = site_details.get('well_authorization_number')
             for worktype, wt_details in ws.get('contracted_work', {}).items():
