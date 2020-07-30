@@ -11,3 +11,5 @@ CREATE TABLE IF NOT EXISTS application_history (
 );
 
 CREATE INDEX application_history_json_idx ON application_history USING gin (json);
+
+ALTER TABLE application_history OWNER TO dsrp;
