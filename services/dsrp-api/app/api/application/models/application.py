@@ -6,6 +6,7 @@ from sqlalchemy.orm import validates
 from sqlalchemy.schema import FetchedValue
 from sqlalchemy import select, desc, func
 from marshmallow import fields, validate
+from flask_restplus import marshal
 
 from app.config import Config
 from app.extensions import db
@@ -16,6 +17,9 @@ from .application_status import ApplicationStatus
 from .application_status_change import ApplicationStatusChange
 from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK
 from app.api.permit_holder.resources.permit_holder import PermitHolderResource
+from app.api.application.response_models import APPLICATION
+from app.api.application.models.application_history import ApplicationHistory
+from app.api.application.models.payment_document import PaymentDocument
 
 
 class Application(Base, AuditMixin):
@@ -25,7 +29,7 @@ class Application(Base, AuditMixin):
         id = fields.Integer(dump_only=True)
         guid = fields.String(dump_only=True)
         submission_date = fields.String(dump_only=True)
-        status_changes = fields.Raw(dump_only=True)  ##DO NOT INGEST ON POST
+        status_changes = fields.Raw(dump_only=True) ##DO NOT INGEST ON POST
 
     id = db.Column(db.Integer, primary_key=True, server_default=FetchedValue())
     guid = db.Column(UUID(as_uuid=True), nullable=False, unique=True, server_default=FetchedValue())
@@ -34,6 +38,7 @@ class Application(Base, AuditMixin):
     json = db.Column(JSONB, nullable=False)
     review_json = db.Column(JSONB)
     submitter_ip = db.Column(db.String)
+    edit_note = db.Column(db.String)
 
     documents = db.relationship('ApplicationDocument', lazy='select')
     status_changes = db.relationship(
@@ -41,6 +46,7 @@ class Application(Base, AuditMixin):
         lazy='joined',
         order_by='desc(ApplicationStatusChange.application_status_change_id)',
     )
+    payment_documents = db.relationship('PaymentDocument', lazy='select')
 
     def __repr__(self):
         return f'<Application: {self.guid}>'
@@ -464,3 +470,39 @@ class Application(Base, AuditMixin):
         """
 
         return html
+
+    def save_application_history(self):
+        application_json = marshal(self, APPLICATION)
+        application_json["application_id"] = self.id
+        application_history = ApplicationHistory._schema().load(application_json)
+        application_history.save()
+        return application_history
+
+    def process_well_sites_work_items(self, well_sites_json, func, **args):
+        def perform(self, fun, **args):
+            fun(**args)
+
+        for site in well_sites_json:
+            contracted_work = site.get('contracted_work')
+            works = list(set(list(WELL_SITE_CONTRACTED_WORK.keys())).intersection(contracted_work))
+            for i in works:
+                work_item = contracted_work.get(i)
+                if args is not None:
+                    args["work_item"] = work_item
+
+                perform(self, func, **args)
+
+    def update_work_item_action(self, work_item, id, planned_start_date, planned_end_date):
+        if work_item["work_id"] == id:
+            work_item["planned_start_date"] = planned_start_date
+            work_item["planned_end_date"] = planned_end_date
+
+    def iterate_application_work_items_action(self, work_item):
+        application_json = marshal(self, APPLICATION)
+        json = application_json["json"]["well_sites"]
+        args = {
+            "id": work_item["work_id"],
+            "planned_start_date": work_item["planned_start_date"],
+            "planned_end_date": work_item["planned_end_date"]
+        }
+        self.process_well_sites_work_items(json, self.update_work_item_action, **args)

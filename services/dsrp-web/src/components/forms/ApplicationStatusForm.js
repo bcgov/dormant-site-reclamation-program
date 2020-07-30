@@ -1,20 +1,16 @@
-/* eslint-disable */
 import React, { Component } from "react";
 import { reduxForm, Field } from "redux-form";
 import { Row, Col, Form, Button, Typography, Popconfirm } from "antd";
 import PropTypes from "prop-types";
-
 import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 
 const { Text } = Typography;
-const propTypes = {
-  onSubmit: PropTypes.func,
-};
 
-const defaultProps = {
-  onSubmit: () => {},
+const propTypes = {
+  handleSubmit: PropTypes.func.isRequired,
+  closeModal: PropTypes.func.isRequired,
 };
 
 class ApplicationStatusForm extends Component {
@@ -58,7 +54,6 @@ class ApplicationStatusForm extends Component {
 }
 
 ApplicationStatusForm.propTypes = propTypes;
-ApplicationStatusForm.defaultProps = defaultProps;
 
 export default reduxForm({
   form: FORM.VIEW_APPLICATION_STATUS_FORM,

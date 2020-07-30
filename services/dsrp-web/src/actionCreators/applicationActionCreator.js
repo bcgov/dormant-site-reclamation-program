@@ -15,7 +15,7 @@ export const createApplication = (application) => (dispatch) => {
     .post(ENVIRONMENT.apiUrl + API.APPLICATION(), payload, createRequestHeader())
     .then((response) => {
       notification.success({
-        message: `Application submitted`,
+        message: "Application submitted",
         duration: 10,
       });
       dispatch(success(reducerTypes.CREATE_APPLICATION));
@@ -80,6 +80,10 @@ export const updateApplication = (guid, payload) => (dispatch) => {
   return CustomAxios()
     .put(ENVIRONMENT.apiUrl + API.APPLICATION_BY_ID(guid), payload, createRequestHeader())
     .then((response) => {
+      notification.success({
+        message: "Application edited successfully",
+        duration: 10,
+      });
       dispatch(success(reducerTypes.UPDATE_APPLICATION));
       return response;
     })
@@ -111,7 +115,7 @@ export const createApplicationStatus = (guid, payload) => (dispatch) => {
     .post(ENVIRONMENT.apiUrl + API.STATUS(guid), payload, createRequestHeader())
     .then((response) => {
       notification.success({
-        message: `Successfully updated status of the application and informed applicant via email`,
+        message: "Successfully updated status of the application and informed applicant via email",
         duration: 10,
       });
       dispatch(success(reducerTypes.CREATE_APPLICATION_STATUS));

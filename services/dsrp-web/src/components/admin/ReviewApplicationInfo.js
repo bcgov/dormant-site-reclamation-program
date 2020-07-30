@@ -16,7 +16,6 @@ import {
 } from "@/selectors/applicationSelectors";
 import {
   fetchApplications,
-  updateApplication,
   updateApplicationReview,
   createApplicationStatus,
 } from "@/actionCreators/applicationActionCreator";
@@ -41,7 +40,6 @@ const propTypes = {
   applicationsWellSitesContractedWork: PropTypes.any.isRequired,
   pageData: PropTypes.any.isRequired,
   fetchApplications: PropTypes.func.isRequired,
-  updateApplication: PropTypes.func.isRequired,
   updateApplicationReview: PropTypes.func.isRequired,
   applicationStatusDropdownOptions: PropTypes.any.isRequired,
   applicationStatusOptionsHash: PropTypes.any.isRequired,
@@ -118,7 +116,6 @@ export class ReviewApplicationInfo extends Component {
   };
 
   openUpdateStatusModal = (item, record) => {
-    event.preventDefault();
     this.props.openModal({
       props: {
         title: `Update Status of ${record.company_name} to: ${
@@ -241,7 +238,6 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchApplications,
-      updateApplication,
       updateApplicationReview,
       fetchLiabilities,
       fetchWells,

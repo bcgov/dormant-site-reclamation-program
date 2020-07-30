@@ -61,12 +61,15 @@ class ApplicationSectionThree extends Component {
         {this.props.isEditable && (
           <Row className="steps-action">
             <Col>
-              <Button onClick={this.props.previousStep}>Previous</Button>
+              <Button onClick={this.props.previousStep} disabled={this.props.submitting}>
+                Previous
+              </Button>
               <Button
                 type="primary"
                 htmlType="submit"
-                disabled={this.props.submitting || this.props.invalid}
+                disabled={this.props.invalid}
                 style={{ marginLeft: 8, marginRight: 8 }}
+                loading={this.props.submitting}
               >
                 Submit
               </Button>

@@ -4,6 +4,9 @@ from sqlalchemy_filters import apply_pagination, apply_sort
 from sqlalchemy import desc, asc, func, or_, and_
 from werkzeug.exceptions import BadRequest, NotFound
 from marshmallow.exceptions import MarshmallowError
+from flask import current_app
+from sqlalchemy.orm.attributes import flag_modified
+from deepdiff import DeepDiff
 
 from app.extensions import api
 from app.api.services.email_service import EmailService
@@ -139,13 +142,48 @@ class ApplicationResource(Resource, UserMixin):
     @api.expect(Application)
     @api.marshal_with(APPLICATION, code=200)
     def put(self, application_guid):
+        # save history
+        temp_application = Application.find_by_guid(application_guid)
+        history = temp_application.save_application_history()
+
+        application = None
+        is_json_updated = None
+        is_application_updated = None
         try:
-            application = Application._schema().load(
-                request.json, instance=Application.find_by_guid(application_guid))
+            # map only specific fields
+            application = Application.find_by_guid(application_guid)
+
+            is_note_updated = application.edit_note != request.json.get("edit_note")
+
+            if is_note_updated:
+                application.edit_note = request.json.get("edit_note")
+
+            json = request.json.get("json")
+
+            is_json_updated = DeepDiff(json, application.json, ignore_order=True) != {}
+
+            if is_json_updated:
+                application.json["company_contact"] = json["company_contact"]
+                application.process_well_sites_work_items(
+                    json["well_sites"], application.iterate_application_work_items_action)
+
+            is_application_updated = is_note_updated or is_json_updated
+
         except MarshmallowError as e:
+            history.delete()
             raise BadRequest(e)
 
-        application.save()
+        try:
+            if is_application_updated:
+                if is_json_updated:
+                    flag_modified(application, "json")
+
+                application.save()
+            else:
+                history.delete()
+        except:
+            history.delete()
+            raise
 
         return application
 

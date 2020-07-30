@@ -106,7 +106,7 @@ export class ApplicationForm extends Component {
 
   handleSubmit = (values, dispatch) => {
     const application = { json: this.validateJSONData(values), documents: this.state.uploadedDocs };
-    this.props.createApplication(application).then((response) => {
+    return this.props.createApplication(application).then((response) => {
       this.setState(resetFormState);
       dispatch(initialize(APPLICATION_FORM));
       this.emptySavedFormData();
@@ -152,7 +152,6 @@ export class ApplicationForm extends Component {
             onSubmit={this.nextFormStep}
             handleReset={this.handleReset}
             initialValues={this.state.initialValues}
-            fileGuid={this.state.fileGuid}
           />
         ),
       },
