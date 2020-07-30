@@ -37,7 +37,7 @@ def action_first_pay_approved(application):
 
     # Get this application's well site data
     well_sites = application.well_sites_with_review_data
-    current_app.logger.info(json.dumps(well_sites))
+    # current_app.logger.info(json.dumps(well_sites))
 
     # Calculate the sum of the approved work for this application
     # app_total = 0
@@ -50,7 +50,7 @@ def action_first_pay_approved(application):
     # Applicant's receive 10% of 50% of the approved work
     # amount = (app_total / 2) / 10
 
-    # dcj = application.shared_cost_agreement_template_json
-    # current_app.logger.info(json.dumps(dcj))
+    dcj = application.shared_cost_agreement_template_json
+    current_app.logger.info(json.dumps(dcj))
 
     # current_app.logger.info(app_total)
