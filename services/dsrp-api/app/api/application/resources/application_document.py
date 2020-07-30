@@ -37,7 +37,7 @@ class ApplicationDocumentListResource(Resource, UserMixin):
 
         if application.application_status_code == "WAIT_FOR_DOCS" or jwt.validate_roles([ADMIN]):
             ##Admin or public if waiting for docs, otherwise reject
-            docs = request.json.get('documents',[])
+            docs = request.json.get('documents', [])
 
             for doc in docs:
                 new_doc = ApplicationDocument(
@@ -47,7 +47,7 @@ class ApplicationDocumentListResource(Resource, UserMixin):
             if request.json.get('confirm_final_documents'):
                 new_app_status_change = ApplicationStatusChange(
                     application_status_code="DOC_SUBMITTED",
-                    note="Thank you for uploading the required documents") 
+                    note="Thank you for uploading the required documents")
                 application.status_changes.append(new_app_status_change)
                 application.save()
                 db.session.refresh(new_app_status_change)
@@ -64,10 +64,10 @@ class ApplicationDocumentResource(Resource, UserMixin):
     @api.marshal_with(DOWNLOAD_TOKEN_MODEL, code=200)
     @requires_role_admin
     def get(self, application_guid, document_guid):
-        app_document = ApplicationDocument.find_by_guid(document_guid)
-        if not app_document or str(app_document.application.guid) != str(application_guid):
+        app_document = ApplicationDocument.find_by_guid(application_guid, document_guid)
+        if not app_document:
             raise NotFound('Not found')
 
         token_guid = uuid.uuid4()
-        cache.set(DOWNLOAD_TOKEN(token_guid), {'document_guid':document_guid}, TIMEOUT_5_MINUTES)
+        cache.set(DOWNLOAD_TOKEN(token_guid), {'document_guid': document_guid}, TIMEOUT_5_MINUTES)
         return {'token_guid': token_guid}

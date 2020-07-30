@@ -3,6 +3,7 @@ import { Typography } from "antd";
 import PropTypes from "prop-types";
 import { paymentDocuments } from "@/customPropTypes/paymentDocuments";
 import { PaymentDocumentTable } from "@/components/pages/PaymentDocumentTable";
+import { PAYMENT_DOCUMENT_TYPES } from "@/constants/paymentDocumentTypes";
 
 const { Title } = Typography;
 
@@ -13,9 +14,9 @@ const propTypes = {
 
 const defaultProps = {
   documents: [],
+  application_guid: null,
 };
 
-// TODO declare separate table for payment requests with buttons
 export const ViewPaymentRequestPage = (props) => {
   return (
     <>
@@ -24,17 +25,26 @@ export const ViewPaymentRequestPage = (props) => {
       </Title>
       <PaymentDocumentTable
         {...props}
+        documents={props.documents.filter(
+          (doc) => doc.payment_document_type_code === PAYMENT_DOCUMENT_TYPES.FIRST_PAYMENT_RF
+        )}
         emptyText="This application does not contain any payment request documents."
         tableTitle="First Payment(s)"
       />
       <PaymentDocumentTable
         {...props}
-        emptyText="This application does not contain any payment request documents."
+        documents={props.documents.filter(
+          (doc) => doc.payment_document_type_code === PAYMENT_DOCUMENT_TYPES.INTERIM_PAYMENT_RF
+        )}
+        emptyText="This application does not contain any interim payment request documents."
         tableTitle="Interim Payment(s)"
       />
       <PaymentDocumentTable
         {...props}
-        emptyText="This application does not contain any payment request documents."
+        documents={props.documents.filter(
+          (doc) => doc.payment_document_type_code === PAYMENT_DOCUMENT_TYPES.FINAL_PAYMENT_RF
+        )}
+        emptyText="This application does not contain any final payment request documents."
         tableTitle="Final Payment(s)"
       />
     </>
