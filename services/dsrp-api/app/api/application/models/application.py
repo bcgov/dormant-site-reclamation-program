@@ -18,18 +18,6 @@ from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK
 from app.api.permit_holder.resources.permit_holder import PermitHolderResource
 
 
-def worktype_est_cost(contracted_work):
-    est_cost = contracted_work['contracted_work_total']
-    return round(est_cost, 2)
-
-
-def worktype_prov_contribution(contracted_work):
-    fifty_percent = contracted_work['contracted_work_total'] / 2.0
-    contribution = fifty_percent if fifty_percent <= 100000 else 100000
-    return round(contribution, 2)
-    
-
-
 class Application(Base, AuditMixin):
     __tablename__ = 'application'
 
@@ -135,18 +123,31 @@ class Application(Base, AuditMixin):
 
         return well_sites
 
+    def calculate_est_shared_cost(self, contracted_work):
+        """Calculates the contracted work item's Estimated Shared Cost, which is half of the estimated cost \
+            unless that value is $100,000 or more, then it is $100,000.
+        """
+
+        half_est_cost = round(contracted_work['contracted_work_total'] / 2.0, 2)
+        est_shared_cost = half_est_cost if half_est_cost <= 100000 else 100000
+        return est_shared_cost
+
     def calc_total_prov_contribution(self):
-        total_prov_contribution = 0
+        """Calculates this application's contribution to the Provincial Financial Contribution total."""
+
         well_sites = self.well_sites_with_review_data
+        total_prov_contribution = 0
         for ws in well_sites:
             for worktype, wt_details in ws.get('contracted_work', {}).items():
                 if wt_details.get('contracted_work_status_code', None) != 'APPROVED':
                     continue
-                total_prov_contribution += worktype_prov_contribution(wt_details)
+                total_prov_contribution += self.calculate_est_shared_cost(wt_details)
         return total_prov_contribution
 
     @hybrid_property
-    def _doc_gen_json(self):
+    def shared_cost_agreement_template_json(self):
+        """Generates the JSON used to generate this application's Shared Cost Agreement document."""
+
         result = self.json
 
         # Create general document info
@@ -183,8 +184,8 @@ class Application(Base, AuditMixin):
                     continue
                 site = f'\nWell Authorization Number: {wan}\n'
                 site += f' Eligible Activities as described in Application: {worktype.replace("_"," ").capitalize()}\n'
-                site += f' Applicant\'s Estimated Cost: {"${:,.2f}".format(worktype_est_cost(wt_details))}\n'
-                site += f' Provincial Financial Contribution: {"${:,.2f}".format(worktype_prov_contribution(wt_details))}\n'
+                site += f' Applicant\'s Estimated Cost: {"${:,.2f}".format(wt_details.get('contracted_work_total'))}\n'
+                site += f' Provincial Financial Contribution: {"${:,.2f}".format(self.calculate_est_shared_cost(wt_details))}\n'
                 site += f' Planned Start Date: {wt_details["planned_start_date"]}\n'
                 site += f' Planned End Date: {wt_details["planned_end_date"]}\n'
                 result['formatted_well_sites'] += site

@@ -161,7 +161,7 @@ class ApplicationStatusChange(Base, AuditMixin):
         filename = None
         if self.application_status.application_status_code == 'WAIT_FOR_DOCS':
             doc = DocumentGeneratorService.generate_document_and_stream_response(
-                get_template_file_path(), self.application._doc_gen_json)
+                get_template_file_path(), self.application.shared_cost_agreement_template_json)
             value, params = cgi.parse_header(doc.headers['content-disposition'])
             filename = params['filename']
             attachment = io.BytesIO(doc.content)
