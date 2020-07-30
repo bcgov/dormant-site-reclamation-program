@@ -139,28 +139,15 @@ class Application(Base, AuditMixin):
                     if k in WELL_SITE_CONTRACTED_WORK[cw_type]:
                         cw_total += v
                 well_sites[i]['contracted_work'][cw_type]['contracted_work_total'] = round(cw_total, 2)
-                    
+
         return well_sites
 
     def calc_total_prov_contribution(self):
         total_prov_contribution = 0
-        well_sites = self.json.get('well_sites', {})
+        well_sites = self.well_sites_with_review_data
         for ws in well_sites:
-            site_details = ws.get('details', {})
-            wan = site_details.get('well_authorization_number')
-            ##get review
-            ws_review_dict = {}
-            ws_review = []
-            if self.review_json:
-                ws_review = [i for i in self.review_json['well_sites'] if i is not None and str(wan) in i.keys()]
-            if ws_review:
-                ws_review_dict = ws_review[0][str(wan)]
-
-            current_app.logger.debug(ws_review_dict)
-
             for worktype, wt_details in ws.get('contracted_work', {}).items():
-                if ws_review_dict.get('contracted_work', {}).get(
-                        worktype, {}).get('contracted_work_status_code') != 'APPROVED':
+                if wt_details.get('contracted_work_status_code', None) != 'APPROVED':
                     continue
                 total_prov_contribution += worktype_prov_contribution(wt_details)
         return total_prov_contribution
@@ -168,49 +155,43 @@ class Application(Base, AuditMixin):
     @hybrid_property
     def _doc_gen_json(self):
         result = self.json
+
+        # Create general document info
         result['agreement_no'] = str(self.id).zfill(4)
         result['application_guid'] = str(self.guid)
         result['agreement_date'] = datetime.now().strftime("%d, %b, %Y")
-        #CREATE SOME FORMATTED MEMBERS FOR DOCUMENT_GENERATION
+
+        # Create company info
         _company_details = self.json.get('company_details')
+        _company_name = _company_details['company_name']['label']
         addr1 = _company_details.get('address_line_1')
         addr2 = _company_details.get('address_line_2') + '\n' if _company_details.get(
             'address_line_2') else ""
         city = _company_details.get('city')
         post_cd = _company_details.get('postal_code')
         prov = _company_details.get('province')
+
+        # Create applicant info
         _applicant_name = f"{self.json['company_contact']['first_name']} {self.json['company_contact']['last_name']}"
         result['applicant_name'] = _applicant_name
         result['applicant_address'] = f'{addr1}\n{addr2}{post_cd}\n{city}, {prov}'
-        _company_name = _company_details['company_name']['label']
         result['applicant_company_name'] = _company_name
-
         result['funding_amount'] = '${:,.2f}'.format(self.calc_total_prov_contribution())
-        result[
-            'recipient_contact_details'] = f'{_applicant_name},\n{_company_name},\n{addr1} {post_cd} {city} {prov},\n{self.submitter_email},\n{self.submitter_phone_1}'
+        result['recipient_contact_details'] = f'{_applicant_name},\n{_company_name},\n{addr1} {post_cd} {city} {prov},\n{self.submitter_email},\n{self.submitter_phone_1}'
 
-        well_sites = self.json.get('well_sites', {})
+        # Create detailed info for each well site's contracted work items
+        well_sites = self.well_sites_with_review_data
         result['formatted_well_sites'] = ""
         for ws in well_sites:
             site_details = ws.get('details', {})
             wan = site_details.get('well_authorization_number')
-            ##get review
-            ws_review_dict = {}
-            ws_review = []
-            if self.review_json:
-                ws_review = [i for i in self.review_json['well_sites'] if i is not None and str(wan) in i.keys()]
-            if ws_review:
-                current_app.logger.info(ws_review)
-                ws_review_dict = ws_review[0][str(wan)]
-
-            # current_app.logger.debug(ws_review_dict)
 
             for worktype, wt_details in ws.get('contracted_work', {}).items():
-                if worktype == "site_conditions": continue  ##all other sections
-                if ws_review_dict.get('contracted_work', {}).get(
-                        worktype, {}).get('contracted_work_status_code') != 'APPROVED':
+                if worktype == "site_conditions":
                     continue
-                # current_app.logger.debug(wt_details)
+                if wt_details.get('contracted_work_status_code', None) != 'APPROVED':
+                    continue
+
                 site = f'\nWell Authorization Number: {wan}\n'
                 site += f' Eligible Activities as described in Application: {worktype.replace("_"," ").capitalize()}\n'
                 site += f' Applicant\'s Estimated Cost: {"${:,.2f}".format(worktype_est_cost(wt_details))}\n'
@@ -218,7 +199,7 @@ class Application(Base, AuditMixin):
                 site += f' Planned Start Date: {wt_details["planned_start_date"]}\n'
                 site += f' Planned End Date: {wt_details["planned_end_date"]}\n'
                 result['formatted_well_sites'] += site
-        # current_app.logger.debug(result)
+
         return result
 
     @hybrid_property
