@@ -22,6 +22,7 @@ from app.api.utils.static_data import setup_static_data
 from app.api.utils.field_template import FieldTemplate
 from app.api.application.models.application import Application
 from app.api.application.models.application_document import ApplicationDocument
+from app.api.application.models.application_history import ApplicationHistory
 from app.api.constants import STATIC_DATA
 
 
@@ -69,7 +70,7 @@ def setup_schema(Base, session):
     inspired by: https://marshmallow-sqlalchemy.readthedocs.io/en/latest/recipes.html#automatically-generating-schemas-for-sqlalchemy-models
     """
     def setup_schema_fn():
-        for class_ in [Application, ApplicationDocument]:
+        for class_ in [Application, ApplicationDocument, ApplicationHistory]:
             if hasattr(class_, "__tablename__") or getattr(class_, "__create_schema__", False):
                 try:
                     if class_.__name__.endswith("Schema"):

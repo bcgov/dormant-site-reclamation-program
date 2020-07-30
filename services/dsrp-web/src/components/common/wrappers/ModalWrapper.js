@@ -27,6 +27,7 @@ const defaultProps = {
   props: {
     title: "",
     onSubmit: () => {},
+    afterClose: () => {},
   },
 };
 
@@ -38,7 +39,12 @@ export class ModalWrapper extends Component {
   }
 
   onBrowserButtonEvent = () => {
+    this.closeModal();
+  };
+
+  closeModal = () => {
     this.props.closeModal();
+    this.props.props.afterClose();
   };
 
   render() {
@@ -65,7 +71,7 @@ export class ModalWrapper extends Component {
         />
         {ChildComponent && (
           <ChildComponent
-            closeModal={this.props.closeModal}
+            closeModal={this.closeModal}
             clearOnSubmit={this.props.clearOnSubmit}
             {...this.props.props}
           />

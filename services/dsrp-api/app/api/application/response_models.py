@@ -34,7 +34,8 @@ APPLICATION = api.model(
         'submission_date': fields.DateTime,
         'json': fields.Raw,
         'review_json': fields.Raw,
-        'documents': fields.List(fields.Nested(APPLICATION_DOCUMENT))
+        'documents': fields.List(fields.Nested(APPLICATION_DOCUMENT)),
+        'edit_note': fields.String
     })
 
 APPLICATION_LIST = api.inherit('ApplicationList', PAGINATED_LIST,
