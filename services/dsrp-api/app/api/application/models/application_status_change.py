@@ -30,7 +30,7 @@ class ApplicationStatusChange(Base, AuditMixin):
     application = db.relationship("Application")
 
     def __repr__(self):
-        return f'<{self.__name__} {self.application_status_code}>'
+        return f'<{__name__} {self.application_status_code}>'
 
     def send_status_change_email(self, email_service):
         if not self.application.submitter_email:

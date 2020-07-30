@@ -15,7 +15,7 @@ from app.api.application.models.application_status_change import ApplicationStat
 
 from app.api.services.email_service import EmailService
 from app.api.utils.access_decorators import requires_role_admin
-
+from app.api.services.application_status_change_actions import determine_application_status_change_action
 
 
 class ApplicationStatusListResource(Resource, UserMixin):
@@ -34,6 +34,8 @@ class ApplicationStatusListResource(Resource, UserMixin):
         application.status_changes.append(app_status_change)
         application.save()
         db.session.refresh(app_status_change)
+
+        determine_application_status_change_action(application)
 
         with EmailService() as es:
             app_status_change.send_status_change_email(es)
