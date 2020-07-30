@@ -37,17 +37,20 @@ def action_first_pay_approved(application):
 
     # Get this application's well site data
     well_sites = application.well_sites_with_review_data
+    current_app.logger.info(json.dumps(well_sites))
 
     # Calculate the sum of the approved work for this application
-    app_total = 0
-    for i, well_site in enumerate(well_sites):
-        for cw_type, cw_data in well_site.get('contracted_work', {}).items():
-            if cw_data.get('contracted_work_status_code', None) != 'APPROVED':
-                continue
-            app_total += cw_data['contracted_work_total']
+    # app_total = 0
+    # for i, well_site in enumerate(well_sites):
+    #     for cw_type, cw_data in well_site.get('contracted_work', {}).items():
+    #         if cw_data.get('contracted_work_status_code', None) != 'APPROVED':
+    #             continue
+    #         app_total += cw_data['contracted_work_total']
 
     # Applicant's receive 10% of 50% of the approved work
-    amount = (app_total / 2) / 10
+    # amount = (app_total / 2) / 10
 
-    current_app.logger.info(app_total)
-    # current_app.logger.info(json.dumps(well_sites))
+    # dcj = application.shared_cost_agreement_template_json
+    # current_app.logger.info(json.dumps(dcj))
+
+    # current_app.logger.info(app_total)
