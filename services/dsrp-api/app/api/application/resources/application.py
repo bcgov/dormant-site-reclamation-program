@@ -152,8 +152,8 @@ class ApplicationResource(Resource, UserMixin):
         try:
             # map only specific fields
             application = Application.find_by_guid(application_guid)
-            
-            is_note_updated =  application.edit_note != request.json.get("edit_note")
+
+            is_note_updated = application.edit_note != request.json.get("edit_note")
 
             if is_note_updated:
                 application.edit_note = request.json.get("edit_note")
@@ -164,8 +164,9 @@ class ApplicationResource(Resource, UserMixin):
 
             if is_json_updated:
                 application.json["company_contact"] = json["company_contact"]
-                application.process_well_sites_work_items(json["well_sites"], application.iterate_application_work_items_action)
-            
+                application.process_well_sites_work_items(
+                    json["well_sites"], application.iterate_application_work_items_action)
+
             is_application_updated = is_note_updated or is_json_updated
 
         except MarshmallowError as e:
@@ -176,9 +177,9 @@ class ApplicationResource(Resource, UserMixin):
             if is_application_updated:
                 if is_json_updated:
                     flag_modified(application, "json")
-                
+
                 application.save()
-            else: 
+            else:
                 history.delete()
         except:
             history.delete()

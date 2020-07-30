@@ -19,6 +19,7 @@ from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK
 from app.api.permit_holder.resources.permit_holder import PermitHolderResource
 from app.api.application.response_models import APPLICATION
 from app.api.application.models.application_history import ApplicationHistory
+from app.api.application.models.payment_document import PaymentDocument
 
 
 def _worktype_est_cost_value(contracted_work_dict):
@@ -63,6 +64,7 @@ class Application(Base, AuditMixin):
         lazy='joined',
         order_by='desc(ApplicationStatusChange.application_status_change_id)',
     )
+    payment_documents = db.relationship('PaymentDocument', lazy='select')
 
     def __repr__(self):
         return f'<Application: {self.guid}>'

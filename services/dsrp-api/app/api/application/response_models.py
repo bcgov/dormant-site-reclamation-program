@@ -23,6 +23,21 @@ APPLICATION_DOCUMENT = api.model(
         'upload_date': fields.Date,
     })
 
+PAYMENT_DOCUMENT_TYPE = api.model(
+    'PaymentDocumentType', {
+        'payment_document_code': fields.String,
+        'description': fields.String,
+        'long_description': fields.String
+    })
+
+PAYMENT_DOCUMENT = api.model(
+    "PaymentDocument", {
+        'document_guid': fields.String,
+        'document_name': fields.String,
+        'upload_date': fields.Date,
+        'payment_document_type_code': fields.String
+    })
+
 APPLICATION_DOCUMENT_LIST = api.model(
     "ApplicationDocumentList", {'documents': fields.List(fields.Nested(APPLICATION_DOCUMENT))})
 
@@ -35,6 +50,7 @@ APPLICATION = api.model(
         'json': fields.Raw,
         'review_json': fields.Raw,
         'documents': fields.List(fields.Nested(APPLICATION_DOCUMENT)),
+        'payment_documents': fields.List(fields.Nested(PAYMENT_DOCUMENT)),
         'edit_note': fields.String
     })
 
