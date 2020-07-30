@@ -153,9 +153,33 @@ class Application(Base, AuditMixin):
                 total_est_shared_cost += self.calculate_est_shared_cost(cw_data)
         return total_est_shared_cost
 
-    def calc_payment_phase_one_amount(self):
+    def calc_prf_phase_one_amount(self):
         """Calculates this application's payment phase one amount, which is 10% of the total estimated shared cost."""
+
         return self.calc_total_est_shared_cost() / 10.0
+
+    def get_prf_invoice_number(self, payment_phase): 
+        """Returns the Invoice Number used in PRFs for this application for the provided payment phase."""
+
+        if payment_phase not in (1, 2, 3):
+            raise "Payment phase must be 1 (first), 2 (interim), or 3 (final)"
+
+        # TODO: Get how many PRF documents have been generated for this application.
+        amount_generated = "X"
+
+        invoice_number = f'{self.agreement_number}-{payment_phase}-{amount_generated + 1}'
+        return invoice_number   
+
+    def get_prf_unique_id(self, payment_phase, work_id):
+        """Returns the Unique ID used in PRFs for this application for the provided payment phase and work ID."""
+
+        invoice_number = self.get_prf_invoice_number(payment_phase)
+        unique_id = invoice_number
+        if (payment_phase != 1):
+            # Remove the application part of the work ID, e.g., "18.16" becomes "16"
+            work_number = work_id.split('.')[1]
+            unique_id += f'-{work_number}'
+        return unique_id   
 
     @hybrid_property
     def shared_cost_agreement_template_json(self):
