@@ -100,6 +100,10 @@ class Application(Base, AuditMixin):
         return self.json.get('company_details', {}).get('company_name', {}).get('label')
 
     @hybrid_property
+    def agreement_number(self):
+        return str(self.id).zfill(4)
+
+    @hybrid_property
     def well_sites_with_review_data(self):
         """Merges well sites with their corresponding review data and provides extra information."""
 
@@ -160,7 +164,7 @@ class Application(Base, AuditMixin):
         result = self.json
 
         # Create general document info
-        result['agreement_no'] = str(self.id).zfill(4)
+        result['agreement_no'] = self.agreement_number
         result['application_guid'] = str(self.guid)
         result['agreement_date'] = datetime.now().strftime("%d, %b, %Y")
 
