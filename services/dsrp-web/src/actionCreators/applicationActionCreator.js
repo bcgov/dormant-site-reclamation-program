@@ -111,7 +111,7 @@ export const createApplicationStatus = (guid, payload) => (dispatch) => {
     .post(ENVIRONMENT.apiUrl + API.STATUS(guid), payload, createRequestHeader())
     .then((response) => {
       notification.success({
-        message: `Sucessfully updated status of the application and informed applicant via email`,
+        message: `Successfully updated status of the application and informed applicant via email`,
         duration: 10,
       });
       dispatch(success(reducerTypes.CREATE_APPLICATION_STATUS));

@@ -153,7 +153,7 @@ export class DocumentUploadForm extends Component {
       <Row>
         <Col>
           <Title level={3}>Document Upload Successful</Title>
-          <p>Succesfully uploaded the following documents:</p>
+          <p>Successfully uploaded the following documents:</p>
           {!this.props.isAdminView && this.state.finalDocuments && (
             <p>
               Application Status has changed to <strong>Documents Submitted</strong>. You will see
