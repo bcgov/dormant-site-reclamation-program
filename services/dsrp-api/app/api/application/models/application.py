@@ -18,20 +18,13 @@ from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK
 from app.api.permit_holder.resources.permit_holder import PermitHolderResource
 
 
-def _worktype_est_cost_value(contracted_work_dict):
-    return sum([
-        v for k, v in contracted_work_dict.items()
-        if k not in ('planned_start_date', 'planned_end_date', 'work_id')
-    ])
-
-
-def worktype_est_cost(contracted_work_dict):
-    est_cost = _worktype_est_cost_value(contracted_work_dict)
+def worktype_est_cost(contracted_work):
+    est_cost = contracted_work['contracted_work_total']
     return round(est_cost, 2)
 
 
-def worktype_prov_contribution(contracted_work_dict):
-    fifty_percent = _worktype_est_cost_value(contracted_work_dict) / 2.0
+def worktype_prov_contribution(contracted_work):
+    fifty_percent = contracted_work['contracted_work_total'] / 2.0
     contribution = fifty_percent if fifty_percent <= 100000 else 100000
     return round(contribution, 2)
     
