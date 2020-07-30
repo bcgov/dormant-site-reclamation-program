@@ -34,6 +34,7 @@ def worktype_prov_contribution(contracted_work_dict):
     fifty_percent = _worktype_est_cost_value(contracted_work_dict) / 2.0
     contribution = fifty_percent if fifty_percent <= 100000 else 100000
     return round(contribution, 2)
+    
 
 
 class Application(Base, AuditMixin):
@@ -111,6 +112,36 @@ class Application(Base, AuditMixin):
     def company_name(self):
         return self.json.get('company_details', {}).get('company_name', {}).get('label')
 
+    @hybrid_property
+    def well_sites_with_review_data(self):
+        """Merges well sites with their corresponding review data and provides extra information."""
+
+        well_sites = self.json.get('well_sites')
+
+        # Merge well sites with their corresponding review data.
+        if self.review_json:
+            ws_reviews = self.review_json.get('well_sites')
+            for i, ws_review in enumerate(ws_reviews):
+                if not ws_review:
+                    continue
+                for wan, review_data in ws_review.items():
+                    for k, v in review_data.items():
+                        if k != 'contracted_work':
+                            continue
+                        for cw_type, cw_data in v.items():
+                            well_sites[i]['contracted_work'][cw_type].update(cw_data)
+
+        # Calculate the sum for each contracted work item
+        for i, well_site in enumerate(well_sites):
+            for cw_type, cw_data in well_site.get('contracted_work', {}).items():
+                cw_total = 0
+                for k, v in cw_data.items():
+                    if k in WELL_SITE_CONTRACTED_WORK[cw_type]:
+                        cw_total += v
+                well_sites[i]['contracted_work'][cw_type]['contracted_work_total'] = round(cw_total, 2)
+                    
+        return well_sites
+
     def calc_total_prov_contribution(self):
         total_prov_contribution = 0
         well_sites = self.json.get('well_sites', {})
@@ -121,7 +152,7 @@ class Application(Base, AuditMixin):
             ws_review_dict = {}
             ws_review = []
             if self.review_json:
-                ws_review = [i for i in self.review_json['well_sites'] if str(wan) in i.keys()]
+                ws_review = [i for i in self.review_json['well_sites'] if i is not None and str(wan) in i.keys()]
             if ws_review:
                 ws_review_dict = ws_review[0][str(wan)]
 
@@ -167,18 +198,19 @@ class Application(Base, AuditMixin):
             ws_review_dict = {}
             ws_review = []
             if self.review_json:
-                ws_review = [i for i in self.review_json['well_sites'] if str(wan) in i.keys()]
+                ws_review = [i for i in self.review_json['well_sites'] if i is not None and str(wan) in i.keys()]
             if ws_review:
+                current_app.logger.info(ws_review)
                 ws_review_dict = ws_review[0][str(wan)]
 
-            current_app.logger.debug(ws_review_dict)
+            # current_app.logger.debug(ws_review_dict)
 
             for worktype, wt_details in ws.get('contracted_work', {}).items():
                 if worktype == "site_conditions": continue  ##all other sections
                 if ws_review_dict.get('contracted_work', {}).get(
                         worktype, {}).get('contracted_work_status_code') != 'APPROVED':
                     continue
-                current_app.logger.debug(wt_details)
+                # current_app.logger.debug(wt_details)
                 site = f'\nWell Authorization Number: {wan}\n'
                 site += f' Eligible Activities as described in Application: {worktype.replace("_"," ").capitalize()}\n'
                 site += f' Applicant\'s Estimated Cost: {"${:,.2f}".format(worktype_est_cost(wt_details))}\n'
@@ -186,7 +218,7 @@ class Application(Base, AuditMixin):
                 site += f' Planned Start Date: {wt_details["planned_start_date"]}\n'
                 site += f' Planned End Date: {wt_details["planned_end_date"]}\n'
                 result['formatted_well_sites'] += site
-        current_app.logger.debug(result)
+        # current_app.logger.debug(result)
         return result
 
     @hybrid_property

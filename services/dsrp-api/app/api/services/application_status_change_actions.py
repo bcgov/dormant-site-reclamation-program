@@ -1,5 +1,5 @@
 from flask import current_app
-
+import json
 from werkzeug.exceptions import BadRequest
 
 from app.api.company.models import Company
@@ -25,21 +25,29 @@ def action_first_pay_approved(application):
         2) This document is sent via email to the required email address.
     """
 
-    # Get the PO number and address associated with the application's company.
+    if not application.review_json:
+        raise BadRequest('Application has no approved contracted work items')
+
+    # Get the PO number and address associated with the application's company
     company = Company.find_by_company_name(application.company_name)
     if not company:
         raise BadRequest('Essential company data is missing')
     company_address = company.company_address
     po_number = company.po_number
 
-    # Generate the body of the Phase 1 PRF document.
-    well_site_reviews = application.review_json.get('well_sites')
-    current_app.logger.info(f'well_site_reviews: {well_site_reviews}')
-    well_sites = application.json.get('well_sites')
-    for review in well_site_reviews:
-        for i, (well_auth_no, review_data) in enumerate(review.items()):
-            # current_app.logger.info(
-            #     f'well_auth_no: {well_auth_no} data: {review_data}')
-            for k, v in review_data.items():
-                if k == 'contracted_work':
-                    well_sites[i]['contracted_work']
+    # Get this application's well site data
+    well_sites = application.well_sites_with_review_data
+
+    # Calculate the sum of the approved work for this application
+    app_total = 0
+    for i, well_site in enumerate(well_sites):
+        for cw_type, cw_data in well_site.get('contracted_work', {}).items():
+            if cw_data.get('contracted_work_status_code', None) != 'APPROVED':
+                continue
+            app_total += cw_data['contracted_work_total']
+
+    # Applicant's receive 10% of 50% of the approved work
+    amount = (app_total / 2) / 10
+
+    current_app.logger.info(app_total)
+    # current_app.logger.info(json.dumps(well_sites))
