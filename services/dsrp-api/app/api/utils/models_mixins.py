@@ -75,7 +75,7 @@ class Base(db.Model):
         if not (hasattr(self, 'active_ind')):
             raise Exception("Provided entity does not have active_ind field.")
 
-        self.active_ind = True
+        self.active_ind = False
         self.save()
 
     def _deep_update_from_dict(self, data_dict, depth=0, _edit_key=None):
