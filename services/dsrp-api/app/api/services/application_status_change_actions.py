@@ -2,7 +2,7 @@ from flask import current_app
 import json
 from werkzeug.exceptions import BadRequest
 
-from app.api.company.models import Company
+from app.api.company_payment_info.models import CompanyPaymentInfo
 
 
 def determine_application_status_change_action(application):
@@ -29,14 +29,22 @@ def action_first_pay_approved(application):
         raise BadRequest('Application has no approved contracted work items')
 
     # Get the PO number and address associated with the application's company
-    company = Company.find_by_company_name(application.company_name)
-    if not company:
-        raise BadRequest('Essential company data is missing')
-    company_address = company.company_address
-    po_number = company.po_number
+    company_info = CompanyPaymentInfo.find_by_company_name(
+        application.company_name)
+    if not company_info:
+        raise BadRequest('Essential company payment data is missing')
+
+    agreement_number = application.agreement_number
+    supplier_name = application.company_name
+    supplier_address = company_info.company_address
+    po_number = company_info.po_number
+    qualified_receiver_name = company_info.qualified_receiver_name
+    expense_authority_name = company_info.expense_authority_name
 
     # Get this application's PRF info for phase one
     amount = application.calc_prf_phase_one_amount()
     invoice_number = application.get_prf_invoice_number(1)
     unique_id = application.get_prf_unique_id(1)
-    current_app.logger.debug(f'{amount} {invoice_number} {unique_id}')
+    current_app.logger.debug(
+        f'{amount} {invoice_number} {unique_id} {qualified_receiver_name} {expense_authority_name}'
+    )
