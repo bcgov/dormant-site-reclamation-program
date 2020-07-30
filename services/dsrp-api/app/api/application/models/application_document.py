@@ -37,6 +37,8 @@ class ApplicationDocument(AuditMixin, Base):
             active_ind=True).all()
 
     @classmethod
-    def find_by_guid(cls, application_document_guid):
-        return cls.query.filter_by(application_document_guid=application_document_guid).filter_by(
+    def find_by_guid(cls, application_guid, application_document_guid):
+        return cls.query.filter_by(
+            application_guid=application_guid,
+            application_document_guid=application_document_guid,
             active_ind=True).first()

@@ -19,6 +19,7 @@ const propTypes = {
 
 const defaultProps = {
   documents: [],
+  application_guid: PropTypes.string.isRequired,
 };
 
 export const PaymentDocumentTable = (props) => {
@@ -65,7 +66,7 @@ export const PaymentDocumentTable = (props) => {
               okText="Delete"
               cancelText="Cancel"
             >
-              <Button ghost size="small" type="primary">
+              <Button type="link" className="color-primary">
                 <Icon type="delete" theme="filled" className="icon-lg" />
               </Button>
             </Popconfirm>

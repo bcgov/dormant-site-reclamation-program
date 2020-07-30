@@ -12,7 +12,7 @@ import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm"
 import ViewApplicationDocuments from "@/components/pages/ViewApplicationDocuments";
 import LinkButton from "@/components/common/LinkButton";
 import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
-import ViewPaymentRequestPage from "@/components/pages/ViewPaymentRequestsPage";
+import ViewPaymentRequestPage from "@/components/pages/ViewPaymentRequestDocuments";
 import Loading from "@/components/common/Loading";
 import { modalConfig } from "@/components/modalContent/config";
 import { PageTracker } from "@/utils/trackers";
@@ -104,6 +104,8 @@ export class ViewApplicationPage extends Component {
       .then(() => this.handleDiscardAdminEditApplication());
   };
 
+  handleDeletePaymentDocument = (documentGuid) => {};
+
   renderAdminEditButton = () => (
     <Button
       type="primary"
@@ -160,7 +162,7 @@ export class ViewApplicationPage extends Component {
                       onDocumentUpload={this.handleGetApplication}
                     />
                   </TabPane>
-                  <TabPane tab="Payment Request Form" key="3" style={{ padding: "20px" }}>
+                  <TabPane tab="Payment Request Forms" key="3" style={{ padding: "20px" }}>
                     <ViewPaymentRequestPage
                       application_guid={this.props.application_guid}
                       documents={this.props.application.payment_documents}
