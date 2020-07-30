@@ -190,7 +190,7 @@ class Application(Base, AuditMixin):
                     continue
                 site = f'\nWell Authorization Number: {wan}\n'
                 site += f' Eligible Activities as described in Application: {worktype.replace("_"," ").capitalize()}\n'
-                site += f' Applicant\'s Estimated Cost: {"${:,.2f}".format(wt_details.get('contracted_work_total'))}\n'
+                site += f' Applicant\'s Estimated Cost: {"${:,.2f}".format(wt_details.get("contracted_work_total"))}\n'
                 site += f' Provincial Financial Contribution: {"${:,.2f}".format(self.calculate_est_shared_cost(wt_details))}\n'
                 site += f' Planned Start Date: {wt_details["planned_start_date"]}\n'
                 site += f' Planned End Date: {wt_details["planned_end_date"]}\n'
