@@ -165,13 +165,16 @@ class Application(Base, AuditMixin):
             raise "Payment phase must be 1 (first), 2 (interim), or 3 (final)"
 
         # TODO: Get how many PRF documents have been generated for this application.
-        amount_generated = "X"
+        amount_generated = 0
 
         invoice_number = f'{self.agreement_number}-{payment_phase}-{amount_generated + 1}'
         return invoice_number   
 
-    def get_prf_unique_id(self, payment_phase, work_id):
+    def get_prf_unique_id(self, payment_phase, work_id=None):
         """Returns the Unique ID used in PRFs for this application for the provided payment phase and work ID."""
+
+        if work_id is None and payment_phase != 1:
+            raise "Work ID is required"
 
         invoice_number = self.get_prf_invoice_number(payment_phase)
         unique_id = invoice_number
