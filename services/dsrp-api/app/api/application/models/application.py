@@ -185,13 +185,9 @@ class Application(Base, AuditMixin):
         for ws in well_sites:
             site_details = ws.get('details', {})
             wan = site_details.get('well_authorization_number')
-
             for worktype, wt_details in ws.get('contracted_work', {}).items():
-                if worktype == "site_conditions":
-                    continue
                 if wt_details.get('contracted_work_status_code', None) != 'APPROVED':
                     continue
-
                 site = f'\nWell Authorization Number: {wan}\n'
                 site += f' Eligible Activities as described in Application: {worktype.replace("_"," ").capitalize()}\n'
                 site += f' Applicant\'s Estimated Cost: {"${:,.2f}".format(worktype_est_cost(wt_details))}\n'
