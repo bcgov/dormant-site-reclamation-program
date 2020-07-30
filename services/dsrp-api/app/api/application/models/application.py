@@ -141,13 +141,17 @@ class Application(Base, AuditMixin):
     def calc_total_est_shared_cost(self):
         """Calculates this application's contribution (sum of all contracted work Estimated Shared Cost) to the Provincial Financial Contribution total."""
 
-        total_prov_contribution = 0
+        total_est_shared_cost = 0
         for ws in self.well_sites_with_review_data:
-            for worktype, wt_details in ws.get('contracted_work', {}).items():
-                if wt_details.get('contracted_work_status_code', None) != 'APPROVED':
+            for cw_type, cw_data in ws.get('contracted_work', {}).items():
+                if cw_data.get('contracted_work_status_code', None) != 'APPROVED':
                     continue
-                total_prov_contribution += self.calculate_est_shared_cost(wt_details)
-        return total_prov_contribution
+                total_est_shared_cost += self.calculate_est_shared_cost(cw_data)
+        return total_est_shared_cost
+
+    def calc_payment_phase_one_amount(self):
+        """Calculates this application's payment phase one amount, which is 10% of the total estimated shared cost."""
+        return self.calc_total_est_shared_cost() / 10.0
 
     @hybrid_property
     def shared_cost_agreement_template_json(self):
