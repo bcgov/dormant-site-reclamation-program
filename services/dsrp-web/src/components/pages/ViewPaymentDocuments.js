@@ -21,7 +21,7 @@ export const ViewPaymentDocuments = (props) => {
       <PaymentDocumentTable
         {...props}
         documents={props.documents.filter(
-          (doc) => doc.payment_document_type_code === PAYMENT_DOCUMENT_TYPES.FIRST_PAYMENT_RF
+          (doc) => doc.payment_document_type_code === PAYMENT_DOCUMENT_TYPES.FIRST_PRF
         )}
         emptyText="This application does not contain any payment request documents."
         tableTitle="First Payment(s)"
@@ -29,7 +29,7 @@ export const ViewPaymentDocuments = (props) => {
       <PaymentDocumentTable
         {...props}
         documents={props.documents.filter(
-          (doc) => doc.payment_document_type_code === PAYMENT_DOCUMENT_TYPES.INTERIM_PAYMENT_RF
+          (doc) => doc.payment_document_type_code === PAYMENT_DOCUMENT_TYPES.INTERIM_PRF
         )}
         emptyText="This application does not contain any interim payment request documents."
         tableTitle="Interim Payment(s)"
@@ -37,7 +37,7 @@ export const ViewPaymentDocuments = (props) => {
       <PaymentDocumentTable
         {...props}
         documents={props.documents.filter(
-          (doc) => doc.payment_document_type_code === PAYMENT_DOCUMENT_TYPES.FINAL_PAYMENT_RF
+          (doc) => doc.payment_document_type_code === PAYMENT_DOCUMENT_TYPES.FINAL_PRF
         )}
         emptyText="This application does not contain any final payment request documents."
         tableTitle="Final Payment(s)"
