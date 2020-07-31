@@ -26,10 +26,9 @@ class ApplicationStatusListResource(Resource, UserMixin):
         application = Application.find_by_guid(application_guid)
         if not application:
             raise NotFound("Not found")
-        app_status_change =  ApplicationStatusChange(
-            application_status_code=request.json['application_status_code'], 
-            note=request.json['note']
-        )
+        app_status_change = ApplicationStatusChange(
+            application_status_code=request.json['application_status_code'],
+            note=request.json['note'])
 
         application.status_changes.append(app_status_change)
         application.save()
@@ -41,4 +40,3 @@ class ApplicationStatusListResource(Resource, UserMixin):
             app_status_change.send_status_change_email(es)
 
         return '', 204
-

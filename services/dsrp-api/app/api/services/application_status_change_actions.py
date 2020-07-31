@@ -12,9 +12,8 @@ from app.api.services.object_store_storage_service import ObjectStoreStorageServ
 def determine_application_status_change_action(application):
     """Performs various actions according to the status of the application."""
 
-    most_recent_status_change = application.status_changes[
-        0] if application.status_changes and len(
-            application.status_changes) > 0 else None
+    most_recent_status_change = application.status_changes[0] if application.status_changes and len(
+        application.status_changes) > 0 else None
     if not most_recent_status_change:
         return
 
@@ -36,8 +35,7 @@ def action_first_pay_approved(application):
         raise BadRequest('Application has no approved contracted work items')
 
     # Get critical company payment info for generating the PRF
-    company_info = CompanyPaymentInfo.find_by_company_name(
-        application.company_name)
+    company_info = CompanyPaymentInfo.find_by_company_name(application.company_name)
     if not company_info:
         raise BadRequest('Essential company payment data is missing')
 
@@ -71,16 +69,16 @@ def action_first_pay_approved(application):
     # Upload the PRF file to the object store
     object_store_path = None
     try:
-        object_store_path = ObjectStoreStorageService().upload_string(
-            file_content, file_path)
+        object_store_path = ObjectStoreStorageService().upload_string(file_content, file_path)
     except Exception as e:
         raise BadGateway(f'Failed to upload generated PRF: {e}')
 
     # Create a payment document record for this PRF and associate it with the application
     try:
-        doc = PaymentDocument(document_name=filename,
-                              object_store_path=object_store_path,
-                              payment_document_type_code='FIRST_PRF')
+        doc = PaymentDocument(
+            document_name=filename,
+            object_store_path=object_store_path,
+            payment_document_type_code='FIRST_PRF')
         application.payment_documents.append(doc)
         application.save()
     except Exception as e:

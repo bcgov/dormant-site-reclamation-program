@@ -22,9 +22,7 @@ class ObjectStoreStorageService():
     def upload_string(self, string, filepath):
         fileobj = io.BytesIO(bytearray(string, 'utf-8'))
         key = f'{Config.S3_PREFIX}{filepath}'
-        self._client.upload_fileobj(Fileobj=fileobj,
-                                    Bucket=Config.OBJECT_STORE_BUCKET,
-                                    Key=key)
+        self._client.upload_fileobj(Fileobj=fileobj, Bucket=Config.OBJECT_STORE_BUCKET, Key=key)
         return key
 
     def download_file(self, path, display_name, as_attachment):
@@ -32,14 +30,12 @@ class ObjectStoreStorageService():
             for chunk in iter(lambda: result['Body'].read(1048576), b''):
                 yield chunk
 
-        s3_response = self._client.get_object(
-            Bucket=Config.OBJECT_STORE_BUCKET, Key=path)
-        resp = Response(generate(s3_response),
-                        mimetype='application/pdf' if '.pdf'
-                        in display_name.lower() else 'application/zip',
-                        headers={
-                            'Content-Disposition':
-                            ('attachment; ' if as_attachment else '') +
-                            ('filename=' + display_name)
-                        })
+        s3_response = self._client.get_object(Bucket=Config.OBJECT_STORE_BUCKET, Key=path)
+        resp = Response(
+            generate(s3_response),
+            mimetype='application/pdf' if '.pdf' in display_name.lower() else 'application/zip',
+            headers={
+                'Content-Disposition':
+                ('attachment; ' if as_attachment else '') + ('filename=' + display_name)
+            })
         return resp

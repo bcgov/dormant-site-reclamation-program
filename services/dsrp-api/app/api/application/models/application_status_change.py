@@ -17,9 +17,8 @@ def get_template_file_path():
 class ApplicationStatusChange(Base, AuditMixin):
     __tablename__ = "application_status_change"
 
-    application_status_change_id = db.Column(db.Integer,
-                                             primary_key=True,
-                                             server_default=FetchedValue())
+    application_status_change_id = db.Column(
+        db.Integer, primary_key=True, server_default=FetchedValue())
     application_guid = db.Column(UUID(as_uuid=True), db.ForeignKey('application.guid'))
     application_status_code = db.Column(db.String,
                                         db.ForeignKey('application_status.application_status_code'))
