@@ -19,9 +19,9 @@ INSERT INTO payment_document_type(
     update_user
     )
 VALUES
-    ('FIRST_PAYMENT_RF', 'First payment request form', 'system', 'system'),
-    ('INTERIM_PAYMENT_RF', 'Interim payment request form', 'system', 'system'),
-    ('FINAL_PAYMENT_RF', 'Final payment request form', 'system', 'system')
+    ('FIRST_PRF', 'First payment request form', 'system', 'system'),
+    ('INTERIM_PRF', 'Interim payment request form', 'system', 'system'),
+    ('FINAL_PRF', 'Final payment request form', 'system', 'system')
 ON CONFLICT DO NOTHING;
 
 

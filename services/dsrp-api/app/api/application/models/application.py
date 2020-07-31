@@ -41,12 +41,12 @@ class Application(Base, AuditMixin):
     edit_note = db.Column(db.String)
 
     documents = db.relationship('ApplicationDocument', lazy='select')
+    payment_documents = db.relationship('PaymentDocument', lazy='select')
     status_changes = db.relationship(
         'ApplicationStatusChange',
         lazy='joined',
         order_by='desc(ApplicationStatusChange.application_status_change_id)',
     )
-    payment_documents = db.relationship('PaymentDocument', lazy='select')
 
     def __repr__(self):
         return f'<Application: {self.guid}>'
