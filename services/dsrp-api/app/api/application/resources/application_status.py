@@ -22,14 +22,13 @@ class ApplicationStatusListResource(Resource, UserMixin):
     @api.doc(description='Change status on an application and send an email')
     @requires_role_admin
     def post(self, application_guid):
-
         application = Application.find_by_guid(application_guid)
         if not application:
             raise NotFound("Not found")
+
         app_status_change = ApplicationStatusChange(
             application_status_code=request.json['application_status_code'],
             note=request.json['note'])
-
         application.status_changes.append(app_status_change)
         application.save()
         db.session.refresh(app_status_change)
