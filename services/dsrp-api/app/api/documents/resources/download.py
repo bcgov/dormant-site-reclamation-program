@@ -15,6 +15,7 @@ from app.api.application.models.application import Application
 from app.api.services.document_generator_service import DocumentGeneratorService
 from app.api.application.models.application_document import ApplicationDocument
 from app.api.services.object_store_storage_service import ObjectStoreStorageService
+from app.api.application.models.payment_document import PaymentDocument
 
 
 class DocumentDownloadResource(Resource, UserMixin):
@@ -42,8 +43,8 @@ class DocumentDownloadResource(Resource, UserMixin):
             headers[
                 'Content-Disposition'] = f'attachment; filename=shared_cost_agreement_{application.company_name}.pdf'
 
-            file_resp = Response(stream_with_context(docgen_resp.iter_content(chunk_size=2048)),
-                                 headers=headers)
+            file_resp = Response(
+                stream_with_context(docgen_resp.iter_content(chunk_size=2048)), headers=headers)
 
         #S3 Download Token
         else:
@@ -60,6 +61,38 @@ class DocumentDownloadResource(Resource, UserMixin):
             file_resp = ObjectStoreStorageService().download_file(
                 path=app_doc.object_store_path,
                 display_name=app_doc.document_name,
+                as_attachment=attach_style)
+
+        return file_resp
+
+
+class PaymentDocumentDownloadResource(Resource, UserMixin):
+    @api.doc(description='Retrieve a file from document storage with token')
+    def get(self):
+        token_guid = request.args.get('token', '')
+        attachment = request.args.get('as_attachment', None)
+        token_data = cache.get(DOWNLOAD_TOKEN(token_guid))
+        cache.delete(DOWNLOAD_TOKEN(token_guid))
+        file_resp = None
+        current_app.logger.debug('redis_data' + str(token_data))
+
+        if not token_data:
+            raise BadRequest('Valid token required for download')
+
+        #S3 Download Token
+        else:
+            document_guid = token_data['document_guid']
+            payment_doc = PaymentDocument.query.filter_by(document_guid=document_guid).first()
+            if not payment_doc:
+                raise NotFound('Could not find the document corresponding to the token')
+            if attachment is not None:
+                attach_style = True if attachment == 'true' else False
+            else:
+                attach_style = '.pdf' not in payment_doc.document_name.lower()
+
+            file_resp = ObjectStoreStorageService().download_file(
+                path=payment_doc.object_store_path,
+                display_name=payment_doc.document_name,
                 as_attachment=attach_style)
 
         return file_resp
