@@ -25,7 +25,7 @@ class ApplicationPaymentDocumentResource(Resource, UserMixin):
     def get(self, application_guid, document_guid):
         payment_document = PaymentDocument.find_by_guid(application_guid, document_guid)
         if not payment_document:
-            raise NotFound('Not found')
+            raise NotFound('Application payment document not found')
 
         token_guid = uuid.uuid4()
         cache.set(DOWNLOAD_TOKEN(token_guid), {'document_guid': document_guid}, TIMEOUT_5_MINUTES)
@@ -36,7 +36,7 @@ class ApplicationPaymentDocumentResource(Resource, UserMixin):
     def delete(self, application_guid, document_guid):
         payment_document = PaymentDocument.find_by_guid(application_guid, document_guid)
         if not payment_document:
-            raise NotFound('Not found')
+            raise NotFound('Application payment document not found')
 
         payment_document.soft_delete()
         return None, 204

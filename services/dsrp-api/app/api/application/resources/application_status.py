@@ -24,7 +24,7 @@ class ApplicationStatusListResource(Resource, UserMixin):
     def post(self, application_guid):
         application = Application.find_by_guid(application_guid)
         if not application:
-            raise NotFound("Not found")
+            raise NotFound('No application was found matching the provided reference number')
 
         app_status_change = ApplicationStatusChange(
             application_status_code=request.json['application_status_code'],

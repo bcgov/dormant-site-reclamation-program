@@ -129,11 +129,9 @@ class ApplicationResource(Resource, UserMixin):
     @api.marshal_with(APPLICATION, code=200)
     @requires_role_view_all
     def get(self, application_guid):
-
         application = Application.find_by_guid(application_guid)
-
         if application is None:
-            raise NotFound('No application was found matching the provided reference number.')
+            raise NotFound('No application was found matching the provided reference number')
 
         return application
 
@@ -195,7 +193,7 @@ class ApplicationReviewResource(Resource, UserMixin):
     def put(self, application_guid):
         application = Application.find_by_guid(application_guid)
         if application is None:
-            raise NotFound('No application was found matching the provided reference number.')
+            raise NotFound('No application was found matching the provided reference number')
 
         try:
             review_json = request.json['review_json']

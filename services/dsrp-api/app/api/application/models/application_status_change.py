@@ -1,21 +1,18 @@
 import io, os, cgi
+
 from flask import current_app
 from datetime import datetime
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.schema import FetchedValue
-from app.config import Config
 
+from app.config import Config
 from app.extensions import db
 from app.api.utils.models_mixins import Base, AuditMixin
-from app.api.services.document_generator_service import DocumentGeneratorService
-
-
-def get_template_file_path():
-    return os.path.join(current_app.root_path, 'templates', 'shared_cost_agreement.docx')
+from app.api.services.document_generator_service import DocumentGeneratorService, get_template_file_path
 
 
 class ApplicationStatusChange(Base, AuditMixin):
-    __tablename__ = "application_status_change"
+    __tablename__ = 'application_status_change'
 
     application_status_change_id = db.Column(
         db.Integer, primary_key=True, server_default=FetchedValue())
@@ -25,8 +22,8 @@ class ApplicationStatusChange(Base, AuditMixin):
     change_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     note = db.Column(db.String, nullable=False)
 
-    application_status = db.relationship("ApplicationStatus")
-    application = db.relationship("Application")
+    application_status = db.relationship('ApplicationStatus')
+    application = db.relationship('Application')
 
     def __repr__(self):
         return f'<{__name__} {self.application_status_code}>'
@@ -160,7 +157,8 @@ class ApplicationStatusChange(Base, AuditMixin):
         filename = None
         if self.application_status.application_status_code == 'WAIT_FOR_DOCS':
             doc = DocumentGeneratorService.generate_document_and_stream_response(
-                get_template_file_path(), self.application.shared_cost_agreement_template_json)
+                get_template_file_path('shared-cost-agreement'),
+                self.application.shared_cost_agreement_template_json)
             value, params = cgi.parse_header(doc.headers['content-disposition'])
             filename = params['filename']
             attachment = io.BytesIO(doc.content)

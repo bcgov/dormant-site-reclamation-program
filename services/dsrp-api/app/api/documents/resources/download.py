@@ -52,7 +52,7 @@ class DocumentDownloadResource(Resource, UserMixin):
             app_doc = ApplicationDocument.query.filter_by(
                 application_document_guid=document_guid).first()
             if not app_doc:
-                raise NotFound('Could not find the document corresponding to the token')
+                raise NotFound('No document was found with the corresponding download token')
             if attachment is not None:
                 attach_style = True if attachment == 'true' else False
             else:
@@ -84,7 +84,7 @@ class PaymentDocumentDownloadResource(Resource, UserMixin):
             document_guid = token_data['document_guid']
             payment_doc = PaymentDocument.query.filter_by(document_guid=document_guid).first()
             if not payment_doc:
-                raise NotFound('Could not find the document corresponding to the token')
+                raise NotFound('No document was found with the corresponding download token')
             if attachment is not None:
                 attach_style = True if attachment == 'true' else False
             else:

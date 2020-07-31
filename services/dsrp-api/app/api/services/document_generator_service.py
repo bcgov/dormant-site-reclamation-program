@@ -2,6 +2,12 @@ import requests, hashlib, os, mimetypes, json, datetime
 from flask import Response, current_app, stream_with_context
 from app.config import Config
 
+DOCUMENT_TYPE_FILE_MAP = {'shared-cost-agreement': 'shared_cost_agreement.docx'}
+
+
+def get_template_file_path(document_type):
+    return os.path.join(current_app.root_path, 'templates', DOCUMENT_TYPE_FILE_MAP[document_type])
+
 
 def sha256_checksum(filename, block_size=65536):
     sha256 = hashlib.sha256()
@@ -38,10 +44,11 @@ class DocumentGeneratorService():
         }
 
         # Send the document generation request and return the response
-        resp = requests.post(url=f'{cls.document_generator_url}/{file_sha}/render',
-                             data=json.dumps(body),
-                             headers={'Content-Type': 'application/json'},
-                             stream=True)
+        resp = requests.post(
+            url=f'{cls.document_generator_url}/{file_sha}/render',
+            data=json.dumps(body),
+            headers={'Content-Type': 'application/json'},
+            stream=True)
         if resp.status_code != 200:
             current_app.logger.warn(f'Docgen-api/generate replied with {str(resp.content)}')
 
