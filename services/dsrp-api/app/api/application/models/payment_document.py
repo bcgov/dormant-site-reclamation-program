@@ -12,9 +12,8 @@ from app.api.utils.models_mixins import AuditMixin, Base
 
 class PaymentDocument(AuditMixin, Base):
     """
-    
+    Local ledger of PRF files in S3 object store and their business relationship
     """
-
     __tablename__ = 'payment_document'
 
     class _ModelSchema(Base._ModelSchema):

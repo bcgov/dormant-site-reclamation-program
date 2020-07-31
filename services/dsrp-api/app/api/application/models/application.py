@@ -41,7 +41,13 @@ class Application(Base, AuditMixin):
     edit_note = db.Column(db.String)
 
     documents = db.relationship('ApplicationDocument', lazy='select')
-    payment_documents = db.relationship('PaymentDocument', lazy='select')
+    payment_documents = db.relationship(
+        'PaymentDocument',
+        lazy='select',
+        primaryjoin=
+        'and_(PaymentDocument.application_guid == Application.guid, PaymentDocument.active_ind == True )'
+    )
+
     status_changes = db.relationship(
         'ApplicationStatusChange',
         lazy='joined',
@@ -129,7 +135,8 @@ class Application(Base, AuditMixin):
                 for k, v in cw_data.items():
                     if k in WELL_SITE_CONTRACTED_WORK[cw_type]:
                         cw_total += v
-                well_sites[i]['contracted_work'][cw_type]['contracted_work_total'] = round(cw_total, 2)
+                well_sites[i]['contracted_work'][cw_type]['contracted_work_total'] = round(
+                    cw_total, 2)
 
         return well_sites
 
@@ -158,17 +165,18 @@ class Application(Base, AuditMixin):
 
         return self.calc_total_est_shared_cost() / 10.0
 
-    def get_prf_invoice_number(self, payment_phase): 
+    def get_prf_invoice_number(self, payment_phase):
         """Returns the Invoice Number used in PRFs for this application for the provided payment phase."""
 
         if payment_phase not in (1, 2, 3):
             raise "Payment phase must be 1 (first), 2 (interim), or 3 (final)"
-        
+
         prf_doc_type = 'FIRST_PRF' if payment_phase == 1 else 'INTERIM_PRF' if payment_phase == 2 else 'FINAL_PRF'
-        amount_generated = sum(map(lambda doc : doc.payment_document_type_code == prf_doc_type, self.payment_documents))
+        amount_generated = sum(
+            map(lambda doc: doc.payment_document_type_code == prf_doc_type, self.payment_documents))
 
         invoice_number = f'{self.agreement_number}-{payment_phase}-{amount_generated + 1}'
-        return invoice_number   
+        return invoice_number
 
     def get_prf_unique_id(self, payment_phase, work_id=None):
         """Returns the Unique ID used in PRFs for this application for the provided payment phase and work ID."""
@@ -182,7 +190,7 @@ class Application(Base, AuditMixin):
             # Remove the application part of the work ID, e.g., "18.16" becomes "16"
             work_number = work_id.split('.')[1]
             unique_id += f'-{work_number}'
-        return unique_id   
+        return unique_id
 
     @hybrid_property
     def shared_cost_agreement_template_json(self):
@@ -211,7 +219,8 @@ class Application(Base, AuditMixin):
         result['applicant_address'] = f'{addr1}\n{addr2}{post_cd}\n{city}, {prov}'
         result['applicant_company_name'] = _company_name
         result['funding_amount'] = '${:,.2f}'.format(self.calc_total_est_shared_cost())
-        result['recipient_contact_details'] = f'{_applicant_name},\n{_company_name},\n{addr1} {post_cd} {city} {prov},\n{self.submitter_email},\n{self.submitter_phone_1}'
+        result[
+            'recipient_contact_details'] = f'{_applicant_name},\n{_company_name},\n{addr1} {post_cd} {city} {prov},\n{self.submitter_email},\n{self.submitter_phone_1}'
 
         # Create detailed info for each well site's contracted work items
         result['formatted_well_sites'] = ""
