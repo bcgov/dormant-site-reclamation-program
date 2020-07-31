@@ -14,5 +14,3 @@ __pycache__
 *.sw*
 *last-backup
 venv*
-.vscode/
-!.vscode/settings.json.default
