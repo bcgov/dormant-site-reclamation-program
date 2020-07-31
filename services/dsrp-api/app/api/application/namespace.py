@@ -5,6 +5,7 @@ from app.api.application.resources.application_document import ApplicationDocume
 from app.api.application.resources.application_status import ApplicationStatusListResource
 from app.api.application.resources.application_summary import ApplicationSummaryResource
 from app.api.application.resources.gen_application_docs import GenerateApplicationDocumentResource
+from app.api.application.resources.application_payment_document import ApplicationPaymentDocumentResource
 
 api = Namespace('application', description='Application endpoints')
 
@@ -18,3 +19,5 @@ api.add_resource(ApplicationDocumentListResource, '/<string:application_guid>/do
 api.add_resource(ApplicationReviewResource, '/<string:application_guid>/review')
 api.add_resource(GenerateApplicationDocumentResource,
                  '/<string:application_guid>/generate-doc/<string:document_type>')
+api.add_resource(ApplicationPaymentDocumentResource,
+                 '/<string:application_guid>/payment-doc/<string:document_guid>')

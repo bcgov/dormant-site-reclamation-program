@@ -36,9 +36,9 @@ export const fetchApplications = (params) => (dispatch) => {
       dispatch(applicationActions.storeApplications(response.data));
       return response;
     })
-    .catch((error) => {
+    .catch((err) => {
       dispatch(error(reducerTypes.GET_APPLICATIONS));
-      throw new Error(error);
+      throw new Error(err);
     })
     .finally(() => dispatch(hideLoading()));
 };
@@ -52,9 +52,9 @@ export const fetchApplicationById = (guid) => (dispatch) => {
       dispatch(applicationActions.storeApplication(response.data));
       return response;
     })
-    .catch((error) => {
+    .catch((err) => {
       dispatch(error(reducerTypes.GET_APPLICATION));
-      throw new Error(error);
+      throw new Error(err);
     })
     .finally(() => dispatch(hideLoading()));
 };
@@ -68,9 +68,9 @@ export const fetchApplicationSummaryById = (guid) => (dispatch) => {
       dispatch(applicationActions.storeApplication(response.data));
       return response;
     })
-    .catch((error) => {
+    .catch((err) => {
       dispatch(error(reducerTypes.GET_APPLICATION_SUMMARY));
-      throw new Error(error);
+      throw new Error(err);
     })
     .finally(() => dispatch(hideLoading()));
 };
@@ -87,9 +87,9 @@ export const updateApplication = (guid, payload) => (dispatch) => {
       dispatch(success(reducerTypes.UPDATE_APPLICATION));
       return response;
     })
-    .catch((error) => {
+    .catch((err) => {
       dispatch(error(reducerTypes.UPDATE_APPLICATION));
-      throw new Error(error);
+      throw new Error(err);
     })
     .finally(() => dispatch(hideLoading()));
 };
@@ -102,9 +102,9 @@ export const updateApplicationReview = (guid, payload) => (dispatch) => {
       dispatch(success(reducerTypes.UPDATE_APPLICATION_REVIEW));
       return response;
     })
-    .catch((error) => {
+    .catch((err) => {
       dispatch(error(reducerTypes.UPDATE_APPLICATION_REVIEW));
-      throw new Error(error);
+      throw new Error(err);
     })
     .finally(() => dispatch(hideLoading()));
 };
@@ -123,6 +123,27 @@ export const createApplicationStatus = (guid, payload) => (dispatch) => {
     })
     .catch((err) => {
       dispatch(error(reducerTypes.CREATE_APPLICATION_STATUS));
+      throw new Error(err);
+    });
+};
+
+export const deleteApplicationPaymentDocument = (appGuid, documentGuid) => (dispatch) => {
+  dispatch(request(reducerTypes.DELETE_APPLICATION_PAYMENT_DOCUMENT));
+  return CustomAxios()
+    .delete(
+      ENVIRONMENT.apiUrl + API.APPLICATION_PAYMENT_DOCUMENT(appGuid, documentGuid),
+      createRequestHeader()
+    )
+    .then((response) => {
+      notification.success({
+        message: "Successfully deleted payment document.",
+        duration: 5,
+      });
+      dispatch(success(reducerTypes.DELETE_APPLICATION_PAYMENT_DOCUMENT));
+      return response;
+    })
+    .catch((err) => {
+      dispatch(error(reducerTypes.DELETE_APPLICATION_PAYMENT_DOCUMENT));
       throw new Error(err);
     });
 };

@@ -6,13 +6,17 @@ import PropTypes from "prop-types";
 import { Row, Col, Typography, Icon, Tabs, Button } from "antd";
 import { openModal, closeModal } from "@/actions/modalActions";
 import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
-import { fetchApplicationById, updateApplication } from "@/actionCreators/applicationActionCreator";
+import {
+  fetchApplicationById,
+  updateApplication,
+  deleteApplicationPaymentDocument,
+} from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/selectors/applicationSelectors";
 import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm";
 import ViewApplicationDocuments from "@/components/pages/ViewApplicationDocuments";
 import LinkButton from "@/components/common/LinkButton";
 import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
-import ViewPaymentRequestPage from "@/components/pages/ViewPaymentRequestDocuments";
+import ViewPaymentDocuments from "@/components/pages/ViewPaymentDocuments";
 import Loading from "@/components/common/Loading";
 import { modalConfig } from "@/components/modalContent/config";
 import { PageTracker } from "@/utils/trackers";
@@ -29,8 +33,13 @@ const propTypes = {
   updateApplication: PropTypes.func.isRequired,
   openModal: PropTypes.func.isRequired,
   reset: PropTypes.func.isRequired,
+  deleteApplicationPaymentDocument: PropTypes.func.isRequired,
+  closeModal: PropTypes.func.isRequired,
+  /* eslint-disable */
+  history: PropTypes.any.isRequired,
   application: PropTypes.any,
   editedApplication: PropTypes.any,
+  /* eslint-enable */
 };
 
 const defaultProps = {
@@ -104,7 +113,12 @@ export class ViewApplicationPage extends Component {
       .then(() => this.handleDiscardAdminEditApplication());
   };
 
-  handleDeletePaymentDocument = (documentGuid) => {};
+  handleDeletePaymentDocument = (appGuid, documentGuid) => {
+    this.props
+      .deleteApplicationPaymentDocument(appGuid, documentGuid)
+      .then(() => this.props.closeModal())
+      .then(() => this.handleGetApplication());
+  };
 
   renderAdminEditButton = () => (
     <Button
@@ -163,9 +177,10 @@ export class ViewApplicationPage extends Component {
                     />
                   </TabPane>
                   <TabPane tab="Payment Request Forms" key="3" style={{ padding: "20px" }}>
-                    <ViewPaymentRequestPage
-                      application_guid={this.props.application_guid}
+                    <ViewPaymentDocuments
+                      application_guid={this.props.application.guid}
                       documents={this.props.application.payment_documents}
+                      onDocumentDelete={this.handleDeletePaymentDocument}
                     />
                   </TabPane>
                 </Tabs>
@@ -191,6 +206,7 @@ const mapDispatchToProps = (dispatch) =>
       openModal,
       closeModal,
       reset,
+      deleteApplicationPaymentDocument,
     },
     dispatch
   );
