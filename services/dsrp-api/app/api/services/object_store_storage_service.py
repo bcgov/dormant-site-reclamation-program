@@ -22,11 +22,10 @@ class ObjectStoreStorageService():
     def upload_string(self, string, filepath):
         fileobj = io.BytesIO(bytearray(string, 'utf-8'))
         key = f'{Config.S3_PREFIX}{filepath}'
-        response = self._client.upload_fileobj(Fileobj=fileobj,
-                                               Bucket=Config.OBJECT_STORE_BUCKET,
-                                               Key=key)
-
-        return response
+        self._client.upload_fileobj(Fileobj=fileobj,
+                                    Bucket=Config.OBJECT_STORE_BUCKET,
+                                    Key=key)
+        return key
 
     def download_file(self, path, display_name, as_attachment):
         def generate(result):
