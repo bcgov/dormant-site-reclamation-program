@@ -9,15 +9,10 @@ const { Title } = Typography;
 
 const propTypes = {
   application_guid: PropTypes.string.isRequired,
-  documents: PropTypes.arrayOf(paymentDocuments),
+  documents: PropTypes.arrayOf(paymentDocuments).isRequired,
 };
 
-const defaultProps = {
-  documents: [],
-  application_guid: null,
-};
-
-export const ViewPaymentRequestPage = (props) => {
+export const ViewPaymentDocuments = (props) => {
   return (
     <>
       <Title level={3} className="documents-section">
@@ -51,7 +46,6 @@ export const ViewPaymentRequestPage = (props) => {
   );
 };
 
-ViewPaymentRequestPage.propTypes = propTypes;
-ViewPaymentRequestPage.defaultProps = defaultProps;
+ViewPaymentDocuments.propTypes = propTypes;
 
-export default ViewPaymentRequestPage;
+export default ViewPaymentDocuments;

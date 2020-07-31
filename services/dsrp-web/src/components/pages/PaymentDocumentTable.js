@@ -11,15 +11,13 @@ import AuthorizationWrapper from "@/components/common/wrappers/AuthorizationWrap
 const { Title } = Typography;
 
 const propTypes = {
-  documents: PropTypes.arrayOf(CustomPropTypes.document),
-  tableTitle: PropTypes.string.isRequired,
+  documents: PropTypes.arrayOf(CustomPropTypes.document).isRequired,
+  // eslint-disable-next-line
+  application_guid: PropTypes.string.isRequired,
+  // eslint-disable-next-line
+  onDocumentDelete: PropTypes.func.isRequired,
   emptyText: PropTypes.string.isRequired,
-  application_guid: PropTypes.string.isRequired,
-};
-
-const defaultProps = {
-  documents: [],
-  application_guid: PropTypes.string.isRequired,
+  tableTitle: PropTypes.string.isRequired,
 };
 
 export const PaymentDocumentTable = (props) => {
@@ -55,14 +53,14 @@ export const PaymentDocumentTable = (props) => {
       title: "",
       key: "handleEditModal",
       dataIndex: "handleEditModal",
-      render: (/* text, record */) => (
+      render: (text, record) => (
         <div align="right" className="btn--middle flex">
           {/* TODO may be add admin permission check */}
           <AuthorizationWrapper>
             <Popconfirm
               placement="topLeft"
               title="Are you sure you want to delete this Payment request?"
-              // onConfirm={() => record.handleDeletePaymentRequest(record.incident)}
+              onConfirm={() => props.onDocumentDelete(props.application_guid, record.document_guid)}
               okText="Delete"
               cancelText="Cancel"
             >
@@ -96,6 +94,5 @@ export const PaymentDocumentTable = (props) => {
 };
 
 PaymentDocumentTable.propTypes = propTypes;
-PaymentDocumentTable.defaultProps = defaultProps;
 
 export default PaymentDocumentTable;
