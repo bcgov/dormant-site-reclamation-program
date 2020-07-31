@@ -34,6 +34,7 @@ class EmailService():
         self.smtp.connect(self.SMTP_CRED['host'], self.SMTP_CRED['port'])
         current_app.logger.info(
             f'Opening connection to {self.SMTP_CRED["host"]}:{self.SMTP_CRED["port"]}')
+
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
@@ -45,7 +46,7 @@ class EmailService():
                 f'EmailService.__exit__ values: {exc_type}, {exc_value}, {traceback}')
 
         current_app.logger.info(
-            f'Sent {self.sent_mail_info["success_count"]} emails successfully, {len(self.sent_mail_info["errors"])} errors. closing connection'
+            f'Sent {self.sent_mail_info["success_count"]} emails successfully, {len(self.sent_mail_info["errors"])} errors. Closing connection.'
         )
 
         if self.sent_mail_info['errors']:
