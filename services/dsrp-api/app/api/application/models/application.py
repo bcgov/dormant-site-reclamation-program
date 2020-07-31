@@ -163,9 +163,9 @@ class Application(Base, AuditMixin):
 
         if payment_phase not in (1, 2, 3):
             raise "Payment phase must be 1 (first), 2 (interim), or 3 (final)"
-
-        # TODO: Get how many PRF documents have been generated for this application.
-        amount_generated = 0
+        
+        prf_doc_type = 'FIRST_PRF' if payment_phase == 1 else 'INTERIM_PRF' if payment_phase == 2 else 'FINAL_PRF'
+        amount_generated = sum(map(lambda doc : doc.payment_document_type_code == prf_doc_type, self.payment_documents))
 
         invoice_number = f'{self.agreement_number}-{payment_phase}-{amount_generated + 1}'
         return invoice_number   
