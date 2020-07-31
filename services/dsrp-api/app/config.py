@@ -85,6 +85,7 @@ class Config(object):
     OBJECT_STORE_ACCESS_KEY_ID = os.environ.get('OBJECT_STORE_ACCESS_KEY_ID', '')
     OBJECT_STORE_ACCESS_KEY = os.environ.get('OBJECT_STORE_ACCESS_KEY', '')
     OBJECT_STORE_BUCKET = os.environ.get('OBJECT_STORE_BUCKET', '')
+    S3_PREFIX = os.environ.get('S3_PREFIX', 'dsrp-applications/')
 
     #SMTP
     SMTP_CRED_HOST = os.environ.get('SMTP_CRED_HOST', None)

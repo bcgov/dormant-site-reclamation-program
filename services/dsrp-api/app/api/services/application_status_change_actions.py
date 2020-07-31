@@ -1,8 +1,11 @@
-from flask import current_app
 import json
+import uuid
+
+from flask import current_app
 from werkzeug.exceptions import BadRequest
 
 from app.api.company_payment_info.models import CompanyPaymentInfo
+from app.api.services.object_store_storage_service import ObjectStoreStorageService
 
 
 def determine_application_status_change_action(application):
@@ -28,7 +31,6 @@ def action_first_pay_approved(application):
     if not application.review_json:
         raise BadRequest('Application has no approved contracted work items')
 
-    # Get the PO number and address associated with the application's company
     company_info = CompanyPaymentInfo.find_by_company_name(
         application.company_name)
     if not company_info:
@@ -41,10 +43,21 @@ def action_first_pay_approved(application):
     qualified_receiver_name = company_info.qualified_receiver_name
     expense_authority_name = company_info.expense_authority_name
 
-    # Get this application's PRF info for phase one
     amount = application.calc_prf_phase_one_amount()
     invoice_number = application.get_prf_invoice_number(1)
     unique_id = application.get_prf_unique_id(1)
-    current_app.logger.debug(
-        f'{amount} {invoice_number} {unique_id} {qualified_receiver_name} {expense_authority_name}'
-    )
+
+    body = f'\
+    {invoice_number}\n\
+    {supplier_name}\n\
+    {supplier_address}\n\
+    {po_number}\n\
+    {qualified_receiver_name}\n\
+    {expense_authority_name}\n\
+    {agreement_number},{unique_id},{amount}\n'
+
+    # fileguid = uuid.uuid4()
+    filename = f'{invoice_number}_prf_first.csv'
+    filepath = f'{application.guid}/prf_1/{filename}'
+
+    ObjectStoreStorageService().upload_string(body, filepath)
