@@ -1,6 +1,5 @@
 import { combineReducers } from "redux";
 import { reducer as formReducer } from "redux-form";
-import { loadingBarReducer } from "react-redux-loading-bar";
 import * as reducerTypes from "../constants/reducerTypes";
 import networkReducer from "./networkReducer";
 
@@ -24,7 +23,6 @@ export const createReducer = (reducer, name) => (state, action) => {
 
 export const reducerObject = {
   form: formReducer,
-  loadingBar: loadingBarReducer,
   ...staticContentReducer,
   ...modalReducer,
   ...orgbookReducer,

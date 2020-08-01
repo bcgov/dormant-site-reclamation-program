@@ -1,5 +1,4 @@
 import { notification } from "antd";
-import { hideLoading } from "react-redux-loading-bar";
 import { request, success, error } from "../actions/genericActions";
 import * as reducerTypes from "../constants/reducerTypes";
 import * as API from "../constants/api";
@@ -39,8 +38,7 @@ export const fetchApplications = (params) => (dispatch) => {
     .catch((err) => {
       dispatch(error(reducerTypes.GET_APPLICATIONS));
       throw new Error(err);
-    })
-    .finally(() => dispatch(hideLoading()));
+    });
 };
 
 export const fetchApplicationById = (guid) => (dispatch) => {
@@ -55,8 +53,7 @@ export const fetchApplicationById = (guid) => (dispatch) => {
     .catch((err) => {
       dispatch(error(reducerTypes.GET_APPLICATION));
       throw new Error(err);
-    })
-    .finally(() => dispatch(hideLoading()));
+    });
 };
 
 export const fetchApplicationSummaryById = (guid) => (dispatch) => {
@@ -71,8 +68,7 @@ export const fetchApplicationSummaryById = (guid) => (dispatch) => {
     .catch((err) => {
       dispatch(error(reducerTypes.GET_APPLICATION_SUMMARY));
       throw new Error(err);
-    })
-    .finally(() => dispatch(hideLoading()));
+    });
 };
 
 export const updateApplication = (guid, payload) => (dispatch) => {
@@ -90,8 +86,7 @@ export const updateApplication = (guid, payload) => (dispatch) => {
     .catch((err) => {
       dispatch(error(reducerTypes.UPDATE_APPLICATION));
       throw new Error(err);
-    })
-    .finally(() => dispatch(hideLoading()));
+    });
 };
 
 export const updateApplicationReview = (guid, payload) => (dispatch) => {
@@ -105,8 +100,7 @@ export const updateApplicationReview = (guid, payload) => (dispatch) => {
     .catch((err) => {
       dispatch(error(reducerTypes.UPDATE_APPLICATION_REVIEW));
       throw new Error(err);
-    })
-    .finally(() => dispatch(hideLoading()));
+    });
 };
 
 export const createApplicationStatus = (guid, payload) => (dispatch) => {
