@@ -5,13 +5,12 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import validates
 from sqlalchemy.schema import FetchedValue
 from sqlalchemy import select, desc, func
-from marshmallow import fields, validate
+from marshmallow import fields
 from flask_restplus import marshal
 
 from app.config import Config
 from app.extensions import db
 from app.api.utils.models_mixins import Base, AuditMixin
-from app.api.utils.field_template import FieldTemplate
 from app.api.constants import WELL_SITE_CONTRACTED_WORK, APPLICATION_JSON, COMPANY_NAME_JSON_KEYS
 from .application_status import ApplicationStatus
 from .application_status_change import ApplicationStatusChange
@@ -55,7 +54,7 @@ class Application(Base, AuditMixin):
     )
 
     def __repr__(self):
-        return f'<Application: {self.guid}>'
+        return f'<{self.__class__.__name__} {self.guid}>'
 
     @classmethod
     def get_all(cls):

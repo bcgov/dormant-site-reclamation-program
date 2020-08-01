@@ -1,8 +1,5 @@
-from datetime import datetime
-from flask import current_app
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.schema import FetchedValue
-from marshmallow import fields
 
 from app.extensions import db
 from app.api.utils.models_mixins import Base, AuditMixin
@@ -17,4 +14,4 @@ class ApplicationHistory(Base, AuditMixin):
     edit_note = db.Column(db.String)
 
     def __repr__(self):
-        return '<ApplicationHistory %r, %r, %r>' % (self.history_id, self.json, self.edit_note)
+        return f'{self.__class__.__name__} {self.history_id} {self.json} {self.edit_note}'

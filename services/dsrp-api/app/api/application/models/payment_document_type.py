@@ -13,7 +13,7 @@ class PaymentDocumentType(Base, AuditMixin):
     active = db.Column(db.Boolean, nullable=False, server_default=FetchedValue())
 
     def __repr__(self):
-        return f'<{self.__name__} {self.payment_document_code}>'
+        return f'<{self.__class__.__name__} {self.payment_document_code}>'
 
     @classmethod
     def get_active(cls):

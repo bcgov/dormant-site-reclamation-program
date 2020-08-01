@@ -12,7 +12,7 @@ class CompanyPaymentInfo(Base, AuditMixin):
     expense_authority_name = db.Column(db.String, nullable=False)
 
     def __repr__(self):
-        return f'<CompanyPaymentInfo: {self.company_name}>'
+        return f'<{self.__class__.__name__} {self.company_name}>'
 
     @classmethod
     def find_by_company_name(cls, company_name):

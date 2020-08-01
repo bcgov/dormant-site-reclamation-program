@@ -18,6 +18,7 @@ def determine_application_status_change_action(application):
         return
 
     status = most_recent_status_change.application_status_code
+    current_app.logger.info(f'status: {most_recent_status_change}')
     if status == 'FIRST_PAY_APPROVED':
         action_first_pay_approved(application)
 
