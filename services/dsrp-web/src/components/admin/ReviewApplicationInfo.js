@@ -109,7 +109,7 @@ export class ReviewApplicationInfo extends Component {
   };
 
   handleApplicationStatusChange = (guid, payload) => {
-    this.props.createApplicationStatus(guid, payload).then(() => {
+    return this.props.createApplicationStatus(guid, payload).then(() => {
       this.props.fetchApplications(this.state.params);
       this.props.closeModal();
     });
