@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Table } from "antd";
 import { formatDate, truncateFilename } from "@/utils/helpers";
-import { downloadFileFromDocumentManager } from "@/utils/actionlessNetworkCalls";
+import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import * as Strings from "@/constants/strings";
 import CustomPropTypes from "@/customPropTypes";
 import LinkButton from "@/components/common/LinkButton";
@@ -27,7 +27,7 @@ export const DocumentTable = (props) => {
             <LinkButton
               title={text}
               onClick={() =>
-                downloadFileFromDocumentManager(
+                downloadDocument(
                   props.application_guid,
                   record.application_document_guid,
                   record.document_name

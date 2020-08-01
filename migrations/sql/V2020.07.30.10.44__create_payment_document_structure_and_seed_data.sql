@@ -34,12 +34,14 @@ CREATE TABLE IF NOT EXISTS payment_document (
 	update_user varchar(60) NOT NULL,
 	update_timestamp timestamptz NOT NULL DEFAULT now(),
 	document_name varchar NOT NULL,
-	document_manager_guid uuid,
 	upload_date timestamptz NOT NULL,
 	object_store_path varchar,
+	invoice_number varchar NOT NULL,
 	payment_document_type_code varchar NOT NULL,
     FOREIGN KEY (application_guid) REFERENCES application(guid) DEFERRABLE INITIALLY DEFERRED,
     FOREIGN KEY (payment_document_type_code) REFERENCES payment_document_type(payment_document_code) DEFERRABLE INITIALLY DEFERRED
 );
 
 ALTER TABLE payment_document OWNER TO dsrp;
+
+ALTER TABLE application_document DROP COLUMN IF EXISTS document_manager_guid;

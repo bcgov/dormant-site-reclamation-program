@@ -9,16 +9,16 @@ import {
   GET_PAYMENT_DOCUMENT_WITH_TOKEN,
 } from "../constants/api";
 
-export const downloadFileFromDocumentManager = (
+export const downloadDocument = (
   application_guid,
   application_document_guid,
   document_name = ""
 ) => {
   if (!(application_guid || application_document_guid)) {
-    throw new Error("Must provide document_manager_guid");
+    throw new Error("Must provide application_guid and application_document_guid");
   }
 
-  CustomAxios()
+  return CustomAxios()
     .get(
       `${ENVIRONMENT.apiUrl + GET_TOKEN_FOR_DOC(application_guid, application_document_guid)}`,
       createRequestHeader()
@@ -34,7 +34,7 @@ export const downloadFileFromDocumentManager = (
 };
 
 export const downloadGeneratedApplicationLetter = (application_guid) => {
-  CustomAxios()
+  return CustomAxios()
     .get(
       `${ENVIRONMENT.apiUrl + GET_TOKEN_FOR_SHARED_COST_AGREE_LETTER(application_guid)}`,
       createRequestHeader()
@@ -51,10 +51,10 @@ export const downloadPaymentDocument = (
   document_name = ""
 ) => {
   if (!(application_guid || application_document_guid)) {
-    throw new Error("Must provide document_manager_guid");
+    throw new Error("Must provide application_guid and application_document_guid");
   }
 
-  CustomAxios()
+  return CustomAxios()
     .get(
       `${ENVIRONMENT.apiUrl +
         APPLICATION_PAYMENT_DOCUMENT(application_guid, application_document_guid)}`,
