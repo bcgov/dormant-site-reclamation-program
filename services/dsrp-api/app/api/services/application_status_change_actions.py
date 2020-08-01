@@ -78,7 +78,8 @@ def action_first_pay_approved(application):
         doc = PaymentDocument(
             document_name=filename,
             object_store_path=object_store_path,
-            payment_document_type_code='FIRST_PRF')
+            payment_document_type_code='FIRST_PRF',
+            invoice_number=invoice_number)
         application.payment_documents.append(doc)
         application.save()
     except Exception as e:
