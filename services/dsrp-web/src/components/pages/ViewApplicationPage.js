@@ -176,7 +176,11 @@ export class ViewApplicationPage extends Component {
                       onDocumentUpload={this.handleGetApplication}
                     />
                   </TabPane>
-                  <TabPane tab="Payment Request Forms" key="3" style={{ padding: "20px" }}>
+                  <TabPane
+                    tab={`Payment Request Forms (${this.props.application.payment_documents.length})`}
+                    key="3"
+                    style={{ padding: "20px" }}
+                  >
                     <ViewPaymentDocuments
                       application_guid={this.props.application.guid}
                       documents={this.props.application.payment_documents}
