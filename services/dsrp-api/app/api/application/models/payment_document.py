@@ -1,6 +1,6 @@
 import json
 
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, ARRAY
 from sqlalchemy.schema import FetchedValue
 from datetime import datetime
 from pytz import timezone
@@ -23,8 +23,12 @@ class PaymentDocument(AuditMixin, Base):
     class _ModelSchema(Base._ModelSchema):
         document_guid = fields.String(dump_only=True)
 
-    document_guid = db.Column(UUID(as_uuid=True), primary_key=True, server_default=FetchedValue())
+    def __init__(self, application, **kwargs):
+        super(PaymentDocument, self).__init__(**kwargs)
+        self.invoice_number = self.create_invoice_number(application)
+
     application_guid = db.Column(UUID(as_uuid=True), db.ForeignKey('application.guid'))
+    document_guid = db.Column(UUID(as_uuid=True), primary_key=True, server_default=FetchedValue())
     document_name = db.Column(db.String, nullable=False)
     object_store_path = db.Column(db.String, nullable=False)
 
@@ -34,8 +38,26 @@ class PaymentDocument(AuditMixin, Base):
     invoice_number = db.Column(db.String, nullable=False)
     payment_document_type_code = db.Column(
         db.String, db.ForeignKey('payment_document_type.payment_document_code'), nullable=False)
+    work_ids = db.Column(ARRAY(db.String))
 
     application = db.relationship('Application')
+
+    def create_invoice_number(self, application):
+        amount_generated = sum(
+            map(lambda doc: doc.payment_document_type_code == self.payment_document_type_code,
+                application.payment_documents))
+        payment_phase = None
+        if self.payment_document_type_code == 'FIRST_PRF':
+            payment_phase = 1
+        elif self.payment_document_type_code == 'INTERIM_PRF':
+            payment_phase = 2
+        elif self.payment_document_type_code == 'FINAL_PRF':
+            payment_phase = 3
+        else:
+            raise Exception('Unknown payment document phase')
+        agreement_number = application.agreement_number
+        invoice_number = f'{agreement_number}-{payment_phase}-{amount_generated + 1}'
+        return invoice_number
 
     @classmethod
     def find_by_guid(cls, application_guid, document_guid):
@@ -69,14 +91,19 @@ class PaymentDocument(AuditMixin, Base):
             'supplier_name': supplier_name,
             'supplier_address': supplier_address,
             'po_number': po_number,
+            'account_coding': '057.2700A.26505.8001.2725067',
             'qualified_receiver_name': qualified_receiver_name,
-            'expense_authority_name': expense_authority_name,
             'date_payment_authorized': date_payment_authorized,
+            'expense_authority_name': expense_authority_name,
             'payment_details': []
         }
 
-        def generate_payment_detail(agreement_number, unique_id, amount):
-            return {'agreement_number': agreement_number, 'unique_id': unique_id, 'amount': amount}
+        def generate_payment_detail(unique_id, amount):
+            return {
+                'agreement_number': self.application.agreement_number,
+                'unique_id': unique_id,
+                'amount': amount
+            }
 
         def generate_unique_id(work_id=None):
             unique_id = self.invoice_number
@@ -87,17 +114,22 @@ class PaymentDocument(AuditMixin, Base):
             return unique_id
 
         # Create the PRF payment details data
-        agreement_number = self.application.agreement_number
         if payment_document_phase == 'FIRST_PRF':
             amount = self.application.calc_prf_phase_one_amount()
             unique_id = generate_unique_id()
-            content_json['payment_details'].append(
-                generate_payment_detail(agreement_number, unique_id, amount))
+            content_json['payment_details'].append(generate_payment_detail(unique_id, amount))
 
-        elif payment_document_phase == 'INTERIM_PRF':
-            raise NotImplemented('Interim-phase PRF document content cannot yet be generated.')
+        elif payment_document_phase in ('INTERIM_PRF', 'FINAL_PRF'):
+            for work_id in self.work_ids:
+                work = self.application.find_contracted_work_by_id(work_id)
+                if not work:
+                    raise Exception(f'Work ID {work_id} does not exist on this application!')
+                # TODO: Calculate actual correct amount for these phases (e.g., 60%, 30%)
+                amount = work['contracted_work_total']
+                unique_id = generate_unique_id(work_id)
+                content_json['payment_details'].append(generate_payment_detail(unique_id, amount))
 
-        elif payment_document_phase == 'FINAL_PRF':
-            raise NotImplemented('Final-phase PRF document content cannot yet be generated.')
+        else:
+            raise Exception('Unknown payment document phase')
 
         return json.dumps(content_json, indent=4)

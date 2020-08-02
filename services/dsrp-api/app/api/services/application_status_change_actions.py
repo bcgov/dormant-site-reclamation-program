@@ -34,32 +34,31 @@ def action_first_pay_approved(application):
     # TODO: Use a GUID as the filename in the object store?
     # file_guid = uuid.uuid4()
     payment_document_type_code = 'FIRST_PRF'
-    invoice_number = application.get_prf_invoice_number(1)
-    filename = f'{invoice_number}_{payment_document_type_code.lower()}.json'
 
     # Create the PRF document record
     doc = None
     try:
         doc = PaymentDocument(
-            document_name=filename,
-            payment_document_type_code=payment_document_type_code,
-            invoice_number=invoice_number)
+            application=application, payment_document_type_code=payment_document_type_code)
         application.payment_documents.append(doc)
         application.save()
         db.session.refresh(doc)
     except Exception as e:
-        doc.delete()
-        raise InternalServerError(f'Failed to record the generated PRF: {e}')
+        if doc:
+            doc.delete()
+        raise InternalServerError(f'Failed to record the PRF: {e}')
 
     # Upload a file containing the PRFs data to the object store
     try:
-        file_path = f'{application.guid}/prf_1/{filename}'
+        document_name = f'{doc.invoice_number}_{doc.payment_document_type_code.lower()}.json'
+        file_path = f'{application.guid}/{payment_document_type_code.lower()}/{document_name}'
         object_store_path = ObjectStoreStorageService().upload_string(doc.content_json, file_path)
+        doc.document_name = document_name
         doc.object_store_path = object_store_path
         doc.save()
     except Exception as e:
         doc.delete()
-        raise BadGateway(f'Failed to upload generated PRF: {e}')
+        raise BadGateway(f'Failed to upload the generated PRF: {e}')
 
     # Send an email to the required address containing this PRF
     # TODO: Implement

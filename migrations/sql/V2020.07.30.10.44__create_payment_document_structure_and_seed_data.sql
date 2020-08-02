@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS payment_document (
 	upload_date timestamptz NOT NULL,
 	object_store_path varchar,
 	invoice_number varchar NOT NULL UNIQUE,
+	work_ids varchar ARRAY,
 	payment_document_type_code varchar NOT NULL,
     FOREIGN KEY (application_guid) REFERENCES application(guid) DEFERRABLE INITIALLY DEFERRED,
     FOREIGN KEY (payment_document_type_code) REFERENCES payment_document_type(payment_document_code) DEFERRABLE INITIALLY DEFERRED
