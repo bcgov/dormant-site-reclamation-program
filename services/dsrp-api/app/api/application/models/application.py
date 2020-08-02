@@ -19,6 +19,7 @@ from app.api.permit_holder.resources.permit_holder import PermitHolderResource
 from app.api.application.response_models import APPLICATION
 from app.api.application.models.application_history import ApplicationHistory
 from app.api.application.models.payment_document import PaymentDocument
+from app.api.services.email_service import EmailService
 
 
 class Application(Base, AuditMixin):
@@ -177,20 +178,6 @@ class Application(Base, AuditMixin):
         invoice_number = f'{self.agreement_number}-{payment_phase}-{amount_generated + 1}'
         return invoice_number
 
-    def get_prf_unique_id(self, payment_phase, work_id=None):
-        """Returns the Unique ID used in PRFs for this application for the provided payment phase and work ID."""
-
-        if work_id is None and payment_phase != 1:
-            raise "Work ID is required"
-
-        invoice_number = self.get_prf_invoice_number(payment_phase)
-        unique_id = invoice_number
-        if (payment_phase != 1):
-            # Remove the application part of the work ID, e.g., "18.16" becomes "16"
-            work_number = work_id.split('.')[1]
-            unique_id += f'-{work_number}'
-        return unique_id
-
     @hybrid_property
     def shared_cost_agreement_template_json(self):
         """Generates the JSON used to generate this application's Shared Cost Agreement document."""
@@ -219,7 +206,7 @@ class Application(Base, AuditMixin):
         result['applicant_company_name'] = _company_name
         result['funding_amount'] = '${:,.2f}'.format(self.calc_total_est_shared_cost())
         result[
-            'recipient_contact_details'] = f'{_applicant_name},\n{_company_name},\n{addr1} {post_cd} {city} {prov},\n{self.submitter_email},\n{self.submitter_phone_1}'
+            'recipient_contact_details'] = f'{_applicant_name},\n{_company_name},\n{addr1} {post_cd} {city} {prov},\n{self.applicant_email},\n{self.submitter_phone_1}'
 
         # Create detailed info for each well site's contracted work items
         result['formatted_well_sites'] = ""
@@ -240,7 +227,7 @@ class Application(Base, AuditMixin):
         return result
 
     @hybrid_property
-    def submitter_email(self):
+    def applicant_email(self):
         return self.json.get('company_contact', {}).get('email')
 
     @hybrid_property
@@ -268,8 +255,9 @@ class Application(Base, AuditMixin):
     def send_confirmation_email(self, email_service):
         html_content = f"""
             <p>
-                We have successfully received your application in the British Columbia Dormant Sites Reclamation Program. Please keep your reference number safe as you will
-                need it to carry your application forward in this process. You can view the contents of your application below.
+                We have successfully received your application in the British Columbia Dormant Sites Reclamation Program.
+                Please keep your reference number safe as you will need it to carry your application forward in this process.
+                You can view the contents of your application below.
                 <br />
                 <br />
                 <a href='{Config.URL}view-application-status/{self.guid}'>Click here to view the status of your application.</a>
@@ -281,7 +269,8 @@ class Application(Base, AuditMixin):
             </p>
             {self.get_application_html()}
             """
-        email_service.send_email_to_applicant(self, 'Application Confirmation', html_content)
+        with EmailService() as es:
+            es.send_email_to_applicant(self, 'Application Confirmation', html_content)
 
     def get_application_html(self):
         def create_company_details(company_details):

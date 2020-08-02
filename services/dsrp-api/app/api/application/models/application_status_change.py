@@ -1,13 +1,13 @@
 import io, os, cgi
 
-from flask import current_app
 from datetime import datetime
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.schema import FetchedValue
 
 from app.config import Config
 from app.extensions import db
 from app.api.utils.models_mixins import Base, AuditMixin
+from app.api.services.email_service import EmailService
 from app.api.services.document_generator_service import DocumentGeneratorService, get_template_file_path
 
 
@@ -28,12 +28,7 @@ class ApplicationStatusChange(Base, AuditMixin):
     def __repr__(self):
         return f'<{self.__class__.__name__} {self.application_status_code}>'
 
-    def send_status_change_email(self, email_service):
-        if not self.application.submitter_email:
-            raise Exception(
-                'Application.json.company_contact.email is not set, must set before email can be sent'
-            )
-
+    def send_status_change_email(self):
         html_content = f"""
             <p>
                 The status of your application has been changed to <b>{self.application_status.description}</b> with the following note:
@@ -60,5 +55,6 @@ class ApplicationStatusChange(Base, AuditMixin):
             filename = params['filename']
             attachment = io.BytesIO(doc.content)
 
-        email_service.send_email_to_applicant(self.application, 'Application Status Change',
-                                              html_content, attachment, filename)
+        with EmailService() as es:
+            es.send_email_to_applicant(self.application, 'Application Status Change', html_content,
+                                       attachment, filename)

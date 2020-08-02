@@ -92,6 +92,7 @@ class Config(object):
     SMTP_ENABLED = SMTP_CRED_HOST is not None
     SMTP_CRED = {'host': SMTP_CRED_HOST, 'port': 25, 'user': None, 'pwrd': None}
     PROGRAM_EMAIL = 'DormantSite.BC.Government@gov.bc.ca'
+    FINANCE_EMAIL = os.environ.get('FINANCE_EMAIL', None)
 
     URL = os.environ.get('URL', 'http://dormant-site-reclamation.gov.bc.ca/')
 

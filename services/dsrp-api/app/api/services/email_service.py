@@ -47,11 +47,11 @@ class EmailService():
         self.smtp.quit()
 
     def send_email_to_applicant(self, application, subject, html_content, attachment=None, filename=None):
-        if not application.submitter_email:
+        if not application.applicant_email:
             raise Exception('Application does not have the applicant email set!')
 
         html_body = self.create_applicant_email_body(application, html_content)
-        to_email = application.submitter_email
+        to_email = application.applicant_email
         from_email = Config.PROGRAM_EMAIL
         signature = f'<p>Email {Config.PROGRAM_EMAIL} with this reference number if you have questions about your application.</p>'
         self.send_email(to_email, from_email, subject, html_body, signature, attachment, filename)
@@ -63,7 +63,7 @@ class EmailService():
         if Config.SMTP_ENABLED and not self.smtp:
             raise InternalServerError('Email service is enabled but failed to connect to the SMTP server!')
         elif not Config.SMTP_ENABLED:
-            current_app.logger.warning(f'Email service is disabled! Cannot send the email.')
+            current_app.logger.warning('Email service is disabled! Cannot send the email.')
             return
 
         msg = MIMEMultipart()
@@ -76,14 +76,14 @@ class EmailService():
 
         if attachment:
             file_to_attach = MIMEApplication(attachment.getvalue(), Name=filename)
-            file_to_attach['Content-Disposition'] = 'attachment; filename="%s"' % filename
+            file_to_attach['Content-Disposition'] = f'attachment; filename="{filename}"'
             msg.attach(file_to_attach)
 
         try:
             self.smtp.send_message(msg)
             self.sent_mail_info['success_count'] += 1
         except Exception as e:
-            self.sent_mail_info['errors'].append((msg['To']) + 'THREW' + str(e))
+            self.sent_mail_info['errors'].append(f'Failed to send email to {to_email}: {str(e)}')
 
 
     def create_applicant_email_body(self, application, html_content):

@@ -9,7 +9,6 @@ from sqlalchemy.orm.attributes import flag_modified
 from deepdiff import DeepDiff
 
 from app.extensions import api
-from app.api.services.email_service import EmailService
 from app.api.utils.access_decorators import requires_role_view_all, requires_role_admin
 from app.api.utils.resources_mixins import UserMixin
 from app.api.application.response_models import APPLICATION, APPLICATION_LIST
@@ -118,8 +117,7 @@ class ApplicationListResource(Resource, UserMixin):
         except MarshmallowError as e:
             raise BadRequest(e)
 
-        with EmailService() as es:
-            application.send_confirmation_email(es)
+        application.send_confirmation_email()
 
         return application, 201
 

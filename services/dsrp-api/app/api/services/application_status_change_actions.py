@@ -2,9 +2,9 @@ import json
 import uuid
 
 from flask import current_app
-from werkzeug.exceptions import BadRequest, BadGateway, InternalServerError
+from werkzeug.exceptions import BadGateway, InternalServerError
 
-from app.api.company_payment_info.models import CompanyPaymentInfo
+from app.extensions import db
 from app.api.application.models.payment_document import PaymentDocument
 from app.api.services.object_store_storage_service import ObjectStoreStorageService
 
@@ -30,61 +30,36 @@ def action_first_pay_approved(application):
         2) This document is sent via email to the required email address.
     """
 
-    # The application must have at least one reviewed contracted work item
-    # TODO: Check to ensure that they have at least one APPROVED contracted work item?
-    if not application.review_json:
-        raise BadRequest('Application has no approved contracted work items')
-
-    # Get critical company payment info for generating the PRF
-    company_info = CompanyPaymentInfo.find_by_company_name(application.company_name)
-    if not company_info:
-        raise BadRequest('Essential company payment data is missing')
-
-    # Get data used in the PRF
-    agreement_number = application.agreement_number
-    supplier_name = application.company_name
-    supplier_address = company_info.company_address
-    po_number = company_info.po_number
-    qualified_receiver_name = company_info.qualified_receiver_name
-    expense_authority_name = company_info.expense_authority_name
-    amount = application.calc_prf_phase_one_amount()
-    invoice_number = application.get_prf_invoice_number(1)
-    unique_id = application.get_prf_unique_id(1)
-
-    # Create the PRF file content
-    file_content = f'\
-    {invoice_number}\n\
-    {supplier_name}\n\
-    {supplier_address}\n\
-    {po_number}\n\
-    {qualified_receiver_name}\n\
-    {expense_authority_name}\n\
-    {agreement_number},{unique_id},{amount}\n'
-
     # Create the PRF file name and path
     # TODO: Use a GUID as the filename in the object store?
     # file_guid = uuid.uuid4()
-    filename = f'{invoice_number}_prf_first.csv'
-    file_path = f'{application.guid}/prf_1/{filename}'
+    payment_document_type_code = 'FIRST_PRF'
+    invoice_number = application.get_prf_invoice_number(1)
+    filename = f'{invoice_number}_{payment_document_type_code.lower()}.json'
 
-    # Upload the PRF file to the object store
-    object_store_path = None
-    try:
-        object_store_path = ObjectStoreStorageService().upload_string(file_content, file_path)
-    except Exception as e:
-        raise BadGateway(f'Failed to upload generated PRF: {e}')
-
-    # Create a payment document record for this PRF and associate it with the application
+    # Create the PRF document record
+    doc = None
     try:
         doc = PaymentDocument(
             document_name=filename,
-            object_store_path=object_store_path,
-            payment_document_type_code='FIRST_PRF',
+            payment_document_type_code=payment_document_type_code,
             invoice_number=invoice_number)
         application.payment_documents.append(doc)
         application.save()
+        db.session.refresh(doc)
     except Exception as e:
+        doc.delete()
         raise InternalServerError(f'Failed to record the generated PRF: {e}')
+
+    # Upload a file containing the PRFs data to the object store
+    try:
+        file_path = f'{application.guid}/prf_1/{filename}'
+        object_store_path = ObjectStoreStorageService().upload_string(doc.content_json, file_path)
+        doc.object_store_path = object_store_path
+        doc.save()
+    except Exception as e:
+        doc.delete()
+        raise BadGateway(f'Failed to upload generated PRF: {e}')
 
     # Send an email to the required address containing this PRF
     # TODO: Implement

@@ -26,7 +26,7 @@ class ApplicationDocument(AuditMixin, Base):
     upload_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
     active_ind = db.Column(db.Boolean, nullable=False, server_default=FetchedValue())
 
-    application = db.relationship("Application")
+    application = db.relationship('Application')
 
     @classmethod
     def find_by_guid(cls, application_guid, application_document_guid):
