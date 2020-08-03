@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS payment_document (
 	update_timestamp timestamptz NOT NULL DEFAULT now(),
 	document_name varchar NOT NULL,
 	upload_date timestamptz NOT NULL,
-	object_store_path varchar,
+	object_store_path varchar NOT NULL,
 	invoice_number varchar NOT NULL UNIQUE,
 	work_ids varchar ARRAY,
 	payment_document_type_code varchar NOT NULL,

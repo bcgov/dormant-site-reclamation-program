@@ -22,19 +22,48 @@ class PaymentDocument(AuditMixin, Base):
 
     def __init__(self, application, **kwargs):
         super(PaymentDocument, self).__init__(**kwargs)
-        self.invoice_number = self.create_invoice_number(application)
-        application.payment_documents.append(self)
-        application.save()
-        self.upload_content_json()
+
+        def create_invoice_number(application):
+            amount_generated = sum(
+                map(lambda doc: doc.payment_document_type_code == self.payment_document_type_code,
+                    application.payment_documents))
+            payment_phase = None
+            if self.payment_document_type_code == 'FIRST_PRF':
+                payment_phase = 1
+            elif self.payment_document_type_code == 'INTERIM_PRF':
+                payment_phase = 2
+            elif self.payment_document_type_code == 'FINAL_PRF':
+                payment_phase = 3
+            else:
+                raise Exception('Unknown payment document phase')
+            agreement_number = application.agreement_number
+            invoice_number = f'{agreement_number}-{payment_phase}-{amount_generated + 1}'
+            return invoice_number
+
+        def upload_content_json():
+            document_name = f'{self.invoice_number}_{self.payment_document_type_code.lower()}.json'
+            file_path = f'{self.application.guid}/{self.payment_document_type_code.lower()}/{document_name}'
+            try:
+                self.object_store_path = ObjectStoreStorageService().upload_string(
+                    self.content_json, file_path)
+                self.document_name = document_name
+                self.upload_date = datetime.utcnow()
+            except Exception as e:
+                raise Exception(f'Failed to upload the PRF: {e}')
+
+        self.invoice_number = create_invoice_number(application)
+        self.application = application
+        upload_content_json()
+        self.save()
 
     class _ModelSchema(Base._ModelSchema):
         document_guid = fields.String(dump_only=True)
 
     application_guid = db.Column(UUID(as_uuid=True), db.ForeignKey('application.guid'))
     document_guid = db.Column(UUID(as_uuid=True), primary_key=True, server_default=FetchedValue())
-    document_name = db.Column(db.String)
-    object_store_path = db.Column(db.String)
-    upload_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    document_name = db.Column(db.String, nullable=False)
+    object_store_path = db.Column(db.String, nullable=False)
+    upload_date = db.Column(db.Date, nullable=False)
     active_ind = db.Column(db.Boolean, nullable=False, server_default=FetchedValue())
 
     invoice_number = db.Column(db.String, nullable=False)
@@ -43,34 +72,6 @@ class PaymentDocument(AuditMixin, Base):
     work_ids = db.Column(ARRAY(db.String))
 
     application = db.relationship('Application')
-
-    def create_invoice_number(self, application):
-        amount_generated = sum(
-            map(lambda doc: doc.payment_document_type_code == self.payment_document_type_code,
-                application.payment_documents))
-        payment_phase = None
-        if self.payment_document_type_code == 'FIRST_PRF':
-            payment_phase = 1
-        elif self.payment_document_type_code == 'INTERIM_PRF':
-            payment_phase = 2
-        elif self.payment_document_type_code == 'FINAL_PRF':
-            payment_phase = 3
-        else:
-            raise Exception('Unknown payment document phase')
-        agreement_number = application.agreement_number
-        invoice_number = f'{agreement_number}-{payment_phase}-{amount_generated + 1}'
-        return invoice_number
-
-    def upload_content_json(self):
-        document_name = f'{self.invoice_number}_{self.payment_document_type_code.lower()}.json'
-        file_path = f'{self.application.guid}/{self.payment_document_type_code.lower()}/{document_name}'
-        try:
-            self.object_store_path = ObjectStoreStorageService().upload_string(
-                self.content_json, file_path)
-            self.document_name = document_name
-            self.save()
-        except Exception as e:
-            raise Exception(f'Failed to upload the PRF: {e}')
 
     @classmethod
     def find_by_guid(cls, application_guid, document_guid):
