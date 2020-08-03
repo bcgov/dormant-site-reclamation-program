@@ -6,7 +6,6 @@ from werkzeug.exceptions import BadGateway, InternalServerError
 
 from app.extensions import db
 from app.api.application.models.payment_document import PaymentDocument
-from app.api.services.object_store_storage_service import ObjectStoreStorageService
 
 
 def determine_application_status_change_action(application):
@@ -30,35 +29,11 @@ def action_first_pay_approved(application):
         2) This document is sent via email to the required email address.
     """
 
-    # Create the PRF file name and path
-    # TODO: Use a GUID as the filename in the object store?
-    # file_guid = uuid.uuid4()
-    payment_document_type_code = 'FIRST_PRF'
-
-    # Create the PRF document record
-    doc = None
+    # Create the PRF document
     try:
-        doc = PaymentDocument(
-            application=application, payment_document_type_code=payment_document_type_code)
-        application.payment_documents.append(doc)
-        application.save()
-        db.session.refresh(doc)
+        doc = PaymentDocument(application=application, payment_document_type_code='FIRST_PRF')
     except Exception as e:
-        if doc:
-            doc.delete()
-        raise InternalServerError(f'Failed to record the PRF: {e}')
-
-    # Upload a file containing the PRFs data to the object store
-    try:
-        document_name = f'{doc.invoice_number}_{doc.payment_document_type_code.lower()}.json'
-        file_path = f'{application.guid}/{payment_document_type_code.lower()}/{document_name}'
-        object_store_path = ObjectStoreStorageService().upload_string(doc.content_json, file_path)
-        doc.document_name = document_name
-        doc.object_store_path = object_store_path
-        doc.save()
-    except Exception as e:
-        doc.delete()
-        raise BadGateway(f'Failed to upload the generated PRF: {e}')
+        raise InternalServerError(f'Failed to create the PRF: {e}')
 
     # Send an email to the required address containing this PRF
     # TODO: Implement

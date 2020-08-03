@@ -10,6 +10,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from app.extensions import db
 from app.api.utils.models_mixins import AuditMixin, Base
 from app.api.company_payment_info.models import CompanyPaymentInfo
+from app.api.services.object_store_storage_service import ObjectStoreStorageService
 
 
 class PaymentDocument(AuditMixin, Base):
@@ -19,18 +20,20 @@ class PaymentDocument(AuditMixin, Base):
 
     __tablename__ = 'payment_document'
 
-    class _ModelSchema(Base._ModelSchema):
-        document_guid = fields.String(dump_only=True)
-
     def __init__(self, application, **kwargs):
         super(PaymentDocument, self).__init__(**kwargs)
         self.invoice_number = self.create_invoice_number(application)
+        application.payment_documents.append(self)
+        application.save()
+        self.upload_content_json()
+
+    class _ModelSchema(Base._ModelSchema):
+        document_guid = fields.String(dump_only=True)
 
     application_guid = db.Column(UUID(as_uuid=True), db.ForeignKey('application.guid'))
     document_guid = db.Column(UUID(as_uuid=True), primary_key=True, server_default=FetchedValue())
-    document_name = db.Column(db.String, nullable=False)
-    object_store_path = db.Column(db.String, nullable=False)
-
+    document_name = db.Column(db.String)
+    object_store_path = db.Column(db.String)
     upload_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
     active_ind = db.Column(db.Boolean, nullable=False, server_default=FetchedValue())
 
@@ -57,6 +60,17 @@ class PaymentDocument(AuditMixin, Base):
         agreement_number = application.agreement_number
         invoice_number = f'{agreement_number}-{payment_phase}-{amount_generated + 1}'
         return invoice_number
+
+    def upload_content_json(self):
+        document_name = f'{self.invoice_number}_{self.payment_document_type_code.lower()}.json'
+        file_path = f'{self.application.guid}/{self.payment_document_type_code.lower()}/{document_name}'
+        try:
+            self.object_store_path = ObjectStoreStorageService().upload_string(
+                self.content_json, file_path)
+            self.document_name = document_name
+            self.save()
+        except Exception as e:
+            raise Exception(f'Failed to upload the PRF: {e}')
 
     @classmethod
     def find_by_guid(cls, application_guid, document_guid):
