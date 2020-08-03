@@ -146,7 +146,7 @@ class Application(Base, AuditMixin):
                 if cw_data['work_id'] == work_id:
                     return cw_data
 
-    def calculate_est_shared_cost(self, contracted_work):
+    def calc_est_shared_cost(self, contracted_work):
         """Calculates the contracted work item's Estimated Shared Cost, which is half of the estimated cost \
             unless that value is $100,000 or more, then it is $100,000.
         """
@@ -163,26 +163,19 @@ class Application(Base, AuditMixin):
             for cw_type, cw_data in ws.get('contracted_work', {}).items():
                 if cw_data.get('contracted_work_status_code', None) != 'APPROVED':
                     continue
-                total_est_shared_cost += self.calculate_est_shared_cost(cw_data)
+                total_est_shared_cost += self.calc_est_shared_cost(cw_data)
         return total_est_shared_cost
 
     def calc_prf_phase_one_amount(self):
         """Calculates this application's payment phase one amount, which is 10% of the total estimated shared cost."""
 
-        return self.calc_total_est_shared_cost() / 10.0
+        return round(self.calc_total_est_shared_cost() * 0.10, 2)
 
-    def get_prf_invoice_number(self, payment_phase):
-        """Returns the Invoice Number used in PRFs for this application for the provided payment phase."""
+    def calc_est_shared_cost_interim_phase(self, contracted_work):
+        return round(self.calc_est_shared_cost(contracted_work) * 0.60, 2)
 
-        if payment_phase not in (1, 2, 3):
-            raise "Payment phase must be 1 (first), 2 (interim), or 3 (final)"
-
-        prf_doc_type = 'FIRST_PRF' if payment_phase == 1 else 'INTERIM_PRF' if payment_phase == 2 else 'FINAL_PRF'
-        amount_generated = sum(
-            map(lambda doc: doc.payment_document_type_code == prf_doc_type, self.payment_documents))
-
-        invoice_number = f'{self.agreement_number}-{payment_phase}-{amount_generated + 1}'
-        return invoice_number
+    def calc_est_shared_cost_final_phase(self, contracted_work):
+        return round(self.calc_est_shared_cost(contracted_work) * 0.30, 2)
 
     @hybrid_property
     def shared_cost_agreement_template_json(self):
@@ -225,7 +218,7 @@ class Application(Base, AuditMixin):
                 site = f'\nWell Authorization Number: {wan}\n'
                 site += f' Eligible Activities as described in Application: {worktype.replace("_"," ").capitalize()}\n'
                 site += f' Applicant\'s Estimated Cost: {"${:,.2f}".format(wt_details.get("contracted_work_total"))}\n'
-                site += f' Provincial Financial Contribution: {"${:,.2f}".format(self.calculate_est_shared_cost(wt_details))}\n'
+                site += f' Provincial Financial Contribution: {"${:,.2f}".format(self.calc_est_shared_cost(wt_details))}\n'
                 site += f' Planned Start Date: {wt_details["planned_start_date"]}\n'
                 site += f' Planned End Date: {wt_details["planned_end_date"]}\n'
                 result['formatted_well_sites'] += site

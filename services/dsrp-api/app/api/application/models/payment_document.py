@@ -3,7 +3,6 @@ import json
 from sqlalchemy.dialects.postgresql import UUID, ARRAY
 from sqlalchemy.schema import FetchedValue
 from datetime import datetime
-from pytz import timezone
 from marshmallow import fields
 from werkzeug.exceptions import NotImplemented
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -83,8 +82,7 @@ class PaymentDocument(AuditMixin, Base):
         po_number = company_info.po_number
         qualified_receiver_name = company_info.qualified_receiver_name
         expense_authority_name = company_info.expense_authority_name
-        date_payment_authorized = datetime.utcnow().astimezone(
-            timezone('US/Pacific')).strftime('%B %-d, %Y')
+        date_payment_authorized = datetime.now().strftime('%B %-d, %Y')
         content_json = {
             'document_type': payment_document_phase,
             'invoice_number': self.invoice_number,
@@ -120,12 +118,12 @@ class PaymentDocument(AuditMixin, Base):
             content_json['payment_details'].append(generate_payment_detail(unique_id, amount))
 
         elif payment_document_phase in ('INTERIM_PRF', 'FINAL_PRF'):
+            calc_cost = self.application.calc_est_shared_cost_interim_phase if payment_document_phase == 'INTERIM_PRF' else self.application.calc_est_shared_cost_final_phase
             for work_id in self.work_ids:
                 work = self.application.find_contracted_work_by_id(work_id)
                 if not work:
                     raise Exception(f'Work ID {work_id} does not exist on this application!')
-                # TODO: Calculate actual correct amount for these phases (e.g., 60%, 30%)
-                amount = work['contracted_work_total']
+                amount = calc_cost(work)
                 unique_id = generate_unique_id(work_id)
                 content_json['payment_details'].append(generate_payment_detail(unique_id, amount))
 
