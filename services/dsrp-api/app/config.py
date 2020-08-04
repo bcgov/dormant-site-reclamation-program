@@ -8,8 +8,7 @@ if ENV_FILE:
 
 class Config(object):
     # Environment config
-    FLASK_LOGGING_LEVEL = os.environ.get('FLASK_LOGGING_LEVEL',
-                                         'INFO')  # ['DEBUG','INFO','WARN','ERROR','CRITICAL']
+    FLASK_LOGGING_LEVEL = os.environ.get('FLASK_LOGGING_LEVEL', 'INFO')
 
     LOGGING_DICT_CONFIG = {
         'version': 1,
@@ -49,7 +48,8 @@ class Config(object):
     JWT_OIDC_AUDIENCE = os.environ.get('JWT_OIDC_AUDIENCE', 'dsrp')
     JWT_OIDC_ALGORITHMS = os.environ.get('JWT_OIDC_ALGORITHMS', 'RS256')
 
-    BUNDLE_ERRORS = True  #RequestParser global config
+    # RequestParser global config
+    BUNDLE_ERRORS = True     
 
     def JWT_ROLE_CALLBACK(jwt_dict):
         return (jwt_dict['realm_access']['roles'])
@@ -77,9 +77,10 @@ class Config(object):
     # OrgBook
     ORGBOOK_API_URL = os.environ.get('ORGBOOK_API_URL', 'https://orgbook.gov.bc.ca/api/v2/')
 
-    #Doc Gen
+    # Document generation
     DOCUMENT_GENERATOR_URL = os.environ.get('DOCUMENT_GENERATOR_URL', 'http://docgen-api:3030')
-    # Document hosting settings
+
+    # Document storage
     OBJECT_STORE_ENABLED = os.environ.get('OBJECT_STORE_ENABLED', False)
     OBJECT_STORE_HOST = os.environ.get('OBJECT_STORE_HOST', '')
     OBJECT_STORE_ACCESS_KEY_ID = os.environ.get('OBJECT_STORE_ACCESS_KEY_ID', '')
@@ -87,12 +88,15 @@ class Config(object):
     OBJECT_STORE_BUCKET = os.environ.get('OBJECT_STORE_BUCKET', '')
     S3_PREFIX = os.environ.get('S3_PREFIX', 'dsrp-applications/')
 
-    #SMTP
+    # SMTP
     SMTP_CRED_HOST = os.environ.get('SMTP_CRED_HOST', None)
     SMTP_ENABLED = SMTP_CRED_HOST is not None
     SMTP_CRED = {'host': SMTP_CRED_HOST, 'port': 25, 'user': None, 'pwrd': None}
+
+    # Email
     PROGRAM_EMAIL = 'DormantSite.BC.Government@gov.bc.ca'
-    FINANCE_EMAIL = os.environ.get('FINANCE_EMAIL', None)
+    PRF_FROM_EMAIL = os.environ.get('PRF_FROM_EMAIL', None)
+    PRF_TO_EMAIL = os.environ.get('PRF_TO_EMAIL', None)
 
     URL = os.environ.get('URL', 'http://dormant-site-reclamation.gov.bc.ca/')
 
