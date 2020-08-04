@@ -49,7 +49,7 @@ class Config(object):
     JWT_OIDC_ALGORITHMS = os.environ.get('JWT_OIDC_ALGORITHMS', 'RS256')
 
     # RequestParser global config
-    BUNDLE_ERRORS = True     
+    BUNDLE_ERRORS = True
 
     def JWT_ROLE_CALLBACK(jwt_dict):
         return (jwt_dict['realm_access']['roles'])
@@ -65,7 +65,7 @@ class Config(object):
     CACHE_REDIS_URL = 'redis://:{0}@{1}:{2}'.format(CACHE_REDIS_PASS, CACHE_REDIS_HOST,
                                                     CACHE_REDIS_PORT)
 
-    #removing flask restplus default header mask for swagger.
+    # Removing flask restplus default header mask for swagger.
     RESTPLUS_MASK_SWAGGER = False
 
     # Constant config
@@ -113,8 +113,8 @@ class TestConfig(Config):
     JWT_OIDC_TEST_AUDIENCE = "test_audience"
     JWT_OIDC_TEST_CLIENT_SECRET = "test_secret"
     JWT_OIDC_TEST_ISSUER = "test_issuer"
-    # Dummy Private Keys for testing purposes, can replace these keys with any other generated key.
 
+    # Dummy Private Keys for testing purposes, can replace these keys with any other generated key.
     JWT_OIDC_TEST_KEYS = {
         "keys": [{
             "kid": "flask-jwt-oidc-test-client",
@@ -126,6 +126,7 @@ class TestConfig(Config):
             "e": "AQAB"
         }]
     }
+
     # Dummy Private Keys for testing purposes.
     JWT_OIDC_TEST_PRIVATE_KEY_JWKS = {
         "keys": [{
@@ -157,6 +158,7 @@ class TestConfig(Config):
             "XLE5O360x-MhsdFXx8Vwz4304-MJg-oGSJXCK_ZWYOB_FGXFRTfebxCsSYi0YwJo-oNu96bvZCuMplzRI1liZw"
         }]
     }
+
     # Dummy Private Key, for testing purposes.
     JWT_OIDC_TEST_PRIVATE_KEY_PEM = """
 -----BEGIN RSA PRIVATE KEY-----
