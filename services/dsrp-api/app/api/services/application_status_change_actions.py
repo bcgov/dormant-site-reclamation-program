@@ -6,6 +6,7 @@ from werkzeug.exceptions import BadGateway, InternalServerError
 
 from app.extensions import db
 from app.api.application.models.payment_document import PaymentDocument
+from app.api.services.email_service import EmailService
 
 
 def determine_application_status_change_action(application):
@@ -35,5 +36,9 @@ def action_first_pay_approved(application):
     except Exception as e:
         raise InternalServerError(f'Failed to create the PRF: {e}')
 
-    # Send an email to the required address containing this PRF
-    # TODO: Implement
+    # Send the PRF document
+    try:
+        with EmailService() as es:
+            es.send_payment_document_to_finance(doc)
+    except Exception as e:
+        raise InternalServerError(f'Failed to send the PRF: {e}')
