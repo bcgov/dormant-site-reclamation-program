@@ -25,14 +25,14 @@ class PaymentDocument(AuditMixin, Base):
 
         def create_invoice_number(application):
             amount_generated = sum(
-                map(lambda doc: doc.payment_document_type_code == self.payment_document_type_code,
+                map(lambda doc: doc.payment_document_code == self.payment_document_code,
                     application.payment_documents))
             payment_phase = None
-            if self.payment_document_type_code == 'FIRST_PRF':
+            if self.payment_document_code == 'FIRST_PRF':
                 payment_phase = 1
-            elif self.payment_document_type_code == 'INTERIM_PRF':
+            elif self.payment_document_code == 'INTERIM_PRF':
                 payment_phase = 2
-            elif self.payment_document_type_code == 'FINAL_PRF':
+            elif self.payment_document_code == 'FINAL_PRF':
                 payment_phase = 3
             else:
                 raise Exception('Unknown payment document phase')
@@ -41,8 +41,8 @@ class PaymentDocument(AuditMixin, Base):
             return invoice_number
 
         def upload_content_json():
-            document_name = f'{self.invoice_number}_{self.payment_document_type_code.lower()}.json'
-            file_path = f'{self.application.guid}/{self.payment_document_type_code.lower()}/{document_name}'
+            document_name = f'{self.invoice_number}_{self.payment_document_code.lower()}.json'
+            file_path = f'{self.application.guid}/{self.payment_document_code.lower()}/{document_name}'
             try:
                 self.object_store_path = ObjectStoreStorageService().upload_string(
                     self.content_json, file_path)
@@ -67,7 +67,7 @@ class PaymentDocument(AuditMixin, Base):
     active_ind = db.Column(db.Boolean, nullable=False, server_default=FetchedValue())
 
     invoice_number = db.Column(db.String, nullable=False)
-    payment_document_type_code = db.Column(
+    payment_document_code = db.Column(
         db.String, db.ForeignKey('payment_document_type.payment_document_code'), nullable=False)
     work_ids = db.Column(ARRAY(db.String))
 
@@ -91,7 +91,7 @@ class PaymentDocument(AuditMixin, Base):
             raise Exception('Essential company payment data is missing')
 
         # Create the general PRF data
-        payment_document_phase = self.payment_document_type_code
+        payment_document_phase = self.payment_document_code
         supplier_name = self.application.company_name
         supplier_address = company_info.company_address
         po_number = company_info.po_number
@@ -120,7 +120,7 @@ class PaymentDocument(AuditMixin, Base):
 
         def generate_unique_id(work_id=None):
             unique_id = self.invoice_number
-            if (self.payment_document_type_code != 'FIRST_PRF'):
+            if (self.payment_document_code != 'FIRST_PRF'):
                 # Remove the application part of the work ID, e.g., "18.16" becomes "16"
                 work_number = work_id.split('.')[1]
                 unique_id += f'-{work_number}'

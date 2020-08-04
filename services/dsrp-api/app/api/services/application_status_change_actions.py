@@ -31,7 +31,7 @@ def action_first_pay_approved(application):
 
     # Create the PRF document
     try:
-        doc = PaymentDocument(application=application, payment_document_type_code='FIRST_PRF')
+        doc = PaymentDocument(application=application, payment_document_code='FIRST_PRF')
     except Exception as e:
         raise InternalServerError(f'Failed to create the PRF: {e}')
 

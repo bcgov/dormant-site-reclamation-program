@@ -6,6 +6,6 @@ export const paymentDocuments = shape({
   object_store_path: PropTypes.string.isRequired,
   document_name: PropTypes.string.isRequired,
   active_ind: PropTypes.bool.isRequired,
-  payment_document_type_code: PropTypes.string.isRequired,
+  payment_document_code: PropTypes.string.isRequired,
   invoice_number: PropTypes.string.isRequired,
 });
