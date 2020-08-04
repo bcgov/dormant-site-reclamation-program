@@ -251,7 +251,7 @@ class Application(Base, AuditMixin):
                         desc(ApplicationStatusChange.change_date)).limit(1).as_scalar(),
             'NOT_STARTED')
 
-    def send_confirmation_email(self, email_service):
+    def send_confirmation_email(self):
         html_content = f"""
             <p>
                 We have successfully received your application in the British Columbia Dormant Sites Reclamation Program.
