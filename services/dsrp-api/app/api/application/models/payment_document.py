@@ -1,3 +1,4 @@
+import io
 import json
 
 from sqlalchemy.dialects.postgresql import UUID, ARRAY
@@ -11,6 +12,8 @@ from app.extensions import db
 from app.api.utils.models_mixins import AuditMixin, Base
 from app.api.company_payment_info.models import CompanyPaymentInfo
 from app.api.services.object_store_storage_service import ObjectStoreStorageService
+from app.api.services.email_service import EmailService
+from app.config import Config
 
 
 class PaymentDocument(AuditMixin, Base):
@@ -80,18 +83,57 @@ class PaymentDocument(AuditMixin, Base):
             active_ind=True).first()
 
     @hybrid_property
+    def company_info(self):
+        company_info = CompanyPaymentInfo.find_by_company_name(self.application.company_name)
+        if not company_info:
+            raise Exception('Essential company payment info is missing')
+        return company_info
+
+    @hybrid_property
+    def payment_details(self):
+        def create_payment_detail(unique_id, amount):
+            return {
+                'agreement_number': self.application.agreement_number,
+                'unique_id': unique_id,
+                'amount': amount
+            }
+
+        def create_unique_id(work_id=None):
+            unique_id = self.invoice_number
+            if (self.payment_document_code != 'FIRST_PRF'):
+                # Remove the application part of the work ID, e.g., "18.16" becomes "16"
+                work_number = work_id.split('.')[1]
+                unique_id += f'-{work_number}'
+            return unique_id
+
+        payment_details = []
+        if self.payment_document_code == 'FIRST_PRF':
+            amount = self.application.calc_prf_phase_one_amount()
+            unique_id = create_unique_id()
+            payment_details.append(create_payment_detail(unique_id, amount))
+
+        elif self.payment_document_code in ('INTERIM_PRF', 'FINAL_PRF'):
+            calc_cost = self.application.calc_est_shared_cost_interim_phase if self.payment_document_code == 'INTERIM_PRF' else self.application.calc_est_shared_cost_final_phase
+            for work_id in self.work_ids:
+                work = self.application.find_contracted_work_by_id(work_id)
+                if not work:
+                    raise Exception(f'Work ID {work_id} does not exist on this application!')
+                amount = calc_cost(work)
+                unique_id = create_unique_id(work_id)
+                payment_details.append(create_payment_detail(unique_id, amount))
+        else:
+            raise Exception('Unknown payment document phase')
+
+        return payment_details
+
+    @hybrid_property
     def content_json(self):
         # The application must have at least one reviewed contracted work item
         if not self.application.review_json:
             raise Exception('Application has no approved contracted work items')
 
-        # Get critical company payment info for generating the PRF data
-        company_info = CompanyPaymentInfo.find_by_company_name(self.application.company_name)
-        if not company_info:
-            raise Exception('Essential company payment data is missing')
-
-        # Create the general PRF data
-        payment_document_phase = self.payment_document_code
+        # Create the PRF data
+        company_info = self.company_info
         supplier_name = self.application.company_name
         supplier_address = company_info.company_address
         po_number = company_info.po_number
@@ -99,7 +141,7 @@ class PaymentDocument(AuditMixin, Base):
         expense_authority_name = company_info.expense_authority_name
         date_payment_authorized = datetime.now().strftime('%B %-d, %Y')
         content_json = {
-            'document_type': payment_document_phase,
+            'document_type': self.payment_document_code,
             'invoice_number': self.invoice_number,
             'supplier_name': supplier_name,
             'supplier_address': supplier_address,
@@ -108,41 +150,11 @@ class PaymentDocument(AuditMixin, Base):
             'qualified_receiver_name': qualified_receiver_name,
             'date_payment_authorized': date_payment_authorized,
             'expense_authority_name': expense_authority_name,
-            'payment_details': []
+            'payment_details': self.payment_details
         }
 
-        def generate_payment_detail(unique_id, amount):
-            return {
-                'agreement_number': self.application.agreement_number,
-                'unique_id': unique_id,
-                'amount': amount
-            }
-
-        def generate_unique_id(work_id=None):
-            unique_id = self.invoice_number
-            if (self.payment_document_code != 'FIRST_PRF'):
-                # Remove the application part of the work ID, e.g., "18.16" becomes "16"
-                work_number = work_id.split('.')[1]
-                unique_id += f'-{work_number}'
-            return unique_id
-
-        # Create the PRF payment details data
-        if payment_document_phase == 'FIRST_PRF':
-            amount = self.application.calc_prf_phase_one_amount()
-            unique_id = generate_unique_id()
-            content_json['payment_details'].append(generate_payment_detail(unique_id, amount))
-
-        elif payment_document_phase in ('INTERIM_PRF', 'FINAL_PRF'):
-            calc_cost = self.application.calc_est_shared_cost_interim_phase if payment_document_phase == 'INTERIM_PRF' else self.application.calc_est_shared_cost_final_phase
-            for work_id in self.work_ids:
-                work = self.application.find_contracted_work_by_id(work_id)
-                if not work:
-                    raise Exception(f'Work ID {work_id} does not exist on this application!')
-                amount = calc_cost(work)
-                unique_id = generate_unique_id(work_id)
-                content_json['payment_details'].append(generate_payment_detail(unique_id, amount))
-
-        else:
-            raise Exception('Unknown payment document phase')
-
         return json.dumps(content_json, indent=4)
+
+    @hybrid_property
+    def content_json_as_bytes(self):
+        return io.BytesIO(bytearray(self.content_json, 'utf-8'))

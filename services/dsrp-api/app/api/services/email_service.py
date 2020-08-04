@@ -50,16 +50,40 @@ class EmailService():
         if not application.applicant_email:
             raise Exception('Application does not have the applicant email set!')
 
-        html_body = self.create_applicant_email_body(application, html_content)
-        to_email = application.applicant_email
         from_email = Config.PROGRAM_EMAIL
+        to_email = application.applicant_email    
         signature = f'<p>Email {Config.PROGRAM_EMAIL} with this reference number if you have questions about your application.</p>'
+        html_body = self.create_applicant_email_body(application, html_content)
+
         self.send_email(to_email, from_email, subject, html_body, signature, attachment, filename)
 
-    def send_payment_request_form(self, application, subject, html_content, attachment=None, filename=None):
-        pass
+    def send_payment_document_to_finance(self, doc):
+        if not Config.PRF_FROM_EMAIL or not Config.PRF_TO_EMAIL:
+            raise Exception('Email addresses required for emailing finance are not set!')
 
-    def send_email(self, to_email, from_email, subject, html_body, signature, attachment=None, filename=None):
+        from_email = Config.PRF_FROM_EMAIL
+        to_email = Config.PRF_TO_EMAIL
+
+        company_info = doc.company_info
+        subject = f'{doc.invoice_number} {company_info.po_number} {doc.application.agreement_number}'
+
+        payment_details = doc.payment_details
+        payment_details_html = None
+        if doc.payment_document_code == 'FIRST_PRF':
+            payment_details_html = payment_details[0]['amount']
+        else:
+            payment_details_html = '<br />'
+            for payment_detail in payment_details:
+                payment_details_html += f'{payment_detail["agreement_number"]} | {payment_detail["unique_id"]} | {payment_detail["amount"]}<br />'
+
+        html_body = f'<p>{company_info.po_number} {company_info.supplier_name} {doc.invoice_number} {payment_details_html}</p>'
+
+        attachment = doc.content_json_as_bytes
+        filename = doc.document_name
+
+        self.send_email(to_email, from_email, subject, html_body, None, attachment, filename)
+
+    def send_email(self, to_email, from_email, subject, html_body, signature=None, attachment=None, filename=None):
         if Config.SMTP_ENABLED and not self.smtp:
             raise InternalServerError('Email service is enabled but failed to connect to the SMTP server!')
         elif not Config.SMTP_ENABLED:
