@@ -1,7 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Table } from "antd";
-import { formatDateTime, truncateFilename } from "@/utils/helpers";
+import {
+  formatDateTime,
+  truncateFilename,
+  dateSorter,
+  nullableStringSorter,
+} from "@/utils/helpers";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import * as Strings from "@/constants/strings";
 import CustomPropTypes from "@/customPropTypes";
@@ -18,6 +23,7 @@ export const DocumentTable = (props) => {
     {
       title: "File name",
       dataIndex: "document_name",
+      sorter: nullableStringSorter("document_name"),
       render: (text, record) => {
         return (
           <div title="File name">
@@ -40,12 +46,14 @@ export const DocumentTable = (props) => {
     {
       title: "Upload date",
       dataIndex: "upload_date",
+      sorter: dateSorter("upload_date"),
       render: (text) => (
         <div title="Upload date">{formatDateTime(text) || Strings.EMPTY_FIELD}</div>
       ),
     },
   ];
 
+  const documents = props.documents.sort(dateSorter("upload_date"));
   return (
     <div>
       <Table
@@ -54,7 +62,7 @@ export const DocumentTable = (props) => {
         columns={columns}
         rowKey={(record) => record.mine_document_guid}
         locale={{ emptyText: "This application does not contain any documents." }}
-        dataSource={props.documents}
+        dataSource={documents}
       />
     </div>
   );
