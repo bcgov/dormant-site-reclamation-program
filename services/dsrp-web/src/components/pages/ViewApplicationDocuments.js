@@ -6,10 +6,10 @@ import { DocumentTable } from "@/components/common/DocumentTable";
 import { downloadGeneratedApplicationLetter } from "@/utils/actionlessNetworkCalls";
 import LinkButton from "@/components/common/LinkButton";
 
+const { Title } = Typography;
 
-const { Title, Text } = Typography;
 const propTypes = {
-  application_guid: PropTypes.string,
+  application_guid: PropTypes.string.isRequired,
   documents: PropTypes.arrayOf(document).isRequired,
 };
 
@@ -19,16 +19,12 @@ export const ViewApplicationDocuments = (props) => (
       Documents
     </Title>
     <LinkButton
-              title='shared_cost_agreement'
-              onClick={() =>
-                downloadGeneratedApplicationLetter(
-                  props.application_guid,
-                )
-              }
+      title="shared_cost_agreement"
+      onClick={() => downloadGeneratedApplicationLetter(props.application_guid)}
     >
       Shared Cost Agreement Letter Draft
     </LinkButton>
-    <DocumentTable {...props} />
+    <DocumentTable application_guid={props.application_guid} documents={props.documents} />
   </>
 );
 

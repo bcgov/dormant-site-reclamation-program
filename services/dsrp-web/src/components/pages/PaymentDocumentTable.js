@@ -1,7 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Table, Popconfirm, Button, Icon, Typography } from "antd";
-import { formatDateTime, truncateFilename } from "@/utils/helpers";
+import {
+  formatDateTime,
+  truncateFilename,
+  dateSorter,
+  nullableStringSorter,
+} from "@/utils/helpers";
 import { downloadPaymentDocument } from "@/utils/actionlessNetworkCalls";
 import * as Strings from "@/constants/strings";
 import CustomPropTypes from "@/customPropTypes";
@@ -11,7 +16,7 @@ import AuthorizationWrapper from "@/components/common/wrappers/AuthorizationWrap
 const { Title } = Typography;
 
 const propTypes = {
-  documents: PropTypes.arrayOf(CustomPropTypes.document).isRequired,
+  documents: PropTypes.arrayOf(CustomPropTypes.paymentDocument).isRequired,
   // eslint-disable-next-line react/no-unused-prop-types
   application_guid: PropTypes.string.isRequired,
   // eslint-disable-next-line react/no-unused-prop-types
@@ -25,6 +30,7 @@ export const PaymentDocumentTable = (props) => {
     {
       title: "File name",
       dataIndex: "document_name",
+      sorter: nullableStringSorter("document_name"),
       render: (text, record) => {
         return (
           <div title="File name">
@@ -45,11 +51,22 @@ export const PaymentDocumentTable = (props) => {
       },
     },
     {
+      title: "Invoice number",
+      dataIndex: "invoice_number",
+      render: (text) => <div title="Invoice number">{text || Strings.EMPTY_FIELD}</div>,
+    },
+    {
       title: "Upload date",
       dataIndex: "upload_date",
+      sorter: dateSorter("upload_date"),
       render: (text) => (
         <div title="Upload date">{formatDateTime(text) || Strings.EMPTY_FIELD}</div>
       ),
+    },
+    {
+      title: "Created by",
+      dataIndex: "create_user",
+      render: (text) => <div title="Create user">{text || Strings.EMPTY_FIELD}</div>,
     },
     {
       title: "",
@@ -57,7 +74,6 @@ export const PaymentDocumentTable = (props) => {
       dataIndex: "handleEditModal",
       render: (text, record) => (
         <div align="right" className="btn--middle flex">
-          {/* TODO may be add admin permission check */}
           <AuthorizationWrapper>
             <Popconfirm
               placement="topLeft"

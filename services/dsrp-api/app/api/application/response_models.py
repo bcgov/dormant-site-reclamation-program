@@ -36,7 +36,8 @@ PAYMENT_DOCUMENT = api.model(
         'document_name': fields.String,
         'upload_date': fields.DateTime,
         'payment_document_code': fields.String,
-        'invoice_number': fields.String
+        'invoice_number': fields.String,
+        'create_user': fields.String
     })
 
 APPLICATION_DOCUMENT_LIST = api.model(

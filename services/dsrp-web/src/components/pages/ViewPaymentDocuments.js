@@ -1,7 +1,8 @@
 import React from "react";
 import { Typography } from "antd";
 import PropTypes from "prop-types";
-import { paymentDocuments } from "@/customPropTypes/paymentDocuments";
+import { dateSorter } from "@/utils/helpers";
+import CustomPropTypes from "@/customPropTypes";
 import { PaymentDocumentTable } from "@/components/pages/PaymentDocumentTable";
 import { PAYMENT_DOCUMENT_TYPES } from "@/constants/paymentDocumentTypes";
 
@@ -9,17 +10,18 @@ const { Title } = Typography;
 
 const propTypes = {
   application_guid: PropTypes.string.isRequired,
-  documents: PropTypes.arrayOf(paymentDocuments).isRequired,
+  documents: PropTypes.arrayOf(CustomPropTypes.paymentDocument).isRequired,
 };
 
 export const ViewPaymentDocuments = (props) => {
-  const firstPhasePaymentDocs = props.documents.filter(
+  const paymentDocuments = props.documents.sort(dateSorter("upload_date"));
+  const firstPhasePaymentDocs = paymentDocuments.filter(
     (doc) => doc.payment_document_code === PAYMENT_DOCUMENT_TYPES.FIRST_PRF
   );
-  const interimPhasePaymentDocs = props.documents.filter(
+  const interimPhasePaymentDocs = paymentDocuments.filter(
     (doc) => doc.payment_document_code === PAYMENT_DOCUMENT_TYPES.INTERIM_PRF
   );
-  const finalPhasePaymentDocs = props.documents.filter(
+  const finalPhasePaymentDocs = paymentDocuments.filter(
     (doc) => doc.payment_document_code === PAYMENT_DOCUMENT_TYPES.FINAL_PRF
   );
   return (
