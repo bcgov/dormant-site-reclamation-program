@@ -50,7 +50,7 @@ const defaultProps = {
 const { Title } = Typography;
 
 export class ViewApplicationPage extends Component {
-  state = { isLoaded: false, editApplication: false };
+  state = { isLoaded: false, editApplication: false, activeTab: "application" };
 
   componentDidMount() {
     this.handleGetApplication();
@@ -132,6 +132,8 @@ export class ViewApplicationPage extends Component {
     </Button>
   );
 
+  handleTabClick = (key) => this.setState({ activeTab: key });
+
   render() {
     return (
       <>
@@ -151,8 +153,8 @@ export class ViewApplicationPage extends Component {
             </Row>
             <Row type="flex" justify="center" align="top" className="landing-header">
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-                <Tabs type="card">
-                  <TabPane tab="Application" key="1" style={{ padding: "20px" }}>
+                <Tabs type="card" activeKey={this.state.activeTab} onTabClick={this.handleTabClick}>
+                  <TabPane tab="Application" key="application" style={{ padding: "20px" }}>
                     {this.renderAdminEditButton()}
                     <ViewOnlyApplicationForm
                       isViewingSubmission
@@ -163,7 +165,7 @@ export class ViewApplicationPage extends Component {
                   </TabPane>
                   <TabPane
                     tab={`Documents (${this.props.application.documents.length})`}
-                    key="2"
+                    key="application_documents"
                     style={{ padding: "20px" }}
                   >
                     <ViewApplicationDocuments
@@ -178,7 +180,7 @@ export class ViewApplicationPage extends Component {
                   </TabPane>
                   <TabPane
                     tab={`Payment Request Forms (${this.props.application.payment_documents.length})`}
-                    key="3"
+                    key="payment_documents"
                     style={{ padding: "20px" }}
                   >
                     <ViewPaymentDocuments
