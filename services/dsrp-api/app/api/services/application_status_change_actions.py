@@ -41,4 +41,5 @@ def action_first_pay_approved(application):
         with EmailService() as es:
             es.send_payment_document_to_finance(doc)
     except Exception as e:
+        doc.delete()
         raise InternalServerError(f'Failed to send the PRF: {e}')
