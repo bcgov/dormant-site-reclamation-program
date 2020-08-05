@@ -34,7 +34,7 @@ class ApplicationStatusChange(Base, AuditMixin):
                 The status of your application has been changed to <b>{self.application_status.description}</b> with the following note:
 				<br />
                 <br />
-                <span>&nbsp;&nbsp;&nbsp;&nbsp;{self.note}</span>
+                <span style='margin-left: 10px'>{self.note}</span>
 				<br />
                 <br />
                 <a href='{Config.URL}/view-application-status/{self.application_guid}'>Click here to view the status of your application.</a>

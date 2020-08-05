@@ -5,9 +5,9 @@ from app.api.utils.models_mixins import Base, AuditMixin
 
 
 class PaymentDocumentType(Base, AuditMixin):
-    __tablename__ = "payment_document_type"
+    __tablename__ = 'payment_document_type'
 
-    payment_document_code = db.Column(db.String, nullable=False, primary_key=True)
+    payment_document_code = db.Column(db.String, primary_key=True)
     description = db.Column(db.String, nullable=False)
     long_description = db.Column(db.String)
     active = db.Column(db.Boolean, nullable=False, server_default=FetchedValue())

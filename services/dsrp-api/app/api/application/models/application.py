@@ -45,7 +45,7 @@ class Application(Base, AuditMixin):
         'PaymentDocument',
         lazy='select',
         primaryjoin=
-        'and_(PaymentDocument.application_guid == Application.guid, PaymentDocument.active_ind == True )'
+        'and_(PaymentDocument.application_guid == Application.guid, PaymentDocument.active_ind == True)'
     )
 
     status_changes = db.relationship(

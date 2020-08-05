@@ -75,6 +75,7 @@ class PaymentDocument(AuditMixin, Base):
     work_ids = db.Column(ARRAY(db.String))
 
     application = db.relationship('Application')
+    payment_document_type = db.relationship('PaymentDocumentType')
 
     @classmethod
     def find_by_guid(cls, application_guid, document_guid):
