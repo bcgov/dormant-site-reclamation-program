@@ -20,7 +20,7 @@ APPLICATION_DOCUMENT = api.model(
     "ApplicationDocument", {
         'application_document_guid': fields.String,
         'document_name': fields.String,
-        'upload_date': fields.Date,
+        'upload_date': fields.DateTime,
     })
 
 PAYMENT_DOCUMENT_TYPE = api.model(
@@ -34,7 +34,7 @@ PAYMENT_DOCUMENT = api.model(
     "PaymentDocument", {
         'document_guid': fields.String,
         'document_name': fields.String,
-        'upload_date': fields.Date,
+        'upload_date': fields.DateTime,
         'payment_document_code': fields.String,
         'invoice_number': fields.String
     })
