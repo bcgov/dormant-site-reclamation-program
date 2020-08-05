@@ -131,11 +131,6 @@ class PaymentDocument(AuditMixin, Base):
 
     @hybrid_property
     def content_json(self):
-        # The application must have at least one reviewed contracted work item
-        if not self.application.review_json:
-            raise Exception('Application has no approved contracted work items')
-
-        # Create the PRF data
         company_info = self.company_info
         supplier_name = self.application.company_name
         supplier_address = company_info.company_address
@@ -143,6 +138,7 @@ class PaymentDocument(AuditMixin, Base):
         qualified_receiver_name = company_info.qualified_receiver_name
         expense_authority_name = company_info.expense_authority_name
         date_payment_authorized = datetime.now().strftime('%B %-d, %Y')
+
         content_json = {
             'document_type': self.payment_document_code,
             'invoice_number': self.invoice_number,
