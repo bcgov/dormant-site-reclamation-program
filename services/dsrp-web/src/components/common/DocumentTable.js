@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Table } from "antd";
-import { formatDate, truncateFilename } from "@/utils/helpers";
+import { formatDateTime, truncateFilename } from "@/utils/helpers";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import * as Strings from "@/constants/strings";
 import CustomPropTypes from "@/customPropTypes";
@@ -9,11 +9,8 @@ import LinkButton from "@/components/common/LinkButton";
 
 const propTypes = {
   documents: PropTypes.arrayOf(CustomPropTypes.document).isRequired,
-  application_guid: PropTypes.string,
-};
-
-const defaultProps = {
-  documents: [],
+  // eslint-disable-next-line react/no-unused-prop-types
+  application_guid: PropTypes.string.isRequired,
 };
 
 export const DocumentTable = (props) => {
@@ -43,7 +40,9 @@ export const DocumentTable = (props) => {
     {
       title: "Upload date",
       dataIndex: "upload_date",
-      render: (text) => <div title="Upload date">{formatDate(text) || Strings.EMPTY_FIELD}</div>,
+      render: (text) => (
+        <div title="Upload date">{formatDateTime(text) || Strings.EMPTY_FIELD}</div>
+      ),
     },
   ];
 
@@ -62,6 +61,5 @@ export const DocumentTable = (props) => {
 };
 
 DocumentTable.propTypes = propTypes;
-DocumentTable.defaultProps = defaultProps;
 
 export default DocumentTable;

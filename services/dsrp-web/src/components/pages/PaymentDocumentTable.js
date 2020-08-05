@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Table, Popconfirm, Button, Icon, Typography } from "antd";
-import { formatDate, truncateFilename } from "@/utils/helpers";
+import { formatDateTime, truncateFilename } from "@/utils/helpers";
 import { downloadPaymentDocument } from "@/utils/actionlessNetworkCalls";
 import * as Strings from "@/constants/strings";
 import CustomPropTypes from "@/customPropTypes";
@@ -12,9 +12,9 @@ const { Title } = Typography;
 
 const propTypes = {
   documents: PropTypes.arrayOf(CustomPropTypes.document).isRequired,
-  // eslint-disable-next-line
+  // eslint-disable-next-line react/no-unused-prop-types
   application_guid: PropTypes.string.isRequired,
-  // eslint-disable-next-line
+  // eslint-disable-next-line react/no-unused-prop-types
   onDocumentDelete: PropTypes.func.isRequired,
   emptyText: PropTypes.string.isRequired,
   tableTitle: PropTypes.string.isRequired,
@@ -47,7 +47,9 @@ export const PaymentDocumentTable = (props) => {
     {
       title: "Upload date",
       dataIndex: "upload_date",
-      render: (text) => <div title="Upload date">{formatDate(text) || Strings.EMPTY_FIELD}</div>,
+      render: (text) => (
+        <div title="Upload date">{formatDateTime(text) || Strings.EMPTY_FIELD}</div>
+      ),
     },
     {
       title: "",
