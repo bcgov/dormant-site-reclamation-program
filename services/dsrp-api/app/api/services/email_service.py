@@ -6,6 +6,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 
+from app.api.utils.include.user_info import User
 from app.config import Config
 
 
@@ -46,12 +47,17 @@ class EmailService():
 
         self.smtp.quit()
 
-    def send_email_to_applicant(self, application, subject, html_content, attachment=None, filename=None):
+    def send_email_to_applicant(self,
+                                application,
+                                subject,
+                                html_content,
+                                attachment=None,
+                                filename=None):
         if not application.applicant_email:
             raise Exception('Application does not have the applicant email set!')
 
         from_email = Config.PROGRAM_EMAIL
-        to_email = application.applicant_email    
+        to_email = application.applicant_email
         signature = f'<p>Email {Config.PROGRAM_EMAIL} with this reference number if you have questions about your application.</p>'
         html_body = self.create_applicant_email_body(application, html_content)
 
@@ -62,7 +68,14 @@ class EmailService():
             current_app.logger.warning('Email addresses required for emailing finance are not set!')
 
         from_email = Config.PRF_FROM_EMAIL
+
+        # For more useful testing purposes, if this value is not set, use the email of the current user
         to_email = Config.PRF_TO_EMAIL
+        if not to_email:
+            to_email = User().get_user_email()
+            current_app.logger.warning(
+                f'Finance recipient email is not set! Using the email of the current user instead: {to_email}'
+            )
 
         company_info = doc.company_info
         doc_title = doc.payment_document_type.description
@@ -85,9 +98,17 @@ class EmailService():
 
         self.send_email(to_email, from_email, subject, html_body, '', attachment, filename)
 
-    def send_email(self, to_email, from_email, subject, html_body, signature=None, attachment=None, filename=None):
+    def send_email(self,
+                   to_email,
+                   from_email,
+                   subject,
+                   html_body,
+                   signature=None,
+                   attachment=None,
+                   filename=None):
         if Config.SMTP_ENABLED and not self.smtp:
-            raise InternalServerError('Email service is enabled but failed to connect to the SMTP server!')
+            raise InternalServerError(
+                'Email service is enabled but failed to connect to the SMTP server!')
         elif not Config.SMTP_ENABLED:
             current_app.logger.warning('Email service is disabled! Cannot send the email.')
             return
@@ -110,7 +131,6 @@ class EmailService():
             self.sent_mail_info['success_count'] += 1
         except Exception as e:
             self.sent_mail_info['errors'].append(f'Failed to send email to {to_email}: {str(e)}')
-
 
     def create_applicant_email_body(self, application, html_content):
         return f"""
