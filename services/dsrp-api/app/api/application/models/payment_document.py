@@ -57,7 +57,6 @@ class PaymentDocument(AuditMixin, Base):
         self.invoice_number = create_invoice_number(application)
         self.application = application
         upload_content_json()
-        self.save()
 
     class _ModelSchema(Base._ModelSchema):
         document_guid = fields.String(dump_only=True)
