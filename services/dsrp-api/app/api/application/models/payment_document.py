@@ -11,6 +11,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from app.extensions import db
 from app.api.utils.models_mixins import AuditMixin, Base
 from app.api.company_payment_info.models import CompanyPaymentInfo
+from app.api.application.models.payment_document_type import PaymentDocumentType
 from app.api.services.object_store_storage_service import ObjectStoreStorageService
 from app.api.services.email_service import EmailService
 from app.config import Config
@@ -56,6 +57,8 @@ class PaymentDocument(AuditMixin, Base):
 
         self.invoice_number = create_invoice_number(application)
         self.application = application
+        self.payment_document_type = PaymentDocumentType.find_by_payment_document_code(
+            self.payment_document_code)
         upload_content_json()
 
     class _ModelSchema(Base._ModelSchema):

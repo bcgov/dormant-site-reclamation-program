@@ -19,3 +19,7 @@ class ApplicationStatus(Base, AuditMixin):
     @classmethod
     def get_active(cls):
         return cls.query.filter_by(active=True).all()
+
+    @classmethod
+    def find_by_application_status_code(cls, application_status_code):
+        return cls.query.filter_by(application_status_code=application_status_code).first()

@@ -18,3 +18,7 @@ class PaymentDocumentType(Base, AuditMixin):
     @classmethod
     def get_active(cls):
         return cls.query.filter_by(active=True).all()
+
+    @classmethod
+    def find_by_payment_document_code(cls, payment_document_code):
+        return cls.query.filter_by(payment_document_code=payment_document_code).first()

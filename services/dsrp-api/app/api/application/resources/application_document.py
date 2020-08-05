@@ -43,17 +43,15 @@ class ApplicationDocumentListResource(Resource, UserMixin):
                 new_doc = ApplicationDocument(
                     document_name=doc['document_name'], object_store_path=doc['object_store_path'])
                 application.documents.append(new_doc)
+                application.save()
 
             if request.json.get('confirm_final_documents'):
-                new_app_status_change = ApplicationStatusChange(
+                app_status_change = ApplicationStatusChange(
+                    application=application,
                     application_status_code='DOC_SUBMITTED',
-                    note='Thank you for uploading the required documents')
-                application.status_changes.append(new_app_status_change)
-                application.save()
-                db.session.refresh(new_app_status_change)
-                new_app_status_change.send_status_change_email()
+                    note='Thank you for uploading the required documents.')
+                app_status_change.save()
 
-            application.save()
             return '', 204
         raise Unauthorized('Not currently accepting documents on this application')
 
