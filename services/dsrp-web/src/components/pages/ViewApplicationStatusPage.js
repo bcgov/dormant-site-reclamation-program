@@ -4,17 +4,12 @@ import { Row, Col, Typography, Button } from "antd";
 import PropTypes from "prop-types";
 import { bindActionCreators, compose } from "redux";
 import { withRouter } from "react-router-dom";
-import { isEmpty } from "lodash";
-
 import ViewApplicationStatusForm from "@/components/forms/ViewApplicationStatusForm";
 import ApplicationStatusCard from "@/components/pages/ApplicationStatusCard";
 import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
-
 import { fetchApplicationSummaryById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
 import { PageTracker } from "@/utils/trackers";
-
-import * as router from "@/constants/routes";
 
 const { Paragraph, Title } = Typography;
 
@@ -24,6 +19,7 @@ const propTypes = {
     guid: PropTypes.string,
     application_status_code: PropTypes.string,
     submission_date: PropTypes.string,
+    company_name: PropTypes.string,
     json: PropTypes.any,
   }),
   match: PropTypes.shape({

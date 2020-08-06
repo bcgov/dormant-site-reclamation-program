@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { formatDateTime } from "@/utils/helpers";
 import { getApplicationStatusOptionsHash } from "@/selectors/staticContentSelectors";
 
-const { Paragraph, Title } = Typography;
+const { Paragraph, Title, Text } = Typography;
 
 const propTypes = {
   application: PropTypes.shape({
@@ -98,11 +98,17 @@ export const ApplicationStatusCard = (props) => (
   <Row type="flex" align="top">
     <Title level={1}>Application Progress</Title>
     <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
+      <Title level={4}>Company</Title>
+      <Paragraph>
+        <Text strong>{props.application.company_name}</Text>
+      </Paragraph>
       <Title level={4}>Received On</Title>
-      <Paragraph>{formatDateTime(props.application.submission_date)}</Paragraph>
+      <Paragraph>
+        <Text strong>{formatDateTime(props.application.submission_date)}</Text>
+      </Paragraph>
       <Title level={4}>Application Status</Title>
       <Paragraph>
-        <b>{props.applicationStatusHash[props.application.application_status_code]}</b>
+        <Text strong>{props.applicationStatusHash[props.application.application_status_code]}</Text>
       </Paragraph>
       <Paragraph>{description(props.application.application_status_code)}</Paragraph>
       <br />
