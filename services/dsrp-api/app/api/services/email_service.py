@@ -93,7 +93,7 @@ class EmailService():
         html_body = f'<p>{company_info.po_number} {company_info.company_name} {doc.invoice_number} {payment_details_html}</p>'
         html_body += '<p>I approve payment for the following attached Payment Request Form under the Dormant Sites Reclamation Program.</p>'
 
-        attachment = doc.content_text_as_bytes
+        attachment = doc.content_finance_email_as_bytes
         filename = doc.document_name
 
         self.send_email(to_email, from_email, subject, html_body, '', attachment, filename)

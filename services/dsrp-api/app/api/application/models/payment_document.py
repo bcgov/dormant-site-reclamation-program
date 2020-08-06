@@ -49,7 +49,7 @@ class PaymentDocument(AuditMixin, Base):
             file_path = f'{self.application.guid}/{self.payment_document_code.lower()}/{document_name}'
             try:
                 self.object_store_path = ObjectStoreStorageService().upload_string(
-                    self.content_text, file_path)
+                    self.content_finance_email, file_path)
                 self.document_name = document_name
                 self.upload_date = datetime.utcnow()
             except Exception as e:
@@ -155,22 +155,23 @@ class PaymentDocument(AuditMixin, Base):
         return json.dumps(content_json, indent=4)
 
     @hybrid_property
-    def content_text(self):
+    def content_finance_email(self):
         content_json = json.loads(self.content_json)
-        text = (f'Document Type\n{content_json["document_type"]}\n\n'
-                f'Invoice Number\n{content_json["invoice_number"]}\n\n'
+
+        payment_text = ''
+        for payment_detail in content_json['payment_details']:
+            payment_text += f'{payment_detail["agreement_number"]}\t\t{payment_detail["unique_id"]}\t\t{payment_detail["amount"]}\n'
+
+        text = (f'PO Number\n{content_json["po_number"]}\n\n'
                 f'Supplier Name\n{content_json["supplier_name"]}\n\n'
                 f'Supplier Address\n{content_json["supplier_address"]}\n\n'
-                f'PO Number\n{content_json["po_number"]}\n\n'
-                f'Account Coding\n{content_json["account_coding"]}\n\n'
+                f'Invoice Date\n{content_json["date_payment_authorized"]}\n\n'
+                f'Invoice Number\n{content_json["invoice_number"]}\n\n'
+                f'Payment Details\nAgreement Number\t\tUnique ID\t\tAmount\n'
+                f'{payment_text}\n'
                 f'Qualified Receiver\n{content_json["qualified_receiver_name"]}\n\n'
-                f'Date Payment Authorized\n{content_json["date_payment_authorized"]}\n\n'
                 f'Expense Authority\n{content_json["expense_authority_name"]}\n\n'
-                f'Payment Details\n'
-                f'Agreement Number\t\tUnique ID\t\tAmount\n')
-
-        for payment_detail in content_json['payment_details']:
-            text += f'{payment_detail["agreement_number"]}\t\t{payment_detail["unique_id"]}\t\t{payment_detail["amount"]}\n'
+                f'Account Coding\n{content_json["account_coding"]}\n\n')
 
         return text
 
@@ -179,5 +180,5 @@ class PaymentDocument(AuditMixin, Base):
         return io.BytesIO(bytearray(self.content_json, 'utf-8'))
 
     @hybrid_property
-    def content_text_as_bytes(self):
-        return io.BytesIO(bytearray(self.content_text, 'utf-8'))
+    def content_finance_email_as_bytes(self):
+        return io.BytesIO(bytearray(self.content_finance_email, 'utf-8'))
