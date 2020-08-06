@@ -80,18 +80,8 @@ class EmailService():
         company_info = doc.company_info
         doc_title = doc.payment_document_type.description
         subject = f'{doc_title} - {doc.invoice_number} {company_info.po_number} {doc.application.agreement_number}'
-        current_app.logger.info(subject)
-        payment_details = doc.payment_details
-        payment_details_html = None
-        if doc.payment_document_code == 'FIRST_PRF':
-            payment_details_html = payment_details[0]['amount']
-        else:
-            payment_details_html = '<br />'
-            for payment_detail in payment_details:
-                payment_details_html += f'{payment_detail["agreement_number"]} | {payment_detail["unique_id"]} | {payment_detail["amount"]}<br />'
 
-        html_body = f'<p>{company_info.po_number} {company_info.company_name} {doc.invoice_number} {payment_details_html}</p>'
-        html_body += '<p>I approve payment for the following attached Payment Request Form under the Dormant Sites Reclamation Program.</p>'
+        html_body = f'<p>{doc.content_finance_email}</p><p>I approve payment for the following attached Payment Request Form under the Dormant Sites Reclamation Program.</p>'
 
         attachment = doc.content_finance_email_as_bytes
         filename = doc.document_name
