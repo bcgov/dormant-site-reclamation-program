@@ -81,7 +81,8 @@ class EmailService():
         doc_title = doc.payment_document_type.description
         subject = f'{doc_title} - {doc.invoice_number} {company_info.po_number} {doc.application.agreement_number}'
 
-        html_body = f'<p>{doc.content_finance_email}</p><p>I approve payment for the following attached Payment Request Form under the Dormant Sites Reclamation Program.</p>'
+        content_finance_email = doc.content_finance_email.replace('\n', '<br />')
+        html_body = f'<p>{content_finance_email}</p><p>I approve payment for the following attached Payment Request Form under the Dormant Sites Reclamation Program.</p>'
 
         attachment = doc.content_finance_email_as_bytes
         filename = doc.document_name
