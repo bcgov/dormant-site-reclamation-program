@@ -10,6 +10,7 @@ from app.extensions import db
 from app.api.utils.models_mixins import Base, AuditMixin
 from app.api.services.email_service import EmailService
 from app.api.application.models.application_status import ApplicationStatus
+from app.api.application.models.payment_document import PaymentDocument
 from app.api.services.document_generator_service import DocumentGeneratorService, get_template_file_path
 from app.api.services.application_status_change_actions import action_first_pay_approved
 
@@ -65,7 +66,7 @@ class ApplicationStatusChange(Base, AuditMixin):
         if self.application_status.application_status_code == 'WAIT_FOR_DOCS':
             doc = DocumentGeneratorService.generate_document_and_stream_response(
                 get_template_file_path('shared-cost-agreement'),
-                self.application.shared_cost_agreement_template_json)
+                self.application.shared_cost_agreement_template_json, 'pdf')
             value, params = cgi.parse_header(doc.headers['content-disposition'])
             filename = params['filename']
             attachment = io.BytesIO(doc.content)

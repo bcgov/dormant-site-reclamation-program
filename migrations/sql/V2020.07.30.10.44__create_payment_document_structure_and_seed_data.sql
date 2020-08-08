@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS payment_document (
 	application_guid uuid NOT NULL,
 	payment_document_code varchar NOT NULL,
 	invoice_number varchar NOT NULL UNIQUE,
+	content jsonb NOT NULL,
 	work_ids varchar ARRAY,
 	document_name varchar NOT NULL,
 	object_store_path varchar NOT NULL UNIQUE,

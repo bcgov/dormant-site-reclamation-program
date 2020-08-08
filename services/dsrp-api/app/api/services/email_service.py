@@ -63,7 +63,7 @@ class EmailService():
 
         self.send_email(to_email, from_email, subject, html_body, signature, attachment, filename)
 
-    def send_payment_document_to_finance(self, doc):
+    def send_payment_document_to_finance(self, doc, prf_file):
         if not Config.PRF_FROM_EMAIL or not Config.PRF_TO_EMAIL:
             current_app.logger.warning('Email addresses required for emailing finance are not set!')
 
@@ -77,16 +77,47 @@ class EmailService():
                 f'Finance recipient email is not set! Using the email of the current user instead: {to_email}'
             )
 
-        company_info = doc.company_info
         doc_title = doc.payment_document_type.description
-        subject = f'{doc_title} - {doc.invoice_number} {company_info.po_number} {doc.application.agreement_number}'
+        subject = f'{doc_title} - {doc.invoice_number} {doc.content["po_number"]} {doc.application.agreement_number}'
 
-        content_finance_email = doc.content_finance_email
-        content_finance_email = content_finance_email.replace('\n', '<br />')
-        content_finance_email = content_finance_email.replace('\t', '&nbsp;&nbsp;&nbsp;&nbsp;')
-        html_body = f'<p>{content_finance_email}</p><p>I approve payment for the following attached Payment Request Form under the Dormant Sites Reclamation Program.</p>'
+        payment_details_html = ''
+        for payment_detail in doc.content['payment_details']:
+            payment_details_html += f'<tr><td>{payment_detail["agreement_number"]}</td><td>{payment_detail["unique_id"]}</td><td style="text-align: right">{payment_detail["amount"]}</td></tr>'
 
-        attachment = doc.content_finance_email_as_bytes
+        payment_details_total_html = f'<tr><td><strong>Total Amount</strong></td><td></td><td style="text-align: right">{doc.content["total_payment"]}</td></tr>'
+
+        payment_html = f'\
+            <table style="width: 100%">\
+                <caption><strong>Payment Details</strong></caption>\
+                <thead>\
+                    <tr>\
+                        <th>Agreement Number</th>\
+                        <th>Unique ID</th>\
+                        <th>Amount</th>\
+                    </tr>\
+                </thead>\
+                <tbody>\
+                    {payment_details_html}\
+                </tbody>\
+                <tfoot>\
+                    {payment_details_total_html}\
+                </tfoot>\
+            </table>'
+
+        prf_content_html = f'\
+            <p><strong>PO Number</strong><br /><p>{doc.content["po_number"]}</p>\
+            <p><strong>Supplier Name</strong><br /><p>{doc.content["supplier_name"]}</p>\
+            <p><strong>Supplier Address</strong><br /><p>{doc.content["supplier_address"]}</p>\
+            <p><strong>Invoice Date</strong><br /><p>{doc.content["date_payment_authorized"]}</p>\
+            <p><strong>Invoice Number</strong><br /><p>{doc.invoice_number}</p>\
+            {payment_html}\
+            <p><strong>Qualified Receiver</strong><br /><p>{doc.content["qualified_receiver_name"]}</p>\
+            <p><strong>Expense Authority</strong><br /><p>{doc.content["expense_authority_name"]}</p>\
+            <p><strong>Account Coding</strong><br /><p>{doc.content["account_coding"]}</p>'
+
+        html_body = f'<p>{prf_content_html}</p><p>I approve payment for the following attached Payment Request Form under the Dormant Sites Reclamation Program.</p>'
+
+        attachment = prf_file
         filename = doc.document_name
 
         self.send_email(to_email, from_email, subject, html_body, '', attachment, filename)

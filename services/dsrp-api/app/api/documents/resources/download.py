@@ -36,7 +36,7 @@ class DocumentDownloadResource(Resource, UserMixin):
             application = Application.find_by_guid(token_data['application_guid'])
             template_path = token_data['template_path']
             docgen_resp = DocumentGeneratorService.generate_document_and_stream_response(
-                template_path, application.shared_cost_agreement_template_json)
+                template_path, application.shared_cost_agreement_template_json, 'pdf')
             # Return the generated document
 
             headers = dict(docgen_resp.headers)

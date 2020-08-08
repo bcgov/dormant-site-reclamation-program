@@ -19,8 +19,7 @@ class ObjectStoreStorageService():
             aws_secret_access_key=Config.OBJECT_STORE_ACCESS_KEY,
             endpoint_url=f'https://{Config.OBJECT_STORE_HOST}')
 
-    def upload_string(self, string, filepath):
-        fileobj = io.BytesIO(bytearray(string, 'utf-8'))
+    def upload_fileobj(self, fileobj, filepath):
         key = f'{Config.S3_PREFIX}{filepath}'
         self._client.upload_fileobj(Fileobj=fileobj, Bucket=Config.OBJECT_STORE_BUCKET, Key=key)
         return key
