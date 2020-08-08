@@ -111,11 +111,11 @@ class EmailService():
             <p><strong>PO Number</strong><br /><p>{doc.content["po_number"]}</p>\
             <p><strong>Supplier Name</strong><br /><p>{doc.content["supplier_name"]}</p>\
             <p><strong>Supplier Address</strong><br /><p>{doc.content["supplier_address"]}</p>\
-            <p><strong>Date Payment Authorized</strong><br /><p>{doc.content["date_payment_authorized"]}</p>\
             <p><strong>Invoice Number</strong><br /><p>{doc.invoice_number}</p>\
             {payment_details_table_html}\
             <p><strong>Qualified Receiver Name</strong><br /><p>{doc.content["qualified_receiver_name"]}</p>\
             <p><strong>Expense Authority Name</strong><br /><p>{doc.content["expense_authority_name"]}</p>\
+            <p><strong>Date Payment Authorized</strong><br /><p>{doc.content["date_payment_authorized"]}</p>\
             <p><strong>Account Coding</strong><br /><p>{doc.content["account_coding"]}</p>'
 
         html_body = f'<p>{prf_content_html}</p><p>I approve payment for the following attached Payment Request Form under the Dormant Sites Reclamation Program.</p>'
