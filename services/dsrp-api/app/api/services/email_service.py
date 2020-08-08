@@ -63,7 +63,7 @@ class EmailService():
 
         self.send_email(to_email, from_email, subject, html_body, signature, attachment, filename)
 
-    def send_payment_document_to_finance(self, doc, prf_file):
+    def send_payment_document(self, doc, prf_file):
         if not Config.PRF_FROM_EMAIL or not Config.PRF_TO_EMAIL:
             current_app.logger.warning('Email addresses required for emailing finance are not set!')
 
@@ -86,39 +86,32 @@ class EmailService():
             payment_details_rows_html += f'<tr><td>{payment_detail["agreement_number"]}</td><td>{payment_detail["unique_id"]}</td><td style="text-align: right">{amount}</td></tr>'
 
         total_amount = '{0:.2f}'.format(doc.content["total_payment"])
-        payment_details_total_row_html = f'<tr><td><strong>Total Amount</strong></td><td></td><td style="text-align: right">{total_amount}</td></tr>'
-        payment_html_style = '<style>table td, th { padding-right: 50px }</style>'
-        payment_details_table_html = f'\
-            {payment_html_style}\
-            <p><strong>Payment Details</strong></p>\
-            <table>\
-                <thead>\
-                    <tr>\
-                        <th>Agreement Number</th>\
-                        <th>Unique ID</th>\
-                        <th>Amount</th>\
-                    </tr>\
-                </thead>\
-                <tbody>\
-                    {payment_details_rows_html}\
-                </tbody>\
-                <tfoot>\
-                    {payment_details_total_row_html}\
-                </tfoot>\
-            </table>'
+        payment_details_total_row_html = f'<tr style="border-top: solid"><th>Total Amount</th><td></td><td style="text-align: right">{total_amount}</td></tr>'
 
-        prf_content_html = f'\
-            <p><strong>PO Number</strong><br /><p>{doc.content["po_number"]}</p>\
-            <p><strong>Supplier Name</strong><br /><p>{doc.content["supplier_name"]}</p>\
-            <p><strong>Supplier Address</strong><br /><p>{doc.content["supplier_address"]}</p>\
-            <p><strong>Invoice Number</strong><br /><p>{doc.invoice_number}</p>\
-            {payment_details_table_html}\
-            <p><strong>Qualified Receiver Name</strong><br /><p>{doc.content["qualified_receiver_name"]}</p>\
-            <p><strong>Expense Authority Name</strong><br /><p>{doc.content["expense_authority_name"]}</p>\
-            <p><strong>Date Payment Authorized</strong><br /><p>{doc.content["date_payment_authorized"]}</p>\
-            <p><strong>Account Coding</strong><br /><p>{doc.content["account_coding"]}</p>'
+        payment_details_table_html = f'''
+            <tr><th style="vertical-align: top">Payment Details</th><td><table><th>Agreement Number</th><th>Unique ID</th><th>Amount</th></tr>
+            {payment_details_rows_html}
+            {payment_details_total_row_html}</table></td>'''
 
-        html_body = f'<p>{prf_content_html}</p><p>I approve payment for the following attached Payment Request Form under the Dormant Sites Reclamation Program.</p>'
+        table_style = '<style>table td, th { padding-right: 50px }</style>'
+        prf_content_html = f'''
+            {table_style}
+            <h4>Payment Request Form</h4>
+            <table>
+                <tr><th>PO Number</th><td>{doc.content["po_number"]}</td></tr>
+                <tr><th>Supplier Name</th><td>{doc.content["supplier_name"]}</td></tr>
+                <tr><th>Supplier Address</th><td>{doc.content["supplier_address"]}</td></tr>
+                <tr><th>Invoice Number</th><td>{doc.invoice_number}</td></tr>
+                <tr><td><br /></td></tr>
+                {payment_details_table_html}
+                <tr><td><br /></td></tr>
+                <tr><th>Qualified Receiver Name</th><td>{doc.content["qualified_receiver_name"]}</td></tr>
+                <tr><th>Expense Authority Name</th><td>{doc.content["expense_authority_name"]}</td></tr>
+                <tr><th>Date Payment Authorized</th><td>{doc.content["date_payment_authorized"]}</td></tr>
+                <tr><th>Account Coding</th><td>{doc.content["account_coding"]}</td></tr>
+            </table>'''
+
+        html_body = f'{prf_content_html}<br /><p>I approve payment for the following attached Payment Request Form under the Dormant Sites Reclamation Program.</p>'
         current_app.logger.info(html_body)
         attachment = prf_file
         filename = doc.document_name

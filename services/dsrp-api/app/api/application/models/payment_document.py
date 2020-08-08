@@ -29,9 +29,8 @@ class PaymentDocument(AuditMixin, Base):
         super(PaymentDocument, self).__init__(**kwargs)
 
         def create_invoice_number(application):
-            amount_generated = sum(
-                map(lambda doc: doc.payment_document_code == self.payment_document_code,
-                    application.payment_documents))
+            amount_generated = sum(doc.payment_document_code == self.payment_document_code
+                                   for doc in application.payment_documents)
             payment_phase = None
             if self.payment_document_code == 'FIRST_PRF':
                 payment_phase = 1
@@ -40,7 +39,7 @@ class PaymentDocument(AuditMixin, Base):
             elif self.payment_document_code == 'FINAL_PRF':
                 payment_phase = 3
             else:
-                raise Exception('Unknown payment document phase')
+                raise Exception('Unknown payment document code')
             agreement_number = application.agreement_number
             invoice_number = f'{agreement_number}-{payment_phase}-{amount_generated + 1}'
             return invoice_number
@@ -56,7 +55,7 @@ class PaymentDocument(AuditMixin, Base):
             def create_unique_id(work_id=None):
                 unique_id = self.invoice_number
                 if (self.payment_document_code != 'FIRST_PRF'):
-                    # Remove the application part of the work ID, e.g., "18.16" becomes "16"
+                    # Remove the application ID part of the work ID, e.g., "18.16" becomes "16"
                     work_number = work_id.split('.')[1]
                     unique_id += f'-{work_number}'
                 return unique_id
@@ -77,14 +76,15 @@ class PaymentDocument(AuditMixin, Base):
                     unique_id = create_unique_id(work_id)
                     payment_details.append(create_payment_detail(unique_id, amount))
             else:
-                raise Exception('Unknown payment document phase')
+                raise Exception('Unknown payment document code')
 
             return payment_details
 
         def create_content():
-            company_info = CompanyPaymentInfo.find_by_company_name(self.application.company_name)
+            company_name = self.application.company_name
+            company_info = CompanyPaymentInfo.find_by_company_name(company_name)
             if not company_info:
-                raise Exception('Essential company payment info is missing')
+                raise Exception(f'Essential company payment info for {company_name} is missing')
 
             account_coding = '057.2700A.26505.8001.2725067'
             supplier_name = company_info.company_name
@@ -92,12 +92,12 @@ class PaymentDocument(AuditMixin, Base):
             invoice_number = self.invoice_number
             po_number = company_info.po_number
             qualified_receiver_name = company_info.qualified_receiver_name
-            expense_authority_name = company_info.expense_authority_name
             date_payment_authorized = datetime.now().strftime('%B %-d, %Y')
+            expense_authority_name = company_info.expense_authority_name
             payment_details = create_payment_details()
             total_payment = sum([payment_detail['amount'] for payment_detail in payment_details])
 
-            content = {
+            return {
                 'account_coding': account_coding,
                 'supplier_name': supplier_name,
                 'supplier_address': supplier_address,
@@ -109,8 +109,6 @@ class PaymentDocument(AuditMixin, Base):
                 'payment_details': payment_details,
                 'total_payment': total_payment
             }
-
-            return content
 
         def upload_prf(prf_file):
             document_name = f'{self.invoice_number}_{self.payment_document_code.lower()}.xlsx'
@@ -139,9 +137,9 @@ class PaymentDocument(AuditMixin, Base):
         # Email the PRF
         try:
             with EmailService() as es:
-                es.send_payment_document_to_finance(self, io.BytesIO(resp.content))
+                es.send_payment_document(self, io.BytesIO(resp.content))
         except Exception as e:
-            raise Exception(f'Failed to send the PRF to Finance: {e}')
+            raise Exception(f'Failed to email the PRF: {e}')
 
     class _ModelSchema(Base._ModelSchema):
         document_guid = fields.String(dump_only=True)
