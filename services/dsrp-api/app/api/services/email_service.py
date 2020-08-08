@@ -86,14 +86,14 @@ class EmailService():
             payment_details_rows_html += f'<tr><td>{payment_detail["agreement_number"]}</td><td>{payment_detail["unique_id"]}</td><td style="text-align: right;">{amount}</td></tr>'
 
         total_amount = '{0:.2f}'.format(doc.content["total_payment"])
-        payment_details_total_row_html = f'<tr style="border-top: solid 2px black;"><th>Total Amount</th><td></td><td style="text-align: right;">{total_amount}</td></tr>'
+        payment_details_total_row_html = f'<tr><th>Total Amount</th><td></td><td style="text-align: right;">{total_amount}</td></tr>'
 
         payment_details_table_html = f'''
             <tr><th style="vertical-align: top;">Payment Details</th><td><table><th>Agreement Number</th><th>Unique ID</th><th>Amount</th></tr>
             {payment_details_rows_html}
             {payment_details_total_row_html}</table></td>'''
 
-        table_style = '<style>table td, th { padding-right: 50px; } th { text-align: left; }</style>'
+        table_style = '<style>td, th { padding-right: 50px; } th { text-align: left; }</style>'
         prf_content_html = f'''
             {table_style}
             <h4>Payment Request Form</h4>
