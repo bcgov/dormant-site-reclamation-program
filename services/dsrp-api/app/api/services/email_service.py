@@ -80,15 +80,18 @@ class EmailService():
         doc_title = doc.payment_document_type.description
         subject = f'{doc_title} - {doc.invoice_number} {doc.content["po_number"]} {doc.application.agreement_number}'
 
-        payment_details_html = ''
+        payment_details_rows_html = ''
         for payment_detail in doc.content['payment_details']:
-            payment_details_html += f'<tr><td>{payment_detail["agreement_number"]}</td><td>{payment_detail["unique_id"]}</td><td style="text-align: right">{payment_detail["amount"]}</td></tr>'
+            amount = '{0:.2f}'.format(payment_detail["amount"])
+            payment_details_rows_html += f'<tr><td>{payment_detail["agreement_number"]}</td><td>{payment_detail["unique_id"]}</td><td style="text-align: right">{amount}</td></tr>'
 
-        payment_details_total_html = f'<tr><td><strong>Total Amount</strong></td><td></td><td style="text-align: right">{doc.content["total_payment"]}</td></tr>'
-
-        payment_html = f'\
-            <table style="width: 100%">\
-                <caption><strong>Payment Details</strong></caption>\
+        total_amount = '{0:.2f}'.format(doc.content["total_payment"])
+        payment_details_total_row_html = f'<tr><td><strong>Total Amount</strong></td><td></td><td style="text-align: right">{total_amount}</td></tr>'
+        payment_html_style = '<style>table td, th { padding-right: 50px }</style>'
+        payment_details_table_html = f'\
+            {payment_html_style}\
+            <p><strong>Payment Details</strong></p>\
+            <table>\
                 <thead>\
                     <tr>\
                         <th>Agreement Number</th>\
@@ -97,10 +100,10 @@ class EmailService():
                     </tr>\
                 </thead>\
                 <tbody>\
-                    {payment_details_html}\
+                    {payment_details_rows_html}\
                 </tbody>\
                 <tfoot>\
-                    {payment_details_total_html}\
+                    {payment_details_total_row_html}\
                 </tfoot>\
             </table>'
 
@@ -108,15 +111,15 @@ class EmailService():
             <p><strong>PO Number</strong><br /><p>{doc.content["po_number"]}</p>\
             <p><strong>Supplier Name</strong><br /><p>{doc.content["supplier_name"]}</p>\
             <p><strong>Supplier Address</strong><br /><p>{doc.content["supplier_address"]}</p>\
-            <p><strong>Invoice Date</strong><br /><p>{doc.content["date_payment_authorized"]}</p>\
+            <p><strong>Date Payment Authorized</strong><br /><p>{doc.content["date_payment_authorized"]}</p>\
             <p><strong>Invoice Number</strong><br /><p>{doc.invoice_number}</p>\
-            {payment_html}\
-            <p><strong>Qualified Receiver</strong><br /><p>{doc.content["qualified_receiver_name"]}</p>\
-            <p><strong>Expense Authority</strong><br /><p>{doc.content["expense_authority_name"]}</p>\
+            {payment_details_table_html}\
+            <p><strong>Qualified Receiver Name</strong><br /><p>{doc.content["qualified_receiver_name"]}</p>\
+            <p><strong>Expense Authority Name</strong><br /><p>{doc.content["expense_authority_name"]}</p>\
             <p><strong>Account Coding</strong><br /><p>{doc.content["account_coding"]}</p>'
 
         html_body = f'<p>{prf_content_html}</p><p>I approve payment for the following attached Payment Request Form under the Dormant Sites Reclamation Program.</p>'
-
+        current_app.logger.info(html_body)
         attachment = prf_file
         filename = doc.document_name
 
