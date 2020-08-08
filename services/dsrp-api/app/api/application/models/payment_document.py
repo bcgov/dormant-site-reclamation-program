@@ -72,6 +72,8 @@ class PaymentDocument(AuditMixin, Base):
                     work = self.application.find_contracted_work_by_id(work_id)
                     if not work:
                         raise Exception(f'Work ID {work_id} does not exist on this application!')
+                    if work.get('contracted_work_status_code', None) != 'APPROVED':
+                        raise Exception(f'Work ID {work_id} must be approved!')
                     amount = calc_cost(work)
                     unique_id = create_unique_id(work_id)
                     payment_details.append(create_payment_detail(unique_id, amount))
