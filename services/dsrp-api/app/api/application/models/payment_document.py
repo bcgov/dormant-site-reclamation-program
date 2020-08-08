@@ -129,15 +129,14 @@ class PaymentDocument(AuditMixin, Base):
         # Generate the PRF
         resp = DocumentGeneratorService.generate_document_and_stream_response(
             get_template_file_path('payment-request-form'), self.content, 'xlsx')
-        prf_file = io.BytesIO(resp.content)
 
         # Upload the PRF
-        upload_prf(prf_file)
+        upload_prf(io.BytesIO(resp.content))
 
         # Email the PRF
         try:
             with EmailService() as es:
-                es.send_payment_document_to_finance(self, prf_file)
+                es.send_payment_document_to_finance(self, io.BytesIO(resp.content))
         except Exception as e:
             raise Exception(f'Failed to send the PRF to Finance: {e}')
 
