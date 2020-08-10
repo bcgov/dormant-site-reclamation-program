@@ -3,19 +3,17 @@ import { bindActionCreators, compose } from "redux";
 import { connect } from "react-redux";
 import { Row, Col, Typography } from "antd";
 import PropTypes from "prop-types";
-
 import ApplicationForm from "@/components/forms/ApplicationForm";
 import { fetchAppSettings } from "@/actionCreators/appSettingsActionCreator";
 import { getAppSettings } from "@/selectors/appSettingsSelectors";
 import * as Strings from "@/constants/strings";
 import Loading from "@/components/common/Loading";
-
 import { PageTracker } from "@/utils/trackers";
 
 const { Title, Paragraph } = Typography;
 
 const propTypes = {
-  appSettings: PropTypes.any,
+  appSettings: PropTypes.objectOf(PropTypes.any).isRequired,
   fetchAppSettings: PropTypes.func.isRequired,
 };
 
@@ -71,13 +69,12 @@ export class SubmitApplicationPage extends Component {
           </Row>
         </>
       );
-    } else {
-      return (
-        <>
-          <Loading />
-        </>
-      );
     }
+    return (
+      <>
+        <Loading />
+      </>
+    );
   }
 }
 
