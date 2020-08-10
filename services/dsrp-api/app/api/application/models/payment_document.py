@@ -88,13 +88,16 @@ class PaymentDocument(AuditMixin, Base):
             if not company_info:
                 raise Exception(f'Essential company payment info for {company_name} is missing')
 
+            today_date = datetime.now().strftime('%B %-d, %Y')
+
             account_coding = '057.2700A.26505.8001.2725067'
             supplier_name = company_info.company_name
             supplier_address = company_info.company_address
+            invoice_date = today_date
             invoice_number = self.invoice_number
             po_number = company_info.po_number
             qualified_receiver_name = company_info.qualified_receiver_name
-            date_payment_authorized = datetime.now().strftime('%B %-d, %Y')
+            date_payment_authorized = today_date
             expense_authority_name = company_info.expense_authority_name
             payment_details = create_payment_details()
             total_payment = sum([payment_detail['amount'] for payment_detail in payment_details])
@@ -103,6 +106,7 @@ class PaymentDocument(AuditMixin, Base):
                 'account_coding': account_coding,
                 'supplier_name': supplier_name,
                 'supplier_address': supplier_address,
+                'invoice_date': invoice_date,
                 'invoice_number': invoice_number,
                 'po_number': po_number,
                 'qualified_receiver_name': qualified_receiver_name,

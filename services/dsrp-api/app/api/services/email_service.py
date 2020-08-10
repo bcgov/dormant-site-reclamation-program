@@ -101,6 +101,7 @@ class EmailService():
                 <tr><th>PO Number</th><td>{doc.content["po_number"]}</td></tr>
                 <tr><th>Supplier Name</th><td>{doc.content["supplier_name"]}</td></tr>
                 <tr><th>Supplier Address</th><td>{doc.content["supplier_address"]}</td></tr>
+                <tr><th>Invoice Date</th><td>{doc.content["invoice_date"]}</td></tr>
                 <tr><th>Invoice Number</th><td>{doc.invoice_number}</td></tr>
                 <tr><td><br /></td></tr>
                 {payment_details_table_html}
