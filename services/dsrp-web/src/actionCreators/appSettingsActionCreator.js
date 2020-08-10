@@ -1,5 +1,4 @@
 import { notification } from "antd";
-import { hideLoading } from "react-redux-loading-bar";
 import { request, success, error } from "../actions/genericActions";
 import * as reducerTypes from "../constants/reducerTypes";
 import * as API from "../constants/api";
@@ -22,8 +21,7 @@ export const updateAppSetting = (payload) => (dispatch) => {
       dispatch(success(reducerTypes.UPDATE_APP_SETTING));
       return response;
     })
-    .catch(() => dispatch(error(reducerTypes.UPDATE_APP_SETTING)))
-    .finally(() => dispatch(hideLoading("modal")));
+    .catch(() => dispatch(error(reducerTypes.UPDATE_APP_SETTING)));
 };
 
 export const fetchAppSettings = () => (dispatch) => {
@@ -35,6 +33,5 @@ export const fetchAppSettings = () => (dispatch) => {
       dispatch(appSettingActions.storeAppSettings(response.data));
       return response;
     })
-    .catch(() => dispatch(error(reducerTypes.GET_APP_SETTINGS)))
-    .finally(() => dispatch(hideLoading()));
+    .catch(() => dispatch(error(reducerTypes.GET_APP_SETTINGS)));
 };

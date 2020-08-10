@@ -9,7 +9,6 @@ from sqlalchemy.orm.attributes import flag_modified
 from deepdiff import DeepDiff
 
 from app.extensions import api
-from app.api.services.email_service import EmailService
 from app.api.utils.access_decorators import requires_role_view_all, requires_role_admin
 from app.api.utils.resources_mixins import UserMixin
 from app.api.application.response_models import APPLICATION, APPLICATION_LIST
@@ -118,8 +117,7 @@ class ApplicationListResource(Resource, UserMixin):
         except MarshmallowError as e:
             raise BadRequest(e)
 
-        with EmailService() as es:
-            application.send_confirmation_email(es)
+        application.send_confirmation_email()
 
         return application, 201
 
@@ -129,11 +127,9 @@ class ApplicationResource(Resource, UserMixin):
     @api.marshal_with(APPLICATION, code=200)
     @requires_role_view_all
     def get(self, application_guid):
-
         application = Application.find_by_guid(application_guid)
-
         if application is None:
-            raise NotFound('No application was found matching the provided reference number.')
+            raise NotFound('No application was found matching the provided reference number')
 
         return application
 
@@ -152,8 +148,8 @@ class ApplicationResource(Resource, UserMixin):
         try:
             # map only specific fields
             application = Application.find_by_guid(application_guid)
-            
-            is_note_updated =  application.edit_note != request.json.get("edit_note")
+
+            is_note_updated = application.edit_note != request.json.get("edit_note")
 
             if is_note_updated:
                 application.edit_note = request.json.get("edit_note")
@@ -164,8 +160,9 @@ class ApplicationResource(Resource, UserMixin):
 
             if is_json_updated:
                 application.json["company_contact"] = json["company_contact"]
-                application.process_well_sites_work_items(json["well_sites"], application.iterate_application_work_items_action)
-            
+                application.process_well_sites_work_items(
+                    json["well_sites"], application.iterate_application_work_items_action)
+
             is_application_updated = is_note_updated or is_json_updated
 
         except MarshmallowError as e:
@@ -176,9 +173,9 @@ class ApplicationResource(Resource, UserMixin):
             if is_application_updated:
                 if is_json_updated:
                     flag_modified(application, "json")
-                
+
                 application.save()
-            else: 
+            else:
                 history.delete()
         except:
             history.delete()
@@ -194,7 +191,7 @@ class ApplicationReviewResource(Resource, UserMixin):
     def put(self, application_guid):
         application = Application.find_by_guid(application_guid)
         if application is None:
-            raise NotFound('No application was found matching the provided reference number.')
+            raise NotFound('No application was found matching the provided reference number')
 
         try:
             review_json = request.json['review_json']

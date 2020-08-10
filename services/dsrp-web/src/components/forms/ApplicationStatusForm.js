@@ -41,10 +41,18 @@ class ApplicationStatusForm extends Component {
             onConfirm={this.props.closeModal}
             okText="Yes"
             cancelText="No"
+            disabled={this.props.submitting}
           >
-            <Button type="secondary">Cancel</Button>
+            <Button type="secondary" disabled={this.props.submitting}>
+              Cancel
+            </Button>
           </Popconfirm>
-          <Button type="primary" htmlType="submit" style={{ marginLeft: "5px" }}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{ marginLeft: "5px" }}
+            loading={this.props.submitting}
+          >
             Update and Send
           </Button>
         </div>

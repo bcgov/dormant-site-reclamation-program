@@ -8,8 +8,7 @@ if ENV_FILE:
 
 class Config(object):
     # Environment config
-    FLASK_LOGGING_LEVEL = os.environ.get('FLASK_LOGGING_LEVEL',
-                                         'INFO')  # ['DEBUG','INFO','WARN','ERROR','CRITICAL']
+    FLASK_LOGGING_LEVEL = os.environ.get('FLASK_LOGGING_LEVEL', 'INFO')
 
     LOGGING_DICT_CONFIG = {
         'version': 1,
@@ -49,7 +48,8 @@ class Config(object):
     JWT_OIDC_AUDIENCE = os.environ.get('JWT_OIDC_AUDIENCE', 'dsrp')
     JWT_OIDC_ALGORITHMS = os.environ.get('JWT_OIDC_ALGORITHMS', 'RS256')
 
-    BUNDLE_ERRORS = True  #RequestParser global config
+    # RequestParser global config
+    BUNDLE_ERRORS = True
 
     def JWT_ROLE_CALLBACK(jwt_dict):
         return (jwt_dict['realm_access']['roles'])
@@ -65,7 +65,7 @@ class Config(object):
     CACHE_REDIS_URL = 'redis://:{0}@{1}:{2}'.format(CACHE_REDIS_PASS, CACHE_REDIS_HOST,
                                                     CACHE_REDIS_PORT)
 
-    #removing flask restplus default header mask for swagger.
+    # Removing flask restplus default header mask for swagger.
     RESTPLUS_MASK_SWAGGER = False
 
     # Constant config
@@ -77,20 +77,26 @@ class Config(object):
     # OrgBook
     ORGBOOK_API_URL = os.environ.get('ORGBOOK_API_URL', 'https://orgbook.gov.bc.ca/api/v2/')
 
-    #Doc Gen
+    # Document generation
     DOCUMENT_GENERATOR_URL = os.environ.get('DOCUMENT_GENERATOR_URL', 'http://docgen-api:3030')
-    # Document hosting settings
+
+    # Document storage
     OBJECT_STORE_ENABLED = os.environ.get('OBJECT_STORE_ENABLED', False)
     OBJECT_STORE_HOST = os.environ.get('OBJECT_STORE_HOST', '')
     OBJECT_STORE_ACCESS_KEY_ID = os.environ.get('OBJECT_STORE_ACCESS_KEY_ID', '')
     OBJECT_STORE_ACCESS_KEY = os.environ.get('OBJECT_STORE_ACCESS_KEY', '')
     OBJECT_STORE_BUCKET = os.environ.get('OBJECT_STORE_BUCKET', '')
+    S3_PREFIX = os.environ.get('S3_PREFIX', 'dsrp-applications/')
 
-    #SMTP
+    # SMTP
     SMTP_CRED_HOST = os.environ.get('SMTP_CRED_HOST', None)
     SMTP_ENABLED = SMTP_CRED_HOST is not None
-
     SMTP_CRED = {'host': SMTP_CRED_HOST, 'port': 25, 'user': None, 'pwrd': None}
+
+    # Email
+    PROGRAM_EMAIL = 'DormantSite.BC.Government@gov.bc.ca'
+    PRF_FROM_EMAIL = os.environ.get('PRF_FROM_EMAIL', None)
+    PRF_TO_EMAIL = os.environ.get('PRF_TO_EMAIL', None)
 
     URL = os.environ.get('URL', 'http://dormant-site-reclamation.gov.bc.ca/')
 
@@ -107,8 +113,8 @@ class TestConfig(Config):
     JWT_OIDC_TEST_AUDIENCE = "test_audience"
     JWT_OIDC_TEST_CLIENT_SECRET = "test_secret"
     JWT_OIDC_TEST_ISSUER = "test_issuer"
-    # Dummy Private Keys for testing purposes, can replace these keys with any other generated key.
 
+    # Dummy Private Keys for testing purposes, can replace these keys with any other generated key.
     JWT_OIDC_TEST_KEYS = {
         "keys": [{
             "kid": "flask-jwt-oidc-test-client",
@@ -120,6 +126,7 @@ class TestConfig(Config):
             "e": "AQAB"
         }]
     }
+
     # Dummy Private Keys for testing purposes.
     JWT_OIDC_TEST_PRIVATE_KEY_JWKS = {
         "keys": [{
@@ -151,6 +158,7 @@ class TestConfig(Config):
             "XLE5O360x-MhsdFXx8Vwz4304-MJg-oGSJXCK_ZWYOB_FGXFRTfebxCsSYi0YwJo-oNu96bvZCuMplzRI1liZw"
         }]
     }
+
     # Dummy Private Key, for testing purposes.
     JWT_OIDC_TEST_PRIVATE_KEY_PEM = """
 -----BEGIN RSA PRIVATE KEY-----

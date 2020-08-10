@@ -40,7 +40,7 @@ export const getApplicationsWellSitesContractedWork = createSelector(
       return [];
     }
 
-    const wellSitesContractedWork = [];
+    let wellSitesContractedWork = [];
     applications.map((application) => {
       if (isEmpty(application) || isEmpty(application.json)) {
         return;
@@ -120,7 +120,9 @@ export const getApplicationsWellSitesContractedWork = createSelector(
         });
       });
     });
-
+    wellSitesContractedWork = wellSitesContractedWork.sort((a, b) =>
+      Number(a.work_id.split(".")[1]) > Number(b.work_id.split(".")[1]) ? 1 : -1
+    );
     return wellSitesContractedWork;
   }
 );

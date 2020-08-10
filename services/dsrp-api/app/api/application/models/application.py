@@ -5,13 +5,12 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import validates
 from sqlalchemy.schema import FetchedValue
 from sqlalchemy import select, desc, func
-from marshmallow import fields, validate
+from marshmallow import fields
 from flask_restplus import marshal
 
 from app.config import Config
 from app.extensions import db
 from app.api.utils.models_mixins import Base, AuditMixin
-from app.api.utils.field_template import FieldTemplate
 from app.api.constants import WELL_SITE_CONTRACTED_WORK, APPLICATION_JSON, COMPANY_NAME_JSON_KEYS
 from .application_status import ApplicationStatus
 from .application_status_change import ApplicationStatusChange
@@ -19,24 +18,8 @@ from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK
 from app.api.permit_holder.resources.permit_holder import PermitHolderResource
 from app.api.application.response_models import APPLICATION
 from app.api.application.models.application_history import ApplicationHistory
-
-
-def _worktype_est_cost_value(contracted_work_dict):
-    return sum([
-        v for k, v in contracted_work_dict.items()
-        if k not in ('planned_start_date', 'planned_end_date', 'work_id')
-    ])
-
-
-def worktype_est_cost(contracted_work_dict):
-    est_cost = _worktype_est_cost_value(contracted_work_dict)
-    return round(est_cost, 2)
-
-
-def worktype_prov_contribution(contracted_work_dict):
-    fifty_percent = _worktype_est_cost_value(contracted_work_dict) / 2.0
-    contribution = fifty_percent if fifty_percent <= 100000 else 100000
-    return round(contribution, 2)
+from app.api.application.models.payment_document import PaymentDocument
+from app.api.services.email_service import EmailService
 
 
 class Application(Base, AuditMixin):
@@ -58,6 +41,13 @@ class Application(Base, AuditMixin):
     edit_note = db.Column(db.String)
 
     documents = db.relationship('ApplicationDocument', lazy='select')
+    payment_documents = db.relationship(
+        'PaymentDocument',
+        lazy='select',
+        primaryjoin=
+        'and_(PaymentDocument.application_guid == Application.guid, PaymentDocument.active_ind == True)'
+    )
+
     status_changes = db.relationship(
         'ApplicationStatusChange',
         lazy='joined',
@@ -65,7 +55,7 @@ class Application(Base, AuditMixin):
     )
 
     def __repr__(self):
-        return f'<Application: {self.guid}>'
+        return f'<{self.__class__.__name__} {self.guid}>'
 
     @classmethod
     def get_all(cls):
@@ -113,88 +103,130 @@ class Application(Base, AuditMixin):
 
     @hybrid_property
     def company_name(self):
-        self.json.get('company_details', {}).get('company_name', {}).get('label')
-
-    def calc_total_prov_contribution(self):
-        total_prov_contribution = 0
-        well_sites = self.json.get('well_sites', {})
-        for ws in well_sites:
-            site_details = ws.get('details', {})
-            wan = site_details.get('well_authorization_number')
-            ##get review
-            ws_review_dict = {}
-            ws_review = []
-            if self.review_json:
-                ws_review = [i for i in self.review_json['well_sites'] if str(wan) in i.keys()]
-            if ws_review:
-                ws_review_dict = ws_review[0][str(wan)]
-
-            current_app.logger.debug(ws_review_dict)
-
-            for worktype, wt_details in ws.get('contracted_work', {}).items():
-                if ws_review_dict.get('contracted_work', {}).get(
-                        worktype, {}).get('contracted_work_status_code') != 'APPROVED':
-                    continue
-                total_prov_contribution += worktype_prov_contribution(wt_details)
-        return total_prov_contribution
+        return self.json.get('company_details', {}).get('company_name', {}).get('label')
 
     @hybrid_property
-    def _doc_gen_json(self):
+    def agreement_number(self):
+        return str(self.id).zfill(4)
+
+    @hybrid_property
+    def well_sites_with_review_data(self):
+        """Merges well sites with their corresponding review data and provides extra information."""
+
+        well_sites = self.json.get('well_sites')
+
+        # Merge well sites with their corresponding review data.
+        if self.review_json:
+            ws_reviews = self.review_json.get('well_sites')
+            for i, ws_review in enumerate(ws_reviews):
+                if not ws_review:
+                    continue
+                for wan, review_data in ws_review.items():
+                    for k, v in review_data.items():
+                        if k != 'contracted_work':
+                            continue
+                        for cw_type, cw_data in v.items():
+                            well_sites[i]['contracted_work'][cw_type].update(cw_data)
+
+        # Calculate the sum for each contracted work item
+        for i, well_site in enumerate(well_sites):
+            for cw_type, cw_data in well_site.get('contracted_work', {}).items():
+                cw_total = 0
+                for k, v in cw_data.items():
+                    if k in WELL_SITE_CONTRACTED_WORK[cw_type]:
+                        cw_total += v
+                well_sites[i]['contracted_work'][cw_type]['contracted_work_total'] = round(
+                    cw_total, 2)
+
+        return well_sites
+
+    def find_contracted_work_by_id(self, work_id):
+        for ws in self.well_sites_with_review_data:
+            for cw_type, cw_data in ws.get('contracted_work', {}).items():
+                if cw_data['work_id'] == work_id:
+                    return cw_data
+
+    def calc_est_shared_cost(self, contracted_work):
+        """Calculates the contracted work item's Estimated Shared Cost, which is half of the estimated cost \
+            unless that value is $100,000 or more, then it is $100,000.
+        """
+
+        half_est_cost = round(contracted_work['contracted_work_total'] / 2.0, 2)
+        est_shared_cost = half_est_cost if half_est_cost <= 100000 else 100000
+        return est_shared_cost
+
+    def calc_total_est_shared_cost(self):
+        """Calculates this application's contribution (sum of all contracted work Estimated Shared Cost) to the Provincial Financial Contribution total."""
+
+        total_est_shared_cost = 0
+        for ws in self.well_sites_with_review_data:
+            for cw_type, cw_data in ws.get('contracted_work', {}).items():
+                if cw_data.get('contracted_work_status_code', None) != 'APPROVED':
+                    continue
+                total_est_shared_cost += self.calc_est_shared_cost(cw_data)
+        return total_est_shared_cost
+
+    def calc_prf_phase_one_amount(self):
+        """Calculates this application's payment phase one amount, which is 10% of the total estimated shared cost."""
+
+        return round(self.calc_total_est_shared_cost() * 0.10, 2)
+
+    def calc_est_shared_cost_interim_phase(self, contracted_work):
+        return round(self.calc_est_shared_cost(contracted_work) * 0.60, 2)
+
+    def calc_est_shared_cost_final_phase(self, contracted_work):
+        return round(self.calc_est_shared_cost(contracted_work) * 0.30, 2)
+
+    @hybrid_property
+    def shared_cost_agreement_template_json(self):
+        """Generates the JSON used to generate this application's Shared Cost Agreement document."""
+
         result = self.json
-        result['agreement_no'] = str(self.id).zfill(4)
+
+        # Create general document info
+        result['agreement_no'] = self.agreement_number
         result['application_guid'] = str(self.guid)
         result['agreement_date'] = datetime.now().strftime("%d, %b, %Y")
-        #CREATE SOME FORMATTED MEMBERS FOR DOCUMENT_GENERATION
+
+        # Create company info
         _company_details = self.json.get('company_details')
+        _company_name = _company_details['company_name']['label']
         addr1 = _company_details.get('address_line_1')
         addr2 = _company_details.get('address_line_2') + '\n' if _company_details.get(
             'address_line_2') else ""
         city = _company_details.get('city')
         post_cd = _company_details.get('postal_code')
         prov = _company_details.get('province')
+
+        # Create applicant info
         _applicant_name = f"{self.json['company_contact']['first_name']} {self.json['company_contact']['last_name']}"
         result['applicant_name'] = _applicant_name
         result['applicant_address'] = f'{addr1}\n{addr2}{post_cd}\n{city}, {prov}'
-        _company_name = _company_details['company_name']['label']
         result['applicant_company_name'] = _company_name
-
-        result['funding_amount'] = '${:,.2f}'.format(self.calc_total_prov_contribution())
+        result['funding_amount'] = '${:,.2f}'.format(self.calc_total_est_shared_cost())
         result[
-            'recipient_contact_details'] = f'{_applicant_name},\n{_company_name},\n{addr1} {post_cd} {city} {prov},\n{self.submitter_email},\n{self.submitter_phone_1}'
+            'recipient_contact_details'] = f'{_applicant_name},\n{_company_name},\n{addr1} {post_cd} {city} {prov},\n{self.applicant_email},\n{self.submitter_phone_1}'
 
-        well_sites = self.json.get('well_sites', {})
+        # Create detailed info for each well site's contracted work items
         result['formatted_well_sites'] = ""
-        for ws in well_sites:
+        for ws in self.well_sites_with_review_data:
             site_details = ws.get('details', {})
             wan = site_details.get('well_authorization_number')
-            ##get review
-            ws_review_dict = {}
-            ws_review = []
-            if self.review_json:
-                ws_review = [i for i in self.review_json['well_sites'] if str(wan) in i.keys()]
-            if ws_review:
-                ws_review_dict = ws_review[0][str(wan)]
-
-            current_app.logger.debug(ws_review_dict)
-
             for worktype, wt_details in ws.get('contracted_work', {}).items():
-                if worktype == "site_conditions": continue        ##all other sections
-                if ws_review_dict.get('contracted_work', {}).get(
-                        worktype, {}).get('contracted_work_status_code') != 'APPROVED':
+                if wt_details.get('contracted_work_status_code', None) != 'APPROVED':
                     continue
-                current_app.logger.debug(wt_details)
                 site = f'\nWell Authorization Number: {wan}\n'
                 site += f' Eligible Activities as described in Application: {worktype.replace("_"," ").capitalize()}\n'
-                site += f' Applicant\'s Estimated Cost: {"${:,.2f}".format(worktype_est_cost(wt_details))}\n'
-                site += f' Provincial Financial Contribution: {"${:,.2f}".format(worktype_prov_contribution(wt_details))}\n'
+                site += f' Applicant\'s Estimated Cost: {"${:,.2f}".format(wt_details.get("contracted_work_total"))}\n'
+                site += f' Provincial Financial Contribution: {"${:,.2f}".format(self.calc_est_shared_cost(wt_details))}\n'
                 site += f' Planned Start Date: {wt_details["planned_start_date"]}\n'
                 site += f' Planned End Date: {wt_details["planned_end_date"]}\n'
                 result['formatted_well_sites'] += site
-        current_app.logger.debug(result)
+
         return result
 
     @hybrid_property
-    def submitter_email(self):
+    def applicant_email(self):
         return self.json.get('company_contact', {}).get('email')
 
     @hybrid_property
@@ -219,135 +251,25 @@ class Application(Base, AuditMixin):
                         desc(ApplicationStatusChange.change_date)).limit(1).as_scalar(),
             'NOT_STARTED')
 
-    def send_confirmation_email(self, email_service):
-        if not self.submitter_email:
-            raise Exception(
-                'Application.json.company_contact.email is not set, must set before email can be sent'
-            )
-
-        html_body = f"""<div class="WordSection1" style="margin:0;">
-  <table class="MsoNormalTable" border="0" cellspacing="0" cellpadding="0" width="100%"
-    style="background:#003366; border-collapse:collapse">
-    <tbody>
-      <tr>
-        <td width="217" colspan="2" valign="top"
-          style="width:163.05pt; border-top:none; border-left:solid windowtext 1.0pt; border-bottom:solid #FCBA19 3.0pt; border-right:none; padding:3mm 0mm 3mm 3mm">
-          <img src="http://news.gov.bc.ca/Content/Images/Gov/gov3_bc_logo.png"
-            alt="Government of B.C." title="Government of B.C.">
-        </td>
-        <td width="207" colspan="2"
-          style="width:155.05pt; border:none; border-bottom:solid #FCBA19 3.0pt; padding:0cm 0cm 0cm 0cm">
-          <p class="MsoNormal" align="center"
-            style="margin-bottom:0cm; margin-bottom:.0001pt; text-align:center; line-height:normal">
-            <span style="font-size:16.0pt; color:white">Dormant Sites Reclamation Program</span></p>
-        </td>
-        <td width="94" colspan="2"
-          style="width:70.55pt; border:none; border-bottom:solid #FCBA19 3.0pt; padding:0cm 0cm 0cm 0cm">
-          <p class="MsoNormal" align="center"
-            style="margin-bottom:0cm; margin-bottom:.0001pt; text-align:center; line-height:normal">
-            <span style="font-size:16.0pt">&nbsp;</span></p>
-        </td>
-      </tr>
-
-      <tr style="height:13.6pt">
-        <td width="47" valign="top"
-          style="width:35.45pt; border:none; border-left:solid #D9D9D9 1.0pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:13.6pt">
-          <p class="MsoNormal" style="margin-bottom:0cm; margin-bottom:.0001pt; line-height:normal">
-            &nbsp;</p>
-        </td>
-        <td width="184" colspan="2" valign="top"
-          style="width:138.25pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:13.6pt">
-		  <br/>
-		  <br/>
-		  <br/>
-          <p class="MsoNormal" style="margin-bottom:0cm; margin-bottom:.0001pt; line-height:normal">
-            <span style="font-size:12.0pt; color:#595959">Reference Number</span></p>
-        </td>
-        <td width="232" colspan="2" valign="top"
-          style="width:173.8pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:13.6pt">
-		  <br/>
-		  <br/>
-		  <br/>
-          <p class="MsoNormal" style="margin-bottom:0cm; margin-bottom:.0001pt; line-height:normal">
-            <b><span style="font-size:12.0pt; color:#595959">{self.guid}</span></b></p>
-        </td>
-        <td width="55" valign="top"
-          style="width:41.15pt; border:none; border-right:solid #D9D9D9 1.0pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:13.6pt">
-          <p class="MsoNormal" style="margin-bottom:0cm; margin-bottom:.0001pt; line-height:normal">
-            &nbsp;</p>
-        </td>
-      </tr>
-
-      <tr style="height:25pt">
-        <td width="47" valign="top"
-          style="width:35.45pt; border:none; border-left:solid #D9D9D9 1.0pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:56.9pt">
-          <p class="MsoNormal" style="margin-bottom:0cm; margin-bottom:.0001pt; line-height:normal">
-            &nbsp;</p>
-        </td>
-        <td width="416" colspan="4" valign="top"
-          style="width:312.05pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:56.9pt">
-        </td>
-        <td width="55" valign="top"
-          style="width:41.15pt; border:none; border-right:solid #D9D9D9 1.0pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:56.9pt">
-          <p class="MsoNormal" style="margin-bottom:0cm; margin-bottom:.0001pt; line-height:normal">
-            &nbsp;</p>
-        </td>
-      </tr>
-
-      <tr>
-        <td width="47" valign="top"
-          style="width:41.15pt; border:none; border-left:solid #D9D9D9 1.0pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:56.9pt">
-          <p class="MsoNormal" style="margin-bottom:0cm; margin-bottom:.0001pt; line-height:normal">
-            &nbsp;</p>
-        </td>
-        <td colspan="4" width="416" valign="top"
-          style="width:41.15pt; border:none; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:56.9pt">
-          <p>
-                We have successfully received your application in the British Columbia Dormant Sites Reclamation Program. Please keep your reference number safe as you will
-                need it to carry your application forward in this process. You can view the 
-                contents of your application below.
-				<br />
-				<br />
+    def send_confirmation_email(self):
+        html_content = f"""
+            <p>
+                We have successfully received your application in the British Columbia Dormant Sites Reclamation Program.
+                Please keep your reference number safe as you will need it to carry your application forward in this process.
+                You can view the contents of your application below.
+                <br />
+                <br />
                 <a href='{Config.URL}view-application-status/{self.guid}'>Click here to view the status of your application.</a>
                 <br/>
                 <br/>
-		  <br/>
-		  <br/>
-		  <br/>
-          </p>
-          {self.get_application_html()}
-        </td>
-        <td width="55" valign="top"
-          style="width:41.15pt; border:none; border-right:solid #D9D9D9 1.0pt; background:white; padding:0cm 5.4pt 0cm 5.4pt; height:56.9pt">
-          <p class="MsoNormal" style="margin-bottom:0cm; margin-bottom:.0001pt; line-height:normal">
-            &nbsp;</p>
-        </td>
-      </tr>
-
-      <tr style="height:22.3pt">
-        <td width="518" colspan="6"
-          style="border:none; border-top:solid #FCBA19 3.0pt; padding:0cm 5.4pt 0cm 5.4pt; height:22.3pt">
-          <p class="MsoNormal" align="right"
-            style="margin-bottom:0cm; margin-bottom:.0001pt; text-align:right; line-height:normal">
-          </p>
-        </td>
-      </tr>
-
-      <tr>
-        <td width="59" style="width:44.25pt; padding:0cm 0cm 0cm 0cm"></td>
-        <td width="213" style="width:159.75pt; padding:0cm 0cm 0cm 0cm"></td>
-        <td width="18" style="width:13.5pt; padding:0cm 0cm 0cm 0cm"></td>
-        <td width="241" style="width:180.75pt; padding:0cm 0cm 0cm 0cm"></td>
-        <td width="49" style="width:36.75pt; padding:0cm 0cm 0cm 0cm"></td>
-        <td width="69" style="width:51.75pt; padding:0cm 0cm 0cm 0cm"></td>
-      </tr>
-    </tbody>
-  </table>
-  <p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
-  <p class="MsoNormal"><span>&nbsp;</span></p>
-</div>
-        """
-        email_service.send_email(self.submitter_email, 'Application Confirmation', html_body)
+                <br/>
+                <br/>
+                <br/>
+            </p>
+            {self.get_application_html()}
+            """
+        with EmailService() as es:
+            es.send_email_to_applicant(self, 'Application Confirmation', html_content)
 
     def get_application_html(self):
         def create_company_details(company_details):

@@ -93,8 +93,8 @@
     },
     {
       "name": "TUSD_URL",
-      "displayName": "Document Manager Url",
-      "description": "URL for the document manager",
+      "displayName": "TUSD Url",
+      "description": "URL for TUSD service",
       "value": "http://localhost:5001"
     },
     {

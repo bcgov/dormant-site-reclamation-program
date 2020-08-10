@@ -356,7 +356,7 @@ export class ApplicationTable extends Component {
         key: "priority_criteria",
         dataIndex: "priority_criteria",
         render: (text) => (
-          <div style={{ textAlign: "right" }} title="Well Auth No.">
+          <div style={{ textAlign: "right" }} title="Priority Criteria">
             {text || Strings.DASH}
           </div>
         ),

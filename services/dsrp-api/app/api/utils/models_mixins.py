@@ -33,6 +33,7 @@ class UserBoundQuery(db.Query):
 def ensure_constrained(query):
     return query
 
+
 class DictLoadingError(Exception):
     """Raised when incoming type does not match expected type, prevents coalesing"""
     pass
@@ -69,6 +70,13 @@ class Base(db.Model):
             except SQLAlchemyError as e:
                 db.session.rollback()
                 raise e
+
+    def soft_delete(self):
+        if not (hasattr(self, 'active_ind')):
+            raise Exception("Provided entity does not have active_ind field.")
+
+        self.active_ind = False
+        self.save()
 
     def _deep_update_from_dict(self, data_dict, depth=0, _edit_key=None):
         """

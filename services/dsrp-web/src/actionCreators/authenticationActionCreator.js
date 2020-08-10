@@ -41,7 +41,7 @@ export const getUserInfoFromToken = (token, errorMessage) => (dispatch) => {
           duration: 10,
         });
       } else {
-        throw err;
+        throw new Error(err);
       }
     });
 };

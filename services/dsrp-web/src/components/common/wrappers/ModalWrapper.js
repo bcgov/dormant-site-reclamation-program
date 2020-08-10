@@ -3,7 +3,6 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Modal } from "antd";
-import LoadingBar from "react-redux-loading-bar";
 import { closeModal } from "@/actions/modalActions";
 import {
   getIsModalOpen,
@@ -57,18 +56,6 @@ export class ModalWrapper extends Component {
         footer={null}
         closable={false}
       >
-        <LoadingBar
-          scope="modal"
-          className="color-primary"
-          style={{
-            position: "absolute",
-            top: "50px",
-            left: 0,
-            width: "100%",
-            height: "8px",
-            zIndex: 1001,
-          }}
-        />
         {ChildComponent && (
           <ChildComponent
             closeModal={this.closeModal}

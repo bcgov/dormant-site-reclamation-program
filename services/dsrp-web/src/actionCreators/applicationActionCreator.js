@@ -1,5 +1,4 @@
 import { notification } from "antd";
-import { hideLoading } from "react-redux-loading-bar";
 import { request, success, error } from "../actions/genericActions";
 import * as reducerTypes from "../constants/reducerTypes";
 import * as API from "../constants/api";
@@ -36,11 +35,10 @@ export const fetchApplications = (params) => (dispatch) => {
       dispatch(applicationActions.storeApplications(response.data));
       return response;
     })
-    .catch((error) => {
+    .catch((err) => {
       dispatch(error(reducerTypes.GET_APPLICATIONS));
-      throw new Error(error);
-    })
-    .finally(() => dispatch(hideLoading()));
+      throw new Error(err);
+    });
 };
 
 export const fetchApplicationById = (guid) => (dispatch) => {
@@ -52,11 +50,10 @@ export const fetchApplicationById = (guid) => (dispatch) => {
       dispatch(applicationActions.storeApplication(response.data));
       return response;
     })
-    .catch((error) => {
+    .catch((err) => {
       dispatch(error(reducerTypes.GET_APPLICATION));
-      throw new Error(error);
-    })
-    .finally(() => dispatch(hideLoading()));
+      throw new Error(err);
+    });
 };
 
 export const fetchApplicationSummaryById = (guid) => (dispatch) => {
@@ -68,11 +65,10 @@ export const fetchApplicationSummaryById = (guid) => (dispatch) => {
       dispatch(applicationActions.storeApplication(response.data));
       return response;
     })
-    .catch((error) => {
+    .catch((err) => {
       dispatch(error(reducerTypes.GET_APPLICATION_SUMMARY));
-      throw new Error(error);
-    })
-    .finally(() => dispatch(hideLoading()));
+      throw new Error(err);
+    });
 };
 
 export const updateApplication = (guid, payload) => (dispatch) => {
@@ -87,11 +83,10 @@ export const updateApplication = (guid, payload) => (dispatch) => {
       dispatch(success(reducerTypes.UPDATE_APPLICATION));
       return response;
     })
-    .catch((error) => {
+    .catch((err) => {
       dispatch(error(reducerTypes.UPDATE_APPLICATION));
-      throw new Error(error);
-    })
-    .finally(() => dispatch(hideLoading()));
+      throw new Error(err);
+    });
 };
 
 export const updateApplicationReview = (guid, payload) => (dispatch) => {
@@ -102,11 +97,10 @@ export const updateApplicationReview = (guid, payload) => (dispatch) => {
       dispatch(success(reducerTypes.UPDATE_APPLICATION_REVIEW));
       return response;
     })
-    .catch((error) => {
+    .catch((err) => {
       dispatch(error(reducerTypes.UPDATE_APPLICATION_REVIEW));
-      throw new Error(error);
-    })
-    .finally(() => dispatch(hideLoading()));
+      throw new Error(err);
+    });
 };
 
 export const createApplicationStatus = (guid, payload) => (dispatch) => {
@@ -123,6 +117,27 @@ export const createApplicationStatus = (guid, payload) => (dispatch) => {
     })
     .catch((err) => {
       dispatch(error(reducerTypes.CREATE_APPLICATION_STATUS));
+      throw new Error(err);
+    });
+};
+
+export const deleteApplicationPaymentDocument = (appGuid, documentGuid) => (dispatch) => {
+  dispatch(request(reducerTypes.DELETE_APPLICATION_PAYMENT_DOCUMENT));
+  return CustomAxios()
+    .delete(
+      ENVIRONMENT.apiUrl + API.APPLICATION_PAYMENT_DOCUMENT(appGuid, documentGuid),
+      createRequestHeader()
+    )
+    .then((response) => {
+      notification.success({
+        message: "Successfully deleted payment document.",
+        duration: 5,
+      });
+      dispatch(success(reducerTypes.DELETE_APPLICATION_PAYMENT_DOCUMENT));
+      return response;
+    })
+    .catch((err) => {
+      dispatch(error(reducerTypes.DELETE_APPLICATION_PAYMENT_DOCUMENT));
       throw new Error(err);
     });
 };

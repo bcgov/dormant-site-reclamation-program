@@ -6,12 +6,17 @@ import PropTypes from "prop-types";
 import { Row, Col, Typography, Icon, Tabs, Button } from "antd";
 import { openModal, closeModal } from "@/actions/modalActions";
 import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
-import { fetchApplicationById, updateApplication } from "@/actionCreators/applicationActionCreator";
+import {
+  fetchApplicationById,
+  updateApplication,
+  deleteApplicationPaymentDocument,
+} from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/selectors/applicationSelectors";
 import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm";
 import ViewApplicationDocuments from "@/components/pages/ViewApplicationDocuments";
 import LinkButton from "@/components/common/LinkButton";
 import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
+import ViewPaymentDocuments from "@/components/pages/ViewPaymentDocuments";
 import Loading from "@/components/common/Loading";
 import { modalConfig } from "@/components/modalContent/config";
 import { PageTracker } from "@/utils/trackers";
@@ -28,8 +33,13 @@ const propTypes = {
   updateApplication: PropTypes.func.isRequired,
   openModal: PropTypes.func.isRequired,
   reset: PropTypes.func.isRequired,
+  deleteApplicationPaymentDocument: PropTypes.func.isRequired,
+  closeModal: PropTypes.func.isRequired,
+  /* eslint-disable */
+  history: PropTypes.any.isRequired,
   application: PropTypes.any,
   editedApplication: PropTypes.any,
+  /* eslint-enable */
 };
 
 const defaultProps = {
@@ -40,7 +50,7 @@ const defaultProps = {
 const { Title } = Typography;
 
 export class ViewApplicationPage extends Component {
-  state = { isLoaded: false, editApplication: false };
+  state = { isLoaded: false, editApplication: false, activeTab: "application" };
 
   componentDidMount() {
     this.handleGetApplication();
@@ -103,6 +113,13 @@ export class ViewApplicationPage extends Component {
       .then(() => this.handleDiscardAdminEditApplication());
   };
 
+  handleDeletePaymentDocument = (appGuid, documentGuid) => {
+    this.props
+      .deleteApplicationPaymentDocument(appGuid, documentGuid)
+      .then(() => this.props.closeModal())
+      .then(() => this.handleGetApplication());
+  };
+
   renderAdminEditButton = () => (
     <Button
       type="primary"
@@ -114,6 +131,8 @@ export class ViewApplicationPage extends Component {
       {(this.state.editApplication && "Finish Editing") || "Edit Application"}
     </Button>
   );
+
+  handleTabClick = (key) => this.setState({ activeTab: key });
 
   render() {
     return (
@@ -134,8 +153,8 @@ export class ViewApplicationPage extends Component {
             </Row>
             <Row type="flex" justify="center" align="top" className="landing-header">
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-                <Tabs type="card">
-                  <TabPane tab="Application" key="1" style={{ padding: "20px" }}>
+                <Tabs type="card" activeKey={this.state.activeTab} onTabClick={this.handleTabClick}>
+                  <TabPane tab="Application" key="application" style={{ padding: "20px" }}>
                     {this.renderAdminEditButton()}
                     <ViewOnlyApplicationForm
                       isViewingSubmission
@@ -146,7 +165,7 @@ export class ViewApplicationPage extends Component {
                   </TabPane>
                   <TabPane
                     tab={`Documents (${this.props.application.documents.length})`}
-                    key="2"
+                    key="application_documents"
                     style={{ padding: "20px" }}
                   >
                     <ViewApplicationDocuments
@@ -157,6 +176,17 @@ export class ViewApplicationPage extends Component {
                       applicationGuid={this.props.application.guid}
                       isAdminView
                       onDocumentUpload={this.handleGetApplication}
+                    />
+                  </TabPane>
+                  <TabPane
+                    tab={`Payment Request Forms (${this.props.application.payment_documents.length})`}
+                    key="payment_documents"
+                    style={{ padding: "20px" }}
+                  >
+                    <ViewPaymentDocuments
+                      application_guid={this.props.application.guid}
+                      documents={this.props.application.payment_documents}
+                      onDocumentDelete={this.handleDeletePaymentDocument}
                     />
                   </TabPane>
                 </Tabs>
@@ -182,6 +212,7 @@ const mapDispatchToProps = (dispatch) =>
       openModal,
       closeModal,
       reset,
+      deleteApplicationPaymentDocument,
     },
     dispatch
   );

@@ -33,30 +33,27 @@ class ApplicationDocumentListResource(Resource, UserMixin):
     def post(self, application_guid):
         application = Application.find_by_guid(application_guid)
         if not application:
-            raise NotFound("Not found")
+            raise NotFound('No application was found matching the provided reference number')
 
-        if application.application_status_code == "WAIT_FOR_DOCS" or jwt.validate_roles([ADMIN]):
-            ##Admin or public if waiting for docs, otherwise reject
-            docs = request.json.get('documents',[])
+        # Documents can only be uploaded for application's in the correct status or if its being done by an admin
+        if application.application_status_code == 'WAIT_FOR_DOCS' or jwt.validate_roles([ADMIN]):
+            docs = request.json.get('documents', [])
 
             for doc in docs:
                 new_doc = ApplicationDocument(
                     document_name=doc['document_name'], object_store_path=doc['object_store_path'])
                 application.documents.append(new_doc)
+                application.save()
 
             if request.json.get('confirm_final_documents'):
-                new_app_status_change = ApplicationStatusChange(
-                    application_status_code="DOC_SUBMITTED",
-                    note="Thank you for uploading the required documents") 
-                application.status_changes.append(new_app_status_change)
-                application.save()
-                db.session.refresh(new_app_status_change)
-                with EmailService() as es:
-                    new_app_status_change.send_status_change_email(es)
+                app_status_change = ApplicationStatusChange(
+                    application=application,
+                    application_status_code='DOC_SUBMITTED',
+                    note='Thank you for uploading the required documents.')
+                app_status_change.save()
 
-            application.save()
-            return "", 204
-        raise Unauthorized("Not currently accepting documents on this application")
+            return '', 204
+        raise Unauthorized('Not currently accepting documents on this application')
 
 
 class ApplicationDocumentResource(Resource, UserMixin):
@@ -64,10 +61,10 @@ class ApplicationDocumentResource(Resource, UserMixin):
     @api.marshal_with(DOWNLOAD_TOKEN_MODEL, code=200)
     @requires_role_admin
     def get(self, application_guid, document_guid):
-        app_document = ApplicationDocument.find_by_guid(document_guid)
-        if not app_document or str(app_document.application.guid) != str(application_guid):
-            raise NotFound('Not found')
+        app_document = ApplicationDocument.find_by_guid(application_guid, document_guid)
+        if not app_document:
+            raise NotFound('Application document not found')
 
         token_guid = uuid.uuid4()
-        cache.set(DOWNLOAD_TOKEN(token_guid), {'document_guid':document_guid}, TIMEOUT_5_MINUTES)
+        cache.set(DOWNLOAD_TOKEN(token_guid), {'document_guid': document_guid}, TIMEOUT_5_MINUTES)
         return {'token_guid': token_guid}
