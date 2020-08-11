@@ -29,8 +29,10 @@ class PaymentDocument(AuditMixin, Base):
         super(PaymentDocument, self).__init__(**kwargs)
 
         def create_invoice_number(application):
+            all_application_payment_documents = PaymentDocument.query.filter_by(
+                application_guid=application.guid).all()
             amount_generated = sum(doc.payment_document_code == self.payment_document_code
-                                   for doc in application.payment_documents)
+                                   for doc in all_application_payment_documents)
             payment_phase = None
             if self.payment_document_code == 'FIRST_PRF':
                 payment_phase = 1
