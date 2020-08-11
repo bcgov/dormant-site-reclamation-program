@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Typography, Result, Icon } from "antd";
+import { Row, Col, Typography } from "antd";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { formatDateTime } from "@/utils/helpers";
@@ -12,8 +12,10 @@ const propTypes = {
     guid: PropTypes.string,
     application_status_code: PropTypes.string,
     submission_date: PropTypes.string,
+    company_name: PropTypes.string,
     json: PropTypes.any,
   }).isRequired,
+  applicationStatusHash: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 const description = (status) => {
@@ -91,6 +93,7 @@ const description = (status) => {
         </Paragraph>
       );
     default:
+      throw new Error("Unknown application status code received!");
   }
 };
 
@@ -114,8 +117,8 @@ export const ApplicationStatusCard = (props) => (
       <br />
       <Paragraph>
         If you have any questions regarding your application,{" "}
-        <a href="mailto:DormantSite.BC.Government@gov.bc.ca">Contact us</a> and be sure to include
-        your reference number
+        <a href="mailto:DormantSite.BC.Government@gov.bc.ca">contact us</a> and be sure to include
+        your reference number.
       </Paragraph>
     </Col>
   </Row>
