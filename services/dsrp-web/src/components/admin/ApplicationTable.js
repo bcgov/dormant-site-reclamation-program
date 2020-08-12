@@ -382,10 +382,10 @@ export class ApplicationTable extends Component {
           const lmr = record.LMR && parseFloat(record.LMR.replace(/[^0-9.-]+/g, ""));
           return (
             <div style={{ textAlign: "right" }} title="Est. Cost">
-              {formatMoney(text) || Strings.DASH}
               {(lmr || lmr === 0) &&
                 Number(text) * 1.15 >= lmr &&
-                toolTip("Est. Cost exceeds LMR by 15% or more", "color-error")}
+                toolTip("Est. Cost exceeds LMR by 15% or more", "color-error est-cost-tooltip")}
+              {formatMoney(text) || Strings.DASH}
             </div>
           );
         },
