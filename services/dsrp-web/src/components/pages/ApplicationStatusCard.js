@@ -70,6 +70,25 @@ const description = (status) => {
           Your application has been approved and payment will be processed shortly.
         </Paragraph>
       );
+    case "INTERIM_AND_FINAL_PAY_PROCESSING":
+      return (
+        <Paragraph>
+          Your application was approved and has received its first-phase payment. Interim and
+          final-phase payments for its approved work items are now able to be processed. Please see
+          below for instructions on how to submit the required documents and other relevant
+          information for processing and receiving the interim and final payments on your approved
+          work items. Your application will remain in this status until payment for all approved and
+          completed work has been received.
+        </Paragraph>
+      );
+    case "ALL_PAYMENTS_RECEIVED":
+      return (
+        <Paragraph>
+          Your application has received payment for all of its approved work items and its lifecycle
+          is complete. Thank you! If you believe there are any outstanding issues, please contact
+          us.
+        </Paragraph>
+      );
     case "NOT_APPROVED":
       return (
         <Paragraph>
