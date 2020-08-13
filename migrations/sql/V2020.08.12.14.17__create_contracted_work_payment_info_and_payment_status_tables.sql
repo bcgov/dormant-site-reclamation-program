@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS contracted_work_payment
     update_user varchar NOT NULL,
     update_timestamp timestamp NOT NULL DEFAULT now(),
 
+    FOREIGN KEY (application_guid) REFERENCES application(guid) DEFERRABLE INITIALLY DEFERRED,
     FOREIGN KEY (interim_payment_status_code) REFERENCES contracted_work_payment_status(contracted_work_payment_status_code) DEFERRABLE INITIALLY DEFERRED,
     FOREIGN KEY (final_payment_status_code) REFERENCES contracted_work_payment_status(contracted_work_payment_status_code) DEFERRABLE INITIALLY DEFERRED,
     FOREIGN KEY (final_eoc_application_document_guid) REFERENCES application_document(application_document_guid) DEFERRABLE INITIALLY DEFERRED,
