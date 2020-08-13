@@ -1,0 +1,1 @@
+UPDATE company_payment_info SET company_name = 'SNC-LAVALIN INC. SNC-LAVALIN INC.' WHERE company_name = 'SNC-LAVALIN INC.';
