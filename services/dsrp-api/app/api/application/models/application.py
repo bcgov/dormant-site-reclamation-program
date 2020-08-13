@@ -140,6 +140,26 @@ class Application(Base, AuditMixin):
 
         return well_sites
 
+    @hybrid_property
+    def contracted_work(self):
+        contracted_work = []
+        for ws in self.well_sites_with_review_data:
+            for cw_type, cw_data in ws.get('contracted_work', {}).items():
+                cw_item = {}
+                cw_item['contracted_work_type'] = cw_type
+                cw_item['well_authorization_number'] = ws.get('details').get(
+                    'well_authorization_number')
+                cw_item.update(cw_data)
+                contracted_work.append(cw_item)
+        return contracted_work
+
+    @hybrid_property
+    def approved_contracted_work(self):
+        return [
+            cw for cw in self.contracted_work
+            if cw.get('contracted_work_status_code', None) == 'APPROVED'
+        ]
+
     def find_contracted_work_by_id(self, work_id):
         for ws in self.well_sites_with_review_data:
             for cw_type, cw_data in ws.get('contracted_work', {}).items():

@@ -71,6 +71,24 @@ export const fetchApplicationSummaryById = (guid) => (dispatch) => {
     });
 };
 
+export const fetchApplicationApprovedContractedWorkById = (guid) => (dispatch) => {
+  dispatch(request(reducerTypes.GET_APPLICATION_APPROVED_CONTRACTED_WORK));
+  return CustomAxios()
+    .get(
+      ENVIRONMENT.apiUrl + API.APPLICATION_APPROVED_CONTRACTED_WORK_BY_ID(guid),
+      createRequestHeader()
+    )
+    .then((response) => {
+      dispatch(success(reducerTypes.GET_APPLICATION_APPROVED_CONTRACTED_WORK));
+      dispatch(applicationActions.storeApplicationApprovedContractedWork(response.data));
+      return response;
+    })
+    .catch((err) => {
+      dispatch(error(reducerTypes.GET_APPLICATION_APPROVED_CONTRACTED_WORK));
+      throw new Error(err);
+    });
+};
+
 export const updateApplication = (guid, payload) => (dispatch) => {
   dispatch(request(reducerTypes.UPDATE_APPLICATION));
   return CustomAxios()

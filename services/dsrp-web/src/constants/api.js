@@ -10,6 +10,8 @@ export const APPLICATION = (params) =>
 export const STATUS = (guid) => `/application/${guid}/status`;
 export const APPLICATION_BY_ID = (guid) => `/application/${guid}`;
 export const APPLICATION_SUMMARY_BY_ID = (guid) => `/application/${guid}/summary`;
+export const APPLICATION_APPROVED_CONTRACTED_WORK_BY_ID = (guid) =>
+  `/application/${guid}/approved-contracted-work`;
 export const APPLICATION_REVIEW = (guid) => `${APPLICATION_BY_ID(guid)}/review`;
 export const APPLICATION_DOCUMENT = (guid) => `${APPLICATION_BY_ID(guid)}/documents`;
 export const APPLICATION_PAYMENT_DOCUMENT = (guid, documentGuid) =>

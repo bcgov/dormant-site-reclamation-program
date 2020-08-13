@@ -34,12 +34,16 @@ CREATE TABLE IF NOT EXISTS contracted_work_payment
 
     interim_payment_status_code varchar NOT NULL DEFAULT 'INFORMATION_REQUIRED',
     final_payment_status_code varchar NOT NULL DEFAULT 'INFORMATION_REQUIRED',
+
     interim_actual_est_cost numeric(14, 2),
     final_actual_est_cost numeric(14, 2),
+
     interim_total_hours_worked_to_date integer,
     final_total_hours_worked_to_date integer,
+
     interim_total_people_employed_to_date integer,
     final_total_people_employed_to_date integer,
+    
     interim_eoc_application_document_guid uuid UNIQUE,
     final_eoc_application_document_guid uuid UNIQUE,
 

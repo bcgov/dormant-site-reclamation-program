@@ -4,6 +4,7 @@ import { APPLICATIONS } from "../constants/reducerTypes";
 const initialState = {
   applications: [],
   application: {},
+  applicationApprovedContractedWork: {},
   pageData: {},
 };
 
@@ -20,6 +21,11 @@ export const applicationReducer = (state = initialState, action) => {
         ...state,
         application: action.payload,
       };
+    case actionTypes.STORE_APPLICATION_APPROVED_CONTRACTED_WORK:
+      return {
+        ...state,
+        applicationApprovedContractedWork: action.payload,
+      };
     default:
       return state;
   }
@@ -31,6 +37,8 @@ const applicationReducerObject = {
 
 export const getApplications = (state) => state[APPLICATIONS].applications;
 export const getApplication = (state) => state[APPLICATIONS].application;
+export const getApplicationApprovedContractedWork = (state) =>
+  state[APPLICATIONS].applicationApprovedContractedWork;
 export const getPageData = (state) => state[APPLICATIONS].pageData;
 
 export default applicationReducerObject;
