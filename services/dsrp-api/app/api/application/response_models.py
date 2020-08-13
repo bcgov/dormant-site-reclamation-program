@@ -20,7 +20,15 @@ APPLICATION_DOCUMENT = api.model(
     "ApplicationDocument", {
         'application_document_guid': fields.String,
         'document_name': fields.String,
-        'upload_date': fields.DateTime,
+        'application_document_code': fields.String,
+        'upload_date': fields.DateTime
+    })
+
+APPLICATION_DOCUMENT_TYPE = api.model(
+    'ApplicationDocumentType', {
+        'application_document_code': fields.String,
+        'description': fields.String,
+        'long_description': fields.String
     })
 
 PAYMENT_DOCUMENT_TYPE = api.model(
