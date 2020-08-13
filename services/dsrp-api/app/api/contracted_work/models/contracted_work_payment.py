@@ -44,5 +44,9 @@ class ContractedWorkPayment(Base, AuditMixin):
         return f'<{self.__class__.__name__} {self.contracted_work_payment_id} {self.application_guid} {self.work_id}>'
 
     @classmethod
-    def get_active(cls):
-        return cls.query.filter_by(active=True).all()
+    def find_by_application_guid(cls, application_guid):
+        return cls.query.filter_by(application_guid=application_guid).all()
+
+    @classmethod
+    def find_by_work_id(cls, work_id):
+        return cls.query.filter_by(work_id=work_id).first()
