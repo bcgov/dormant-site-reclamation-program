@@ -40,9 +40,9 @@ CREATE TABLE IF NOT EXISTS contracted_work_payment
     final_total_hours_worked_to_date integer,
     interim_total_people_employed_to_date integer,
     final_total_people_employed_to_date integer,
-    final_eoc_application_document_guid uuid UNIQUE,
     interim_eoc_application_document_guid uuid UNIQUE,
-    
+    final_eoc_application_document_guid uuid UNIQUE,
+
     create_user varchar NOT NULL,
     create_timestamp timestamp NOT NULL DEFAULT now(),
     update_user varchar NOT NULL,

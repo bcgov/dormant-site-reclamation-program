@@ -152,7 +152,8 @@ class PaymentDocument(AuditMixin, Base):
     class _ModelSchema(Base._ModelSchema):
         document_guid = fields.String(dump_only=True)
 
-    application_guid = db.Column(UUID(as_uuid=True), db.ForeignKey('application.guid'))
+    application_guid = db.Column(
+        UUID(as_uuid=True), db.ForeignKey('application.guid'), nullable=False)
     document_guid = db.Column(UUID(as_uuid=True), primary_key=True, server_default=FetchedValue())
     document_name = db.Column(db.String, nullable=False)
     object_store_path = db.Column(db.String, nullable=False)

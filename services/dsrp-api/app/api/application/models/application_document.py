@@ -19,10 +19,14 @@ class ApplicationDocument(AuditMixin, Base):
 
     application_document_guid = db.Column(
         UUID(as_uuid=True), primary_key=True, server_default=FetchedValue())
-    application_guid = db.Column(UUID(as_uuid=True), nullable=False, db.ForeignKey('application.guid'))
+    application_guid = db.Column(
+        UUID(as_uuid=True), db.ForeignKey('application.guid'), nullable=False)
     document_name = db.Column(db.String, nullable=False)
     object_store_path = db.Column(db.String, nullable=False)
-    application_document_code = db.Column(db.String, nullable=False, db.ForeignKey('application_document_type.application_document_code'))
+    application_document_code = db.Column(
+        db.String,
+        db.ForeignKey('application_document_type.application_document_code'),
+        nullable=False)
 
     upload_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
     active_ind = db.Column(db.Boolean, nullable=False, server_default=FetchedValue())
