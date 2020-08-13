@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS contracted_work_payment_status
 
 ALTER TABLE contracted_work_payment_status OWNER TO dsrp;
 
-INSERT INTO TABLE contracted_work_payment_status (
-    contracted_work_payment_status,
+INSERT INTO contracted_work_payment_status (
+    contracted_work_payment_status_code,
     description,
     long_description,
     create_user,
@@ -21,7 +21,7 @@ INSERT INTO TABLE contracted_work_payment_status (
 )
 VALUES 
     ('INFORMATION_REQUIRED', 'Information Required', 'The applicant is able to edit and provide information for this work item in order for it to be reviewed by an admin.', 'system', 'system'),
-    ('READY_FOR_REVIEW', 'Ready for Review', 'The applicant has indicated that they have provided all required information and that this work item is ready to be reviewed by an admin.')
+    ('READY_FOR_REVIEW', 'Ready for Review', 'The applicant has indicated that they have provided all required information and that this work item is ready to be reviewed by an admin.', 'system', 'system'),
     ('UNDER_REVIEW', 'Under Review', 'The admin has indicated that they have begun reviewing the provided information on the work item.', 'system', 'system'),
     ('APPROVED', 'Approved', 'The admin has indicated that the work item was approved and a payment request form was sent to Finance.', 'system', 'system')    
 ON CONFLICT DO NOTHING;
@@ -40,8 +40,8 @@ CREATE TABLE IF NOT EXISTS contracted_work_payment
     final_total_hours_worked_to_date integer,
     interim_total_people_employed_to_date integer,
     final_total_people_employed_to_date integer,
-    final_eoc_application_document_guid uuid,
-    interim_eoc_application_document_guid uuid,
+    final_eoc_application_document_guid uuid UNIQUE,
+    interim_eoc_application_document_guid uuid UNIQUE,
     
     create_user varchar NOT NULL,
     create_timestamp timestamp NOT NULL DEFAULT now(),
