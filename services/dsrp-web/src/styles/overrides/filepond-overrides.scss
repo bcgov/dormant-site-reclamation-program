@@ -22,11 +22,6 @@
   background-color: $white; //#eee;
 }
 
-/* the border radius of the drop area */
-.filepond--panel-root {
-  border-radius: $border-radius-base;
-}
-
 /* the border radius of the file item */
 .filepond--item-panel {
   border-radius: $border-radius-base;
@@ -74,11 +69,9 @@
 }
 
 /* bordered drop area */
-.filepond--panel-root {
+.filepond--wrapper {
   background-color: transparent;
   border: 2px solid $primary-color;
-}
-
-.filepond--root {
-  max-height: 260px;
+  border-radius: $border-radius-base;
+  min-height: 4.75em;
 }
