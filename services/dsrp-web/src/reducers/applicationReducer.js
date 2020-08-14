@@ -4,7 +4,7 @@ import { APPLICATIONS } from "../constants/reducerTypes";
 const initialState = {
   applications: [],
   application: {},
-  applicationApprovedContractedWork: {},
+  applicationApprovedContractedWork: { approved_contracted_work: [] },
   pageData: {},
 };
 

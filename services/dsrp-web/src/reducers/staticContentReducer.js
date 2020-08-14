@@ -9,6 +9,7 @@ import { STATIC_CONTENT } from "../constants/reducerTypes";
 const initialState = {
   applicationStatusOptions: [],
   contractedWorkStatusOptions: [],
+  contractedWorkPaymentStatusOptions: [],
 };
 
 export const staticContentReducer = (state = initialState, action) => {
@@ -28,6 +29,8 @@ export const getApplicationStatusOptions = (state) =>
   state[STATIC_CONTENT].applicationStatusOptions;
 export const getContractedWorkStatusOptions = (state) =>
   state[STATIC_CONTENT].contractedWorkStatusOptions;
+export const getContractedWorkPaymentStatusOptions = (state) =>
+  state[STATIC_CONTENT].contractedWorkPaymentStatusOptions;
 
 const isStaticContentLoaded = (state) =>
   Object.keys(state)

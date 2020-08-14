@@ -13,7 +13,12 @@ import { createSelector } from "reselect";
 import * as applicationReducer from "../reducers/applicationReducer";
 import { getWells, getLiabilities } from "@/selectors/OGCSelectors";
 
-export const { getApplications, getApplication, getPageData } = applicationReducer;
+export const {
+  getApplications,
+  getApplication,
+  getApplicationApprovedContractedWork,
+  getPageData,
+} = applicationReducer;
 
 const getLMR = (workType, liability) => {
   if (!liability) {

@@ -65,11 +65,7 @@ const description = (status) => {
         </Paragraph>
       );
     case "FIRST_PAY_APPROVED":
-      return (
-        <Paragraph>
-          Your application has been approved and payment will be processed shortly.
-        </Paragraph>
-      );
+      return <Paragraph>Your application has been approved.</Paragraph>;
     case "NOT_APPROVED":
       return (
         <Paragraph>

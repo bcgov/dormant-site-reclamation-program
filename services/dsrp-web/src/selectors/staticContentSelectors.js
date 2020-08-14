@@ -12,6 +12,7 @@ export const {
   getStaticContentLoadingIsComplete,
   getApplicationStatusOptions,
   getContractedWorkStatusOptions,
+  getContractedWorkPaymentStatusOptions,
 } = staticContentReducer;
 
 export const getDropdownApplicationStatusOptions = createSelector(
@@ -42,5 +43,15 @@ export const getDropdownContractedWorkStatusOptions = createSelector(
 
 export const getContractedWorkStatusOptionsHash = createSelector(
   [getDropdownContractedWorkStatusOptions],
+  createLabelHash
+);
+
+export const getDropdownContractedWorkPaymentStatusOptions = createSelector(
+  [getContractedWorkPaymentStatusOptions],
+  (options) => createDropDownList(options, "description", "contracted_work_payment_status_code")
+);
+
+export const getContractedWorkPaymentStatusOptionsHash = createSelector(
+  [getDropdownContractedWorkPaymentStatusOptions],
   createLabelHash
 );

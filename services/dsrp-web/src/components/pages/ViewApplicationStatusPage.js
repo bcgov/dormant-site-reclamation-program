@@ -7,6 +7,7 @@ import { withRouter } from "react-router-dom";
 import ViewApplicationStatusForm from "@/components/forms/ViewApplicationStatusForm";
 import ApplicationStatusCard from "@/components/pages/ApplicationStatusCard";
 import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
+import ApplicationApplicantApprovedContractedWorkView from "@/components/pages/ApplicationApplicantApprovedContractedWorkView";
 import { fetchApplicationSummaryById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
 import { PageTracker } from "@/utils/trackers";
@@ -55,6 +56,8 @@ export class ViewApplicationStatusPage extends Component {
       this.props.fetchApplicationSummaryById(this.props.match.params.id);
       this.setState({ guid: this.props.match.params.id });
     }
+
+    this.onFormSubmit({ guid: "8b8ce987-b16d-4167-aff9-229e44cb8bc0" });
   };
 
   onFormSubmit = (values) => {
@@ -83,9 +86,12 @@ export class ViewApplicationStatusPage extends Component {
         <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
           <ApplicationStatusCard application={this.props.loadedApplication} />
           {this.props.loadedApplication.application_status_code === "WAIT_FOR_DOCS" && (
-            <>
-              <DocumentUploadForm applicationGuid={this.props.loadedApplication.guid} />
-            </>
+            <DocumentUploadForm applicationGuid={this.props.loadedApplication.guid} />
+          )}
+          {this.props.loadedApplication.application_status_code === "FIRST_PAY_APPROVED" && (
+            <ApplicationApplicantApprovedContractedWorkView
+              applicationGuid={this.props.loadedApplication.guid}
+            />
           )}
           <br />
           <Button onClick={() => this.setState({ guid: "" })}>Check another Application</Button>

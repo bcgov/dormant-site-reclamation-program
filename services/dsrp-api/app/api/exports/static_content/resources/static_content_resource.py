@@ -11,11 +11,13 @@ from app.api.constants import TIMEOUT_60_MINUTES, STATIC_CONTENT_KEY
 from app.api.exports.response_models import STATIC_CONTENT
 from app.api.application.models.application_status import ApplicationStatus
 from app.api.contracted_work.models.contracted_work_status import ContractedWorkStatus
+from app.api.contracted_work.models.contracted_work_payment_status import ContractedWorkPaymentStatus
 from app.api.application.models.application_document_type import ApplicationDocumentType
 from app.api.application.models.payment_document_type import PaymentDocumentType
 
 MODELS_GET_ACTIVE = [
-    ApplicationStatus, ContractedWorkStatus, ApplicationDocumentType, PaymentDocumentType
+    ApplicationStatus, ContractedWorkStatus, ApplicationDocumentType, PaymentDocumentType,
+    ContractedWorkPaymentStatus
 ]
 
 
@@ -35,6 +37,7 @@ class StaticContentResource(Resource):
     )
     def get(self):
         content_json = cache.get(STATIC_CONTENT_KEY)
+        content_json = None
         if not content_json:
             current_app.logger.debug('CACHE MISS - static-content')
             content = generate_static_content_dict()
