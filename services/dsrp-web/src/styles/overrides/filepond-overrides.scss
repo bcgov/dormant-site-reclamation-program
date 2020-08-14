@@ -68,10 +68,13 @@
   background-color: $success-color;
 }
 
-/* bordered drop area */
 .filepond--wrapper {
   background-color: transparent;
   border: 2px solid $primary-color;
   border-radius: $border-radius-base;
   min-height: 4.75em;
+}
+
+.filepond--root {
+  margin-bottom: 0;
 }
