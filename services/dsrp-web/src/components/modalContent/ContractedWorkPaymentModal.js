@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import InterimContractedWorkPaymentForm from "@/components/forms/InterimContractedWorkPaymentForm";
 import { Row, Col, Typography, Table, Icon, Button, Tabs } from "antd";
+import InterimContractedWorkPaymentForm from "@/components/forms/InterimContractedWorkPaymentForm";
 
 const { TabPane } = Tabs;
 
@@ -22,8 +22,8 @@ export class ContractedWorkPaymentModal extends Component {
             closeModal={this.props.closeModal}
           />
         </TabPane>
-        <TabPane tab="Final Payment" key="1"></TabPane>
-        <TabPane tab="Interim Progress Report" key="2"></TabPane>
+        <TabPane tab="Final Payment" key="1" />
+        <TabPane tab="Interim Progress Report" key="2" />
       </Tabs>
     );
   };
