@@ -22,8 +22,11 @@ class ContractedWorkPayment(Base, AuditMixin):
         db.ForeignKey('application_document_type.application_document_code'),
         nullable=False)
 
-    interim_actual_est_cost = db.Column(db.Numeric(14, 2))
-    final_actual_est_cost = db.Column(db.Numeric(14, 2))
+    interim_actual_cost = db.Column(db.Numeric(14, 2))
+    final_actual_cost = db.Column(db.Numeric(14, 2))
+
+    interim_paid_amount = db.Column(db.Numeric(14, 2))
+    final_paid_amount = db.Column(db.Numeric(14, 2))
 
     interim_total_hours_worked_to_date = db.Column(db.Integer)
     final_total_hours_worked_to_date = db.Column(db.Integer)
@@ -39,6 +42,16 @@ class ContractedWorkPayment(Base, AuditMixin):
         UUID(as_uuid=True),
         db.ForeignKey('application_document.application_document_guid'),
         unique=True)
+        
+    final_report_application_document_guid = db.Column(
+        UUID(as_uuid=True),
+        db.ForeignKey('application_document.application_document_guid'),
+        unique=True)
+
+    interim_first_submitted_timestamp = db.Column(db.DateTime)
+    final_first_submitted_timestamp = db.Column(db.DateTime)
+
+    work_completion_date = db.Column(db.Date)
 
     def __repr__(self):
         return f'<{self.__class__.__name__} {self.contracted_work_payment_id} {self.application_guid} {self.work_id}>'

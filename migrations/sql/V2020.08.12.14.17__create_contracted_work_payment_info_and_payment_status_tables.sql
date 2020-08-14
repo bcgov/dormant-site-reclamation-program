@@ -35,8 +35,11 @@ CREATE TABLE IF NOT EXISTS contracted_work_payment
     interim_payment_status_code varchar NOT NULL DEFAULT 'INFORMATION_REQUIRED',
     final_payment_status_code varchar NOT NULL DEFAULT 'INFORMATION_REQUIRED',
 
-    interim_actual_est_cost numeric(14, 2),
-    final_actual_est_cost numeric(14, 2),
+    interim_actual_cost numeric(14, 2),
+    final_actual_cost numeric(14, 2),
+
+    interim_paid_amount numeric(14, 2),
+    final_paid_amount numeric(14, 2),
 
     interim_total_hours_worked_to_date integer,
     final_total_hours_worked_to_date integer,
@@ -46,6 +49,13 @@ CREATE TABLE IF NOT EXISTS contracted_work_payment
     
     interim_eoc_application_document_guid uuid UNIQUE,
     final_eoc_application_document_guid uuid UNIQUE,
+    
+    final_report_application_document_guid uuid UNIQUE,
+
+    interim_first_submitted_timestamp timestamp,
+    final_first_submitted_timestamp timestamp,
+
+    work_completion_date date,
 
     create_user varchar NOT NULL,
     create_timestamp timestamp NOT NULL DEFAULT now(),
@@ -55,8 +65,9 @@ CREATE TABLE IF NOT EXISTS contracted_work_payment
     FOREIGN KEY (application_guid) REFERENCES application(guid) DEFERRABLE INITIALLY DEFERRED,
     FOREIGN KEY (interim_payment_status_code) REFERENCES contracted_work_payment_status(contracted_work_payment_status_code) DEFERRABLE INITIALLY DEFERRED,
     FOREIGN KEY (final_payment_status_code) REFERENCES contracted_work_payment_status(contracted_work_payment_status_code) DEFERRABLE INITIALLY DEFERRED,
-    FOREIGN KEY (final_eoc_application_document_guid) REFERENCES application_document(application_document_guid) DEFERRABLE INITIALLY DEFERRED,
     FOREIGN KEY (interim_eoc_application_document_guid) REFERENCES application_document(application_document_guid) DEFERRABLE INITIALLY DEFERRED
+    FOREIGN KEY (final_eoc_application_document_guid) REFERENCES application_document(application_document_guid) DEFERRABLE INITIALLY DEFERRED,
+    FOREIGN KEY (final_report_application_document_guid) REFERENCES application_document(application_document_guid) DEFERRABLE INITIALLY DEFERRED,
 );
 
 ALTER TABLE contracted_work_payment OWNER TO dsrp;
