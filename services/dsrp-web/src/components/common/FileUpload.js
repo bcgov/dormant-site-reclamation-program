@@ -17,16 +17,20 @@ const propTypes = {
   onFileLoad: PropTypes.func,
   onRemoveFile: PropTypes.func,
   allowRevert: PropTypes.bool,
+  allowMultiple: PropTypes.bool,
   chunkSize: PropTypes.number,
+  labelIdle: PropTypes.string,
 };
 
 const defaultProps = {
   maxFileSize: "750MB",
   acceptedFileTypesMap: {},
   allowRevert: false,
+  allowMultiple: true,
   onFileLoad: () => {},
   onRemoveFile: () => {},
   chunkSize: 1048576, // 1MB
+  labelIdle: "Drag & Drop your files or Browse",
 };
 
 class FileUpload extends React.Component {
@@ -61,7 +65,6 @@ class FileUpload extends React.Component {
             this.props.onFileLoad(file.name, documentGuid);
           },
         });
-        // Start the upload
         upload.start();
         return {
           abort: () => {
@@ -80,9 +83,10 @@ class FileUpload extends React.Component {
       <FilePond
         server={this.server}
         name="file"
+        labelIdle={this.props.labelIdle}
         allowRevert={this.props.allowRevert}
         onremovefile={this.props.onRemoveFile}
-        allowMultiple
+        allowMultiple={this.props.allowMultiple}
         maxFileSize={this.props.maxFileSize}
         allowFileTypeValidation={acceptedFileTypes.length > 0}
         acceptedFileTypes={acceptedFileTypes}

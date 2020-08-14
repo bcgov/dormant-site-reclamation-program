@@ -7,7 +7,7 @@ import { withRouter } from "react-router-dom";
 import ViewApplicationStatusForm from "@/components/forms/ViewApplicationStatusForm";
 import ApplicationStatusCard from "@/components/pages/ApplicationStatusCard";
 import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
-import ApplicationApplicantApprovedContractedWorkView from "@/components/pages/ApplicationApplicantApprovedContractedWorkView";
+import ContractedWorkPaymentView from "@/components/pages/ContractedWorkPaymentView";
 import { fetchApplicationSummaryById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
 import { PageTracker } from "@/utils/trackers";
@@ -89,9 +89,7 @@ export class ViewApplicationStatusPage extends Component {
             <DocumentUploadForm applicationGuid={this.props.loadedApplication.guid} />
           )}
           {this.props.loadedApplication.application_status_code === "FIRST_PAY_APPROVED" && (
-            <ApplicationApplicantApprovedContractedWorkView
-              applicationGuid={this.props.loadedApplication.guid}
-            />
+            <ContractedWorkPaymentView applicationGuid={this.props.loadedApplication.guid} />
           )}
           <br />
           <Button onClick={() => this.setState({ guid: "" })}>Check another Application</Button>

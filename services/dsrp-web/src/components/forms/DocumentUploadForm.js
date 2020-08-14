@@ -113,7 +113,7 @@ export class DocumentUploadForm extends Component {
                     onFileLoad={this.onFileLoad}
                     onRemoveFile={this.onRemoveFile}
                     allowRevert
-                    allowMultiple={false}
+                    allowMultiple
                   />
                 </Form.Item>
               </Col>

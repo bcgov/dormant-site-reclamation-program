@@ -117,6 +117,11 @@ h1.ant-typography,
   font-size: 24px;
 }
 
+.ant-tabs-center .ant-tabs-nav-scroll {
+  display: flex;
+  justify-content: center;
+}
+
 // Tables
 
 .ant-table {

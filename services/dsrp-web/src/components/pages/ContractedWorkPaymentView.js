@@ -4,18 +4,26 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { startCase, camelCase } from "lodash";
 import { Row, Col, Typography, Table, Icon, Button } from "antd";
-import { formatDate, formatMoney } from "@/utils/helpers";
+import {
+  formatDate,
+  formatMoney,
+  nullableStringSorter,
+  nullableNumberSorter,
+} from "@/utils/helpers";
 import { fetchApplicationApprovedContractedWorkById } from "@/actionCreators/applicationActionCreator";
 import { getApplicationApprovedContractedWork } from "@/selectors/applicationSelectors";
 import { getContractedWorkPaymentStatusOptionsHash } from "@/selectors/staticContentSelectors";
 import CONTRACT_WORK_SECTIONS from "@/constants/contract_work_sections";
 import * as Strings from "@/constants/strings";
+import { modalConfig } from "@/components/modalContent/config";
+import { openModal, closeModal } from "@/actions/modalActions";
 
 const propTypes = {
   applicationGuid: PropTypes.string.isRequired,
   applicationApprovedContractedWork: PropTypes.arrayOf(PropTypes.any).isRequired,
   contractedWorkPaymentStatusOptionsHash: PropTypes.objectOf(PropTypes.any),
   fetchApplicationApprovedContractedWorkById: PropTypes.func.isRequired,
+  openModal: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -24,7 +32,7 @@ const defaultProps = {
 
 const { Paragraph, Title, Text } = Typography;
 
-export class ApplicationApplicantApprovedContractedWorkView extends Component {
+export class ContractedWorkPaymentView extends Component {
   state = { isLoaded: false };
 
   componentDidMount = () => {
@@ -42,12 +50,12 @@ export class ApplicationApplicantApprovedContractedWorkView extends Component {
         key: work.work_id,
         contracted_work_type_description: startCase(camelCase(work.contracted_work_type)),
         interim_cost:
-          (!isNaN(contracted_work_payment.interim_actual_est_cost) &&
-            formatMoney(contracted_work_payment.interim_actual_est_cost)) ||
+          (!isNaN(contracted_work_payment.interim_actual_cost) &&
+            formatMoney(contracted_work_payment.interim_actual_cost)) ||
           undefined,
         final_cost:
-          (!isNaN(contracted_work_payment.final_actual_est_cost) &&
-            formatMoney(contracted_work_payment.final_actual_est_cost)) ||
+          (!isNaN(contracted_work_payment.final_actual_cost) &&
+            formatMoney(contracted_work_payment.final_actual_cost)) ||
           undefined,
         interim_status:
           (contracted_work_payment.interim_payment_status_code &&
@@ -68,32 +76,15 @@ export class ApplicationApplicantApprovedContractedWorkView extends Component {
     return data;
   };
 
-  //   interim_payment_status_code = db.Column(
-  //     db.String,
-  //     db.ForeignKey('application_document_type.application_document_code'),
-  //     nullable=False)
-  // final_payment_status_code = db.Column(
-  //     db.String,
-  //     db.ForeignKey('application_document_type.application_document_code'),
-  //     nullable=False)
-
-  // interim_actual_est_cost = db.Column(db.Numeric(14, 2))
-  // final_actual_est_cost = db.Column(db.Numeric(14, 2))
-
-  // interim_total_hours_worked_to_date = db.Column(db.Integer)
-  // final_total_hours_worked_to_date = db.Column(db.Integer)
-
-  // interim_total_people_employed_to_date = db.Column(db.Integer)
-  // final_total_people_employed_to_date = db.Column(db.Integer)
-
-  // interim_eoc_application_document_guid = db.Column(
-  //     UUID(as_uuid=True),
-  //     db.ForeignKey('application_document.application_document_guid'),
-  //     unique=True)
-  // final_eoc_application_document_guid = db.Column(
-  //     UUID(as_uuid=True),
-  //     db.ForeignKey('application_document.application_document_guid'),
-  //     unique=True)
+  openContractedWorkPaymentModal = (record) => {
+    console.log(record);
+    return this.props.openModal({
+      props: {
+        title: `Provide Information for Work ID ${record.work_id}`,
+      },
+      content: modalConfig.CONTRACTED_WORK_PAYMENT,
+    });
+  };
 
   render() {
     const columns = [
@@ -177,33 +168,34 @@ export class ApplicationApplicantApprovedContractedWorkView extends Component {
         },
       },
       {
-        key: "operations",
         render: (text, record) => (
-          <div title="View">
-            <Button type="link">
-              <Icon type="edit" className="icon-lg" />
+          <>
+            <Button type="link" onClick={() => this.openContractedWorkPaymentModal(record)}>
+              <Icon type="form" className="icon-lg" />
             </Button>
-          </div>
+          </>
         ),
       },
     ];
+
+    const dataSource = this.transformRowData(
+      this.props.applicationApprovedContractedWork.approved_contracted_work
+    );
+
+    console.log(dataSource);
 
     return (
       <Row>
         <Col>
           <Table
-            rowSelection={{ type: "checkbox" }}
-            align="left"
-            pagination={false}
             columns={columns}
+            pagination={false}
             rowKey={(record) => record.work_id}
             locale={{
               emptyText:
-                "This application does not contain any approved work items! Please contact us.",
+                "This application does not contain any approved contracted work items! Please contact us.",
             }}
-            dataSource={this.transformRowData(
-              this.props.applicationApprovedContractedWork.approved_contracted_work
-            )}
+            dataSource={dataSource}
             loading={!this.state.isLoaded}
           />
         </Col>
@@ -221,13 +213,13 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchApplicationApprovedContractedWorkById,
+      openModal,
+      closeModal,
     },
     dispatch
   );
 
-ApplicationApplicantApprovedContractedWorkView.propTypes = propTypes;
-ApplicationApplicantApprovedContractedWorkView.defaultProps = defaultProps;
+ContractedWorkPaymentView.propTypes = propTypes;
+ContractedWorkPaymentView.defaultProps = defaultProps;
 
-export default compose(connect(mapStateToProps, mapDispatchToProps))(
-  ApplicationApplicantApprovedContractedWorkView
-);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(ContractedWorkPaymentView);

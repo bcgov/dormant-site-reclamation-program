@@ -44,12 +44,12 @@ CREATE TABLE IF NOT EXISTS contracted_work_payment
     interim_total_hours_worked_to_date integer,
     final_total_hours_worked_to_date integer,
 
-    interim_total_people_employed_to_date integer,
-    final_total_people_employed_to_date integer,
+    interim_number_of_workers integer,
+    final_number_of_workers integer,
     
     interim_eoc_application_document_guid uuid UNIQUE,
     final_eoc_application_document_guid uuid UNIQUE,
-    
+
     final_report_application_document_guid uuid UNIQUE,
 
     interim_first_submitted_timestamp timestamp,
@@ -65,9 +65,9 @@ CREATE TABLE IF NOT EXISTS contracted_work_payment
     FOREIGN KEY (application_guid) REFERENCES application(guid) DEFERRABLE INITIALLY DEFERRED,
     FOREIGN KEY (interim_payment_status_code) REFERENCES contracted_work_payment_status(contracted_work_payment_status_code) DEFERRABLE INITIALLY DEFERRED,
     FOREIGN KEY (final_payment_status_code) REFERENCES contracted_work_payment_status(contracted_work_payment_status_code) DEFERRABLE INITIALLY DEFERRED,
-    FOREIGN KEY (interim_eoc_application_document_guid) REFERENCES application_document(application_document_guid) DEFERRABLE INITIALLY DEFERRED
+    FOREIGN KEY (interim_eoc_application_document_guid) REFERENCES application_document(application_document_guid) DEFERRABLE INITIALLY DEFERRED,
     FOREIGN KEY (final_eoc_application_document_guid) REFERENCES application_document(application_document_guid) DEFERRABLE INITIALLY DEFERRED,
-    FOREIGN KEY (final_report_application_document_guid) REFERENCES application_document(application_document_guid) DEFERRABLE INITIALLY DEFERRED,
+    FOREIGN KEY (final_report_application_document_guid) REFERENCES application_document(application_document_guid) DEFERRABLE INITIALLY DEFERRED
 );
 
 ALTER TABLE contracted_work_payment OWNER TO dsrp;

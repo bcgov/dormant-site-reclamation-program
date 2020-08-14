@@ -16,11 +16,13 @@ class ContractedWorkPayment(Base, AuditMixin):
     interim_payment_status_code = db.Column(
         db.String,
         db.ForeignKey('application_document_type.application_document_code'),
-        nullable=False)
+        nullable=False,
+        server_default=FetchedValue())
     final_payment_status_code = db.Column(
         db.String,
         db.ForeignKey('application_document_type.application_document_code'),
-        nullable=False)
+        nullable=False,
+        server_default=FetchedValue())
 
     interim_actual_cost = db.Column(db.Numeric(14, 2))
     final_actual_cost = db.Column(db.Numeric(14, 2))
@@ -31,8 +33,8 @@ class ContractedWorkPayment(Base, AuditMixin):
     interim_total_hours_worked_to_date = db.Column(db.Integer)
     final_total_hours_worked_to_date = db.Column(db.Integer)
 
-    interim_total_people_employed_to_date = db.Column(db.Integer)
-    final_total_people_employed_to_date = db.Column(db.Integer)
+    interim_number_of_workers = db.Column(db.Integer)
+    final_number_of_workers = db.Column(db.Integer)
 
     interim_eoc_application_document_guid = db.Column(
         UUID(as_uuid=True),
@@ -42,7 +44,7 @@ class ContractedWorkPayment(Base, AuditMixin):
         UUID(as_uuid=True),
         db.ForeignKey('application_document.application_document_guid'),
         unique=True)
-        
+
     final_report_application_document_guid = db.Column(
         UUID(as_uuid=True),
         db.ForeignKey('application_document.application_document_guid'),
