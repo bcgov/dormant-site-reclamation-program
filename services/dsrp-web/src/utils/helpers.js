@@ -155,18 +155,8 @@ export const dateSorter = (key) => (a, b) => {
   return moment(a[key]) - moment(b[key]);
 };
 
-export const nullableStringSorter = (key) => (a, b) => {
-  if (a[key] === b[key]) {
-    return 0;
-  }
-  if (!a[key]) {
-    return 1;
-  }
-  if (!b[key]) {
-    return -1;
-  }
-  return a[key].localeCompare(b[key]);
-};
+export const nullableStringOrNumberSorter = (key) => (a, b) =>
+  isNaN(a[key]) && isNaN(b[key]) ? (a[key] || "").localeCompare(b[key] || "") : a[key] - b[key];
 
 // Case insensitive filter for a SELECT field by label string
 export const caseInsensitiveLabelFilter = (input, option) =>
@@ -337,10 +327,10 @@ export const flattenObject = (ob) => {
 };
 
 export const formatMoney = (value) => {
-  const number = Number(value);
-  return isNaN(number)
-    ? null
-    : number.toLocaleString("en-US", { style: "currency", currency: "USD" });
+  const number = isNaN(value) ? (isNaN(Number(value)) ? null : Number(value)) : value;
+  return number !== null
+    ? number.toLocaleString("en-US", { style: "currency", currency: "USD" })
+    : null;
 };
 
 export const getPathsToLeaves = (obj = {}) => {
