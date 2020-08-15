@@ -17,6 +17,7 @@ from .application_status_change import ApplicationStatusChange
 from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK
 from app.api.permit_holder.resources.permit_holder import PermitHolderResource
 from app.api.application.response_models import APPLICATION
+from app.api.contracted_work.response_models import CONTRACTED_WORK_PAYMENT
 from app.api.application.models.application_history import ApplicationHistory
 from app.api.application.models.payment_document import PaymentDocument
 from app.api.contracted_work.models.contracted_work_payment import ContractedWorkPayment
@@ -149,9 +150,12 @@ class Application(Base, AuditMixin):
                 cw_item = {}
                 cw_item['contracted_work_type'] = cw_type
                 cw_item['well_authorization_number'] = ws['details']['well_authorization_number']
+                cw_item['estimated_shared_cost'] = self.calc_est_shared_cost(cw_data)
                 cw_item.update(cw_data)
-                cw_item['contracted_work_payment'] = ContractedWorkPayment.find_by_work_id(
-                    cw_item['work_id'])
+                cw_payment = ContractedWorkPayment.find_by_work_id(cw_item['work_id'])
+                if cw_payment:
+                    cw_payment = marshal(cw_payment, CONTRACTED_WORK_PAYMENT)
+                cw_item['contracted_work_payment'] = cw_payment
                 contracted_work.append(cw_item)
 
         return contracted_work

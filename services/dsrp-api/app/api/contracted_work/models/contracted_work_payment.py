@@ -50,6 +50,13 @@ class ContractedWorkPayment(Base, AuditMixin):
         db.ForeignKey('application_document.application_document_guid'),
         unique=True)
 
+    interim_eoc_document = db.relationship(
+        'ApplicationDocument', foreign_keys=[interim_eoc_application_document_guid])
+    final_eoc_document = db.relationship(
+        'ApplicationDocument', foreign_keys=[final_eoc_application_document_guid])
+    final_report_document = db.relationship(
+        'ApplicationDocument', foreign_keys=[final_report_application_document_guid])
+
     interim_first_submitted_timestamp = db.Column(db.DateTime)
     final_first_submitted_timestamp = db.Column(db.DateTime)
 
@@ -65,3 +72,10 @@ class ContractedWorkPayment(Base, AuditMixin):
     @classmethod
     def find_by_work_id(cls, work_id):
         return cls.query.filter_by(work_id=work_id).first()
+
+    @classmethod
+    def create(cls, application_guid, work_id, add_to_session=True):
+        contracted_work_payment = cls(application_guid=application_guid, work_id=work_id)
+        if add_to_session:
+            contracted_work_payment.save(commit=False)
+        return contracted_work_payment

@@ -71,24 +71,6 @@ export const fetchApplicationSummaryById = (guid) => (dispatch) => {
     });
 };
 
-export const fetchApplicationApprovedContractedWorkById = (guid) => (dispatch) => {
-  dispatch(request(reducerTypes.GET_APPLICATION_APPROVED_CONTRACTED_WORK));
-  return CustomAxios()
-    .get(
-      ENVIRONMENT.apiUrl + API.APPLICATION_APPROVED_CONTRACTED_WORK_BY_ID(guid),
-      createRequestHeader()
-    )
-    .then((response) => {
-      dispatch(success(reducerTypes.GET_APPLICATION_APPROVED_CONTRACTED_WORK));
-      dispatch(applicationActions.storeApplicationApprovedContractedWork(response.data));
-      return response;
-    })
-    .catch((err) => {
-      dispatch(error(reducerTypes.GET_APPLICATION_APPROVED_CONTRACTED_WORK));
-      throw new Error(err);
-    });
-};
-
 export const updateApplication = (guid, payload) => (dispatch) => {
   dispatch(request(reducerTypes.UPDATE_APPLICATION));
   return CustomAxios()
@@ -148,7 +130,7 @@ export const deleteApplicationPaymentDocument = (appGuid, documentGuid) => (disp
     )
     .then((response) => {
       notification.success({
-        message: "Successfully deleted payment document.",
+        message: "Payment document deleted successfully",
         duration: 5,
       });
       dispatch(success(reducerTypes.DELETE_APPLICATION_PAYMENT_DOCUMENT));
@@ -156,6 +138,49 @@ export const deleteApplicationPaymentDocument = (appGuid, documentGuid) => (disp
     })
     .catch((err) => {
       dispatch(error(reducerTypes.DELETE_APPLICATION_PAYMENT_DOCUMENT));
+      throw new Error(err);
+    });
+};
+
+export const fetchApplicationApprovedContractedWorkById = (guid) => (dispatch) => {
+  dispatch(request(reducerTypes.GET_APPLICATION_APPROVED_CONTRACTED_WORK));
+  return CustomAxios()
+    .get(
+      ENVIRONMENT.apiUrl + API.APPLICATION_APPROVED_CONTRACTED_WORK_BY_ID(guid),
+      createRequestHeader()
+    )
+    .then((response) => {
+      dispatch(success(reducerTypes.GET_APPLICATION_APPROVED_CONTRACTED_WORK));
+      dispatch(applicationActions.storeApplicationApprovedContractedWork(response.data));
+      return response;
+    })
+    .catch((err) => {
+      dispatch(error(reducerTypes.GET_APPLICATION_APPROVED_CONTRACTED_WORK));
+      throw new Error(err);
+    });
+};
+
+export const updateApplicationContractedWorkPaymentInterim = (applicationGuid, workId, payload) => (
+  dispatch
+) => {
+  dispatch(request(reducerTypes.UPDATE_APPLICATION_CONTRACTED_WORK_PAYMENT_INTERIM));
+  return CustomAxios()
+    .put(
+      ENVIRONMENT.apiUrl +
+        API.UPDATE_APPLICATION_CONTRACTED_WORK_PAYMENT_INTERIM(applicationGuid, workId),
+      payload,
+      createRequestHeader()
+    )
+    .then((response) => {
+      notification.success({
+        message: "Contracted work interim payment information updated successfully",
+        duration: 10,
+      });
+      dispatch(success(reducerTypes.UPDATE_APPLICATION_CONTRACTED_WORK_PAYMENT_INTERIM));
+      return response;
+    })
+    .catch((err) => {
+      dispatch(error(reducerTypes.UPDATE_APPLICATION_CONTRACTED_WORK_PAYMENT_INTERIM));
       throw new Error(err);
     });
 };

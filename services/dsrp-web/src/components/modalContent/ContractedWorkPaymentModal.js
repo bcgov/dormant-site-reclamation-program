@@ -1,29 +1,37 @@
 import React, { Component } from "react";
+import { Tabs } from "antd";
 import PropTypes from "prop-types";
-import { Row, Col, Typography, Table, Icon, Button, Tabs } from "antd";
 import InterimContractedWorkPaymentForm from "@/components/forms/InterimContractedWorkPaymentForm";
 
 const { TabPane } = Tabs;
 
-const propTypes = {};
+const propTypes = {
+  contractedWorkPayment: PropTypes.objectOf(PropTypes.any).isRequired,
+};
 
 export class ContractedWorkPaymentModal extends Component {
-  handleUpdateStatus = (values) =>
-    this.props.onSubmit(props.application.guid, {
-      ...values,
-    });
+  handleSubmitInterimContractedWorkPayment = (values) =>
+    this.props.handleSubmitInterimContractedWorkPayment(this.props.contractedWorkPayment, values);
+  handleSubmitFinalContractedWorkPayment = (values) =>
+    this.props.handleSubmitFinalContractedWorkPayment(this.props.contractedWorkPayment, values);
+  handleSubmitInterimContractedWorkPaymentProgressReport = (values) =>
+    this.props.handleSubmitInterimContractedWorkPaymentProgressReport(
+      this.props.contractedWorkPayment,
+      values
+    );
 
   render = () => {
+    console.log("ContractedWorkPaymentModal", this.props);
     return (
       <Tabs type="card" className="ant-tabs-center">
         <TabPane tab="Interim Payment" key="0">
           <InterimContractedWorkPaymentForm
-            onSubmit={this.handleUpdateStatus}
+            onSubmit={this.handleSubmitInterimContractedWorkPayment}
             closeModal={this.props.closeModal}
           />
         </TabPane>
-        <TabPane tab="Final Payment" key="1" />
-        <TabPane tab="Interim Progress Report" key="2" />
+        <TabPane tab="Final Payment" key="1" disabled />
+        <TabPane tab="Interim Progress Report" key="2" disabled />
       </Tabs>
     );
   };

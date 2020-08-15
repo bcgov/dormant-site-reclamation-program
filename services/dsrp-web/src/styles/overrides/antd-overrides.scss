@@ -95,6 +95,9 @@ h1.ant-typography,
   color: $white;
   border: 2px solid transparent;
   font-weight: bold;
+  &:last-child {
+    margin-right: 0;
+  }
 }
 
 .ant-tabs-tab:not(.ant-tabs-tab-active) {

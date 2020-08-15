@@ -3,7 +3,7 @@ import { reduxForm, Field } from "redux-form";
 import { Row, Col, Form, Button, Typography, Popconfirm, Divider } from "antd";
 import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
-import { required, number } from "@/utils/validate";
+import { required, number, requiredList } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 import { currencyMask } from "@/utils/helpers";
 import { EXCEL } from "@/constants/fileTypes";
@@ -17,24 +17,7 @@ const propTypes = {
 };
 
 class InterimContractedWorkPaymentForm extends Component {
-  state = { uploadedDocs: [] };
-
-  onFileLoad = (document_name, object_store_path, foo) => {
-    console.log(document_name, object_store_path, foo);
-    this.setState((prevState) => ({
-      uploadedDocs: [{ document_name, object_store_path }, ...prevState.uploadedDocs],
-    }));
-  };
-
-  onRemoveFile = (error, file) => {
-    console.log(error, file);
-    this.setState((prevState) => ({
-      uploadedDocs: prevState.uploadedDocs.filter((doc) => doc.object_store_path !== file.serverId),
-    }));
-  };
-
   render() {
-    console.log(EOC_TEMPLATE);
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <Title level={4}>Interim Payment Information</Title>
@@ -74,31 +57,32 @@ class InterimContractedWorkPaymentForm extends Component {
               validate={[required, number]}
               {...currencyMask}
             />
-            <Form.Item label="Evidence of Cost">
-              Please&nbsp;
-              <a href={EOC_TEMPLATE} target="_blank" rel="noopener noreferrer">
-                download
-              </a>
-              &nbsp;and use the provided Evidence of Cost template.
-              <br />
-              <br />
-              <Field
-                id="interim_eoc"
-                name="interim_eoc"
-                component={renderConfig.FILE_UPLOAD}
-                labelIdle="Upload Evidence of Cost"
-                validate={[required]}
-                acceptedFileTypesMap={{ ...EXCEL }}
-                onFileLoad={this.onFileLoad}
-                onRemoveFile={this.onRemoveFile}
-                allowRevert
-                allowMultiple={false}
-              />
-            </Form.Item>
+            <Field
+              id="interim_eoc"
+              name="interim_eoc"
+              label={
+                <>
+                  <div>Evidence of Cost</div>
+                  Please&nbsp;
+                  <a href={EOC_TEMPLATE} target="_blank" rel="noopener noreferrer">
+                    download
+                  </a>
+                  &nbsp;and use the provided Evidence of Cost template.
+                </>
+              }
+              component={renderConfig.FILE_UPLOAD}
+              validate={[requiredList]}
+              labelIdle="Upload Evidence of Cost"
+              acceptedFileTypesMap={{ ...EXCEL }}
+              onFileLoad={this.onFileLoad}
+              onRemoveFile={this.onRemoveFile}
+              allowMultiple={false}
+              allowRevert
+            />
             <Field
               id="interim_submission_confirmation"
               name="interim_submission_confirmation"
-              label="I certify that the above information is correct and has been reviewed and approved by X."
+              label="I certify that the provided information is true and correct."
               component={renderConfig.CHECKBOX}
               validate={[required]}
             />
@@ -120,7 +104,7 @@ class InterimContractedWorkPaymentForm extends Component {
           <Button
             type="primary"
             htmlType="submit"
-            style={{ marginLeft: "5px" }}
+            style={{ marginLeft: 5 }}
             loading={this.props.submitting}
           >
             Submit

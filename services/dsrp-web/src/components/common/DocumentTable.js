@@ -5,7 +5,7 @@ import {
   formatDateTime,
   truncateFilename,
   dateSorter,
-  nullableStringSorter,
+  nullableStringOrNumberSorter,
 } from "@/utils/helpers";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import * as Strings from "@/constants/strings";
@@ -23,7 +23,7 @@ export const DocumentTable = (props) => {
     {
       title: "File name",
       dataIndex: "document_name",
-      sorter: nullableStringSorter("document_name"),
+      sorter: nullableStringOrNumberSorter("document_name"),
       render: (text, record) => {
         return (
           <div title="File name">
