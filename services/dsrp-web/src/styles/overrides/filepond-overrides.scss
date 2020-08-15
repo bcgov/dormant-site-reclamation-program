@@ -68,6 +68,10 @@
   background-color: $success-color;
 }
 
+.has-error .filepond--wrapper {
+  border-color: $error-color;
+}
+
 .filepond--wrapper {
   background-color: transparent;
   border: 2px solid $primary-color;

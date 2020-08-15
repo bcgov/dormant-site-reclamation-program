@@ -1,8 +1,8 @@
-import { map } from "lodash";
 import React from "react";
 import PropTypes from "prop-types";
+import { Form } from "antd";
 import "filepond-polyfill";
-import { FilePond, File, registerPlugin } from "react-filepond";
+import { FilePond, registerPlugin } from "react-filepond";
 import "filepond/dist/filepond.min.css";
 import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
@@ -12,6 +12,8 @@ import { ENVIRONMENT } from "@/constants/environment";
 registerPlugin(FilePondPluginFileValidateSize, FilePondPluginFileValidateType);
 
 const propTypes = {
+  meta: PropTypes.objectOf(PropTypes.any).isRequired,
+  input: PropTypes.objectOf(PropTypes.any).isRequired,
   maxFileSize: PropTypes.string,
   acceptedFileTypesMap: PropTypes.objectOf(PropTypes.string),
   onFileLoad: PropTypes.func,
@@ -62,7 +64,7 @@ class FileUpload extends React.Component {
                 .split("+")[0]
             }`;
             load(documentGuid);
-            this.props.onFileLoad(file.name, documentGuid);
+            this.handleFileLoad(file.name, documentGuid);
           },
         });
         upload.start();
@@ -76,22 +78,54 @@ class FileUpload extends React.Component {
     };
   }
 
+  handleFileLoad = (filename, id) => {
+    const files = [{ filename, id }, ...this.props.input.value];
+    this.props.onFileLoad(filename, id);
+    this.props.input.onChange(files);
+  };
+
+  handleRemoveFile = (error, removedFile) => {
+    const files = this.props.input.value.filter((file) => file.id !== removedFile.serverId);
+    this.props.onRemoveFile(error, removedFile);
+    this.props.input.onChange(files);
+  };
+
   render() {
     const acceptedFileTypes = Object.keys(this.props.acceptedFileTypesMap);
 
     return (
-      <FilePond
-        server={this.server}
-        name="file"
-        labelIdle={this.props.labelIdle}
-        allowRevert={this.props.allowRevert}
-        onremovefile={this.props.onRemoveFile}
-        allowMultiple={this.props.allowMultiple}
-        maxFileSize={this.props.maxFileSize}
-        allowFileTypeValidation={acceptedFileTypes.length > 0}
-        acceptedFileTypes={acceptedFileTypes}
-        fileValidateTypeLabelExpectedTypesMap={this.props.acceptedFileTypesMap}
-      />
+      <Form.Item
+        label={this.props.label}
+        validateStatus={
+          this.props.meta.touched
+            ? (this.props.meta.error && "error") || (this.props.meta.warning && "warning")
+            : ""
+        }
+        help={
+          this.props.meta.touched &&
+          ((this.props.meta.error && <span>{this.props.meta.error}</span>) ||
+            (this.props.meta.warning && <span>{this.props.meta.warning}</span>))
+        }
+        labelCol={this.props.labelCol}
+        wrapperCol={this.props.wrapperCol}
+        labelAlign={this.props.labelAlign}
+        style={this.props.style}
+      >
+        <FilePond
+          server={this.server}
+          id={this.props.id}
+          name={this.props.name}
+          {...this.props.input}
+          labelIdle={this.props.labelIdle}
+          allowRevert={this.props.allowRevert}
+          onremovefile={this.handleRemoveFile}
+          allowMultiple={this.props.allowMultiple}
+          maxFileSize={this.props.maxFileSize}
+          allowFileTypeValidation={acceptedFileTypes.length > 0}
+          acceptedFileTypes={acceptedFileTypes}
+          fileValidateTypeLabelExpectedTypesMap={this.props.acceptedFileTypesMap}
+        />
+      </Form.Item>
     );
   }
 }
