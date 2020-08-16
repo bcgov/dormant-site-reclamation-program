@@ -72,6 +72,17 @@
   border-color: $error-color;
 }
 
+.disabled {
+  & .filepond--panel-root,
+  .filepond--wrapper {
+    background-color: $background !important;
+  }
+  & .filepond--wrapper {
+    border-color: $gov-grey-dark;
+    cursor: not-allowed;
+  }
+}
+
 .filepond--wrapper {
   background-color: transparent;
   border: 2px solid $primary-color;

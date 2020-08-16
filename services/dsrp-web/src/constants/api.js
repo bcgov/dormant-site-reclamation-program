@@ -19,14 +19,12 @@ export const APPLICATION_APPROVED_CONTRACTED_WORK_BY_ID = (guid) =>
 
 export const APPLICATION_CONTRACTED_WORK_PAYMENT = (applicationGuid, workId) =>
   `/application/${applicationGuid}/contracted-work-payment/${workId}`;
-export const UPDATE_APPLICATION_CONTRACTED_WORK_PAYMENT_INTERIM = (applicationGuid, workId) =>
+export const UPDATE_CONTRACTED_WORK_PAYMENT_INTERIM = (applicationGuid, workId) =>
   `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/interim`;
-export const UPDATE_APPLICATION_CONTRACTED_WORK_PAYMENT_FINAL = (applicationGuid, workId) =>
+export const UPDATE_CONTRACTED_WORK_PAYMENT_FINAL = (applicationGuid, workId) =>
   `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/final`;
-export const UPDATE_APPLICATION_CONTRACTED_WORK_PAYMENT_PROGRESS_REPORT = (
-  applicationGuid,
-  workId
-) => `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/interim-progress-report`;
+export const CREATE_CONTRACTED_WORK_PAYMENT_STATUS = (applicationGuid, workId) =>
+  `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/status`;
 
 // Documents
 export const GET_TOKEN_FOR_DOC = (app_guid, doc_guid) =>

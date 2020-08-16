@@ -110,11 +110,13 @@ class FileUpload extends React.Component {
         wrapperCol={this.props.wrapperCol}
         labelAlign={this.props.labelAlign}
         style={this.props.style}
+        className={this.props.disabled ? "disabled" : ""}
       >
         <FilePond
           server={this.server}
           id={this.props.id}
           name={this.props.name}
+          disabled={this.props.disabled}
           {...this.props.input}
           labelIdle={this.props.labelIdle}
           allowRevert={this.props.allowRevert}

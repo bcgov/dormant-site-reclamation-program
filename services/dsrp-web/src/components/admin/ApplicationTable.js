@@ -384,7 +384,7 @@ export class ApplicationTable extends Component {
             <div style={{ textAlign: "right" }} title="Est. Cost">
               {(lmr || lmr === 0) &&
                 Number(text) * 1.15 >= lmr &&
-                toolTip("Est. Cost exceeds LMR by 15% or more", "color-error est-cost-tooltip")}
+                toolTip("Est. Cost exceeds LMR by 15% or more", "color-error table-record-tooltip")}
               {formatMoney(text) || Strings.DASH}
             </div>
           );

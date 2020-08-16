@@ -3,24 +3,20 @@ import { bindActionCreators, compose } from "redux";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { startCase, camelCase } from "lodash";
-import { Row, Col, Typography, Table, Icon, Button } from "antd";
-import {
-  formatDate,
-  formatMoney,
-  nullableStringOrNumberSorter,
-  nullableNumberSorter,
-  dateSorter,
-} from "@/utils/helpers";
+import { Row, Col, Typography, Table, Icon, Button, Tooltip } from "antd";
+import { formatDate, formatMoney, nullableStringOrNumberSorter, dateSorter } from "@/utils/helpers";
 import {
   fetchApplicationApprovedContractedWorkById,
-  updateApplicationContractedWorkPaymentInterim,
+  updateContractedWorkPaymentInterim,
+  updateContractedWorkPaymentFinal,
 } from "@/actionCreators/applicationActionCreator";
+import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import { getApplicationApprovedContractedWork } from "@/selectors/applicationSelectors";
 import { getContractedWorkPaymentStatusOptionsHash } from "@/selectors/staticContentSelectors";
-import CONTRACT_WORK_SECTIONS from "@/constants/contract_work_sections";
 import * as Strings from "@/constants/strings";
 import { modalConfig } from "@/components/modalContent/config";
 import { openModal, closeModal } from "@/actions/modalActions";
+import LinkButton from "@/components/common/LinkButton";
 
 const propTypes = {
   applicationGuid: PropTypes.string.isRequired,
@@ -35,6 +31,12 @@ const defaultProps = {
 };
 
 const { Paragraph, Title, Text } = Typography;
+
+const toolTip = (title, extraClassName) => (
+  <Tooltip title={title} placement="right" mouseEnterDelay={0.3}>
+    <Icon type="info-circle" className={`icon-sm ${extraClassName}`} style={{ marginLeft: 4 }} />
+  </Tooltip>
+);
 
 export class ContractedWorkPaymentView extends Component {
   state = { isLoaded: false };
@@ -59,20 +61,20 @@ export class ContractedWorkPaymentView extends Component {
         contracted_work_type_description: startCase(camelCase(work.contracted_work_type)),
         interim_cost: parseFloat(contracted_work_payment.interim_actual_cost),
         final_cost: parseFloat(contracted_work_payment.final_actual_cost),
-        interim_status:
+        interim_status_description:
           (contracted_work_payment.interim_payment_status_code &&
             this.props.contractedWorkPaymentStatusOptionsHash[
               contracted_work_payment.interim_payment_status_code
             ]) ||
           "Information Required",
-        final_status:
+        final_status_description:
           (contracted_work_payment.final_payment_status_code &&
             this.props.contractedWorkPaymentStatusOptionsHash[
               contracted_work_payment.final_payment_status_code
             ]) ||
           "Information Required",
-        interim_eoc: null,
-        final_eoc: null,
+        interim_eoc: contracted_work_payment.interim_eoc_application_document_guid,
+        final_eoc: contracted_work_payment.final_eoc_application_document_guid,
         work: work,
       };
     });
@@ -94,19 +96,27 @@ export class ContractedWorkPaymentView extends Component {
 
   handleSubmitInterimContractedWorkPayment = (contractedWorkPayment, values) =>
     this.props
-      .updateApplicationContractedWorkPaymentInterim(
+      .updateContractedWorkPaymentInterim(
         this.props.applicationGuid,
         contractedWorkPayment.work_id,
         values
       )
       .then(() => {
-        // this.props.closeModal();
+        this.props.closeModal();
         this.loadApprovedContractedWork();
       });
 
-  handleSubmitFinalContractedWorkPayment = (contractedWorkPayment, values) => {
-    console.log(contractedWorkPayment, values);
-  };
+  handleSubmitFinalContractedWorkPayment = (contractedWorkPayment, values) =>
+    this.props
+      .updateContractedWorkPaymentFinal(
+        this.props.applicationGuid,
+        contractedWorkPayment.work_id,
+        values
+      )
+      .then(() => {
+        this.props.closeModal();
+        this.loadApprovedContractedWork();
+      });
 
   handleSubmitInterimContractedWorkPaymentProgressReport = (contractedWorkPayment, values) => {
     console.log(contractedWorkPayment, values);
@@ -140,18 +150,18 @@ export class ContractedWorkPaymentView extends Component {
         render: (text) => <div title="Work Type">{text}</div>,
       },
       {
-        title: "Est. Shared Cost",
-        key: "estimated_shared_cost",
-        dataIndex: "estimated_shared_cost",
-        sorter: nullableStringOrNumberSorter("estimated_shared_cost"),
+        title: "Est. Cost",
+        key: "contracted_work_total",
+        dataIndex: "contracted_work_total",
+        sorter: nullableStringOrNumberSorter("contracted_work_total"),
         render: (text) => <div title="Est. Cost">{formatMoney(text) || Strings.DASH}</div>,
       },
       {
-        title: "Completion Date",
+        title: "Planned End Date",
         key: "planned_end_date",
         dataIndex: "planned_end_date",
         sorter: dateSorter("planned_end_date"),
-        render: (text) => <div title="Completion Date">{formatDate(text)}</div>,
+        render: (text) => <div title="Planned End Date">{formatDate(text)}</div>,
       },
       {
         title: "Interim Cost",
@@ -164,14 +174,42 @@ export class ContractedWorkPaymentView extends Component {
         title: "Interim EoC",
         key: "interim_eoc",
         dataIndex: "interim_eoc",
-        render: (text) => <div title="Interim EoC">{text || Strings.DASH}</div>,
+        render: (text) => (
+          <div title="Interim EoC">
+            {(text && (
+              <LinkButton
+                onClick={() =>
+                  downloadDocument(
+                    this.props.applicationGuid,
+                    text,
+                    "Dormant Sites Reclamation Program - Evidence of Cost.pdf"
+                  )
+                }
+              >
+                Download
+              </LinkButton>
+            )) ||
+              Strings.DASH}
+          </div>
+        ),
       },
       {
         title: "Interim Status",
-        key: "interim_status",
-        dataIndex: "interim_status",
-        sorter: nullableStringOrNumberSorter("interim_status"),
-        render: (text) => <div title="Interim Status">{text}</div>,
+        key: "interim_status_description",
+        dataIndex: "interim_status_description",
+        sorter: nullableStringOrNumberSorter("interim_status_description"),
+        render: (text, record) => {
+          const note =
+            record.contracted_work_payment && record.contracted_work_payment.interim_payment_status
+              ? record.contracted_work_payment.interim_payment_status.note
+              : null;
+          return (
+            <div title="Interim Status">
+              {note && toolTip(note, "table-record-tooltip")}
+              {text}
+            </div>
+          );
+        },
       },
       {
         title: "Final Cost",
@@ -184,14 +222,42 @@ export class ContractedWorkPaymentView extends Component {
         title: "Final EoC",
         key: "final_eoc",
         dataIndex: "final_eoc",
-        render: (text) => <div title="Final EoC">{text || Strings.DASH}</div>,
+        render: (text) => (
+          <div title="Final EoC">
+            {(text && (
+              <LinkButton
+                onClick={() =>
+                  downloadDocument(
+                    this.props.applicationGuid,
+                    text,
+                    "Dormant Sites Reclamation Program - Evidence of Cost.pdf"
+                  )
+                }
+              >
+                Download
+              </LinkButton>
+            )) ||
+              Strings.DASH}
+          </div>
+        ),
       },
       {
         title: "Final Status",
-        key: "final_status",
-        dataIndex: "final_status",
-        sorter: nullableStringOrNumberSorter("final_status"),
-        render: (text) => <div title="Final Status">{text}</div>,
+        key: "final_status_description",
+        dataIndex: "final_status_description",
+        sorter: nullableStringOrNumberSorter("final_status_description"),
+        render: (text, record) => {
+          const note =
+            record.contracted_work_payment && record.contracted_work_payment.final_payment_status
+              ? record.contracted_work_payment.final_payment_status.note
+              : null;
+          return (
+            <div title="Final Status">
+              {note && toolTip(note, "table-record-tooltip")}
+              {text}
+            </div>
+          );
+        },
       },
       {
         key: "operations",
@@ -205,9 +271,16 @@ export class ContractedWorkPaymentView extends Component {
       },
     ];
 
+    const dataSource = this.transformRowData(
+      this.props.applicationApprovedContractedWork.approved_contracted_work
+    );
+    console.log(dataSource);
+
     return (
       <Row>
         <Col>
+          <br />
+          <Title level={2}>Approved Contracted Work Payments</Title>
           <Table
             columns={columns}
             pagination={false}
@@ -215,9 +288,7 @@ export class ContractedWorkPaymentView extends Component {
               emptyText:
                 "This application does not contain any approved contracted work items! Please contact us.",
             }}
-            dataSource={this.transformRowData(
-              this.props.applicationApprovedContractedWork.approved_contracted_work
-            )}
+            dataSource={dataSource}
             loading={!this.state.isLoaded}
           />
         </Col>
@@ -235,7 +306,8 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchApplicationApprovedContractedWorkById,
-      updateApplicationContractedWorkPaymentInterim,
+      updateContractedWorkPaymentInterim,
+      updateContractedWorkPaymentFinal,
       openModal,
       closeModal,
     },

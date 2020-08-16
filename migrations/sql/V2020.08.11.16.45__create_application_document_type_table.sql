@@ -21,7 +21,8 @@ INSERT INTO application_document_type (
 VALUES
     ('SUPPORTING_DOC', 'Supporting Document', 'A document that the applicant uploads to support the assessment of their application.', 'system', 'system'),
     ('INTERIM_EOC', 'Evidence of Cost (Interim Payment)', 'An interim-payment Evidence of Cost document that is required to process interim payments.', 'system', 'system'),
-    ('FINAL_EOC', 'Evidence of Cost (Final Payment)', 'A final-payment Evidence of Cost document that is required to process final payments.', 'system', 'system')
+    ('FINAL_EOC', 'Evidence of Cost (Final Payment)', 'A final-payment Evidence of Cost document that is required to process final payments.', 'system', 'system'),
+    ('FINAL_REPORT', 'Final Report', 'A Final Report document that is required to process final payments for a contracted work item.', 'system', 'system')
 ON CONFLICT DO NOTHING;
 
 

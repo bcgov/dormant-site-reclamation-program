@@ -3,7 +3,9 @@ CREATE TABLE IF NOT EXISTS contracted_work_payment_status
     contracted_work_payment_status_code varchar PRIMARY KEY,
     description varchar NOT NULL,
     long_description varchar NOT NULL,
+
     active boolean DEFAULT true NOT NULL,
+
     create_user varchar NOT NULL,
     create_timestamp timestamp NOT NULL DEFAULT now(),
     update_user varchar NOT NULL,
@@ -32,9 +34,6 @@ CREATE TABLE IF NOT EXISTS contracted_work_payment
     application_guid uuid NOT NULL,
     work_id varchar NOT NULL UNIQUE,
 
-    interim_payment_status_code varchar NOT NULL DEFAULT 'INFORMATION_REQUIRED',
-    final_payment_status_code varchar NOT NULL DEFAULT 'INFORMATION_REQUIRED',
-
     interim_actual_cost numeric(14, 2),
     final_actual_cost numeric(14, 2),
 
@@ -52,9 +51,6 @@ CREATE TABLE IF NOT EXISTS contracted_work_payment
 
     final_report_application_document_guid uuid UNIQUE,
 
-    interim_first_submitted_timestamp timestamp,
-    final_first_submitted_timestamp timestamp,
-
     work_completion_date date,
 
     create_user varchar NOT NULL,
@@ -63,11 +59,53 @@ CREATE TABLE IF NOT EXISTS contracted_work_payment
     update_timestamp timestamp NOT NULL DEFAULT now(),
 
     FOREIGN KEY (application_guid) REFERENCES application(guid) DEFERRABLE INITIALLY DEFERRED,
-    FOREIGN KEY (interim_payment_status_code) REFERENCES contracted_work_payment_status(contracted_work_payment_status_code) DEFERRABLE INITIALLY DEFERRED,
-    FOREIGN KEY (final_payment_status_code) REFERENCES contracted_work_payment_status(contracted_work_payment_status_code) DEFERRABLE INITIALLY DEFERRED,
     FOREIGN KEY (interim_eoc_application_document_guid) REFERENCES application_document(application_document_guid) DEFERRABLE INITIALLY DEFERRED,
     FOREIGN KEY (final_eoc_application_document_guid) REFERENCES application_document(application_document_guid) DEFERRABLE INITIALLY DEFERRED,
     FOREIGN KEY (final_report_application_document_guid) REFERENCES application_document(application_document_guid) DEFERRABLE INITIALLY DEFERRED
 );
 
 ALTER TABLE contracted_work_payment OWNER TO dsrp;
+
+CREATE TABLE IF NOT EXISTS contracted_work_payment_type
+(
+    contracted_work_payment_code varchar PRIMARY KEY,
+    description varchar NOT NULL,
+
+    create_user varchar NOT NULL,
+    create_timestamp timestamp NOT NULL DEFAULT now(),
+    update_user varchar NOT NULL,
+    update_timestamp timestamp NOT NULL DEFAULT now()
+);
+
+ALTER TABLE contracted_work_payment_type OWNER TO dsrp;
+
+INSERT INTO contracted_work_payment_type (
+    contracted_work_payment_code,
+    create_user,
+    update_user
+)
+VALUES 
+    ('INTERIM', 'Interim', 'system', 'system'),
+    ('FINAL', 'Final', 'system', 'system')
+ON CONFLICT DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS contracted_work_payment_status_change
+(
+    contracted_work_payment_status_change_id SERIAL PRIMARY KEY,
+    contracted_work_payment_id integer NOT NULL,
+    contracted_work_payment_status_code varchar NOT NULL,
+    contracted_work_payment_code varchar NOT NULL,
+    change_timestamp timestamp NOT NULL DEFAULT now(),
+    note varchar,
+
+    create_user varchar NOT NULL,
+    create_timestamp timestamp NOT NULL DEFAULT now(),
+    update_user varchar NOT NULL,
+    update_timestamp timestamp NOT NULL DEFAULT now(),
+
+    FOREIGN KEY (contracted_work_payment_id) REFERENCES contracted_work_payment(contracted_work_payment_id) DEFERRABLE INITIALLY DEFERRED,
+    FOREIGN KEY (contracted_work_payment_status_code) REFERENCES contracted_work_payment_status(contracted_work_payment_status_code) DEFERRABLE INITIALLY DEFERRED,
+    FOREIGN KEY (contracted_work_payment_code) REFERENCES contracted_work_payment_type(contracted_work_payment_code) DEFERRABLE INITIALLY DEFERRED
+);
+
+ALTER TABLE contracted_work_payment_status_change OWNER TO dsrp;

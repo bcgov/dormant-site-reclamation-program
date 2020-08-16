@@ -1,28 +1,30 @@
 from sqlalchemy.schema import FetchedValue
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy import desc, func, and_, select
 
 from app.extensions import db
 from app.api.utils.models_mixins import Base, AuditMixin
+from app.api.contracted_work.models.contracted_work_payment_status_change import ContractedWorkPaymentStatusChange
 
 
 class ContractedWorkPayment(Base, AuditMixin):
     __tablename__ = 'contracted_work_payment'
 
+    def __init__(self, contracted_work_payment_status_code, contracted_work_payment_code, **kwargs):
+        super(ContractedWorkPayment, self).__init__(**kwargs)
+        initial_status_change = ContractedWorkPaymentStatusChange(
+            contracted_work_payment_status_code=contracted_work_payment_status_code,
+            contracted_work_payment_code=contracted_work_payment_code)
+        if contracted_work_payment_code == 'INTERIM':
+            self.interim_payment_status_changes.append(initial_status_change)
+        if contracted_work_payment_code == 'FINAL':
+            self.final_payment_status_changes.append(initial_status_change)
+
     contracted_work_payment_id = db.Column(db.Integer, primary_key=True)
     application_guid = db.Column(
         UUID(as_uuid=True), db.ForeignKey('application.guid'), nullable=False)
     work_id = db.Column(db.String, unique=True, nullable=False)
-
-    interim_payment_status_code = db.Column(
-        db.String,
-        db.ForeignKey('application_document_type.application_document_code'),
-        nullable=False,
-        server_default=FetchedValue())
-    final_payment_status_code = db.Column(
-        db.String,
-        db.ForeignKey('application_document_type.application_document_code'),
-        nullable=False,
-        server_default=FetchedValue())
 
     interim_actual_cost = db.Column(db.Numeric(14, 2))
     final_actual_cost = db.Column(db.Numeric(14, 2))
@@ -54,13 +56,76 @@ class ContractedWorkPayment(Base, AuditMixin):
         'ApplicationDocument', foreign_keys=[interim_eoc_application_document_guid])
     final_eoc_document = db.relationship(
         'ApplicationDocument', foreign_keys=[final_eoc_application_document_guid])
+
     final_report_document = db.relationship(
         'ApplicationDocument', foreign_keys=[final_report_application_document_guid])
 
-    interim_first_submitted_timestamp = db.Column(db.DateTime)
-    final_first_submitted_timestamp = db.Column(db.DateTime)
+    interim_payment_status_changes = db.relationship(
+        'ContractedWorkPaymentStatusChange',
+        lazy='joined',
+        primaryjoin=
+        f"and_(ContractedWorkPayment.contracted_work_payment_id == ContractedWorkPaymentStatusChange.contracted_work_payment_id, \
+            ContractedWorkPaymentStatusChange.contracted_work_payment_code=='INTERIM')",
+        order_by='desc(ContractedWorkPaymentStatusChange.change_timestamp)',
+    )
+    final_payment_status_changes = db.relationship(
+        'ContractedWorkPaymentStatusChange',
+        lazy='joined',
+        primaryjoin=
+        f"and_(ContractedWorkPayment.contracted_work_payment_id == ContractedWorkPaymentStatusChange.contracted_work_payment_id, \
+            ContractedWorkPaymentStatusChange.contracted_work_payment_code=='FINAL')",
+        order_by='desc(ContractedWorkPaymentStatusChange.change_timestamp)',
+    )
 
     work_completion_date = db.Column(db.Date)
+
+    @hybrid_property
+    def interim_payment_status_code(self):
+        if self.interim_payment_status_changes:
+            return self.interim_payment_status_changes[0].contracted_work_payment_status_code
+        else:
+            return 'INFORMATION_REQUIRED'
+
+    @interim_payment_status_code.expression
+    def interim_payment_status_code(self):
+        return func.coalesce(
+            select([ContractedWorkPaymentStatusChange.contracted_work_payment_status_code]).where(
+                and_(
+                    ContractedWorkPaymentStatusChange.contracted_work_payment_id ==
+                    self.contracted_work_payment_id,
+                    ContractedWorkPaymentStatusChange.contracted_work_payment_code ==
+                    'INTERIM')).order_by(desc(
+                        ContractedWorkPaymentStatusChange.change_timestamp)).limit(1).as_scalar(),
+            'INFORMATION_REQUIRED')
+
+    @hybrid_property
+    def interim_payment_status(self):
+        if self.interim_payment_status_changes:
+            return self.interim_payment_status_changes[0]
+
+    @hybrid_property
+    def final_payment_status_code(self):
+        if self.final_payment_status_changes:
+            return self.final_payment_status_changes[0].contracted_work_payment_status_code
+        else:
+            return 'INFORMATION_REQUIRED'
+
+    @final_payment_status_code.expression
+    def final_payment_status_code(self):
+        return func.coalesce(
+            select([ContractedWorkPaymentStatusChange.contracted_work_payment_status_code]).where(
+                and_(
+                    ContractedWorkPaymentStatusChange.contracted_work_payment_id ==
+                    self.contracted_work_payment_id,
+                    ContractedWorkPaymentStatusChange.contracted_work_payment_code ==
+                    'FINAL')).order_by(desc(
+                        ContractedWorkPaymentStatusChange.change_timestamp)).limit(1).as_scalar(),
+            'INFORMATION_REQUIRED')
+
+    @hybrid_property
+    def final_payment_status(self):
+        if self.final_payment_status_changes:
+            return self.final_payment_status_changes[0]
 
     def __repr__(self):
         return f'<{self.__class__.__name__} {self.contracted_work_payment_id} {self.application_guid} {self.work_id}>'
@@ -72,10 +137,3 @@ class ContractedWorkPayment(Base, AuditMixin):
     @classmethod
     def find_by_work_id(cls, work_id):
         return cls.query.filter_by(work_id=work_id).first()
-
-    @classmethod
-    def create(cls, application_guid, work_id, add_to_session=True):
-        contracted_work_payment = cls(application_guid=application_guid, work_id=work_id)
-        if add_to_session:
-            contracted_work_payment.save(commit=False)
-        return contracted_work_payment

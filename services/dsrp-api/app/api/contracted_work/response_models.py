@@ -13,6 +13,16 @@ CONTRACTED_WORK_PAYMENT_STATUS = api.model(
         'long_description': fields.String
     })
 
+CONTRACTED_WORK_PAYMENT_STATUS_CHANGE = api.model(
+    'ContractedWorkPaymentStatusChange', {
+        'contracted_work_payment_status_change_id': fields.Integer,
+        'contracted_work_payment_id': fields.Integer,
+        'contracted_work_payment_status_code': fields.String,
+        'contracted_work_payment_code': fields.String,
+        'change_timestamp': fields.DateTime,
+        'note': fields.String
+    })
+
 CONTRACTED_WORK_PAYMENT = api.model(
     'ContractedWorkPayment', {
         'contracted_work_payment_id': fields.Integer,
@@ -31,7 +41,7 @@ CONTRACTED_WORK_PAYMENT = api.model(
         'interim_eoc_application_document_guid': fields.String,
         'final_eoc_application_document_guid': fields.String,
         'final_report_application_document_guid': fields.String,
-        'interim_first_submitted_timestamp': fields.DateTime,
-        'final_first_submitted_timestamp': fields.DateTime,
-        'work_completion_date': fields.Date
+        'work_completion_date': fields.Date,
+        'interim_payment_status': fields.Nested(CONTRACTED_WORK_PAYMENT_STATUS_CHANGE),
+        'final_payment_status': fields.Nested(CONTRACTED_WORK_PAYMENT_STATUS_CHANGE),
     })
