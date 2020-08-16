@@ -1,14 +1,12 @@
 import React, { Component } from "react";
 import { initialize, reduxForm, Field, getFormValues } from "redux-form";
-import { Form, Col, Row, Typography, Button } from "antd";
+import { Form, Col, Row, Typography, Button, Alert } from "antd";
 import { compose, bindActionCreators } from "redux";
+import { isEmpty } from "lodash";
 import { connect } from "react-redux";
 import { has } from "lodash";
-
 import PropTypes from "prop-types";
-
 import { uploadDocs } from "@/actionCreators/uploadDocumentsActionCreator";
-
 import { renderConfig } from "@/components/common/config";
 import { DOCUMENT_UPLOAD_FORM } from "@/constants/forms";
 import { DOCUMENT, EXCEL } from "@/constants/fileTypes";
@@ -39,6 +37,7 @@ export class DocumentUploadForm extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
+    this.setState({ submitting: true });
     const finalDocuments = has(this.props.formValues, "confirm_final_documents")
       ? this.props.formValues.confirm_final_documents
       : false;
@@ -46,11 +45,14 @@ export class DocumentUploadForm extends Component {
       documents: this.state.uploadedDocs,
       confirm_final_documents: finalDocuments,
     };
-    this.props.uploadDocs(this.props.applicationGuid, payload).then(() => {
-      this.setState({ submitted: true, finalDocuments });
-      this.props.initialize(DOCUMENT_UPLOAD_FORM);
-      this.props.onDocumentUpload();
-    });
+    return this.props
+      .uploadDocs(this.props.applicationGuid, payload)
+      .then(() => {
+        this.setState({ submitted: true, finalDocuments });
+        this.props.initialize(DOCUMENT_UPLOAD_FORM);
+        this.props.onDocumentUpload();
+      })
+      .finally(() => this.setState({ submitting: false }));
   };
 
   handleReset = () => {
@@ -77,7 +79,7 @@ export class DocumentUploadForm extends Component {
         <Col>
           {!this.props.isAdminView && (
             <>
-              <Title level={3}>Supporting Documents</Title>
+              <Title level={2}>Supporting Documents</Title>
               <Text>
                 You must submit the following files before any approved work can begin and your
                 initial payment can be processed:
@@ -94,16 +96,20 @@ export class DocumentUploadForm extends Component {
                   </li>
                   <li>A certificate of insurance</li>
                 </ul>
-                <b>
-                  NOTE: You will not see documents you may have previously uploaded for this
-                  application
-                </b>
               </Paragraph>
+              <Alert
+                message="Note that you are not able to see documents you may have previously uploaded for this
+                  application."
+                showIcon
+                style={{ display: "inline-block" }}
+              />
+              <br />
+              <br />
             </>
           )}
-          <Form layout="vertical" onSubmit={this.handleSubmit} onReset={this.handleReset}>
+          <Form layout="vertical" onSubmit={this.handleSubmit}>
             <Row gutter={48}>
-              <Col span={24}>
+              <Col md={24} xl={10}>
                 <Form.Item label="Upload Required Files">
                   <Field
                     id="files"
@@ -119,11 +125,11 @@ export class DocumentUploadForm extends Component {
               </Col>
             </Row>
             <Row gutter={48}>
-              <Col span={24}>
+              <Col>
                 {!this.props.isAdminView && (
                   <Text>
                     Your application cannot progress until you indicate that all documents have been
-                    submitted
+                    submitted.
                   </Text>
                 )}
                 {!this.props.isAdminView && (
@@ -131,7 +137,7 @@ export class DocumentUploadForm extends Component {
                     <Field
                       id="confirm_final_documents"
                       name="confirm_final_documents"
-                      label={<b>I have finished submitting all requested documents</b>}
+                      label={<b>I have finished submitting all requested documents.</b>}
                       type="checkbox"
                       component={renderConfig.CHECKBOX}
                     />
@@ -141,8 +147,13 @@ export class DocumentUploadForm extends Component {
             </Row>
             <Row>
               <Col>
-                <Button type="primary" htmlType="submit" disabled={disableSubmission}>
-                  Submit Files
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  disabled={disableSubmission}
+                  loading={this.state.submitting}
+                >
+                  Submit
                 </Button>
               </Col>
             </Row>
@@ -152,19 +163,23 @@ export class DocumentUploadForm extends Component {
     ) : (
       <Row>
         <Col>
-          <Title level={3}>Document Upload Successful</Title>
-          <p>Successfully uploaded the following documents:</p>
           {!this.props.isAdminView && this.state.finalDocuments && (
-            <p>
-              Application Status has changed to <strong>Documents Submitted</strong>. You will see
-              this change the next time you visit this page.
-            </p>
+            <Paragraph>
+              Your application's status has changed to <Text strong>Documents Submitted</Text>. You
+              will see this change the next time you visit this page.
+            </Paragraph>
           )}
-          <ul>
-            {this.state.uploadedDocs.map((value, index) => {
-              return <li key={index}>{value.document_name}</li>;
-            })}
-          </ul>
+          {!isEmpty(this.state.uploadedDocs) && (
+            <>
+              <Title level={3}>Document Upload Successful</Title>
+              <Paragraph>Successfully uploaded the following documents:</Paragraph>
+              <ul>
+                {this.state.uploadedDocs.map((value, index) => (
+                  <li key={index}>{value.document_name}</li>
+                ))}
+              </ul>
+            </>
+          )}
         </Col>
       </Row>
     );

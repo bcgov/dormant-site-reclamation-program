@@ -41,7 +41,9 @@ class ApplicationDocumentListResource(Resource, UserMixin):
 
             for doc in docs:
                 new_doc = ApplicationDocument(
-                    document_name=doc['document_name'], object_store_path=doc['object_store_path'])
+                    document_name=doc['document_name'],
+                    object_store_path=doc['object_store_path'],
+                    application_document_code='SUPPORTING_DOC')
                 application.documents.append(new_doc)
                 application.save()
 
