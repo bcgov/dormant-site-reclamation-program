@@ -10,19 +10,14 @@ import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
 import ContractedWorkPaymentView from "@/components/pages/ContractedWorkPaymentView";
 import { fetchApplicationSummaryById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
+import CustomPropTypes from "@/customPropTypes";
 import { PageTracker } from "@/utils/trackers";
 
 const { Paragraph, Title } = Typography;
 
 const propTypes = {
   fetchApplicationSummaryById: PropTypes.func.isRequired,
-  loadedApplication: PropTypes.shape({
-    guid: PropTypes.string,
-    application_status_code: PropTypes.string,
-    submission_date: PropTypes.string,
-    company_name: PropTypes.string,
-    json: PropTypes.any,
-  }),
+  loadedApplication: CustomPropTypes.applicationSummary,
   match: PropTypes.shape({
     params: {
       id: PropTypes.string,
