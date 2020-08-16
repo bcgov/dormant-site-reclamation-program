@@ -341,7 +341,7 @@ export const flattenObject = (ob) => {
 export const formatMoney = (value) => {
   const number = isNaN(value) ? (isNaN(Number(value)) ? null : Number(value)) : value;
   return number !== null
-    ? number.toLocaleString("en-US", { style: "currency", currency: "USD" })
+    ? Number(number).toLocaleString("en-US", { style: "currency", currency: "USD" })
     : null;
 };
 
