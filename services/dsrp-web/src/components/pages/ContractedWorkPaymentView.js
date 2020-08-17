@@ -76,7 +76,7 @@ export class ContractedWorkPaymentView extends Component {
           "Information Required",
         interim_eoc: contracted_work_payment.interim_eoc_application_document_guid,
         final_eoc: contracted_work_payment.final_eoc_application_document_guid,
-        work: work,
+        work,
       };
     });
     return data;

@@ -21,7 +21,7 @@ const propTypes = {
 
 export class ContractedWorkPaymentForm extends Component {
   render() {
-    const paymentType = this.props.paymentType;
+    const {paymentType} = this.props;
     if (!paymentType) {
       return <></>;
     }
