@@ -107,6 +107,9 @@ export const currency = (value) =>
 export const validSearchSelection = ({ key, err }) => (value, allValues, formProps) =>
   !Object.keys(formProps[key]).includes(value) ? err || "Invalid Selection" : undefined;
 
+export const date = (value) =>
+  value && Number.isNaN(Date.parse(value)) ? "Input must be a date" : undefined;
+
 export const validateStartDate = memoize((previousStartDate) => (value) =>
   value <= previousStartDate
     ? "New manager's start date cannot be on or before the previous manager's start date."

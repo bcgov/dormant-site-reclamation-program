@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { reduxForm, Field } from "redux-form";
-import { Row, Col, Form, Button, Typography, Popconfirm } from "antd";
+import { Row, Col, Form, Button, Typography, Popconfirm, Alert } from "antd";
 import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
 import { required, minLength, maxLength } from "@/utils/validate";
@@ -17,23 +17,42 @@ const propTypes = {
 
 class InterimProgressReportForm extends Component {
   render() {
-    const interimPaymentStatus = this.props.contractedWorkPayment.contracted_work_payment
+    let interimPaymentStatus = this.props.contractedWorkPayment.contracted_work_payment
       ? this.props.contractedWorkPayment.contracted_work_payment.interim_payment_status_code
-      : "INFORMATION_REQUIRED";
+      : null;
+    const haveInterimPaymentInfo = interimPaymentStatus !== null;
+    interimPaymentStatus = "INFORMATION_REQUIRED";
 
-    const isViewOnly = interimPaymentStatus === "APPROVED";
+    const haveInterimProgressReport =
+      this.props.contractedWorkPayment.contracted_work_payment &&
+      this.props.contractedWorkPayment.contracted_work_payment.interim_report !== null;
+
+    // TODO: Figure out other business rules that should disallow the modification of the Interim Progress Report.
+    const isViewOnly = !haveInterimPaymentInfo || haveInterimProgressReport;
 
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <Title level={4}>Interim Progress Report</Title>
 
-        <Paragraph>Completion of this form is a requirement for receiving final payment.</Paragraph>
+        <Paragraph>
+          Completion of this form is a requirement for receiving final payment. Once the form has
+          been submitted you will be unable to modify it.
+        </Paragraph>
+
+        {!haveInterimPaymentInfo && (
+          <Paragraph>
+            <Alert
+              showIcon
+              message="You must complete and submit this work item's interim payment information before you can submit its Interim Progress Report."
+            />
+          </Paragraph>
+        )}
 
         <Row gutter={48}>
           <Col>
             <Field
-              id="interim_progress_report"
-              name="interim_progress_report"
+              id="interim_report"
+              name="interim_report"
               label={
                 <>
                   <div>Interim Progress Report</div>
@@ -47,8 +66,8 @@ class InterimProgressReportForm extends Component {
               validate={[required, minLength(25), maxLength(250)]}
             />
             <Field
-              id="interim_progress_report_submission_confirmation"
-              name="interim_progress_report_submission_confirmation"
+              id="interim_report_submission_confirmation"
+              name="interim_report_submission_confirmation"
               label="I certify that the information provided in the Interim Progress Report is true and correct."
               disabled={isViewOnly}
               component={renderConfig.CHECKBOX}
@@ -94,6 +113,6 @@ class InterimProgressReportForm extends Component {
 InterimProgressReportForm.propTypes = propTypes;
 
 export default reduxForm({
-  form: FORM.CONTRACTED_WORK_INTERIM_PROGRESS_REPORT_FORM,
+  form: FORM.CONTRACTED_WORK_INTERIM_REPORT_FORM,
   enableReinitialize: true,
 })(InterimProgressReportForm);

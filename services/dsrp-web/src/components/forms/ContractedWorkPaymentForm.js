@@ -4,7 +4,7 @@ import { Row, Col, Form, Button, Typography, Popconfirm, Alert } from "antd";
 import { capitalize } from "lodash";
 import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
-import { required, number, requiredList } from "@/utils/validate";
+import { required, number, requiredList, date } from "@/utils/validate";
 import { currencyMask } from "@/utils/helpers";
 import { EXCEL, PDF } from "@/constants/fileTypes";
 import { EOC_TEMPLATE } from "@/constants/assets";
@@ -101,6 +101,17 @@ export class ContractedWorkPaymentForm extends Component {
               validate={[required, number]}
               {...currencyMask}
             />
+            {paymentType === "final" && (
+              <Field
+                id="work_completion_date"
+                name="work_completion_date"
+                label="Work Completion Date"
+                placeholder="YYYY-MM-DD"
+                disabled={isViewOnly}
+                component={renderConfig.DATE}
+                validate={[required, date]}
+              />
+            )}
             <Field
               id={`${paymentType}_eoc`}
               name={`${paymentType}_eoc`}

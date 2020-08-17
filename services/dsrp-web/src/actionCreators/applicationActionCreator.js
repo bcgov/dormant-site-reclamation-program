@@ -208,12 +208,37 @@ export const updateContractedWorkPaymentFinal = (applicationGuid, workId, payloa
     });
 };
 
+export const updateContractedWorkPaymentInterimReport = (applicationGuid, workId, payload) => (
+  dispatch
+) => {
+  dispatch(request(reducerTypes.UPDATE_CONTRACTED_WORK_PAYMENT_INTERIM_REPORT));
+  return CustomAxios()
+    .put(
+      ENVIRONMENT.apiUrl +
+        API.UPDATE_CONTRACTED_WORK_PAYMENT_INTERIM_REPORT(applicationGuid, workId),
+      payload,
+      createRequestHeader()
+    )
+    .then((response) => {
+      notification.success({
+        message: "Contracted work interim progress report information updated successfully",
+        duration: 10,
+      });
+      dispatch(success(reducerTypes.UPDATE_CONTRACTED_WORK_PAYMENT_INTERIM_REPORT));
+      return response;
+    })
+    .catch((err) => {
+      dispatch(error(reducerTypes.UPDATE_CONTRACTED_WORK_PAYMENT_INTERIM_REPORT));
+      throw new Error(err);
+    });
+};
+
 export const createContractedWorkPaymentStatus = (applicationGuid, workId, payload) => (
   dispatch
 ) => {
   dispatch(request(reducerTypes.CREATE_CONTRACTED_WORK_PAYMENT_STATUS));
   return CustomAxios()
-    .put(
+    .post(
       ENVIRONMENT.apiUrl + API.CREATE_CONTRACTED_WORK_PAYMENT_STATUS(applicationGuid, workId),
       payload,
       createRequestHeader()

@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS contracted_work_payment
     interim_eoc_application_document_guid uuid UNIQUE,
     final_eoc_application_document_guid uuid UNIQUE,
 
+    interim_report varchar,
     final_report_application_document_guid uuid UNIQUE,
 
     work_completion_date date,

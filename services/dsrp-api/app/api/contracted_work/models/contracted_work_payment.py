@@ -38,6 +38,8 @@ class ContractedWorkPayment(Base, AuditMixin):
     interim_number_of_workers = db.Column(db.Integer)
     final_number_of_workers = db.Column(db.Integer)
 
+    work_completion_date = db.Column(db.Date)
+
     interim_eoc_application_document_guid = db.Column(
         UUID(as_uuid=True),
         db.ForeignKey('application_document.application_document_guid'),
@@ -57,6 +59,7 @@ class ContractedWorkPayment(Base, AuditMixin):
     final_eoc_document = db.relationship(
         'ApplicationDocument', foreign_keys=[final_eoc_application_document_guid])
 
+    interim_report = db.Column(db.String)
     final_report_document = db.relationship(
         'ApplicationDocument', foreign_keys=[final_report_application_document_guid])
 
@@ -76,8 +79,6 @@ class ContractedWorkPayment(Base, AuditMixin):
             ContractedWorkPaymentStatusChange.contracted_work_payment_code=='FINAL')",
         order_by='desc(ContractedWorkPaymentStatusChange.change_timestamp)',
     )
-
-    work_completion_date = db.Column(db.Date)
 
     @hybrid_property
     def interim_payment_status_code(self):
@@ -126,6 +127,16 @@ class ContractedWorkPayment(Base, AuditMixin):
     def final_payment_status(self):
         if self.final_payment_status_changes:
             return self.final_payment_status_changes[0]
+
+    @hybrid_property
+    def interim_payment_submission_date(self):
+        if self.interim_payment_status_changes:
+            return self.interim_payment_status_changes[-1].change_timestamp
+
+    @hybrid_property
+    def final_payment_submission_date(self):
+        if self.final_payment_status_changes:
+            return self.final_payment_status_changes[-1].change_timestamp
 
     def __repr__(self):
         return f'<{self.__class__.__name__} {self.contracted_work_payment_id} {self.application_guid} {self.work_id}>'

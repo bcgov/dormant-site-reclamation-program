@@ -23,6 +23,8 @@ export const UPDATE_CONTRACTED_WORK_PAYMENT_INTERIM = (applicationGuid, workId) 
   `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/interim`;
 export const UPDATE_CONTRACTED_WORK_PAYMENT_FINAL = (applicationGuid, workId) =>
   `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/final`;
+export const UPDATE_CONTRACTED_WORK_PAYMENT_INTERIM_REPORT = (applicationGuid, workId) =>
+  `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/interim-report`;
 export const CREATE_CONTRACTED_WORK_PAYMENT_STATUS = (applicationGuid, workId) =>
   `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/status`;
 

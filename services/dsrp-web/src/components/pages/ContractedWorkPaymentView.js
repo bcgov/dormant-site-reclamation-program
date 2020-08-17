@@ -9,6 +9,7 @@ import {
   fetchApplicationApprovedContractedWorkById,
   updateContractedWorkPaymentInterim,
   updateContractedWorkPaymentFinal,
+  updateContractedWorkPaymentInterimReport,
 } from "@/actionCreators/applicationActionCreator";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import { getApplicationApprovedContractedWork } from "@/selectors/applicationSelectors";
@@ -118,9 +119,17 @@ export class ContractedWorkPaymentView extends Component {
         this.loadApprovedContractedWork();
       });
 
-  handleSubmitInterimContractedWorkPaymentProgressReport = (contractedWorkPayment, values) => {
-    console.log(contractedWorkPayment, values);
-  };
+  handleSubmitInterimContractedWorkPaymentProgressReport = (contractedWorkPayment, values) =>
+    this.props
+      .updateContractedWorkPaymentInterimReport(
+        this.props.applicationGuid,
+        contractedWorkPayment.work_id,
+        values
+      )
+      .then(() => {
+        this.props.closeModal();
+        this.loadApprovedContractedWork();
+      });
 
   render() {
     const columns = [
@@ -157,11 +166,11 @@ export class ContractedWorkPaymentView extends Component {
         render: (text) => <div title="Est. Cost">{formatMoney(text) || Strings.DASH}</div>,
       },
       {
-        title: "Planned End Date",
+        title: "Completion Date",
         key: "planned_end_date",
         dataIndex: "planned_end_date",
         sorter: dateSorter("planned_end_date"),
-        render: (text) => <div title="Planned End Date">{formatDate(text)}</div>,
+        render: (text) => <div title="Completion Date">{formatDate(text)}</div>,
       },
       {
         title: "Interim Cost",
@@ -280,7 +289,7 @@ export class ContractedWorkPaymentView extends Component {
       <Row>
         <Col>
           <br />
-          <Title level={2}>Approved Contracted Work Payments</Title>
+          <Title level={2}>Approved Contracted Work Payment Information</Title>
           <Table
             columns={columns}
             pagination={false}
@@ -308,6 +317,7 @@ const mapDispatchToProps = (dispatch) =>
       fetchApplicationApprovedContractedWorkById,
       updateContractedWorkPaymentInterim,
       updateContractedWorkPaymentFinal,
+      updateContractedWorkPaymentInterimReport,
       openModal,
       closeModal,
     },

@@ -40,8 +40,11 @@ CONTRACTED_WORK_PAYMENT = api.model(
         'final_number_of_workers': fields.Integer,
         'interim_eoc_application_document_guid': fields.String,
         'final_eoc_application_document_guid': fields.String,
+        'interim_report': fields.String,
         'final_report_application_document_guid': fields.String,
         'work_completion_date': fields.Date,
+        'interim_payment_submission_date': fields.DateTime,
+        'final_payment_submission_date': fields.DateTime,
         'interim_payment_status': fields.Nested(CONTRACTED_WORK_PAYMENT_STATUS_CHANGE),
         'final_payment_status': fields.Nested(CONTRACTED_WORK_PAYMENT_STATUS_CHANGE),
     })

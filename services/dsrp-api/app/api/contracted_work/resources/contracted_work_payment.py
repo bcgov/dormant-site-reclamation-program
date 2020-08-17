@@ -85,6 +85,7 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
         validate_application_contracted_work(application, work_id)
 
         # Get the contracted work payment or create it if it doesn't exist.
+        # TODO: Determine if we should create it OR send a bad request indicating that you must submit Interim info first.
         payment = ContractedWorkPayment.find_by_work_id(work_id)
         if not payment:
             payment = ContractedWorkPayment(
@@ -110,6 +111,7 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
             'final_total_hours_worked_to_date']
         payment.final_number_of_workers = final_payment_data['final_number_of_workers']
         payment.final_actual_cost = final_payment_data['final_actual_cost']
+        payment.work_completion_date = final_payment_data['work_completion_date']
 
         # Create the EoC document and soft-delete the existing one (if it exists).
         if payment.final_eoc_document:
@@ -139,6 +141,29 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
         return '', response_code
 
 
+class ContractedWorkPaymentInterimReport(Resource, UserMixin):
+    @requires_role_admin
+    def put(self, application_guid, work_id):
+        # Ensure that this work item exists on this application.
+        application = Application.find_by_guid(application_guid)
+        validate_application_contracted_work(application, work_id)
+
+        # Get the contracted work payment.
+        payment = ContractedWorkPayment.find_by_work_id(work_id)
+        if not payment:
+            raise BadRequest(
+                'Only contracted work items that have had information submitted can have their Interim Progress Report updated'
+            )
+
+        # Set the contracted work payment interim report.
+        interim_report_data = request.json
+        interim_report = interim_report_data['interim_report']
+        payment.interim_report = interim_report
+
+        payment.save()
+        return '', 200
+
+
 class ContractedWorkPaymentStatus(Resource, UserMixin):
     @requires_role_admin
     def post(self, application_guid, work_id):
@@ -158,9 +183,11 @@ class ContractedWorkPaymentStatus(Resource, UserMixin):
         contracted_work_payment_code = payment_status_data['contracted_work_payment_code']
         contracted_work_payment_status_code = payment_status_data[
             'contracted_work_payment_status_code']
+        note = payment_status_data['note']
         status_change = ContractedWorkPaymentStatusChange(
             contracted_work_payment_status_code=contracted_work_payment_status_code,
-            contracted_work_payment_code=contracted_work_payment_code)
+            contracted_work_payment_code=contracted_work_payment_code,
+            note=note)
         if contracted_work_payment_code == 'INTERIM':
             payment.interim_payment_status_changes.append(status_change)
         if contracted_work_payment_code == 'FINAL':

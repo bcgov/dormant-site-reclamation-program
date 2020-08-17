@@ -46,7 +46,7 @@ const description = (status) => {
       );
     case "FIRST_PAY_APPROVED":
       return (
-        <StatusDescription description="Your application has been approved and the first payment will be issued." />
+        <StatusDescription description="Your application has been approved and the first payment will be issued. You can manage the information required to process interim and final payments below." />
       );
     case "NOT_APPROVED":
       return <StatusDescription description="Your application has been rejected." />;
