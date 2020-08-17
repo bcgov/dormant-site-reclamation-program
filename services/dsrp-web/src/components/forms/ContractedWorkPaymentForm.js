@@ -12,19 +12,22 @@ import { EOC_TEMPLATE } from "@/constants/assets";
 const { Title, Text, Paragraph } = Typography;
 
 const propTypes = {
-  paymentType: PropTypes.oneOf(["interim", "final"]).isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  closeModal: PropTypes.func.isRequired,
   contractedWorkPayment: PropTypes.objectOf(PropTypes.any).isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  closeModal: PropTypes.func.isRequired,
+  submitting: PropTypes.bool.isRequired,
+  paymentType: PropTypes.oneOf(["interim", "final"]),
 };
 
+const defaultProps = {
+  paymentType: "interim",
+};
+
+// eslint-disable-next-line react/prefer-stateless-function
 export class ContractedWorkPaymentForm extends Component {
   render() {
-    const {paymentType} = this.props;
-    if (!paymentType) {
-      return <></>;
-    }
+    const { paymentType } = this.props;
 
     const interimPaymentStatus = this.props.contractedWorkPayment.contracted_work_payment
       ? this.props.contractedWorkPayment.contracted_work_payment.interim_payment_status_code
@@ -45,17 +48,18 @@ export class ContractedWorkPaymentForm extends Component {
         <Title level={4}>{capitalize(paymentType)} Payment Information</Title>
 
         <Paragraph>
-          In order to process this work item's <Text strong>{paymentType} payment</Text>, you must
-          provide the information below. Upon submitting the form, it will be marked as ready for
-          review and you will be <Text strong>unable to edit your submission</Text>. If an issue is
-          found with your submission, you will be notified by email and be able to edit your
+          In order to process this work item&apos;s <Text strong>{paymentType} payment</Text>, you
+          must provide the information below. Upon submitting the form, it will be marked as ready
+          for review and you will be <Text strong>unable to edit your submission</Text>. If an issue
+          is found with your submission, you will be notified by email and be able to edit your
           submission again. If an issue is not found with your submission, it will approved and
           payment will be sent.
         </Paragraph>
 
         {paymentType === "interim" && (
           <Paragraph>
-            Once you have submitted this work item's interim payment information, you have{" "}
+            Once you have submitted this work item&apos;s interim payment information, you
+            have&nbsp;
             <Text strong>30 days</Text> to complete the Interim Progress Report form available in
             the <Text strong>Interim Progress Report</Text> tab above. Completion of this form is a
             requirement for receiving final payment.
@@ -159,11 +163,15 @@ export class ContractedWorkPaymentForm extends Component {
             <Field
               id={`${paymentType}_submission_confirmation`}
               name={`${paymentType}_submission_confirmation`}
-              label="I certify that the provided information is true and correct."
+              label="I certify that the above information is correct and has been reviewed and approved by X."
               disabled={isViewOnly}
               component={renderConfig.CHECKBOX}
               validate={[required]}
             />
+            <Paragraph>
+              Please keep your records available. If the province requests evidence of cost, it must
+              be provided within X days.
+            </Paragraph>
           </Col>
         </Row>
         <div className="right">
@@ -202,5 +210,6 @@ export class ContractedWorkPaymentForm extends Component {
 }
 
 ContractedWorkPaymentForm.propTypes = propTypes;
+ContractedWorkPaymentForm.defaultProps = defaultProps;
 
 export default ContractedWorkPaymentForm;
