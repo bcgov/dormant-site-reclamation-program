@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import { bindActionCreators, compose } from "redux";
 import PropTypes from "prop-types";
+import moment from "moment";
 import { connect } from "react-redux";
 import { startCase, camelCase } from "lodash";
-import { Row, Col, Typography, Table, Icon, Button, Tooltip } from "antd";
+import { Row, Col, Typography, Table, Icon, Button, Popover, Progress, Divider } from "antd";
 import { formatDate, formatMoney, nullableStringOrNumberSorter, dateSorter } from "@/utils/helpers";
 import {
   fetchApplicationApprovedContractedWorkById,
@@ -33,10 +34,10 @@ const defaultProps = {
 
 const { Paragraph, Title, Text } = Typography;
 
-const toolTip = (title, extraClassName) => (
-  <Tooltip title={title} placement="right" mouseEnterDelay={0.3}>
+const popover = (message, extraClassName) => (
+  <Popover title="Admin Note" content={message}>
     <Icon type="info-circle" className={`icon-sm ${extraClassName}`} style={{ marginLeft: 4 }} />
-  </Tooltip>
+  </Popover>
 );
 
 export class ContractedWorkPaymentView extends Component {
@@ -53,9 +54,30 @@ export class ContractedWorkPaymentView extends Component {
     });
   };
 
+  handleRefresh = () => {
+    if (!this.state.isLoaded) {
+      return;
+    }
+    this.loadApprovedContractedWork();
+  };
+
   transformRowData = (applicationApprovedContractedWork) => {
     const data = applicationApprovedContractedWork.map((work) => {
       const contracted_work_payment = work.contracted_work_payment || {};
+      const {interim_payment_submission_date} = contracted_work_payment;
+      let interim_report_days_until_deadline = Infinity;
+      if (interim_payment_submission_date) {
+        if (contracted_work_payment.interim_report) {
+          interim_report_days_until_deadline = -Infinity;
+        } else {
+          const daysToSubmit = 30;
+          let daysLeftCount =
+            daysToSubmit -
+            (moment() - moment(interim_payment_submission_date)) / (1000 * 60 * 60 * 24);
+          daysLeftCount = Math.round(daysLeftCount);
+          interim_report_days_until_deadline = daysLeftCount;
+        }
+      }
       return {
         ...work,
         key: work.work_id,
@@ -76,6 +98,7 @@ export class ContractedWorkPaymentView extends Component {
           "Information Required",
         interim_eoc: contracted_work_payment.interim_eoc_application_document_guid,
         final_eoc: contracted_work_payment.final_eoc_application_document_guid,
+        interim_report_days_until_deadline,
         work,
       };
     });
@@ -166,11 +189,11 @@ export class ContractedWorkPaymentView extends Component {
         render: (text) => <div title="Est. Cost">{formatMoney(text) || Strings.DASH}</div>,
       },
       {
-        title: "Completion Date",
+        title: "End Date",
         key: "planned_end_date",
         dataIndex: "planned_end_date",
         sorter: dateSorter("planned_end_date"),
-        render: (text) => <div title="Completion Date">{formatDate(text)}</div>,
+        render: (text) => <div title="End Date">{formatDate(text)}</div>,
       },
       {
         title: "Interim Cost",
@@ -214,10 +237,27 @@ export class ContractedWorkPaymentView extends Component {
               : null;
           return (
             <div title="Interim Status">
-              {note && toolTip(note, "table-record-tooltip")}
+              {note && popover(note, "table-record-tooltip")}
               {text}
             </div>
           );
+        },
+      },
+      {
+        title: "Progress Report Status",
+        key: "interim_report_days_until_deadline",
+        dataIndex: "interim_report_days_until_deadline",
+        sorter: nullableStringOrNumberSorter("interim_report_days_until_deadline"),
+        render: (text) => {
+          let display = null;
+          if (text === -Infinity) {
+            display = "Submitted";
+          } else if (text === Infinity) {
+            display = Strings.DASH;
+          } else {
+            display = `${text} days until deadline`;
+          }
+          return <div title="Progress Report Status">{display}</div>;
         },
       },
       {
@@ -262,7 +302,7 @@ export class ContractedWorkPaymentView extends Component {
               : null;
           return (
             <div title="Final Status">
-              {note && toolTip(note, "table-record-tooltip")}
+              {note && popover(note, "table-record-tooltip")}
               {text}
             </div>
           );
@@ -285,11 +325,113 @@ export class ContractedWorkPaymentView extends Component {
     );
     console.log(dataSource);
 
+    const countOfApprovedWork = dataSource.length;
+
+    // Determine how many contracted work items have been approved.
+    const interimApprovedCount = dataSource.filter(
+      ({ contracted_work_payment }) =>
+        contracted_work_payment &&
+        contracted_work_payment.interim_payment_status_code === "APPROVED"
+    ).length;
+    const finalApprovedCount = dataSource.filter(
+      ({ contracted_work_payment }) =>
+        contracted_work_payment && contracted_work_payment.final_payment_status_code === "APPROVED"
+    ).length;
+
+    // Determine how many contracted work items still require information to be submitted.
+    const interimInfoRequiredCount = dataSource.filter(
+      ({ contracted_work_payment }) =>
+        !contracted_work_payment ||
+        contracted_work_payment.interim_payment_status_code === "INFORMATION_REQUIRED" // ||
+      //! contracted_work_payment.interim_report
+    ).length;
+    const finalInfoRequiredCount = dataSource.filter(
+      ({ contracted_work_payment }) =>
+        !contracted_work_payment ||
+        contracted_work_payment.final_payment_status_code === "INFORMATION_REQUIRED"
+    ).length;
+
+    const interimApprovedPercent = (interimApprovedCount / countOfApprovedWork) * 100;
+    const finalApprovedPercent = (finalApprovedCount / countOfApprovedWork) * 100;
+    const interimTotalPercent =
+      ((countOfApprovedWork - interimInfoRequiredCount) / countOfApprovedWork) * 100;
+    const finalTotalPercent =
+      ((countOfApprovedWork - finalInfoRequiredCount) / countOfApprovedWork) * 100;
+
     return (
       <Row>
         <Col>
+          <Row gutter={48} type="flex" justify="center" align="middle">
+            <Col md={24} lg={12}>
+              <Title level={4}>Interim Payments Progress</Title>
+              <Row gutter={16} type="flex" justify="space-around" align="middle">
+                <Col style={{ textAlign: "center" }}>
+                  <Text strong>
+                    <Icon type="check-circle" style={{ marginRight: 5 }} />
+                    Approved
+                  </Text>
+                  <br />
+                  {interimApprovedCount}
+                </Col>
+                <Col style={{ textAlign: "center" }}>
+                  <Text strong>
+                    <Icon type="clock-circle" style={{ marginRight: 5 }} />
+                    Ready for/Under Review
+                  </Text>
+                  <br />
+                  {countOfApprovedWork - interimInfoRequiredCount}
+                </Col>
+                <Col style={{ textAlign: "center" }}>
+                  <Text strong>
+                    <Icon type="info-circle" style={{ marginRight: 5 }} />
+                    Information Required
+                  </Text>
+                  <br />
+                  {interimInfoRequiredCount}
+                </Col>
+              </Row>
+              <Progress percent={interimTotalPercent} successPercent={interimApprovedPercent} />
+            </Col>
+            <Col md={24} lg={12}>
+              <Title level={4}>Final Payments Progress</Title>
+              <Row gutter={16} type="flex" justify="space-around" align="middle">
+                <Col style={{ textAlign: "center" }}>
+                  <Text strong>
+                    <Icon type="check-circle" style={{ marginRight: 5 }} />
+                    Approved
+                  </Text>
+                  <br />
+                  {finalApprovedCount}
+                </Col>
+                <Col style={{ textAlign: "center" }}>
+                  <Text strong>
+                    <Icon type="clock-circle" style={{ marginRight: 5 }} />
+                    Ready for/Under Review
+                  </Text>
+                  <br />
+                  {countOfApprovedWork - finalInfoRequiredCount}
+                </Col>
+                <Col style={{ textAlign: "center" }}>
+                  <Text strong>
+                    <Icon type="info-circle" style={{ marginRight: 5 }} />
+                    Information Required
+                  </Text>
+                  <br />
+                  {finalInfoRequiredCount}
+                </Col>
+              </Row>
+              <Progress percent={finalTotalPercent} successPercent={finalApprovedPercent} />
+            </Col>
+          </Row>
           <br />
-          <Title level={2}>Approved Contracted Work Payment Information</Title>
+          <br />
+          <Title level={2}>
+            Approved Contracted Work Payment Information
+            <Button type="link" onClick={this.handleRefresh} style={{ float: "right" }}>
+              <Icon type="reload" className="icon-lg" />
+              Refresh
+            </Button>
+          </Title>
           <Table
             columns={columns}
             pagination={false}
