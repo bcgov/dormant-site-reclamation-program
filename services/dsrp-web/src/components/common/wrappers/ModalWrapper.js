@@ -43,7 +43,9 @@ export class ModalWrapper extends Component {
 
   closeModal = () => {
     this.props.closeModal();
-    this.props.props.afterClose();
+    if (typeof this.props.props.afterClose === "function") {
+      this.props.props.afterClose();
+    }
   };
 
   render() {
