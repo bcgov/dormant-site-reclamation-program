@@ -1,4 +1,4 @@
-from flask_restplus import Resource
+from flask_restplus import Resource, marshal
 from werkzeug.exceptions import NotFound
 
 from app.extensions import api
@@ -27,15 +27,17 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
     # TODO: Implement
     @api.doc(description='Get the information required to manage the payments on an application.')
     # @api.marshal_with(None, code=200)
-    @requires_role_admin
+    # @requires_role_admin
     def get(self):
         # Get all approved applications
+        approved_applications = Application.query.filter_by(
+            application_status_code='FIRST_PAY_APPROVED').all()
 
         # Get all approved contracted work items on those applications
+        approved_applications_approved_contracted_work = [
+            marshal(application, APPLICATION_APPROVED_CONTRACTED_WORK)
+            for application in approved_applications
+        ]
 
-        # Apply filtering/sorting
-
-        # Paginate
-
-        # Return
-        return [], 501
+        # TODO: Apply manual filtering/sorting/pagination based on query params
+        return approved_applications_approved_contracted_work, 200
