@@ -163,14 +163,28 @@ export class ContractedWorkPaymentForm extends Component {
             <Field
               id={`${paymentType}_submission_confirmation`}
               name={`${paymentType}_submission_confirmation`}
-              label="I certify that the above information is correct and has been reviewed and approved by X."
+              label={
+                <>
+                  I certify that the above information is correct and has been reviewed and approved
+                  by <Text strong>[insert name here]</Text> and I declare that I have completed all
+                  required notifications and activities in accordance with the&nbsp;
+                  <a
+                    href="https://www.bclaws.ca/civix/document/id/complete/statreg/112_2019"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Dormancy and Shutdown Regulations
+                  </a>
+                  .
+                </>
+              }
               disabled={isViewOnly}
               component={renderConfig.CHECKBOX}
               validate={[required]}
             />
             <Paragraph>
               Please keep your records available. If the province requests evidence of cost, it must
-              be provided within X days.
+              be provided within 30 days.
             </Paragraph>
           </Col>
         </Row>
