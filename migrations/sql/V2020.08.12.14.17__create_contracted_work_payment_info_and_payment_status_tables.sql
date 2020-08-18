@@ -24,7 +24,6 @@ INSERT INTO contracted_work_payment_status (
 VALUES 
     ('INFORMATION_REQUIRED', 'Information Required', 'The applicant is able to edit and provide information for this work item in order for it to be reviewed by an admin.', 'system', 'system'),
     ('READY_FOR_REVIEW', 'Ready for Review', 'The applicant has indicated that they have provided all required information and that this work item is ready to be reviewed by an admin.', 'system', 'system'),
-    ('UNDER_REVIEW', 'Under Review', 'The admin has indicated that they have begun reviewing the provided information on the work item.', 'system', 'system'),
     ('APPROVED', 'Approved', 'The admin has indicated that the work item was approved and a payment request form was sent to Finance.', 'system', 'system')    
 ON CONFLICT DO NOTHING;
 
