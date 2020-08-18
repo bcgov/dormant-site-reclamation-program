@@ -142,7 +142,6 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
 
 
 class ContractedWorkPaymentInterimReport(Resource, UserMixin):
-    @requires_role_admin
     def put(self, application_guid, work_id):
         # Ensure that this work item exists on this application.
         application = Application.find_by_guid(application_guid)
