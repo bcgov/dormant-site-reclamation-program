@@ -3,7 +3,7 @@ import { Tabs } from "antd";
 import PropTypes from "prop-types";
 import InterimContractedWorkPaymentForm from "@/components/forms/InterimContractedWorkPaymentForm";
 import FinalContractedWorkPaymentForm from "@/components/forms/FinalContractedWorkPaymentForm";
-import InterimProgressReportForm from "@/components/forms/InterimProgressReportForm";
+import InterimReportForm from "@/components/forms/InterimReportForm";
 
 const { TabPane } = Tabs;
 
@@ -45,7 +45,7 @@ export class ContractedWorkPaymentModal extends Component {
         />
       </TabPane>
       <TabPane tab="Interim Progress Report" key="2">
-        <InterimProgressReportForm
+        <InterimReportForm
           onSubmit={this.handleSubmitInterimContractedWorkPaymentProgressReport}
           closeModal={this.props.closeModal}
           contractedWorkPayment={this.props.contractedWorkPayment}

@@ -15,7 +15,7 @@ const propTypes = {
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
-class InterimProgressReportForm extends Component {
+class InterimReportForm extends Component {
   render() {
     let interimPaymentStatus = this.props.contractedWorkPayment.contracted_work_payment
       ? this.props.contractedWorkPayment.contracted_work_payment.interim_payment_status_code
@@ -27,7 +27,6 @@ class InterimProgressReportForm extends Component {
       this.props.contractedWorkPayment.contracted_work_payment &&
       this.props.contractedWorkPayment.contracted_work_payment.interim_report !== null;
 
-    // TODO: Figure out other business rules that should disallow the modification of the Interim Progress Report.
     const isViewOnly = !haveInterimPaymentInfo || haveInterimProgressReport;
 
     return (
@@ -64,14 +63,6 @@ class InterimProgressReportForm extends Component {
               disabled={isViewOnly}
               component={renderConfig.AUTO_SIZE_FIELD}
               validate={[required, minLength(25), maxLength(250)]}
-            />
-            <Field
-              id="interim_report_submission_confirmation"
-              name="interim_report_submission_confirmation"
-              label="I certify that the information provided in the Interim Progress Report is true and correct."
-              disabled={isViewOnly}
-              component={renderConfig.CHECKBOX}
-              validate={[required]}
             />
           </Col>
         </Row>
@@ -110,9 +101,9 @@ class InterimProgressReportForm extends Component {
   }
 }
 
-InterimProgressReportForm.propTypes = propTypes;
+InterimReportForm.propTypes = propTypes;
 
 export default reduxForm({
   form: FORM.CONTRACTED_WORK_INTERIM_REPORT_FORM,
   enableReinitialize: true,
-})(InterimProgressReportForm);
+})(InterimReportForm);
