@@ -74,12 +74,6 @@ export const ApplicationStatusCard = (props) => (
         <Text strong>{props.applicationStatusHash[props.application.application_status_code]}</Text>
       </Paragraph>
       <Paragraph>{description(props.application.application_status_code)}</Paragraph>
-      <br />
-      <Paragraph>
-        If you have any questions regarding your application,&nbsp;
-        <a href="mailto:DormantSite.BC.Government@gov.bc.ca">contact us</a> and be sure to include
-        your reference number.
-      </Paragraph>
     </Col>
   </Row>
 );

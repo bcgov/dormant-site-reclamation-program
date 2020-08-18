@@ -87,6 +87,11 @@ export class ViewApplicationStatusPage extends Component {
             <ContractedWorkPaymentView applicationGuid={this.props.loadedApplication.guid} />
           )}
           <br />
+          <Paragraph>
+            If you have any questions regarding your application,&nbsp;
+            <a href="mailto:DormantSite.BC.Government@gov.bc.ca">contact us</a> and be sure to
+            include your reference number.
+          </Paragraph>
           <Button onClick={() => this.setState({ guid: "" })}>Check another Application</Button>
         </Col>
       </Row>

@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import { connect } from "react-redux";
 import { startCase, camelCase } from "lodash";
-import { Row, Col, Typography, Table, Icon, Button, Popover, Progress, Divider } from "antd";
+import { Row, Col, Typography, Table, Icon, Button, Popover, Progress, Tooltip } from "antd";
 import { formatDate, formatMoney, nullableStringOrNumberSorter, dateSorter } from "@/utils/helpers";
 import {
   fetchApplicationApprovedContractedWorkById,
@@ -64,7 +64,7 @@ export class ContractedWorkPaymentView extends Component {
   transformRowData = (applicationApprovedContractedWork) => {
     const data = applicationApprovedContractedWork.map((work) => {
       const contracted_work_payment = work.contracted_work_payment || {};
-      const {interim_payment_submission_date} = contracted_work_payment;
+      const { interim_payment_submission_date } = contracted_work_payment;
       let interim_report_days_until_deadline = Infinity;
       if (interim_payment_submission_date) {
         if (contracted_work_payment.interim_report) {
@@ -361,7 +361,7 @@ export class ContractedWorkPaymentView extends Component {
     return (
       <Row>
         <Col>
-          <Row gutter={48} type="flex" justify="center" align="middle">
+          <Row gutter={64} type="flex" justify="center" align="middle">
             <Col md={24} lg={12}>
               <Title level={4}>Interim Payments Progress</Title>
               <Row gutter={16} type="flex" justify="space-around" align="middle">
@@ -391,6 +391,9 @@ export class ContractedWorkPaymentView extends Component {
                 </Col>
               </Row>
               <Progress percent={interimTotalPercent} successPercent={interimApprovedPercent} />
+              {/* <Text type="secondary">
+                Final payment information for {interimInfoRequiredCount} work items is required.
+              </Text> */}
             </Col>
             <Col md={24} lg={12}>
               <Title level={4}>Final Payments Progress</Title>
@@ -421,6 +424,9 @@ export class ContractedWorkPaymentView extends Component {
                 </Col>
               </Row>
               <Progress percent={finalTotalPercent} successPercent={finalApprovedPercent} />
+              {/* <Text type="secondary">
+                Final payment information for {finalInfoRequiredCount} work items is required.
+              </Text> */}
             </Col>
           </Row>
           <br />
