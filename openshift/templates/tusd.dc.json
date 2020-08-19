@@ -17,6 +17,10 @@
       "required": true
     },
     {
+      "name": "CHANGE_ID",
+      "required": false
+    },
+    {
       "name": "OBJECT_STORE_SECRET_NAME",
       "value": "object-store-credentials"
     },
@@ -192,6 +196,10 @@
                   {
                     "name": "AWS_REGION",
                     "value": "eu-west-1"
+                  },
+                  {
+                    "name": "CHANGE_ID",
+                    "value": "${CHANGE_ID}"
                   },
                   {
                     "name": "S3_BUCKET_ID",

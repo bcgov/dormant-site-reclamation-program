@@ -177,6 +177,7 @@ app {
                             'NAME':"tusd",
                             'VERSION':"${app.deployment.version}",
                             'SUFFIX': "${vars.deployment.suffix}",
+                            'CHANGE_ID': "${vars.git.changeId}",
                             'CPU_REQUEST':"${vars.resources.tusd.cpu_request}",
                             'CPU_LIMIT':"${vars.resources.tusd.cpu_limit}",
                             'MEMORY_REQUEST':"${vars.resources.tusd.memory_request}",
@@ -366,7 +367,7 @@ environments {
                 }
                 'dsrp-tusd-backend' {
                     HOST = "http://tusd${vars.deployment.suffix}:1080"
-                    PATH = "/files/"
+                    PATH = "/${vars.git.changeId}/files/"
                 }
                 'dsrp-redis' {
                     HOST = "http://dsrp-redis${vars.deployment.suffix}"
