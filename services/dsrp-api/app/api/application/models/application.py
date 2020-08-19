@@ -149,6 +149,7 @@ class Application(Base, AuditMixin):
             for cw_type, cw_data in ws.get('contracted_work', {}).items():
                 cw_item = {}
                 cw_item['application_id'] = self.id
+                cw_item['application_guid'] = str(self.guid)
                 cw_item['contracted_work_type'] = cw_type
                 cw_item['well_authorization_number'] = ws['details']['well_authorization_number']
                 cw_item['estimated_shared_cost'] = self.calc_est_shared_cost(cw_data)
