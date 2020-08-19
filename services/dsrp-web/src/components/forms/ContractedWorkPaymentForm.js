@@ -8,6 +8,8 @@ import { required, number, requiredList, date } from "@/utils/validate";
 import { currencyMask } from "@/utils/helpers";
 import { EXCEL, PDF } from "@/constants/fileTypes";
 import { EOC_TEMPLATE } from "@/constants/assets";
+import { downloadDocument } from "@/utils/actionlessNetworkCalls";
+import LinkButton from "@/components/common/LinkButton";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -27,14 +29,15 @@ const defaultProps = {
 // eslint-disable-next-line react/prefer-stateless-function
 export class ContractedWorkPaymentForm extends Component {
   render() {
-    const { paymentType } = this.props;
+    const { paymentType, contractedWorkPayment } = this.props;
+    const paymentInfo = contractedWorkPayment.contracted_work_payment;
 
-    const interimPaymentStatus = this.props.contractedWorkPayment.contracted_work_payment
-      ? this.props.contractedWorkPayment.contracted_work_payment.interim_payment_status_code
+    const interimPaymentStatus = paymentInfo
+      ? paymentInfo.interim_payment_status_code
       : "INFORMATION_REQUIRED";
 
-    const finalPaymentStatus = this.props.contractedWorkPayment.contracted_work_payment
-      ? this.props.contractedWorkPayment.contracted_work_payment.final_payment_status_code
+    const finalPaymentStatus = paymentInfo
+      ? paymentInfo.final_payment_status_code
       : "INFORMATION_REQUIRED";
 
     const isViewOnly =
@@ -42,6 +45,18 @@ export class ContractedWorkPaymentForm extends Component {
       (paymentType === "final" &&
         (interimPaymentStatus === "INFORMATION_REQUIRED" ||
           finalPaymentStatus !== "INFORMATION_REQUIRED"));
+
+    const existingEvidenceOfCostGuid = paymentInfo
+      ? paymentType === "interim"
+        ? paymentInfo.interim_eoc_application_document_guid
+        : paymentType === "final"
+        ? paymentInfo.final_eoc_application_document_guid
+        : null
+      : null;
+
+    const existingFinalReportGuid = paymentInfo
+      ? paymentInfo.final_report_application_document_guid
+      : null;
 
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
@@ -121,12 +136,30 @@ export class ContractedWorkPaymentForm extends Component {
               name={`${paymentType}_eoc`}
               label={
                 <>
+                  {console.log(this.props)}
                   <div>Evidence of Cost</div>
                   Please&nbsp;
                   <a href={EOC_TEMPLATE} target="_blank" rel="noopener noreferrer">
                     download
                   </a>
                   &nbsp;and use the provided Evidence of Cost template.
+                  {existingEvidenceOfCostGuid && (
+                    <>
+                      &nbsp;You can download your previously uploaded Evidence of Cost&nbsp;
+                      <LinkButton
+                        onClick={() =>
+                          downloadDocument(
+                            this.props.contractedWorkPayment.application_guid,
+                            existingEvidenceOfCostGuid,
+                            "Dormant Sites Reclamation Program - Evidence of Cost.xlsx"
+                          )
+                        }
+                      >
+                        here
+                      </LinkButton>
+                      .
+                    </>
+                  )}
                 </>
               }
               disabled={isViewOnly}
@@ -149,6 +182,23 @@ export class ContractedWorkPaymentForm extends Component {
                       download
                     </a>
                     &nbsp;and use the provided Final Report template.
+                    {existingFinalReportGuid && (
+                      <>
+                        &nbsp;You can download your previously uploaded Final Report&nbsp;
+                        <LinkButton
+                          onClick={() =>
+                            downloadDocument(
+                              this.props.contractedWorkPayment.application_guid,
+                              existingFinalReportGuid,
+                              "Dormant Sites Reclamation Program - Final Report.pdf"
+                            )
+                          }
+                        >
+                          here
+                        </LinkButton>
+                        .
+                      </>
+                    )}
                   </>
                 }
                 disabled={isViewOnly}
