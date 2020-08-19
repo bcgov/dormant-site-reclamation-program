@@ -1,6 +1,6 @@
 from flask_restplus import Namespace
 
-from app.api.application.resources.application import ApplicationResource, ApplicationListResource, ApplicationReviewResource
+from app.api.application.resources.application import ApplicationResource, ApplicationListResource, ApplicationReviewResource, ApplicationTestResource
 from app.api.application.resources.application_document import ApplicationDocumentListResource, ApplicationDocumentResource
 from app.api.application.resources.application_status import ApplicationStatusListResource
 from app.api.application.resources.application_summary import ApplicationSummaryResource
@@ -16,6 +16,7 @@ api.add_resource(ApplicationResource, '/<string:application_guid>')
 api.add_resource(ApplicationSummaryResource, '/<string:application_guid>/summary')
 api.add_resource(ApplicationStatusListResource, '/<string:application_guid>/status')
 api.add_resource(ApplicationReviewResource, '/<string:application_guid>/review')
+api.add_resource(ApplicationTestResource, '/test')
 
 api.add_resource(GenerateApplicationDocumentResource,
                  '/<string:application_guid>/generate-doc/<string:document_type>')
