@@ -122,7 +122,7 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
         final_eoc = ApplicationDocument(
             document_name=final_eoc_data['filename'],
             object_store_path=final_eoc_data['id'],
-            application_document_code='INTERIM_EOC')
+            application_document_code='FINAL_EOC')
         application.documents.append(final_eoc)
         application.save()
         payment.final_eoc_application_document_guid = final_eoc.application_document_guid
