@@ -1,4 +1,3 @@
-import math
 from flask_restplus import Resource, marshal
 from werkzeug.exceptions import NotFound
 from flask import request
@@ -9,6 +8,7 @@ from app.api.constants import PAGE_DEFAULT, PER_PAGE_DEFAULT
 from app.api.application.response_models import APPLICATION_APPROVED_CONTRACTED_WORK
 from app.api.application.models.application import Application
 from app.api.utils.access_decorators import requires_role_admin
+from app.api.utils.helpers import apply_pagination_to_records
 
 
 class ApplicationApprovedContractedWorkResource(Resource, UserMixin):
@@ -30,7 +30,7 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
     @api.doc(
         description=
         'Get all approved contracted work item payment information on all approved applications.')
-    @requires_role_admin
+    # @requires_role_admin
     def get(self):
         # Get all approved applications
         approved_applications = Application.query.filter_by(
@@ -95,21 +95,9 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
             records.sort(key=lambda x: x[sort_field], reverse=reverse)
         elif sort_field in ('interim_payment_status_code', 'final_payment_status_code'):
             records.sort(
-                key=lambda x: x.get('contracted_work_payment', {}).get(
-                    sort_field, 'INFORMATION_REQUIRED'),
+                key=lambda x: (x.get('contracted_work_payment') and x['contracted_work_payment'][
+                    sort_field]) or 'INFORMATION_REQUIRED',
                 reverse=reverse)
-
-        def apply_pagination_to_records(records, page_number, page_size):
-            total_records = len(records[:page_size])
-            total_pages = math.ceil(len(records) / page_size)
-            items_per_page = min(total_records, page_size)
-            return {
-                'records': records,
-                'current_page': page_number,
-                'total_pages': total_pages,
-                'items_per_page': items_per_page,
-                'total': total_records
-            }
 
         # Return records with pagination applied
         return apply_pagination_to_records(records, page_number, page_size)
