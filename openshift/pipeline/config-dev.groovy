@@ -1,5 +1,5 @@
 app {
-    name = 'dormant-site-reclamation-program'
+    name = 'dsrp'
     version = 'snapshot'
 
     namespaces {
