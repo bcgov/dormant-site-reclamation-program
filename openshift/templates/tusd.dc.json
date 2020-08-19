@@ -34,7 +34,7 @@
     },
     {
       "name": "MEMORY_REQUEST",
-      "value": "0.5Gi"
+      "value": "512Mi"
     },
     {
       "name": "VERSION",
