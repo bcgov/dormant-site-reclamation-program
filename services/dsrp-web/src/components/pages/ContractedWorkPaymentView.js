@@ -3,7 +3,7 @@ import { bindActionCreators, compose } from "redux";
 import PropTypes from "prop-types";
 import moment from "moment";
 import { connect } from "react-redux";
-import { startCase, camelCase } from "lodash";
+import { startCase, camelCase, round } from "lodash";
 import { Row, Col, Typography, Table, Icon, Button, Popover, Progress } from "antd";
 import { formatDate, formatMoney, nullableStringOrNumberSorter, dateSorter } from "@/utils/helpers";
 import {
@@ -390,7 +390,11 @@ export class ContractedWorkPaymentView extends Component {
                   {interimInfoRequiredCount}
                 </Col>
               </Row>
-              <Progress percent={interimTotalPercent} successPercent={interimApprovedPercent} />
+              <Progress
+                percent={interimTotalPercent}
+                successPercent={interimApprovedPercent}
+                format={(percent) => round(percent, 1) + "%"}
+              />
               {/* <Text type="secondary">
                 Final payment information for {interimInfoRequiredCount} work items is required.
               </Text> */}
@@ -423,7 +427,11 @@ export class ContractedWorkPaymentView extends Component {
                   {finalInfoRequiredCount}
                 </Col>
               </Row>
-              <Progress percent={finalTotalPercent} successPercent={finalApprovedPercent} />
+              <Progress
+                percent={finalTotalPercent}
+                successPercent={finalApprovedPercent}
+                format={(percent) => round(percent, 1) + "%"}
+              />
               {/* <Text type="secondary">
                 Final payment information for {finalInfoRequiredCount} work items is required.
               </Text> */}
