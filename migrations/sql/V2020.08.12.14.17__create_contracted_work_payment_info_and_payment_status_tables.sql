@@ -81,6 +81,7 @@ ALTER TABLE contracted_work_payment_type OWNER TO dsrp;
 
 INSERT INTO contracted_work_payment_type (
     contracted_work_payment_code,
+    description,
     create_user,
     update_user
 )
