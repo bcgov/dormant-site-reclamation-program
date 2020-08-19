@@ -1,6 +1,6 @@
 from flask_restplus import Namespace
 
-from app.api.application.resources.application import ApplicationResource, ApplicationListResource, ApplicationReviewResource, ApplicationTestResource
+from app.api.application.resources.application import ApplicationResource, ApplicationListResource, ApplicationReviewResource
 from app.api.application.resources.application_document import ApplicationDocumentListResource, ApplicationDocumentResource
 from app.api.application.resources.application_status import ApplicationStatusListResource
 from app.api.application.resources.application_summary import ApplicationSummaryResource
@@ -11,13 +11,14 @@ from app.api.contracted_work.resources.contracted_work_payment import Contracted
 
 api = Namespace('application', description='Application endpoints')
 
+# General
 api.add_resource(ApplicationListResource, '')
 api.add_resource(ApplicationResource, '/<string:application_guid>')
 api.add_resource(ApplicationSummaryResource, '/<string:application_guid>/summary')
 api.add_resource(ApplicationStatusListResource, '/<string:application_guid>/status')
 api.add_resource(ApplicationReviewResource, '/<string:application_guid>/review')
-api.add_resource(ApplicationTestResource, '/test')
 
+# Documents
 api.add_resource(GenerateApplicationDocumentResource,
                  '/<string:application_guid>/generate-doc/<string:document_type>')
 api.add_resource(ApplicationDocumentResource,
@@ -26,6 +27,7 @@ api.add_resource(ApplicationDocumentListResource, '/<string:application_guid>/do
 api.add_resource(ApplicationPaymentDocumentResource,
                  '/<string:application_guid>/payment-doc/<string:document_guid>')
 
+# Contracted Work
 api.add_resource(ApplicationApprovedContractedWorkResource,
                  '/<string:application_guid>/approved-contracted-work')
 api.add_resource(ApplicationApprovedContractedWorkListResource, '/approved-contracted-work')

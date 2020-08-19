@@ -202,11 +202,3 @@ class ApplicationReviewResource(Resource, UserMixin):
         application.save()
 
         return application
-
-
-class ApplicationTestResource(Resource, UserMixin):
-    def patch(self):
-        return 'patch test success', 200
-
-    def get(self):
-        return 'get test succes', 200
