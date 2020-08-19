@@ -11,6 +11,7 @@ import {
 export const {
   getStaticContentLoadingIsComplete,
   getApplicationStatusOptions,
+  getApplicationDocumentTypeOptions,
   getContractedWorkStatusOptions,
   getContractedWorkPaymentStatusOptions,
 } = staticContentReducer;
@@ -33,6 +34,16 @@ export const getFilterListApplicationStatusOptions = createSelector(
 
 export const getApplicationStatusOptionsHash = createSelector(
   [getDropdownApplicationStatusOptions],
+  createLabelHash
+);
+
+export const getDropdownApplicationDocumentTypeOptions = createSelector(
+  [getApplicationDocumentTypeOptions],
+  (options) => createDropDownList(options, "description", "application_document_code")
+);
+
+export const getApplicationDocumentTypeOptionsHash = createSelector(
+  [getDropdownApplicationDocumentTypeOptions],
   createLabelHash
 );
 

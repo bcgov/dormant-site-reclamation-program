@@ -12,6 +12,7 @@ import {
   deleteApplicationPaymentDocument,
 } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/selectors/applicationSelectors";
+import { getApplicationDocumentTypeOptionsHash } from "@/selectors/staticContentSelectors";
 import ViewOnlyApplicationForm from "@/components/forms/ViewOnlyApplicationForm";
 import ViewApplicationDocuments from "@/components/pages/ViewApplicationDocuments";
 import LinkButton from "@/components/common/LinkButton";
@@ -34,6 +35,7 @@ const propTypes = {
   openModal: PropTypes.func.isRequired,
   reset: PropTypes.func.isRequired,
   deleteApplicationPaymentDocument: PropTypes.func.isRequired,
+  applicationDocumentTypeOptionsHash: PropTypes.objectOf(PropTypes.any).isRequired,
   closeModal: PropTypes.func.isRequired,
   /* eslint-disable */
   history: PropTypes.any.isRequired,
@@ -169,7 +171,10 @@ export class ViewApplicationPage extends Component {
                     style={{ padding: "20px" }}
                   >
                     <ViewApplicationDocuments
-                      application_guid={this.props.application.guid}
+                      applicationDocumentTypeOptionsHash={
+                        this.props.applicationDocumentTypeOptionsHash
+                      }
+                      applicationGuid={this.props.application.guid}
                       documents={this.props.application.documents}
                     />
                     <DocumentUploadForm
@@ -202,6 +207,7 @@ export class ViewApplicationPage extends Component {
 const mapStateToProps = (state) => ({
   application: getApplication(state),
   editedApplication: getFormValues(FORM.APPLICATION_FORM)(state),
+  applicationDocumentTypeOptionsHash: getApplicationDocumentTypeOptionsHash(state),
 });
 
 const mapDispatchToProps = (dispatch) =>
