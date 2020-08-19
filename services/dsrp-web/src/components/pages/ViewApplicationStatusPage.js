@@ -52,7 +52,7 @@ export class ViewApplicationStatusPage extends Component {
       this.setState({ guid: this.props.match.params.id });
     }
 
-    this.onFormSubmit({ guid: "8b8ce987-b16d-4167-aff9-229e44cb8bc0" });
+    // this.onFormSubmit({ guid: "8b8ce987-b16d-4167-aff9-229e44cb8bc0" });
   };
 
   onFormSubmit = (values) => {
