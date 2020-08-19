@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import { connect } from "react-redux";
 import { startCase, camelCase } from "lodash";
-import { Row, Col, Typography, Table, Icon, Button, Popover, Progress, Tooltip } from "antd";
+import { Row, Col, Typography, Table, Icon, Button, Popover, Progress } from "antd";
 import { formatDate, formatMoney, nullableStringOrNumberSorter, dateSorter } from "@/utils/helpers";
 import {
   fetchApplicationApprovedContractedWorkById,
@@ -19,17 +19,18 @@ import * as Strings from "@/constants/strings";
 import { modalConfig } from "@/components/modalContent/config";
 import { openModal, closeModal } from "@/actions/modalActions";
 import LinkButton from "@/components/common/LinkButton";
+import { contractedWorkIdSorter } from "@/utils/helpers";
 
 const propTypes = {
   applicationGuid: PropTypes.string.isRequired,
-  applicationApprovedContractedWork: PropTypes.objectOf(PropTypes.any).isRequired,
+  applicationApprovedContractedWork: PropTypes.arrayOf(PropTypes.any).isRequired,
   contractedWorkPaymentStatusOptionsHash: PropTypes.objectOf(PropTypes.any),
   fetchApplicationApprovedContractedWorkById: PropTypes.func.isRequired,
   openModal: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
-  applicationApprovedContractedWork: { approved_contracted_work: [] },
+  applicationApprovedContractedWork: [],
 };
 
 const { Paragraph, Title, Text } = Typography;
@@ -320,9 +321,8 @@ export class ContractedWorkPaymentView extends Component {
       },
     ];
 
-    const dataSource = this.transformRowData(
-      this.props.applicationApprovedContractedWork.approved_contracted_work
-    );
+    let dataSource = this.transformRowData(this.props.applicationApprovedContractedWork);
+    dataSource = dataSource.sort(contractedWorkIdSorter);
     console.log(dataSource);
 
     const countOfApprovedWork = dataSource.length;

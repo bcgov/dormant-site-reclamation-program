@@ -17,13 +17,12 @@ class ApplicationApprovedContractedWorkResource(Resource, UserMixin):
         description=
         'Get the information required for an applicant to manage the approved contracted work payment information on their application.'
     )
-    @api.marshal_with(APPLICATION_APPROVED_CONTRACTED_WORK, code=200)
     def get(self, application_guid):
         application = Application.find_by_guid(application_guid)
         if application is None:
             raise NotFound('No application was found matching the provided reference number')
 
-        return application
+        return application.approved_contracted_work
 
 
 class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):

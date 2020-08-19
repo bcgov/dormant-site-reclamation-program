@@ -170,6 +170,9 @@ export const nullableStringOrNumberSorter = (key) => (a, b) => {
     : a[key] - b[key];
 };
 
+export const contractedWorkIdSorter = (a, b) =>
+  Number(a.work_id.split(".")[1]) > Number(b.work_id.split(".")[1]) ? 1 : -1;
+
 // Case insensitive filter for a SELECT field by label string
 export const caseInsensitiveLabelFilter = (input, option) =>
   option.props.children.toLowerCase().includes(input.toLowerCase());
