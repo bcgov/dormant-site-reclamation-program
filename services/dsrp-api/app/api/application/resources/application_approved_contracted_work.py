@@ -89,8 +89,13 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
 
         # Apply sorting
         reverse = sort_dir == 'desc'
-        if sort_field in ('application_id', 'work_id', 'well_authorization_number',
-                          'contracted_work_type'):
+        if sort_field == 'well_authorization_number':
+            records.sort(key=lambda x: int(x[sort_field]), reverse=reverse)
+        elif sort_field == 'work_id':
+            records.sort(
+                key=lambda x: (x['application_id'], int(x[sort_field].split('.')[1])),
+                reverse=reverse)
+        elif sort_field in ('application_id', 'work_id', 'contracted_work_type'):
             records.sort(key=lambda x: x[sort_field], reverse=reverse)
         elif sort_field in ('interim_payment_status_code', 'final_payment_status_code'):
             records.sort(
