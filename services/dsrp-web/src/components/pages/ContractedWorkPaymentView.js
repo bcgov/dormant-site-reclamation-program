@@ -247,7 +247,7 @@ export class ContractedWorkPaymentView extends Component {
               : null;
           return (
             <div title="Interim Status">
-              <Badge
+              {/* <Badge
                 className="table-badge"
                 status={getContractedWorkPaymentStatusBadgeStatus(statusCode)}
                 text={
@@ -256,7 +256,9 @@ export class ContractedWorkPaymentView extends Component {
                     {text}
                   </>
                 }
-              />
+              /> */}
+              {note && popover(note, "table-record-tooltip")}
+              {text}
             </div>
           );
         },
@@ -323,7 +325,7 @@ export class ContractedWorkPaymentView extends Component {
               : null;
           return (
             <div title="Final Status">
-              <Badge
+              {/* <Badge
                 className="table-badge"
                 status={getContractedWorkPaymentStatusBadgeStatus(statusCode)}
                 text={
@@ -332,7 +334,9 @@ export class ContractedWorkPaymentView extends Component {
                     {text}
                   </>
                 }
-              />
+              /> */}
+              {note && popover(note, "table-record-tooltip")}
+              {text}
             </div>
           );
         },
