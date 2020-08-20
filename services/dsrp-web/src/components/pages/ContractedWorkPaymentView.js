@@ -4,8 +4,14 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import { connect } from "react-redux";
 import { startCase, camelCase, round } from "lodash";
-import { Row, Col, Typography, Table, Icon, Button, Popover, Progress } from "antd";
-import { formatDate, formatMoney, nullableStringOrNumberSorter, dateSorter } from "@/utils/helpers";
+import { Row, Col, Typography, Table, Icon, Button, Popover, Progress, Badge } from "antd";
+import {
+  formatDate,
+  formatMoney,
+  nullableStringOrNumberSorter,
+  dateSorter,
+  getContractedWorkPaymentStatusBadgeStatus,
+} from "@/utils/helpers";
 import {
   fetchApplicationApprovedContractedWorkById,
   updateContractedWorkPaymentInterim,
@@ -232,6 +238,9 @@ export class ContractedWorkPaymentView extends Component {
         dataIndex: "interim_status_description",
         sorter: nullableStringOrNumberSorter("interim_status_description"),
         render: (text, record) => {
+          const statusCode =
+            record.contracted_work_payment &&
+            record.contracted_work_payment.interim_payment_status_code;
           const note =
             record.contracted_work_payment && record.contracted_work_payment.interim_payment_status
               ? record.contracted_work_payment.interim_payment_status.note
@@ -239,7 +248,7 @@ export class ContractedWorkPaymentView extends Component {
           return (
             <div title="Interim Status">
               {note && popover(note, "table-record-tooltip")}
-              {text}
+              <Badge status={getContractedWorkPaymentStatusBadgeStatus(statusCode)} text={text} />
             </div>
           );
         },
@@ -297,6 +306,9 @@ export class ContractedWorkPaymentView extends Component {
         dataIndex: "final_status_description",
         sorter: nullableStringOrNumberSorter("final_status_description"),
         render: (text, record) => {
+          const statusCode =
+            record.contracted_work_payment &&
+            record.contracted_work_payment.final_payment_status_code;
           const note =
             record.contracted_work_payment && record.contracted_work_payment.final_payment_status
               ? record.contracted_work_payment.final_payment_status.note
@@ -304,7 +316,7 @@ export class ContractedWorkPaymentView extends Component {
           return (
             <div title="Final Status">
               {note && popover(note, "table-record-tooltip")}
-              {text}
+              <Badge status={getContractedWorkPaymentStatusBadgeStatus(statusCode)} text={text} />
             </div>
           );
         },

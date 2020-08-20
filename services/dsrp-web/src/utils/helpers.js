@@ -427,3 +427,15 @@ export const createUuidv4 = () => {
     return v.toString(16);
   });
 };
+
+export const getContractedWorkPaymentStatusBadgeStatus = (status) => {
+  switch (status) {
+    case "APPROVED":
+      return "success";
+    case "READY_FOR_REVIEW":
+      return "processing";
+    case "INFORMATION_REQUIRED":
+    default:
+      return "warning";
+  }
+};
