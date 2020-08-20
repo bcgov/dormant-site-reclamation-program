@@ -130,7 +130,7 @@ h1.ant-typography,
 .ant-table {
   border: none !important;
   border-radius: 0 !important;
-  font-size: 12px;
+  font-size: $font-size-sm;
 
   table {
     overflow-x: auto;
@@ -252,7 +252,22 @@ tr.ant-table-expanded-row {
   }
 }
 
+// Badges
+
+.table-badge {
+  & .ant-badge-status-text {
+    font-size: $font-size-sm;
+    margin-left: 6px;
+  }
+  & .ant-badge-status-dot {
+    width: 4px;
+    height: 4px;
+    top: 0;
+  }
+}
+
 // Forms
+
 .ant-form-item-required {
   &::before {
     font-family: $font-family;

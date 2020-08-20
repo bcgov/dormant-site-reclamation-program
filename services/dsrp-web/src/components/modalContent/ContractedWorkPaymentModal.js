@@ -35,18 +35,18 @@ export class ContractedWorkPaymentModal extends Component {
           initialValues={this.props.contractedWorkPayment.contracted_work_payment}
         />
       </TabPane>
-      <TabPane tab="Final Payment" key="1">
-        <FinalContractedWorkPaymentForm
-          paymentType="final"
-          onSubmit={this.handleSubmitFinalContractedWorkPayment}
+      <TabPane tab="Interim Progress Report" key="1">
+        <InterimReportForm
+          onSubmit={this.handleSubmitInterimContractedWorkPaymentProgressReport}
           closeModal={this.props.closeModal}
           contractedWorkPayment={this.props.contractedWorkPayment}
           initialValues={this.props.contractedWorkPayment.contracted_work_payment}
         />
       </TabPane>
-      <TabPane tab="Interim Progress Report" key="2">
-        <InterimReportForm
-          onSubmit={this.handleSubmitInterimContractedWorkPaymentProgressReport}
+      <TabPane tab="Final Payment" key="2">
+        <FinalContractedWorkPaymentForm
+          paymentType="final"
+          onSubmit={this.handleSubmitFinalContractedWorkPayment}
           closeModal={this.props.closeModal}
           contractedWorkPayment={this.props.contractedWorkPayment}
           initialValues={this.props.contractedWorkPayment.contracted_work_payment}

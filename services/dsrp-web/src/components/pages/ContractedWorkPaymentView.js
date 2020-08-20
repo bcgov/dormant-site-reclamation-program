@@ -209,29 +209,29 @@ export class ContractedWorkPaymentView extends Component {
         sorter: nullableStringOrNumberSorter("interim_cost"),
         render: (text) => <div title="Interim Cost">{formatMoney(text) || Strings.DASH}</div>,
       },
-      {
-        title: "Interim EoC",
-        key: "interim_eoc",
-        dataIndex: "interim_eoc",
-        render: (text) => (
-          <div title="Interim EoC">
-            {(text && (
-              <LinkButton
-                onClick={() =>
-                  downloadDocument(
-                    this.props.applicationGuid,
-                    text,
-                    "Dormant Sites Reclamation Program - Evidence of Cost.pdf"
-                  )
-                }
-              >
-                Download
-              </LinkButton>
-            )) ||
-              Strings.DASH}
-          </div>
-        ),
-      },
+      // {
+      //   title: "Interim EoC",
+      //   key: "interim_eoc",
+      //   dataIndex: "interim_eoc",
+      //   render: (text) => (
+      //     <div title="Interim EoC">
+      //       {(text && (
+      //         <LinkButton
+      //           onClick={() =>
+      //             downloadDocument(
+      //               this.props.applicationGuid,
+      //               text,
+      //               "Dormant Sites Reclamation Program - Evidence of Cost.pdf"
+      //             )
+      //           }
+      //         >
+      //           Download
+      //         </LinkButton>
+      //       )) ||
+      //         Strings.DASH}
+      //     </div>
+      //   ),
+      // },
       {
         title: "Interim Status",
         key: "interim_status_description",
@@ -247,8 +247,16 @@ export class ContractedWorkPaymentView extends Component {
               : null;
           return (
             <div title="Interim Status">
-              {note && popover(note, "table-record-tooltip")}
-              <Badge status={getContractedWorkPaymentStatusBadgeStatus(statusCode)} text={text} />
+              <Badge
+                className="table-badge"
+                status={getContractedWorkPaymentStatusBadgeStatus(statusCode)}
+                text={
+                  <>
+                    {note && popover(note, "table-record-tooltip")}
+                    {text}
+                  </>
+                }
+              />
             </div>
           );
         },
@@ -265,7 +273,7 @@ export class ContractedWorkPaymentView extends Component {
           } else if (text === Infinity) {
             display = Strings.DASH;
           } else {
-            display = `${text} days until deadline`;
+            display = `${text} days to submit`;
           }
           return <div title="Progress Report Status">{display}</div>;
         },
@@ -277,29 +285,29 @@ export class ContractedWorkPaymentView extends Component {
         sorter: nullableStringOrNumberSorter("final_cost"),
         render: (text) => <div title="Final Cost">{formatMoney(text) || Strings.DASH}</div>,
       },
-      {
-        title: "Final EoC",
-        key: "final_eoc",
-        dataIndex: "final_eoc",
-        render: (text) => (
-          <div title="Final EoC">
-            {(text && (
-              <LinkButton
-                onClick={() =>
-                  downloadDocument(
-                    this.props.applicationGuid,
-                    text,
-                    "Dormant Sites Reclamation Program - Evidence of Cost.pdf"
-                  )
-                }
-              >
-                Download
-              </LinkButton>
-            )) ||
-              Strings.DASH}
-          </div>
-        ),
-      },
+      // {
+      //   title: "Final EoC",
+      //   key: "final_eoc",
+      //   dataIndex: "final_eoc",
+      //   render: (text) => (
+      //     <div title="Final EoC">
+      //       {(text && (
+      //         <LinkButton
+      //           onClick={() =>
+      //             downloadDocument(
+      //               this.props.applicationGuid,
+      //               text,
+      //               "Dormant Sites Reclamation Program - Evidence of Cost.pdf"
+      //             )
+      //           }
+      //         >
+      //           Download
+      //         </LinkButton>
+      //       )) ||
+      //         Strings.DASH}
+      //     </div>
+      //   ),
+      // },
       {
         title: "Final Status",
         key: "final_status_description",
@@ -315,8 +323,16 @@ export class ContractedWorkPaymentView extends Component {
               : null;
           return (
             <div title="Final Status">
-              {note && popover(note, "table-record-tooltip")}
-              <Badge status={getContractedWorkPaymentStatusBadgeStatus(statusCode)} text={text} />
+              <Badge
+                className="table-badge"
+                status={getContractedWorkPaymentStatusBadgeStatus(statusCode)}
+                text={
+                  <>
+                    {note && popover(note, "table-record-tooltip")}
+                    {text}
+                  </>
+                }
+              />
             </div>
           );
         },

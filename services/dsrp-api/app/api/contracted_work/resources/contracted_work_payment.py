@@ -183,6 +183,12 @@ class ContractedWorkPaymentStatus(Resource, UserMixin):
         # Create the contracted work payment status change.
         payment_status_data = request.json
         contracted_work_payment_code = payment_status_data['contracted_work_payment_code']
+
+        # Final payments can only be approved if the interim report has been submitted.
+        # if contracted_work_payment_code == 'FINAL':
+        #     if not payment.interim_report:
+        #         raise BadRequest('The interim progress report must be provided.')
+
         contracted_work_payment_status_code = payment_status_data[
             'contracted_work_payment_status_code']
         note = payment_status_data['note']
