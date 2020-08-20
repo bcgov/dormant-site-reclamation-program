@@ -14,3 +14,8 @@ export const storeApplicationApprovedContractedWork = (payload) => ({
   type: ActionTypes.STORE_APPLICATION_APPROVED_CONTRACTED_WORK,
   payload,
 });
+
+export const storeApplicationsApprovedContractedWork = (payload) => ({
+  type: ActionTypes.STORE_APPLICATIONS_APPROVED_CONTRACTED_WORK,
+  payload,
+});

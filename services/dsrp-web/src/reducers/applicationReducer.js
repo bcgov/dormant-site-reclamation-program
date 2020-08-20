@@ -5,6 +5,7 @@ const initialState = {
   applications: [],
   application: {},
   applicationApprovedContractedWork: [],
+  applicationsApprovedContractedWork: [],
   pageData: {},
 };
 
@@ -26,6 +27,12 @@ export const applicationReducer = (state = initialState, action) => {
         ...state,
         applicationApprovedContractedWork: action.payload,
       };
+    case actionTypes.STORE_APPLICATIONS_APPROVED_CONTRACTED_WORK:
+      return {
+        ...state,
+        applicationsApprovedContractedWork: action.payload.records,
+        pageData: action.payload,
+      };
     default:
       return state;
   }
@@ -39,6 +46,8 @@ export const getApplications = (state) => state[APPLICATIONS].applications;
 export const getApplication = (state) => state[APPLICATIONS].application;
 export const getApplicationApprovedContractedWork = (state) =>
   state[APPLICATIONS].applicationApprovedContractedWork;
+export const getApplicationsApprovedContractedWork = (state) =>
+  state[APPLICATIONS].applicationsApprovedContractedWork;
 export const getPageData = (state) => state[APPLICATIONS].pageData;
 
 export default applicationReducerObject;

@@ -18,6 +18,7 @@ export const {
   getApplications,
   getApplication,
   getApplicationApprovedContractedWork,
+  getApplicationsApprovedContractedWork,
   getPageData,
 } = applicationReducer;
 

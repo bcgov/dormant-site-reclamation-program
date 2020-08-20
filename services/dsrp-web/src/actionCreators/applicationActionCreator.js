@@ -160,6 +160,24 @@ export const fetchApplicationApprovedContractedWorkById = (guid) => (dispatch) =
     });
 };
 
+export const fetchApplicationApprovedContractedWork = (params) => (dispatch) => {
+  dispatch(request(reducerTypes.GET_APPLICATIONS_APPROVED_CONTRACTED_WORK));
+  return CustomAxios()
+    .get(
+      ENVIRONMENT.apiUrl + API.APPLICATION_APPROVED_CONTRACTED_WORK(params),
+      createRequestHeader()
+    )
+    .then((response) => {
+      dispatch(success(reducerTypes.GET_APPLICATIONS_APPROVED_CONTRACTED_WORK));
+      dispatch(applicationActions.storeApplicationsApprovedContractedWork(response.data));
+      return response;
+    })
+    .catch((err) => {
+      dispatch(error(reducerTypes.GET_APPLICATIONS_APPROVED_CONTRACTED_WORK));
+      throw new Error(err);
+    });
+};
+
 export const updateContractedWorkPaymentInterim = (applicationGuid, workId, payload) => (
   dispatch
 ) => {
