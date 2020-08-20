@@ -64,19 +64,44 @@ class PaymentDocument(AuditMixin, Base):
 
             payment_details = []
             if self.payment_document_code == 'FIRST_PRF':
-                amount = self.application.calc_prf_phase_one_amount()
+                amount = self.application.calc_first_prf_amount()
                 unique_id = create_unique_id()
                 payment_details.append(create_payment_detail(unique_id, amount))
 
             elif self.payment_document_code in ('INTERIM_PRF', 'FINAL_PRF'):
-                calc_cost = self.application.calc_est_shared_cost_interim_phase if self.payment_document_code == 'INTERIM_PRF' else self.application.calc_est_shared_cost_final_phase
                 for work_id in self.work_ids:
+
                     work = self.application.find_contracted_work_by_id(work_id)
                     if not work:
                         raise Exception(f'Work ID {work_id} does not exist on this application!')
+
                     if work.get('contracted_work_status_code', None) != 'APPROVED':
-                        raise Exception(f'Work ID {work_id} must be approved!')
-                    amount = calc_cost(work)
+                        raise Exception(f'Work ID {work_id} is not approved!')
+
+                    contracted_work_payment = work.get('contracted_work_payment', None)
+                    if not contracted_work_payment:
+                        raise Exception(f'Work ID {work_id} contains no payment information!')
+
+                    amount = None
+                    if self.payment_document_code == 'INTERIM_PRF':
+                        if contracted_work_payment.get('interim_payment_status_code',
+                                                       None) != 'APPROVED':
+                            raise Exception(
+                                f'Work ID {work_id} interim payment has not been approved!')
+                        amount = contracted_work_payment.get('interim_paid_amount', None)
+                        if not amount:
+                            raise Exception(
+                                f'Work ID {work_id} interim payment amount has not been set!')
+                    else:
+                        if contracted_work_payment.get('final_payment_status_code',
+                                                       None) != 'APPROVED':
+                            raise Exception(
+                                f'Work ID {work_id} final payment has not been approved!')
+                        amount = contracted_work_payment.get('final_paid_amount', None)
+                        if not amount:
+                            raise Exception(
+                                f'Work ID {work_id} final payment amount has not been set!')
+
                     unique_id = create_unique_id(work_id)
                     payment_details.append(create_payment_detail(unique_id, amount))
             else:

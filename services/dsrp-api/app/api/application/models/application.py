@@ -195,16 +195,10 @@ class Application(Base, AuditMixin):
                 total_est_shared_cost += self.calc_est_shared_cost(cw_data)
         return total_est_shared_cost
 
-    def calc_prf_phase_one_amount(self):
+    def calc_first_prf_amount(self):
         """Calculates this application's payment phase one amount, which is 10% of the total estimated shared cost."""
 
         return round(self.calc_total_est_shared_cost() * 0.10, 2)
-
-    def calc_est_shared_cost_interim_phase(self, contracted_work):
-        return round(self.calc_est_shared_cost(contracted_work) * 0.60, 2)
-
-    def calc_est_shared_cost_final_phase(self, contracted_work):
-        return round(self.calc_est_shared_cost(contracted_work) * 0.30, 2)
 
     @hybrid_property
     def shared_cost_agreement_template_json(self):
