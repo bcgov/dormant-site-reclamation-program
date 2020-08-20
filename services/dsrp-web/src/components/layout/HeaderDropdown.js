@@ -63,6 +63,11 @@ export class HeaderDropdown extends Component {
                 <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
               </Button>
             </Menu.Item>
+            <Menu.Item key="review-approved-contracted-work" className="custom-menu-item">
+              <Button className="header-dropdown-item-button">
+                <Link to={routes.REVIEW_APPROVED_CONTRACTED_WORK.route}>Approved Work</Link>
+              </Button>
+            </Menu.Item>
           </React.Fragment>
         </AuthorizationWrapper>
         {this.props.isAuthenticated && (
@@ -80,6 +85,15 @@ export class HeaderDropdown extends Component {
           <Menu.Item key="review-applications" className="custom-menu-item" onItemHover={() => {}}>
             <Button className="header-dropdown-item-button">
               <Link to={routes.REVIEW_APPLICATIONS.route}>Applications</Link>
+            </Button>
+          </Menu.Item>
+          <Menu.Item
+            key="review-approved-contracted-work"
+            className="custom-menu-item"
+            onItemHover={() => {}}
+          >
+            <Button className="header-dropdown-item-button">
+              <Link to={routes.REVIEW_APPROVED_CONTRACTED_WORK.route}>Approved Work</Link>
             </Button>
           </Menu.Item>
         </AuthorizationWrapper>
