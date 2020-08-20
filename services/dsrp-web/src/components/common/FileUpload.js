@@ -57,14 +57,14 @@ class FileUpload extends React.Component {
             progress(true, bytesUploaded, bytesTotal);
           },
           onSuccess: (e) => {
-            const documentGuid = `dsrp-applications/${
+            const key = `dsrp-applications/${
               upload.url
                 .split("/")
                 .pop()
                 .split("+")[0]
             }`;
-            load(documentGuid);
-            this.handleFileLoad(file.name, documentGuid);
+            load(key);
+            this.handleFileLoad(file.name, key);
           },
         });
         upload.start();
@@ -78,14 +78,14 @@ class FileUpload extends React.Component {
     };
   }
 
-  handleFileLoad = (filename, id) => {
-    const files = [{ filename, id }, ...this.props.input.value];
-    this.props.onFileLoad(filename, id);
+  handleFileLoad = (filename, key) => {
+    const files = [{ filename, key }, ...this.props.input.value];
+    this.props.onFileLoad(filename, key);
     this.props.input.onChange(files);
   };
 
   handleRemoveFile = (error, removedFile) => {
-    const files = this.props.input.value.filter((file) => file.id !== removedFile.serverId);
+    const files = this.props.input.value.filter((file) => file.key !== removedFile.serverId);
     this.props.onRemoveFile(error, removedFile);
     this.props.input.onChange(files);
   };

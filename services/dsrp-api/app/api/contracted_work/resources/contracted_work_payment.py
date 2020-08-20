@@ -67,7 +67,7 @@ class ContractedWorkPaymentInterim(Resource, UserMixin):
         interim_eoc_data = interim_payment_data['interim_eoc'][0]
         interim_eoc = ApplicationDocument(
             document_name=interim_eoc_data['filename'],
-            object_store_path=interim_eoc_data['id'],
+            object_store_path=interim_eoc_data['key'],
             application_document_code='INTERIM_EOC')
         application.documents.append(interim_eoc)
         application.save()
@@ -121,7 +121,7 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
         final_eoc_data = final_payment_data['final_eoc'][0]
         final_eoc = ApplicationDocument(
             document_name=final_eoc_data['filename'],
-            object_store_path=final_eoc_data['id'],
+            object_store_path=final_eoc_data['key'],
             application_document_code='FINAL_EOC')
         application.documents.append(final_eoc)
         application.save()
@@ -133,7 +133,7 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
         final_report_data = final_payment_data['final_report'][0]
         final_report = ApplicationDocument(
             document_name=final_report_data['filename'],
-            object_store_path=final_report_data['id'],
+            object_store_path=final_report_data['key'],
             application_document_code='FINAL_REPORT')
         application.documents.append(final_report)
         application.save()
