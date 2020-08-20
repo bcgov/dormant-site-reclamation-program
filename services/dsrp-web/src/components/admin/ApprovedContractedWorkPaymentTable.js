@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { isArray, isEmpty, startCase, camelCase } from "lodash";
-import { Table, Icon, Tooltip, Pagination, Menu, Dropdown, Input, Button } from "antd";
+import { Table, Icon, Tooltip, Pagination, Menu, Dropdown, Input, Button, Popover } from "antd";
 import { formatDateTime, formatDate, formatMoney, formatDateTimeFine } from "@/utils/helpers";
 import { getFilterListApplicationStatusOptions } from "@/selectors/staticContentSelectors";
 import * as Strings from "@/constants/strings";
