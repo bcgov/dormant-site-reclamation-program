@@ -1,11 +1,10 @@
 from flask_restplus import Resource, marshal
 from werkzeug.exceptions import NotFound
-from flask import request
+from flask import request, current_app
 
-from app.extensions import api
+from app.extensions import api, db
 from app.api.utils.resources_mixins import UserMixin
 from app.api.constants import PAGE_DEFAULT, PER_PAGE_DEFAULT
-from app.api.application.response_models import APPLICATION_APPROVED_CONTRACTED_WORK
 from app.api.application.models.application import Application
 from app.api.utils.access_decorators import requires_role_admin
 from app.api.utils.helpers import apply_pagination_to_records
@@ -38,7 +37,7 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
         # Get all approved contracted work items on those applications
         approved_applications_approved_contracted_work = [
             approved_contracted_work for application in approved_applications
-            for approved_contracted_work in application.approved_contracted_work
+            for approved_contracted_work in application.contracted_work('APPROVED')
         ]
 
         # Get pagination/sorting query params
@@ -56,40 +55,46 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
         final_payment_status_code = request.args.getlist('final_payment_status_code', type=str)
 
         # Apply filtering
-        records = []
-        for approved_work in approved_applications_approved_contracted_work:
+        records = approved_applications_approved_contracted_work
+        if (application_id or work_id or well_authorization_number or contracted_work_type
+                or interim_payment_status_code or final_payment_status_code):
+            records = []
+            for approved_work in approved_applications_approved_contracted_work:
 
-            if application_id and approved_work['application_id'] != application_id:
-                continue
-
-            if work_id and approved_work['work_id'] != work_id:
-                continue
-
-            if well_authorization_number and approved_work[
-                    'well_authorization_number'] != well_authorization_number:
-                continue
-
-            if contracted_work_type and approved_work[
-                    'contracted_work_type'] not in contracted_work_type:
-                continue
-
-            contracted_work_payment = approved_work.get('contracted_work_payment', None)
-
-            interim_status = 'INFORMATION_REQUIRED' if not contracted_work_payment else contracted_work_payment[
-                'interim_payment_status_code']
-            final_status = 'INFORMATION_REQUIRED' if not contracted_work_payment else contracted_work_payment[
-                'final_payment_status_code']
-
-            if interim_payment_status_code and final_payment_status_code:
-                if interim_status not in interim_payment_status_code and final_status not in final_payment_status_code:
-                    continue
-            else:
-                if interim_payment_status_code and interim_status not in interim_payment_status_code:
-                    continue
-                if final_payment_status_code and final_status not in final_payment_status_code:
+                if work_id:
+                    if approved_work['work_id'] == work_id:
+                        records.append(approved_work)
+                        break
                     continue
 
-            records.append(approved_work)
+                if application_id and approved_work['application_id'] != application_id:
+                    continue
+
+                if well_authorization_number and approved_work[
+                        'well_authorization_number'] != well_authorization_number:
+                    continue
+
+                if contracted_work_type and approved_work[
+                        'contracted_work_type'] not in contracted_work_type:
+                    continue
+
+                contracted_work_payment = approved_work.get('contracted_work_payment', None)
+
+                interim_status = 'INFORMATION_REQUIRED' if not contracted_work_payment else contracted_work_payment[
+                    'interim_payment_status_code']
+                final_status = 'INFORMATION_REQUIRED' if not contracted_work_payment else contracted_work_payment[
+                    'final_payment_status_code']
+
+                if interim_payment_status_code and final_payment_status_code:
+                    if interim_status not in interim_payment_status_code and final_status not in final_payment_status_code:
+                        continue
+                else:
+                    if interim_payment_status_code and interim_status not in interim_payment_status_code:
+                        continue
+                    if final_payment_status_code and final_status not in final_payment_status_code:
+                        continue
+
+                records.append(approved_work)
 
         # Apply sorting
         reverse = sort_dir == 'desc'
