@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import current_app
 from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from sqlalchemy.orm import validates
 from sqlalchemy.schema import FetchedValue
 from sqlalchemy import select, desc, func
@@ -142,11 +142,13 @@ class Application(Base, AuditMixin):
 
         return well_sites
 
-    @hybrid_property
-    def contracted_work(self):
+    @hybrid_method
+    def contracted_work(self, status):
         contracted_work = []
         for ws in self.well_sites_with_review_data:
             for cw_type, cw_data in ws.get('contracted_work', {}).items():
+                if cw_data.get('contracted_work_status_code', None) != status:
+                    continue
                 cw_item = {}
                 cw_item['application_id'] = self.id
                 cw_item['application_guid'] = str(self.guid)
@@ -160,14 +162,8 @@ class Application(Base, AuditMixin):
                 cw_item['contracted_work_payment'] = cw_payment
                 contracted_work.append(cw_item)
 
+        # contracted_work.sort(key=lambda x: int(x['work_id'].split('.')[1]))
         return contracted_work
-
-    @hybrid_property
-    def approved_contracted_work(self):
-        return [
-            cw for cw in self.contracted_work
-            if cw.get('contracted_work_status_code', None) == 'APPROVED'
-        ]
 
     def find_contracted_work_by_id(self, work_id):
         for ws in self.well_sites_with_review_data:
