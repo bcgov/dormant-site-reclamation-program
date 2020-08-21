@@ -120,3 +120,7 @@ class ContractedWorkPayment(Base, AuditMixin):
     @classmethod
     def find_by_application_guid(cls, application_guid):
         return cls.query.filter_by(application_guid=application_guid).all()
+
+    @classmethod
+    def find_by_work_id(cls, work_id):
+        return cls.query.filter_by(work_id=work_id).all()
