@@ -29,7 +29,7 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
     @api.doc(
         description=
         'Get all approved contracted work item payment information on all approved applications.')
-    # @requires_role_admin
+    @requires_role_admin
     def get(self):
         # Get all approved applications
         approved_applications = Application.query.filter_by(
@@ -53,7 +53,7 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
         well_authorization_number = request.args.get('well_authorization_number', type=str)
         contracted_work_type = request.args.getlist('contracted_work_type', type=str)
         interim_payment_status_code = request.args.getlist('interim_payment_status_code', type=str)
-        final_payment_status_code = request.args.getlist('interim_payment_status_code', type=str)
+        final_payment_status_code = request.args.getlist('final_payment_status_code', type=str)
 
         # Apply filtering
         records = []
@@ -75,15 +75,19 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
 
             contracted_work_payment = approved_work.get('contracted_work_payment', None)
 
-            status = 'INFORMATION_REQUIRED' if not contracted_work_payment else contracted_work_payment[
+            interim_status = 'INFORMATION_REQUIRED' if not contracted_work_payment else contracted_work_payment[
                 'interim_payment_status_code']
-            if interim_payment_status_code and status not in interim_payment_status_code:
-                continue
-
-            status = 'INFORMATION_REQUIRED' if not contracted_work_payment else contracted_work_payment[
+            final_status = 'INFORMATION_REQUIRED' if not contracted_work_payment else contracted_work_payment[
                 'final_payment_status_code']
-            if final_payment_status_code and status not in final_payment_status_code:
-                continue
+
+            if interim_payment_status_code and final_payment_status_code:
+                if interim_status not in interim_payment_status_code and final_status not in final_payment_status_code:
+                    continue
+            else:
+                if interim_payment_status_code and interim_status not in interim_payment_status_code:
+                    continue
+                if final_payment_status_code and final_status not in final_payment_status_code:
+                    continue
 
             records.append(approved_work)
 
