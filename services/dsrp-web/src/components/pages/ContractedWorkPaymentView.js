@@ -408,7 +408,7 @@ export class ContractedWorkPaymentView extends Component {
                 <Col style={{ textAlign: "center" }}>
                   <Text strong>
                     <Icon type="clock-circle" style={{ marginRight: 5 }} />
-                    Ready for/Under Review
+                    Ready for Review
                   </Text>
                   <br />
                   {countOfApprovedWork - interimInfoRequiredCount}
@@ -445,7 +445,7 @@ export class ContractedWorkPaymentView extends Component {
                 <Col style={{ textAlign: "center" }}>
                   <Text strong>
                     <Icon type="clock-circle" style={{ marginRight: 5 }} />
-                    Ready for/Under Review
+                    Ready for Review
                   </Text>
                   <br />
                   {countOfApprovedWork - finalInfoRequiredCount}
