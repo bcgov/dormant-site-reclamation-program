@@ -65,7 +65,7 @@ class ContractedWorkPayment(Base, AuditMixin):
 
     interim_payment_status_changes = db.relationship(
         'ContractedWorkPaymentStatusChange',
-        lazy='select',
+        lazy='selectin',
         primaryjoin=
         f"and_(ContractedWorkPayment.contracted_work_payment_id == ContractedWorkPaymentStatusChange.contracted_work_payment_id, \
             ContractedWorkPaymentStatusChange.contracted_work_payment_code=='INTERIM')",
@@ -73,7 +73,7 @@ class ContractedWorkPayment(Base, AuditMixin):
     )
     final_payment_status_changes = db.relationship(
         'ContractedWorkPaymentStatusChange',
-        lazy='select',
+        lazy='selectin',
         primaryjoin=
         f"and_(ContractedWorkPayment.contracted_work_payment_id == ContractedWorkPaymentStatusChange.contracted_work_payment_id, \
             ContractedWorkPaymentStatusChange.contracted_work_payment_code=='FINAL')",

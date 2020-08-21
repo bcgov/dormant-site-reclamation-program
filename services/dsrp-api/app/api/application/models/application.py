@@ -145,7 +145,8 @@ class Application(Base, AuditMixin):
     @hybrid_method
     def contracted_work(self, status):
         contracted_work = []
-        all_cwp = ContractedWorkPayment.find_by_application_guid(self.guid)
+        contracted_work_payments = ContractedWorkPayment.find_by_application_guid(self.guid)
+        contracted_work_payments = marshal(contracted_work_payments, CONTRACTED_WORK_PAYMENT)
         for ws in self.well_sites_with_review_data:
             for cw_type, cw_data in ws.get('contracted_work', {}).items():
                 if cw_data.get('contracted_work_status_code', None) != status:
@@ -157,14 +158,13 @@ class Application(Base, AuditMixin):
                 cw_item['well_authorization_number'] = ws['details']['well_authorization_number']
                 cw_item['estimated_shared_cost'] = self.calc_est_shared_cost(cw_data)
                 cw_item.update(cw_data)
-                cw_payment = next((cwp for cwp in all_cwp if cwp.work_id == cw_item['work_id']),
-                                  None)
-                if cw_payment:
-                    cw_payment = marshal(cw_payment, CONTRACTED_WORK_PAYMENT)
+                cw_payment = next(
+                    (cwp
+                     for cwp in contracted_work_payments if cwp['work_id'] == cw_item['work_id']),
+                    None)
                 cw_item['contracted_work_payment'] = cw_payment
                 contracted_work.append(cw_item)
 
-        # contracted_work.sort(key=lambda x: int(x['work_id'].split('.')[1]))
         return contracted_work
 
     def find_contracted_work_by_id(self, work_id):
