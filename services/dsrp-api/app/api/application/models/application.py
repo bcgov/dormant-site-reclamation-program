@@ -52,7 +52,7 @@ class Application(Base, AuditMixin):
 
     status_changes = db.relationship(
         'ApplicationStatusChange',
-        lazy='joined',
+        lazy='select',
         order_by='desc(ApplicationStatusChange.application_status_change_id)',
     )
 
