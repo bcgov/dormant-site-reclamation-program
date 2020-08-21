@@ -2,7 +2,7 @@ from flask_restplus import Resource, marshal
 from werkzeug.exceptions import NotFound
 from flask import request, current_app
 
-from app.extensions import api, db
+from app.extensions import api
 from app.api.utils.resources_mixins import UserMixin
 from app.api.constants import PAGE_DEFAULT, PER_PAGE_DEFAULT
 from app.api.application.models.application import Application
@@ -30,9 +30,19 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
         'Get all approved contracted work item payment information on all approved applications.')
     @requires_role_admin
     def get(self):
-        # Get all approved applications
-        approved_applications = Application.query.filter_by(
-            application_status_code='FIRST_PAY_APPROVED').all()
+
+        # If filtering by application_id, just get that application
+        application_id = request.args.get('application_id', type=int)
+        approved_applications = None
+        if application_id:
+            approved_applications = Application.query.filter_by(
+                id=application_id, application_status_code='FIRST_PAY_APPROVED').all()
+
+        # Else, get all approved applications
+        else:
+            approved_applications = Application.query.filter_by(
+                application_status_code='FIRST_PAY_APPROVED').all()
+
 
         # Get all approved contracted work items on those applications
         approved_applications_approved_contracted_work = [
@@ -47,7 +57,6 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
         sort_dir = request.args.get('sort_dir', 'asc', type=str)
 
         # Get filtering query params
-        application_id = request.args.get('application_id', type=int)
         work_id = request.args.get('work_id', type=str)
         well_authorization_number = request.args.get('well_authorization_number', type=str)
         contracted_work_type = request.args.getlist('contracted_work_type', type=str)
