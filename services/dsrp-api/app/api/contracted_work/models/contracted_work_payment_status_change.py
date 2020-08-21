@@ -23,9 +23,5 @@ class ContractedWorkPaymentStatusChange(Base, AuditMixin):
     change_timestamp = db.Column(db.DateTime, nullable=False, server_default=FetchedValue())
     note = db.Column(db.String)
 
-    contracted_work_payment = db.relationship('ContractedWorkPayment')
-    contracted_work_payment_status = db.relationship('ContractedWorkPaymentStatus')
-    contracted_work_payment_type = db.relationship('ContractedWorkPaymentType')
-
     def __repr__(self):
         return f'<{self.__class__.__name__} {self.contracted_work_payment_status_change_id}>'

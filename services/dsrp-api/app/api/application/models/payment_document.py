@@ -191,8 +191,8 @@ class PaymentDocument(AuditMixin, Base):
     work_ids = db.Column(ARRAY(db.String))
     content = db.Column(JSONB, nullable=False)
 
-    application = db.relationship('Application')
-    payment_document_type = db.relationship('PaymentDocumentType')
+    application = db.relationship('Application', lazy='selectin')
+    payment_document_type = db.relationship('PaymentDocumentType', lazy='selectin')
 
     @classmethod
     def find_by_guid(cls, application_guid, document_guid):

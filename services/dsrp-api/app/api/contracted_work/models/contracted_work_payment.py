@@ -87,18 +87,6 @@ class ContractedWorkPayment(Base, AuditMixin):
         else:
             return 'INFORMATION_REQUIRED'
 
-    @interim_payment_status_code.expression
-    def interim_payment_status_code(self):
-        return func.coalesce(
-            select([ContractedWorkPaymentStatusChange.contracted_work_payment_status_code]).where(
-                and_(
-                    ContractedWorkPaymentStatusChange.contracted_work_payment_id ==
-                    self.contracted_work_payment_id,
-                    ContractedWorkPaymentStatusChange.contracted_work_payment_code ==
-                    'INTERIM')).order_by(desc(
-                        ContractedWorkPaymentStatusChange.change_timestamp)).limit(1).as_scalar(),
-            'INFORMATION_REQUIRED')
-
     @hybrid_property
     def interim_payment_status(self):
         if self.interim_payment_status_changes:
@@ -110,18 +98,6 @@ class ContractedWorkPayment(Base, AuditMixin):
             return self.final_payment_status_changes[0].contracted_work_payment_status_code
         else:
             return 'INFORMATION_REQUIRED'
-
-    @final_payment_status_code.expression
-    def final_payment_status_code(self):
-        return func.coalesce(
-            select([ContractedWorkPaymentStatusChange.contracted_work_payment_status_code]).where(
-                and_(
-                    ContractedWorkPaymentStatusChange.contracted_work_payment_id ==
-                    self.contracted_work_payment_id,
-                    ContractedWorkPaymentStatusChange.contracted_work_payment_code ==
-                    'FINAL')).order_by(desc(
-                        ContractedWorkPaymentStatusChange.change_timestamp)).limit(1).as_scalar(),
-            'INFORMATION_REQUIRED')
 
     @hybrid_property
     def final_payment_status(self):
