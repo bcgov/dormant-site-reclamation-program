@@ -55,17 +55,17 @@ class ContractedWorkPayment(Base, AuditMixin):
         unique=True)
 
     interim_eoc_document = db.relationship(
-        'ApplicationDocument', foreign_keys=[interim_eoc_application_document_guid])
+        'ApplicationDocument', lazy='select', foreign_keys=[interim_eoc_application_document_guid])
     final_eoc_document = db.relationship(
-        'ApplicationDocument', foreign_keys=[final_eoc_application_document_guid])
+        'ApplicationDocument', lazy='select', foreign_keys=[final_eoc_application_document_guid])
 
     interim_report = db.Column(db.String)
     final_report_document = db.relationship(
-        'ApplicationDocument', foreign_keys=[final_report_application_document_guid])
+        'ApplicationDocument', lazy='select', foreign_keys=[final_report_application_document_guid])
 
     interim_payment_status_changes = db.relationship(
         'ContractedWorkPaymentStatusChange',
-        lazy='joined',
+        lazy='select',
         primaryjoin=
         f"and_(ContractedWorkPayment.contracted_work_payment_id == ContractedWorkPaymentStatusChange.contracted_work_payment_id, \
             ContractedWorkPaymentStatusChange.contracted_work_payment_code=='INTERIM')",
@@ -73,7 +73,7 @@ class ContractedWorkPayment(Base, AuditMixin):
     )
     final_payment_status_changes = db.relationship(
         'ContractedWorkPaymentStatusChange',
-        lazy='joined',
+        lazy='select',
         primaryjoin=
         f"and_(ContractedWorkPayment.contracted_work_payment_id == ContractedWorkPaymentStatusChange.contracted_work_payment_id, \
             ContractedWorkPaymentStatusChange.contracted_work_payment_code=='FINAL')",
