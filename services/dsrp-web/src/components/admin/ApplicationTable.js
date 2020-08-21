@@ -149,7 +149,11 @@ export class ApplicationTable extends Component {
     clearFilters();
   };
 
-  columnSearchInput = (setSelectedKeys, selectedKeys, clearFilters, dataIndex, placeholder) => {
+  columnSearchInput = (dataIndex, placeholder) => ({
+    setSelectedKeys,
+    selectedKeys,
+    clearFilters,
+  }) => {
     return (
       <div style={{ padding: 8 }}>
         <Input
@@ -158,7 +162,7 @@ export class ApplicationTable extends Component {
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
           onPressEnter={() => this.handleSearch(selectedKeys, dataIndex)}
-          style={{ width: 188, marginBottom: 8, display: "block" }}
+          style={{ width: 188, marginBottom: 8, display: "block", fontSize: 12 }}
         />
         <Button
           type="primary"
@@ -204,14 +208,7 @@ export class ApplicationTable extends Component {
         key: "company_name",
         dataIndex: "company_name",
         render: (text) => <div title="Company">{text || Strings.DASH}</div>,
-        filterDropdown: ({ setSelectedKeys, selectedKeys, clearFilters }) =>
-          this.columnSearchInput(
-            setSelectedKeys,
-            selectedKeys,
-            clearFilters,
-            "company_name",
-            "Search Company..."
-          ),
+        filterDropdown: this.columnSearchInput("company_name", "Enter Company Name"),
         filterIcon: () => this.searchFilterIcon("company_name"),
       },
       {
