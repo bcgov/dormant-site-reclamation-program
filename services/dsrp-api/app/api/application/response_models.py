@@ -75,9 +75,3 @@ APPLICATION_SUMMARY = api.model(
         'submission_date': fields.DateTime,
         'company_name': fields.String
     })
-
-APPLICATION_APPROVED_CONTRACTED_WORK = api.model('ApplicationApprovedContractedWork', {
-    'id': fields.Integer,
-    'guid': fields.String,
-    'approved_contracted_work': fields.Raw
-})
