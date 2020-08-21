@@ -21,7 +21,7 @@ class ApplicationApprovedContractedWorkResource(Resource, UserMixin):
         if application is None:
             raise NotFound('No application was found matching the provided reference number')
 
-        return application.approved_contracted_work
+        return application.contracted_work('APPROVED')
 
 
 class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
