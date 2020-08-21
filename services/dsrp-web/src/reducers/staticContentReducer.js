@@ -1,5 +1,6 @@
 import * as actionTypes from "../constants/actionTypes";
 import { STATIC_CONTENT } from "../constants/reducerTypes";
+import { CONTRACT_WORK_TYPE_OPTIONS } from "../constants/contract_work_sections";
 
 /**
  * @file staticContentReducer.js
@@ -11,6 +12,7 @@ const initialState = {
   applicationDocumentTypeOptions: [],
   contractedWorkStatusOptions: [],
   contractedWorkPaymentStatusOptions: [],
+  contractedWorkTypeOptions: CONTRACT_WORK_TYPE_OPTIONS,
 };
 
 export const staticContentReducer = (state = initialState, action) => {
@@ -34,6 +36,8 @@ export const getContractedWorkStatusOptions = (state) =>
   state[STATIC_CONTENT].contractedWorkStatusOptions;
 export const getContractedWorkPaymentStatusOptions = (state) =>
   state[STATIC_CONTENT].contractedWorkPaymentStatusOptions;
+export const getContractedWorkTypeOptions = (state) =>
+  state[STATIC_CONTENT].contractedWorkTypeOptions;
 
 const isStaticContentLoaded = (state) =>
   Object.keys(state)
