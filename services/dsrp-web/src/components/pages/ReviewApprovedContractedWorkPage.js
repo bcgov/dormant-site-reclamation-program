@@ -20,7 +20,7 @@ export class ReviewApprovedContractedWorkPage extends Component {
   render() {
     return (
       <>
-        <PageTracker title="Approved Contracted Work" />
+        <PageTracker title="Review Approved Contracted Work" />
         <Row type="flex" justify="center" align="top" className="landing-header">
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
             <Title>Review Approved Contracted Work</Title>

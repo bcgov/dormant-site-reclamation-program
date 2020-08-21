@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { Button, Icon } from "antd";
+import { Button, Icon, Row, Col } from "antd";
 import { withRouter } from "react-router-dom";
 import { bindActionCreators, compose } from "redux";
-import { set, isEmpty } from "lodash";
 import queryString from "query-string";
 import { openModal, closeModal } from "@/actions/modalActions";
 import * as routes from "@/constants/routes";
@@ -36,6 +35,12 @@ const defaultParams = {
   per_page: Strings.DEFAULT_PER_PAGE,
   sort_field: "application_id",
   sort_dir: "asc",
+  application_id: undefined,
+  work_id: undefined,
+  well_authorization_number: undefined,
+  contracted_work_type: [],
+  interim_payment_status_code: [],
+  final_payment_status_code: [],
 };
 
 export class ReviewApprovedContractedWorkInfo extends Component {
@@ -68,6 +73,13 @@ export class ReviewApprovedContractedWorkInfo extends Component {
     this.props.history.replace(
       routes.REVIEW_APPROVED_CONTRACTED_WORK.dynamicRoute(this.state.params)
     );
+  };
+
+  handleReset = () => {
+    if (!this.state.isLoaded) {
+      return;
+    }
+    this.props.history.replace(routes.REVIEW_APPROVED_CONTRACTED_WORK.dynamicRoute(defaultParams));
   };
 
   handleTableChange = (params) => {
@@ -126,27 +138,39 @@ export class ReviewApprovedContractedWorkInfo extends Component {
   render() {
     return (
       <>
-        {/* <Button
-          type="link"
-          onClick={this.handleRefresh}
-          style={{ float: "right"}}
-        >
-          <Icon type="reload" className="icon-lg" />
-          Refresh
-        </Button> */}
-        <ApprovedContractedWorkPaymentTable
-          applicationsApprovedContractedWork={this.props.applicationsApprovedContractedWork}
-          pageData={this.props.pageData}
-          params={this.state.params}
-          handleTableChange={this.handleTableChange}
-          onPageChange={this.onPageChange}
-          isLoaded={this.state.isLoaded}
-          contractedWorkPaymentStatusDropdownOptions={
-            this.props.contractedWorkPaymentStatusDropdownOptions
-          }
-          contractedWorkPaymentStatusOptionsHash={this.props.contractedWorkPaymentStatusOptionsHash}
-          handleContractedWorkPaymentStatusChange={this.handleContractedWorkPaymentStatusChange}
-        />
+        <Row>
+          <Col>
+            <div style={{ float: "right" }}>
+              <Button type="link" onClick={this.handleReset}>
+                <Icon type="delete" className="icon-lg" />
+                Clear Filters
+              </Button>
+              <Button type="link" onClick={this.handleRefresh}>
+                <Icon type="reload" className="icon-lg" />
+                Refresh
+              </Button>
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <ApprovedContractedWorkPaymentTable
+              applicationsApprovedContractedWork={this.props.applicationsApprovedContractedWork}
+              pageData={this.props.pageData}
+              params={this.state.params}
+              handleTableChange={this.handleTableChange}
+              onPageChange={this.onPageChange}
+              isLoaded={this.state.isLoaded}
+              contractedWorkPaymentStatusDropdownOptions={
+                this.props.contractedWorkPaymentStatusDropdownOptions
+              }
+              contractedWorkPaymentStatusOptionsHash={
+                this.props.contractedWorkPaymentStatusOptionsHash
+              }
+              handleContractedWorkPaymentStatusChange={this.handleContractedWorkPaymentStatusChange}
+            />
+          </Col>
+        </Row>
       </>
     );
   }
