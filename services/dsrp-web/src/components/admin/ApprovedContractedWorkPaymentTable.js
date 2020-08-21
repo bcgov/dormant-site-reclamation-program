@@ -5,14 +5,18 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { isArray, isEmpty, startCase, camelCase } from "lodash";
 import { Table, Icon, Tooltip, Pagination, Menu, Dropdown, Input, Button, Popover } from "antd";
-import { formatDateTime, formatDate, formatMoney, formatDateTimeFine } from "@/utils/helpers";
-import { getFilterListApplicationStatusOptions } from "@/selectors/staticContentSelectors";
+import { formatDateTime, formatDate, formatMoney } from "@/utils/helpers";
+import {
+  getFilterListContractedWorkPaymentStatusOptions,
+  getFilterListContractedWorkTypeOptions,
+} from "@/selectors/staticContentSelectors";
 import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
 
 const propTypes = {
   applicationsApprovedContractedWork: PropTypes.any.isRequired,
-  filterListApplicationStatusOptions: PropTypes.objectOf(PropTypes.any).isRequired,
+  filterListContractedWorkPaymentStatusOptions: PropTypes.objectOf(PropTypes.any).isRequired,
+  filterListContractedWorkTypeOptions: PropTypes.objectOf(PropTypes.any).isRequired,
   handleContractedWorkPaymentStatusChange: PropTypes.func.isRequired,
   contractedWorkPaymentStatusDropdownOptions: PropTypes.any.isRequired,
   contractedWorkPaymentStatusOptionsHash: PropTypes.any.isRequired,
@@ -68,7 +72,18 @@ const popover = (message, extraClassName) => (
   </Popover>
 );
 
+const getApplicationIdFromWorkId = (workId) => parseInt(workId.split(".")[0]);
+
 export class ApprovedContractedWorkPaymentTable extends Component {
+  state = {
+    selectedRowKeys: [],
+  };
+
+  getParamFilteredValue = (key) => {
+    const val = this.props.params[key];
+    return isArray(val) ? val : val ? [val] : [];
+  };
+
   transformRowData = (applicationApprovedContractedWork) => {
     const data = applicationApprovedContractedWork.map((work) => {
       const contracted_work_payment = work.contracted_work_payment || {};
@@ -89,7 +104,6 @@ export class ApprovedContractedWorkPaymentTable extends Component {
       return {
         ...work,
         key: work.work_id,
-        // contracted_work_type: startCase(camelCase(work.contracted_work_type)),
         interim_cost: parseFloat(contracted_work_payment.interim_actual_cost),
         final_cost: parseFloat(contracted_work_payment.final_actual_cost),
         interim_payment_status_code:
@@ -130,7 +144,11 @@ export class ApprovedContractedWorkPaymentTable extends Component {
     clearFilters();
   };
 
-  columnSearchInput = (setSelectedKeys, selectedKeys, clearFilters, dataIndex, placeholder) => {
+  columnSearchInput = (dataIndex, placeholder) => ({
+    setSelectedKeys,
+    selectedKeys,
+    clearFilters,
+  }) => {
     return (
       <div style={{ padding: 8 }}>
         <Input
@@ -139,7 +157,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
           onPressEnter={() => this.handleSearch(selectedKeys, dataIndex)}
-          style={{ width: 188, marginBottom: 8, display: "block" }}
+          style={{ width: 188, marginBottom: 8, display: "block", fontSize: 12 }}
         />
         <Button
           type="primary"
@@ -165,10 +183,15 @@ export class ApprovedContractedWorkPaymentTable extends Component {
       <Icon
         type="search"
         theme="outlined"
-        className={this.props.params[dataIndex] ? "color-primary" : ""}
+        className={!isEmpty(this.props.params[dataIndex]) ? "color-primary" : ""}
       />
     );
   };
+
+  onSelectChange = (selectedRowKeys) =>
+    this.setState({
+      selectedRowKeys: selectedRowKeys,
+    });
 
   render() {
     const columns = [
@@ -178,6 +201,8 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         dataIndex: "application_id",
         sortField: "application_id",
         sorter: true,
+        filterDropdown: this.columnSearchInput("application_id", "Enter Application ID"),
+        filterIcon: () => this.searchFilterIcon("application_id"),
         render: (text) => <div title="Application ID">{text}</div>,
       },
       {
@@ -186,6 +211,8 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         dataIndex: "work_id",
         sortField: "work_id",
         sorter: true,
+        filterDropdown: this.columnSearchInput("work_id", "Enter Work ID"),
+        filterIcon: () => this.searchFilterIcon("work_id"),
         render: (text) => <div title="Work ID">{text}</div>,
       },
       {
@@ -194,6 +221,8 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         dataIndex: "well_authorization_number",
         sortField: "well_authorization_number",
         sorter: true,
+        filterDropdown: this.columnSearchInput("well_authorization_number", "Enter Well Auth No."),
+        filterIcon: () => this.searchFilterIcon("well_authorization_number"),
         render: (text) => <div title="Well Auth No.">{text}</div>,
       },
       {
@@ -202,6 +231,8 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         dataIndex: "contracted_work_type",
         sortField: "contracted_work_type",
         sorter: true,
+        filters: this.props.filterListContractedWorkTypeOptions,
+        filteredValue: this.getParamFilteredValue("contracted_work_type"),
         render: (text) => <div title="Work Type">{startCase(camelCase(text))}</div>,
       },
       {
@@ -245,6 +276,8 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         dataIndex: "interim_payment_status_code",
         sortField: "interim_payment_status_code",
         sorter: true,
+        filters: this.props.filterListContractedWorkPaymentStatusOptions,
+        filteredValue: this.getParamFilteredValue("interim_payment_status_code"),
         render: (text, record) => {
           const note =
             record.contracted_work_payment && record.contracted_work_payment.interim_payment_status
@@ -258,24 +291,24 @@ export class ApprovedContractedWorkPaymentTable extends Component {
           );
         },
       },
-      {
-        title: "Progress Report Status",
-        key: "interim_report_days_until_deadline",
-        dataIndex: "interim_report_days_until_deadline",
-        sortField: "interim_report_days_until_deadline",
-        sorter: false,
-        render: (text) => {
-          let display = null;
-          if (text === -Infinity) {
-            display = "Submitted";
-          } else if (text === Infinity) {
-            display = Strings.DASH;
-          } else {
-            display = `${text} days to submit`;
-          }
-          return <div title="Progress Report Status">{display}</div>;
-        },
-      },
+      // {
+      //   title: "Progress Report Status",
+      //   key: "interim_report_days_until_deadline",
+      //   dataIndex: "interim_report_days_until_deadline",
+      //   sortField: "interim_report_days_until_deadline",
+      //   sorter: false,
+      //   render: (text) => {
+      //     let display = null;
+      //     if (text === -Infinity) {
+      //       display = "Submitted";
+      //     } else if (text === Infinity) {
+      //       display = Strings.DASH;
+      //     } else {
+      //       display = `${text} days to submit`;
+      //     }
+      //     return <div title="Progress Report Status">{display}</div>;
+      //   },
+      // },
       {
         title: "Final Cost",
         key: "final_cost",
@@ -311,6 +344,8 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         dataIndex: "final_payment_status_code",
         sortField: "final_payment_status_code",
         sorter: true,
+        filters: this.props.filterListContractedWorkPaymentStatusOptions,
+        filteredValue: this.getParamFilteredValue("final_payment_status_code"),
         render: (text, record) => {
           const note =
             record.contracted_work_payment && record.contracted_work_payment.final_payment_status
@@ -336,11 +371,18 @@ export class ApprovedContractedWorkPaymentTable extends Component {
       },
     ];
 
+    const rowSelection = {
+      selectedRowKeys: this.state.selectedRowKeys,
+      onChange: this.onSelectChange,
+    };
+
     return (
       <>
         <Table
           columns={applySortIndicator(columns, this.props.params)}
           pagination={false}
+          rowSelection={rowSelection}
+          rowKey={(record) => record.work_id}
           dataSource={this.transformRowData(this.props.applicationsApprovedContractedWork)}
           onChange={handleTableChange(this.props.handleTableChange, this.props.params)}
           className="table-headers-center"
@@ -368,7 +410,10 @@ ApprovedContractedWorkPaymentTable.propTypes = propTypes;
 ApprovedContractedWorkPaymentTable.defaultProps = defaultProps;
 
 const mapStateToProps = (state) => ({
-  filterListApplicationStatusOptions: getFilterListApplicationStatusOptions(state),
+  filterListContractedWorkPaymentStatusOptions: getFilterListContractedWorkPaymentStatusOptions(
+    state
+  ),
+  filterListContractedWorkTypeOptions: getFilterListContractedWorkTypeOptions(state),
 });
 
 export default connect(mapStateToProps)(ApprovedContractedWorkPaymentTable);
