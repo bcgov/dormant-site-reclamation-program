@@ -8,6 +8,7 @@ import { required, number, requiredList, date } from "@/utils/validate";
 import { currencyMask } from "@/utils/helpers";
 import { EXCEL, PDF } from "@/constants/fileTypes";
 import { EOC_TEMPLATE } from "@/constants/assets";
+import { DATE_FORMAT } from "@/constants/strings";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import LinkButton from "@/components/common/LinkButton";
 
@@ -125,7 +126,7 @@ export class ContractedWorkPaymentForm extends Component {
                 id="work_completion_date"
                 name="work_completion_date"
                 label="Work Completion Date"
-                placeholder="YYYY-MM-DD"
+                placeholder={DATE_FORMAT}
                 disabled={isViewOnly}
                 component={renderConfig.DATE}
                 validate={[required, date]}

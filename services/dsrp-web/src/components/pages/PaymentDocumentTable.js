@@ -53,20 +53,18 @@ export const PaymentDocumentTable = (props) => {
     {
       title: "Invoice Number",
       dataIndex: "invoice_number",
-      render: (text) => <div title="Invoice Number">{text || Strings.EMPTY_FIELD}</div>,
+      render: (text) => <div title="Invoice Number">{text || Strings.DASH}</div>,
     },
     {
       title: "Upload Date",
       dataIndex: "upload_date",
       sorter: dateSorter("upload_date"),
-      render: (text) => (
-        <div title="Upload Date">{formatDateTime(text) || Strings.EMPTY_FIELD}</div>
-      ),
+      render: (text) => <div title="Upload Date">{formatDateTime(text) || Strings.DASH}</div>,
     },
     {
       title: "Created By",
       dataIndex: "create_user",
-      render: (text) => <div title="Created By">{text || Strings.EMPTY_FIELD}</div>,
+      render: (text) => <div title="Created By">{text || Strings.DASH}</div>,
     },
     {
       title: "",

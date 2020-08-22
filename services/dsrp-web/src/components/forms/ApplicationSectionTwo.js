@@ -9,7 +9,7 @@ import { sum, get, set, isEqual, isArrayLike, isEmpty, isObjectLike, debounce } 
 import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
-import { PROGRAM_START_DATE, PROGRAM_END_DATE } from "@/constants/strings";
+import { PROGRAM_START_DATE, PROGRAM_END_DATE, DATE_FORMAT } from "@/constants/strings";
 import {
   currencyMask,
   formatMoney,
@@ -75,8 +75,8 @@ const disabledStartDate = (date, wellSiteFormValues, contractWorkSection) => {
     sectionValues && sectionValues.planned_end_date ? moment(sectionValues.planned_end_date) : null;
   return (
     selectedDate &&
-    (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
-      selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD") ||
+    (selectedDate < moment(PROGRAM_START_DATE, DATE_FORMAT) ||
+      selectedDate > moment(PROGRAM_END_DATE, DATE_FORMAT) ||
       (endDate && selectedDate > endDate))
   );
 };
@@ -90,10 +90,10 @@ const validateStartDate = (date, sectionValues) => {
     sectionValues && sectionValues.planned_end_date ? moment(sectionValues.planned_end_date) : null;
 
   if (selectedDate) {
-    if (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD")) {
+    if (selectedDate < moment(PROGRAM_START_DATE, DATE_FORMAT)) {
       return `Date cannot be before the program's start date: ${PROGRAM_START_DATE}`;
     }
-    if (selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD")) {
+    if (selectedDate > moment(PROGRAM_END_DATE, DATE_FORMAT)) {
       return `Date cannot be after the program's end date: ${PROGRAM_END_DATE}`;
     }
     if (endDate && selectedDate > endDate) {
@@ -115,8 +115,8 @@ const disabledEndDate = (date, wellSiteFormValues, contractWorkSection) => {
       : null;
   return (
     selectedDate &&
-    (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD") ||
-      selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD") ||
+    (selectedDate < moment(PROGRAM_START_DATE, DATE_FORMAT) ||
+      selectedDate > moment(PROGRAM_END_DATE, DATE_FORMAT) ||
       (startDate && selectedDate < startDate))
   );
 };
@@ -131,10 +131,10 @@ const validateEndDate = (date, sectionValues) => {
       ? moment(sectionValues.planned_start_date)
       : null;
   if (selectedDate) {
-    if (selectedDate < moment(PROGRAM_START_DATE, "YYYY-MM-DD")) {
+    if (selectedDate < moment(PROGRAM_START_DATE, DATE_FORMAT)) {
       return `Date cannot be before the program's start date: ${PROGRAM_START_DATE}`;
     }
-    if (selectedDate > moment(PROGRAM_END_DATE, "YYYY-MM-DD")) {
+    if (selectedDate > moment(PROGRAM_END_DATE, DATE_FORMAT)) {
       return `Date cannot be after the program's end date: ${PROGRAM_END_DATE}`;
     }
     if (startDate && selectedDate < startDate) {
