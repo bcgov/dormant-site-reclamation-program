@@ -63,27 +63,15 @@ class ContractedWorkPayment(Base, AuditMixin):
     final_report_document = db.relationship(
         'ApplicationDocument', lazy='select', foreign_keys=[final_report_application_document_guid])
 
-    interim_payment_status_changes = db.relationship(
+    status_changes = db.relationship(
         'ContractedWorkPaymentStatusChange',
         lazy='selectin',
-        primaryjoin=
-        f"and_(ContractedWorkPayment.contracted_work_payment_id == ContractedWorkPaymentStatusChange.contracted_work_payment_id, \
-            ContractedWorkPaymentStatusChange.contracted_work_payment_code=='INTERIM')",
-        order_by='desc(ContractedWorkPaymentStatusChange.change_timestamp)',
-    )
-    final_payment_status_changes = db.relationship(
-        'ContractedWorkPaymentStatusChange',
-        lazy='selectin',
-        primaryjoin=
-        f"and_(ContractedWorkPayment.contracted_work_payment_id == ContractedWorkPaymentStatusChange.contracted_work_payment_id, \
-            ContractedWorkPaymentStatusChange.contracted_work_payment_code=='FINAL')",
-        order_by='desc(ContractedWorkPaymentStatusChange.change_timestamp)',
-    )
+        order_by='desc(ContractedWorkPaymentStatusChange.change_timestamp)')
 
     @hybrid_property
     def interim_payment_status_code(self):
-        if self.interim_payment_status_changes:
-            return self.interim_payment_status_changes[0].contracted_work_payment_status_code
+        if self.interim_payment_status:
+            return self.interim_payment_status.contracted_work_payment_status_code
         else:
             return 'INFORMATION_REQUIRED'
 
@@ -93,9 +81,21 @@ class ContractedWorkPayment(Base, AuditMixin):
             return self.interim_payment_status_changes[0]
 
     @hybrid_property
+    def interim_payment_status_changes(self):
+        return [
+            status for status in self.status_changes
+            if status.contracted_work_payment_code == 'INTERIM'
+        ]
+
+    @hybrid_property
+    def interim_payment_submission_date(self):
+        if self.interim_payment_status_changes:
+            return self.interim_payment_status_changes[-1].change_timestamp
+
+    @hybrid_property
     def final_payment_status_code(self):
-        if self.final_payment_status_changes:
-            return self.final_payment_status_changes[0].contracted_work_payment_status_code
+        if self.final_payment_status:
+            return self.final_payment_status.contracted_work_payment_status_code
         else:
             return 'INFORMATION_REQUIRED'
 
@@ -105,9 +105,11 @@ class ContractedWorkPayment(Base, AuditMixin):
             return self.final_payment_status_changes[0]
 
     @hybrid_property
-    def interim_payment_submission_date(self):
-        if self.interim_payment_status_changes:
-            return self.interim_payment_status_changes[-1].change_timestamp
+    def final_payment_status_changes(self):
+        return [
+            status for status in self.status_changes
+            if status.contracted_work_payment_code == 'FINAL'
+        ]
 
     @hybrid_property
     def final_payment_submission_date(self):
