@@ -196,10 +196,7 @@ class ContractedWorkPaymentStatus(Resource, UserMixin):
             contracted_work_payment_status_code=contracted_work_payment_status_code,
             contracted_work_payment_code=contracted_work_payment_code,
             note=note)
-        if contracted_work_payment_code == 'INTERIM':
-            payment.interim_payment_status_changes.append(status_change)
-        if contracted_work_payment_code == 'FINAL':
-            payment.final_payment_status_changes.append(status_change)
+        payment.status_changes.append(status_change)
 
         payment.save()
         return '', 201

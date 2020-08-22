@@ -13,13 +13,10 @@ class ContractedWorkPayment(Base, AuditMixin):
 
     def __init__(self, contracted_work_payment_status_code, contracted_work_payment_code, **kwargs):
         super(ContractedWorkPayment, self).__init__(**kwargs)
-        initial_status_change = ContractedWorkPaymentStatusChange(
+        initial_status = ContractedWorkPaymentStatusChange(
             contracted_work_payment_status_code=contracted_work_payment_status_code,
             contracted_work_payment_code=contracted_work_payment_code)
-        if contracted_work_payment_code == 'INTERIM':
-            self.interim_payment_status_changes.append(initial_status_change)
-        if contracted_work_payment_code == 'FINAL':
-            self.final_payment_status_changes.append(initial_status_change)
+        self.status_changes.append(initial_status)
 
     contracted_work_payment_id = db.Column(db.Integer, primary_key=True)
     application_guid = db.Column(
@@ -125,4 +122,4 @@ class ContractedWorkPayment(Base, AuditMixin):
 
     @classmethod
     def find_by_work_id(cls, work_id):
-        return cls.query.filter_by(work_id=work_id).all()
+        return cls.query.filter_by(work_id=work_id).first()
