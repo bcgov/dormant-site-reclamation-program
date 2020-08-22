@@ -12,6 +12,7 @@ from app.extensions import db
 from app.api.utils.models_mixins import AuditMixin, Base
 from app.api.company_payment_info.models import CompanyPaymentInfo
 from app.api.application.models.payment_document_type import PaymentDocumentType
+from app.api.contracted_work.models.contracted_work_payment import ContractedWorkPayment
 from app.api.services.object_store_storage_service import ObjectStoreStorageService
 from app.api.services.document_generator_service import DocumentGeneratorService, get_template_file_path
 from app.api.services.email_service import EmailService
@@ -78,26 +79,24 @@ class PaymentDocument(AuditMixin, Base):
                     if work.get('contracted_work_status_code', None) != 'APPROVED':
                         raise Exception(f'Work ID {work_id} is not approved!')
 
-                    contracted_work_payment = work.get('contracted_work_payment', None)
+                    contracted_work_payment = ContractedWorkPayment.find_by_work_id(work_id)
                     if not contracted_work_payment:
                         raise Exception(f'Work ID {work_id} contains no payment information!')
 
                     amount = None
                     if self.payment_document_code == 'INTERIM_PRF':
-                        if contracted_work_payment.get('interim_payment_status_code',
-                                                       None) != 'APPROVED':
+                        if contracted_work_payment.interim_payment_status_code != 'APPROVED':
                             raise Exception(
                                 f'Work ID {work_id} interim payment has not been approved!')
-                        amount = contracted_work_payment.get('interim_paid_amount', None)
+                        amount = contracted_work_payment.interim_paid_amount
                         if not amount:
                             raise Exception(
                                 f'Work ID {work_id} interim payment amount has not been set!')
                     else:
-                        if contracted_work_payment.get('final_payment_status_code',
-                                                       None) != 'APPROVED':
+                        if contracted_work_payment.final_payment_status_code != 'APPROVED':
                             raise Exception(
                                 f'Work ID {work_id} final payment has not been approved!')
-                        amount = contracted_work_payment.get('final_paid_amount', None)
+                        amount = contracted_work_payment.final_paid_amount
                         if not amount:
                             raise Exception(
                                 f'Work ID {work_id} final payment amount has not been set!')
