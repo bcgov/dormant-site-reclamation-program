@@ -15,10 +15,7 @@ CONTRACTED_WORK_PAYMENT_STATUS = api.model(
 
 CONTRACTED_WORK_PAYMENT_STATUS_CHANGE = api.model(
     'ContractedWorkPaymentStatusChange', {
-        'contracted_work_payment_status_change_id': fields.Integer,
-        'contracted_work_payment_id': fields.Integer,
         'contracted_work_payment_status_code': fields.String,
-        'contracted_work_payment_code': fields.String,
         'change_timestamp': fields.DateTime,
         'note': fields.String
     })

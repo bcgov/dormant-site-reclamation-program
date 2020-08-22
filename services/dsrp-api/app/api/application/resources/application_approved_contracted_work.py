@@ -21,7 +21,7 @@ class ApplicationApprovedContractedWorkResource(Resource, UserMixin):
         if application is None:
             raise NotFound('No application was found matching the provided reference number')
 
-        return application.contracted_work('APPROVED')
+        return application.contracted_work('APPROVED', True)
 
 
 class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
@@ -30,25 +30,9 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
         'Get all approved contracted work item payment information on all approved applications.')
     @requires_role_admin
     def get(self):
-
-        # If filtering by application_id, just get that application
+        # Get all approved contracted work items on all approved applications
         application_id = request.args.get('application_id', type=int)
-        approved_applications = None
-        if application_id:
-            approved_applications = Application.query.filter_by(
-                id=application_id, application_status_code='FIRST_PAY_APPROVED').all()
-
-        # Else, get all approved applications
-        else:
-            approved_applications = Application.query.filter_by(
-                application_status_code='FIRST_PAY_APPROVED').all()
-
-
-        # Get all approved contracted work items on those applications
-        approved_applications_approved_contracted_work = [
-            approved_contracted_work for application in approved_applications
-            for approved_contracted_work in application.contracted_work('APPROVED')
-        ]
+        all_approved_contracted_work = Application.all_approved_contracted_work(application_id)
 
         # Get pagination/sorting query params
         page_number = request.args.get('page', PAGE_DEFAULT, type=int)
@@ -64,11 +48,11 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
         final_payment_status_code = request.args.getlist('final_payment_status_code', type=str)
 
         # Apply filtering
-        records = approved_applications_approved_contracted_work
+        records = all_approved_contracted_work
         if (work_id or well_authorization_number or contracted_work_type
                 or interim_payment_status_code or final_payment_status_code):
             records = []
-            for approved_work in approved_applications_approved_contracted_work:
+            for approved_work in all_approved_contracted_work:
 
                 if work_id:
                     if approved_work['work_id'] == work_id:

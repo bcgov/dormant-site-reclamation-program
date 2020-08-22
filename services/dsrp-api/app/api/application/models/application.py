@@ -53,7 +53,7 @@ class Application(Base, AuditMixin):
     status_changes = db.relationship(
         'ApplicationStatusChange',
         lazy='select',
-        order_by='desc(ApplicationStatusChange.application_status_change_id)',
+        order_by='desc(ApplicationStatusChange.change_date)',
     )
 
     def __repr__(self):
@@ -143,10 +143,12 @@ class Application(Base, AuditMixin):
         return well_sites
 
     @hybrid_method
-    def contracted_work(self, status):
+    def contracted_work(self, status, include_payment):
         contracted_work = []
-        contracted_work_payments = ContractedWorkPayment.find_by_application_guid(self.guid)
-        contracted_work_payments = marshal(contracted_work_payments, CONTRACTED_WORK_PAYMENT)
+        contracted_work_payments = None
+        if include_payment:
+            contracted_work_payments = marshal(
+                ContractedWorkPayment.find_by_application_guid(self.guid), CONTRACTED_WORK_PAYMENT)
         for ws in self.well_sites_with_review_data:
             for cw_type, cw_data in ws.get('contracted_work', {}).items():
                 if cw_data.get('contracted_work_status_code', None) != status:
@@ -158,14 +160,41 @@ class Application(Base, AuditMixin):
                 cw_item['well_authorization_number'] = ws['details']['well_authorization_number']
                 cw_item['estimated_shared_cost'] = self.calc_est_shared_cost(cw_data)
                 cw_item.update(cw_data)
-                cw_payment = next(
-                    (cwp
-                     for cwp in contracted_work_payments if cwp['work_id'] == cw_item['work_id']),
-                    None)
-                cw_item['contracted_work_payment'] = cw_payment
+                if include_payment:
+                    cw_payment = next((cwp for cwp in contracted_work_payments
+                                       if cwp['work_id'] == cw_item['work_id']), None)
+                    cw_item['contracted_work_payment'] = cw_payment
                 contracted_work.append(cw_item)
 
         return contracted_work
+
+    @classmethod
+    def all_approved_contracted_work(self, application_id):
+        contracted_work_payments = None
+        approved_applications = None
+        if application_id:
+            application = Application.query.filter_by(id=application_id).first()
+            application_guid = application.guid if application else None
+            contracted_work_payments = marshal(
+                ContractedWorkPayment.query.filter_by(application_guid=application_guid).all(),
+                CONTRACTED_WORK_PAYMENT)
+            approved_applications = Application.query.filter_by(
+                id=application_id, application_status_code='FIRST_PAY_APPROVED').all()
+        else:
+            contracted_work_payments = marshal(ContractedWorkPayment.query.all(),
+                                               CONTRACTED_WORK_PAYMENT)
+            approved_applications = Application.query.filter_by(
+                application_status_code='FIRST_PAY_APPROVED').all()
+
+        approved_applications_approved_contracted_work = []
+        for application in approved_applications:
+            for approved_work in application.contracted_work('APPROVED', False):
+                approved_work['contracted_work_payment'] = next(
+                    (cwp for cwp in contracted_work_payments
+                     if cwp['work_id'] == approved_work['work_id']), None)
+                approved_applications_approved_contracted_work.append(approved_work)
+
+        return approved_applications_approved_contracted_work
 
     def find_contracted_work_by_id(self, work_id):
         for ws in self.well_sites_with_review_data:
