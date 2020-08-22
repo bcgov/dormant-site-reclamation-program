@@ -24,8 +24,9 @@ LIABILITY_PER_WELL_CACHE = "dsrp:ogc_data:liability_per_well"
 STATIC_DATA = {}
 
 # Pagination
-PAGE_DEFAULT = 1
-PER_PAGE_DEFAULT = 25
+DEFAULT_PAGE_NUMBER = 1
+PAGE_SIZE_OPTIONS = [5, 10, 25, 50, 100, 250]
+DEFAULT_PAGE_SIZE = PAGE_SIZE_OPTIONS[2]
 
 #settings
 DISABLE_APP_SUBMIT_SETTING = 'disable_applications'

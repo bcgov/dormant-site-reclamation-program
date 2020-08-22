@@ -14,7 +14,7 @@ from app.api.utils.resources_mixins import UserMixin
 from app.api.application.response_models import APPLICATION, APPLICATION_LIST
 from app.api.application.models.application import Application
 from app.api.application.models.application_status_change import ApplicationStatusChange
-from app.api.constants import PAGE_DEFAULT, PER_PAGE_DEFAULT, DISABLE_APP_SUBMIT_SETTING
+from app.api.constants import DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, DISABLE_APP_SUBMIT_SETTING
 from app.api.dsrp_settings.models.dsrp_settings import DSRPSettings
 
 
@@ -24,8 +24,8 @@ class ApplicationListResource(Resource, UserMixin):
     @requires_role_view_all
     def get(self):
         records, pagination_details = self._apply_filters_and_pagination(
-            page_number=request.args.get('page', PAGE_DEFAULT, type=int),
-            page_size=request.args.get('per_page', PER_PAGE_DEFAULT, type=int),
+            page_number=request.args.get('page', DEFAULT_PAGE_NUMBER, type=int),
+            page_size=request.args.get('per_page', DEFAULT_PAGE_SIZE, type=int),
             sort_field=request.args.get('sort_field', 'submission_date', type=str),
             sort_dir=request.args.get('sort_dir', 'asc', type=str),
             application_status_code=request.args.getlist('application_status_code', type=str),
@@ -43,8 +43,8 @@ class ApplicationListResource(Resource, UserMixin):
         }
 
     def _apply_filters_and_pagination(self,
-                                      page_number=PAGE_DEFAULT,
-                                      page_size=PER_PAGE_DEFAULT,
+                                      page_number=DEFAULT_PAGE_NUMBER,
+                                      page_size=DEFAULT_PAGE_SIZE,
                                       sort_field=None,
                                       sort_dir=None,
                                       guid=None,

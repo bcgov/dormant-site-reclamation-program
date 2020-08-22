@@ -31,8 +31,8 @@ const propTypes = {
 const defaultProps = {};
 
 const defaultParams = {
-  page: Strings.DEFAULT_PAGE,
-  per_page: Strings.DEFAULT_PER_PAGE,
+  page: Strings.DEFAULT_PAGE_NUMBER,
+  per_page: Strings.DEFAULT_PAGE_SIZE,
   sort_field: "application_id",
   sort_dir: "asc",
   application_id: undefined,

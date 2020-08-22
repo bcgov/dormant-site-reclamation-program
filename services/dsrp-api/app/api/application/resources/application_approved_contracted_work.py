@@ -4,7 +4,7 @@ from flask import request, current_app
 
 from app.extensions import api
 from app.api.utils.resources_mixins import UserMixin
-from app.api.constants import PAGE_DEFAULT, PER_PAGE_DEFAULT
+from app.api.constants import DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE
 from app.api.application.models.application import Application
 from app.api.utils.access_decorators import requires_role_admin
 from app.api.utils.helpers import apply_pagination_to_records
@@ -35,8 +35,8 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
         all_approved_contracted_work = Application.all_approved_contracted_work(application_id)
 
         # Get pagination/sorting query params
-        page_number = request.args.get('page', PAGE_DEFAULT, type=int)
-        page_size = request.args.get('per_page', PER_PAGE_DEFAULT, type=int)
+        page_number = request.args.get('page', DEFAULT_PAGE_NUMBER, type=int)
+        page_size = request.args.get('per_page', DEFAULT_PAGE_SIZE, type=int)
         sort_field = request.args.get('sort_field', 'application_id', type=str)
         sort_dir = request.args.get('sort_dir', 'asc', type=str)
 
