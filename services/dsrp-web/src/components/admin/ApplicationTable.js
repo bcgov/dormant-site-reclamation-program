@@ -478,11 +478,15 @@ export class ApplicationTable extends Component {
           <div className="center">
             <Pagination
               defaultCurrent={Number(this.props.params.page)}
+              defaultPageSize={Number(this.props.params.per_page)}
+              pageSizeOptions={Strings.PER_PAGE_OPTIONS}
               current={Number(this.props.params.page)}
               total={Number(this.props.pageData.total)}
               pageSize={Number(this.props.params.per_page)}
               showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
               onChange={this.props.onPageChange}
+              onShowSizeChange={this.props.onPageChange}
+              showSizeChanger
             />
           </div>
         )}
