@@ -4,14 +4,8 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import { connect } from "react-redux";
 import { startCase, camelCase, round } from "lodash";
-import { Row, Col, Typography, Table, Icon, Button, Popover, Progress, Badge } from "antd";
-import {
-  formatDate,
-  formatMoney,
-  nullableStringOrNumberSorter,
-  dateSorter,
-  getContractedWorkPaymentStatusBadgeStatus,
-} from "@/utils/helpers";
+import { Row, Col, Typography, Table, Icon, Button, Popover, Progress } from "antd";
+import { formatDate, formatMoney, nullableStringOrNumberSorter, dateSorter } from "@/utils/helpers";
 import {
   fetchApplicationApprovedContractedWorkById,
   updateContractedWorkPaymentInterim,
@@ -247,16 +241,6 @@ export class ContractedWorkPaymentView extends Component {
               : null;
           return (
             <div title="Interim Status">
-              {/* <Badge
-                className="table-badge"
-                status={getContractedWorkPaymentStatusBadgeStatus(statusCode)}
-                text={
-                  <>
-                    {note && popover(note, "table-record-tooltip")}
-                    {text}
-                  </>
-                }
-              /> */}
               {note && popover(note, "table-record-tooltip")}
               {text}
             </div>
@@ -325,16 +309,6 @@ export class ContractedWorkPaymentView extends Component {
               : null;
           return (
             <div title="Final Status">
-              {/* <Badge
-                className="table-badge"
-                status={getContractedWorkPaymentStatusBadgeStatus(statusCode)}
-                text={
-                  <>
-                    {note && popover(note, "table-record-tooltip")}
-                    {text}
-                  </>
-                }
-              /> */}
               {note && popover(note, "table-record-tooltip")}
               {text}
             </div>
