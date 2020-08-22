@@ -65,7 +65,7 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
 
         # Apply filtering
         records = approved_applications_approved_contracted_work
-        if (application_id or work_id or well_authorization_number or contracted_work_type
+        if (work_id or well_authorization_number or contracted_work_type
                 or interim_payment_status_code or final_payment_status_code):
             records = []
             for approved_work in approved_applications_approved_contracted_work:
@@ -74,9 +74,6 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
                     if approved_work['work_id'] == work_id:
                         records.append(approved_work)
                         break
-                    continue
-
-                if application_id and approved_work['application_id'] != application_id:
                     continue
 
                 if well_authorization_number and approved_work[
