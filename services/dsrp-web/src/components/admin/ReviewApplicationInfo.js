@@ -54,6 +54,7 @@ const defaultParams = {
   per_page: Strings.DEFAULT_PAGE_SIZE,
   sort_field: "submission_date",
   sort_dir: "asc",
+  id: undefined,
   guid: undefined,
   company_name: undefined,
   application_status_code: [],
@@ -90,6 +91,13 @@ export class ReviewApplicationInfo extends Component {
       },
       () => this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(this.state.params))
     );
+  };
+
+  handleReset = () => {
+    if (!this.state.isLoaded) {
+      return;
+    }
+    this.props.history.replace(routes.REVIEW_APPLICATIONS.dynamicRoute(defaultParams));
   };
 
   handleRefresh = () => {
@@ -192,10 +200,16 @@ export class ReviewApplicationInfo extends Component {
   render() {
     return (
       <>
-        <Button type="link" onClick={this.handleRefresh} style={{ float: "right", marginTop: 70 }}>
-          <Icon type="reload" className="icon-lg" />
-          Refresh
-        </Button>
+        <div style={{ float: "right", marginTop: 70 }}>
+          <Button type="link" onClick={this.handleReset}>
+            <Icon type="delete" className="icon-lg" />
+            Clear Filters
+          </Button>
+          <Button type="link" onClick={this.handleRefresh}>
+            <Icon type="reload" className="icon-lg" />
+            Refresh
+          </Button>
+        </div>
         <JumpToApplicationForm
           onSubmit={this.search}
           initialValues={{ guid: this.state.params.guid }}

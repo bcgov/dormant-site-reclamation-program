@@ -201,15 +201,17 @@ export class ApplicationTable extends Component {
         dataIndex: "id",
         sortField: "id",
         sorter: true,
+        filterDropdown: this.columnSearchInput("id", "Enter Application ID"),
+        filterIcon: () => this.searchFilterIcon("id"),
         render: (text) => <div title={`Application ID: ${text}`}>{text}</div>,
       },
       {
         title: "Company",
         key: "company_name",
         dataIndex: "company_name",
-        render: (text) => <div title="Company">{text || Strings.DASH}</div>,
         filterDropdown: this.columnSearchInput("company_name", "Enter Company Name"),
         filterIcon: () => this.searchFilterIcon("company_name"),
+        render: (text) => <div title="Company">{text || Strings.DASH}</div>,
       },
       {
         title: "Received On",
