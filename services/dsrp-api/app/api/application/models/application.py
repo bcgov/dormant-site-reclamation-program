@@ -170,28 +170,30 @@ class Application(Base, AuditMixin):
 
     @classmethod
     def all_approved_contracted_work(self, application_id):
-        contracted_work_payments = None
-        approved_applications = None
+        contracted_work_payments = []
+        approved_applications = []
+
         if application_id:
             application = Application.query.filter_by(id=application_id).first()
             application_guid = application.guid if application else None
-            contracted_work_payments = marshal(
-                ContractedWorkPayment.query.filter_by(application_guid=application_guid).all(),
-                CONTRACTED_WORK_PAYMENT)
             approved_applications = Application.query.filter_by(
                 id=application_id, application_status_code='FIRST_PAY_APPROVED').all()
+            contracted_work_payments = ContractedWorkPayment.query.filter_by(
+                application_guid=application_guid).all()
         else:
-            contracted_work_payments = marshal(ContractedWorkPayment.query.all(),
-                                               CONTRACTED_WORK_PAYMENT)
             approved_applications = Application.query.filter_by(
                 application_status_code='FIRST_PAY_APPROVED').order_by(Application.id).all()
+            contracted_work_payments = ContractedWorkPayment.query.all()
+
+        contracted_work_payments_lookup = {}
+        for cwp in contracted_work_payments:
+            contracted_work_payments_lookup[cwp.work_id] = marshal(cwp, CONTRACTED_WORK_PAYMENT)
 
         approved_applications_approved_contracted_work = []
         for application in approved_applications:
             for approved_work in application.contracted_work('APPROVED', False):
-                approved_work['contracted_work_payment'] = next(
-                    (cwp for cwp in contracted_work_payments
-                     if cwp['work_id'] == approved_work['work_id']), None)
+                approved_work['contracted_work_payment'] = contracted_work_payments_lookup.get(
+                    approved_work['work_id'], None)
                 approved_applications_approved_contracted_work.append(approved_work)
 
         return approved_applications_approved_contracted_work

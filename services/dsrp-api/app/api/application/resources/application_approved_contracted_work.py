@@ -1,4 +1,4 @@
-from flask_restplus import Resource, marshal
+from flask_restplus import Resource
 from werkzeug.exceptions import NotFound
 from flask import request, current_app
 from datetime import datetime
