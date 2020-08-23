@@ -4,8 +4,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { isArray, isEmpty, startCase, camelCase } from "lodash";
-import { Table, Icon, Tooltip, Pagination, Menu, Dropdown, Input, Button, Popover } from "antd";
-import { formatDateTime, formatDate, formatMoney } from "@/utils/helpers";
+import { Table, Icon, Pagination, Menu, Dropdown, Input, Button, Popover, Divider } from "antd";
+import { formatMoney } from "@/utils/helpers";
 import {
   getFilterListContractedWorkPaymentStatusOptions,
   getFilterListContractedWorkTypeOptions,
@@ -59,12 +59,6 @@ const handleTableChange = (updateParams, tableFilters) => (pagination, filters, 
 
   updateParams(params);
 };
-
-export const toolTip = (title, extraClassName) => (
-  <Tooltip title={title} placement="right" mouseEnterDelay={0.3}>
-    <Icon type="info-circle" className={`icon-sm ${extraClassName}`} style={{ marginLeft: 4 }} />
-  </Tooltip>
-);
 
 const popover = (message, extraClassName) => (
   <Popover title="Admin Note" content={message}>
@@ -121,6 +115,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         interim_eoc: contracted_work_payment.interim_eoc_application_document_guid,
         final_eoc: contracted_work_payment.final_eoc_application_document_guid,
         interim_report_days_until_deadline,
+        review_deadlines: contracted_work_payment ? contracted_work_payment.review_deadlines : null,
         work,
       };
     });
@@ -235,12 +230,12 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         filteredValue: this.getParamFilteredValue("contracted_work_type"),
         render: (text) => <div title="Work Type">{startCase(camelCase(text))}</div>,
       },
-      {
-        title: "Est. Cost",
-        key: "contracted_work_total",
-        dataIndex: "contracted_work_total",
-        render: (text) => <div title="Est. Cost">{formatMoney(text) || Strings.DASH}</div>,
-      },
+      // {
+      //   title: "Est. Cost",
+      //   key: "contracted_work_total",
+      //   dataIndex: "contracted_work_total",
+      //   render: (text) => <div title="Est. Cost">{formatMoney(text) || Strings.DASH}</div>,
+      // },
       {
         title: "Interim Cost",
         key: "interim_cost",
@@ -355,6 +350,36 @@ export class ApprovedContractedWorkPaymentTable extends Component {
             <div title="Final Status">
               {note && popover(note, "table-record-tooltip")}
               {text}
+            </div>
+          );
+        },
+      },
+      {
+        title: "Review Deadlines",
+        key: "review_deadlines",
+        dataIndex: "review_deadlines",
+        sortField: "review_deadlines",
+        sorter: true,
+        render: (text) => {
+          let interim = text && text["interim"];
+          interim =
+            !interim || interim === 1000000
+              ? "Not Submitted"
+              : interim === 20000000
+              ? "Paid"
+              : `${interim} days`;
+          let final = text && text["final"];
+          final =
+            !final || final === 1000000
+              ? "Not Submitted"
+              : final === 20000000
+              ? "Paid"
+              : `${final} days`;
+          return (
+            <div title="Review Deadlines">
+              {interim}
+              <Divider type="vertical" />
+              {final}
             </div>
           );
         },

@@ -21,6 +21,9 @@ def validate_application_contracted_work(application, work_id):
         raise NotFound(
             'No contracted work matching the provided work ID was found on that application')
 
+    if application.application_status_code != 'FIRST_PAY_APPROVED':
+        raise BadRequest('The application this contracted work item belongs to is not approved!')
+
     if contracted_work.get('contracted_work_status_code', None) != 'APPROVED':
         raise BadRequest('This contracted work item is not approved!')
 

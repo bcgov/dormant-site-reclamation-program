@@ -1,6 +1,7 @@
 from flask_restplus import Resource, marshal
 from werkzeug.exceptions import NotFound
 from flask import request, current_app
+from datetime import datetime
 
 from app.extensions import api
 from app.api.utils.resources_mixins import UserMixin
@@ -96,6 +97,18 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
                 reverse=reverse)
         elif sort_field in ('application_id', 'work_id', 'contracted_work_type'):
             records.sort(key=lambda x: x[sort_field], reverse=reverse)
+        elif sort_field in ('review_deadlines'):
+            records.sort(
+                key=lambda x:
+                (x.get('contracted_work_payment') and
+                 (x['contracted_work_payment'][sort_field] and (
+                     (x['contracted_work_payment'][sort_field]['interim'], x[
+                         'contracted_work_payment'][sort_field]['final'])
+                     if x['contracted_work_payment'][sort_field]['interim'] <= x[
+                         'contracted_work_payment'][sort_field]['final'] else
+                     (x['contracted_work_payment'][sort_field]['final'],
+                      x['contracted_work_payment'][sort_field]['interim']))) or (1000000, 1000000)),
+                reverse=reverse)
         elif sort_field in ('interim_payment_status_code', 'final_payment_status_code'):
             records.sort(
                 key=lambda x: (x.get('contracted_work_payment') and x['contracted_work_payment'][

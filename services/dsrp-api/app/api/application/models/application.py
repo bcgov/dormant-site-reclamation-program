@@ -184,7 +184,7 @@ class Application(Base, AuditMixin):
             contracted_work_payments = marshal(ContractedWorkPayment.query.all(),
                                                CONTRACTED_WORK_PAYMENT)
             approved_applications = Application.query.filter_by(
-                application_status_code='FIRST_PAY_APPROVED').all()
+                application_status_code='FIRST_PAY_APPROVED').order_by(Application.id).all()
 
         approved_applications_approved_contracted_work = []
         for application in approved_applications:

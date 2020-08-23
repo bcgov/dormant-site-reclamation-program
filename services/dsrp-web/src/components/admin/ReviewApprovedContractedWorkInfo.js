@@ -33,7 +33,7 @@ const defaultProps = {};
 const defaultParams = {
   page: Strings.DEFAULT_PAGE_NUMBER,
   per_page: Strings.DEFAULT_PAGE_SIZE,
-  sort_field: "application_id",
+  sort_field: "review_deadlines",
   sort_dir: "asc",
   application_id: undefined,
   work_id: undefined,
