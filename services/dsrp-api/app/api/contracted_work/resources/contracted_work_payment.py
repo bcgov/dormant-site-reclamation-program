@@ -52,7 +52,7 @@ class ContractedWorkPaymentInterim(Resource, UserMixin):
             status_change = ContractedWorkPaymentStatusChange(
                 contracted_work_payment_status_code='READY_FOR_REVIEW',
                 contracted_work_payment_code='INTERIM')
-            payment.final_payment_status_changes.append(status_change)
+            payment.status_changes.append(status_change)
 
         # Update the required data points.
         interim_payment_data = request.json
@@ -105,7 +105,7 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
             status_change = ContractedWorkPaymentStatusChange(
                 contracted_work_payment_status_code='READY_FOR_REVIEW',
                 contracted_work_payment_code='FINAL')
-            payment.final_payment_status_changes.append(status_change)
+            payment.status_changes.append(status_change)
 
         # Update the required data points.
         final_payment_data = request.json
