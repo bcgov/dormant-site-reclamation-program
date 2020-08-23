@@ -198,7 +198,11 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         sorter: true,
         filterDropdown: this.columnSearchInput("application_id", "Enter Application ID"),
         filterIcon: () => this.searchFilterIcon("application_id"),
-        render: (text) => <div title="Application ID">{text}</div>,
+        render: (text, record) => (
+          <div title="Application ID">
+            <Link to={route.VIEW_APPLICATION.dynamicRoute(record.application_guid)}>{text}</Link>
+          </div>
+        ),
       },
       {
         title: "Work ID",

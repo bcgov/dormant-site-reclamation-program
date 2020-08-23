@@ -146,7 +146,7 @@ export class ViewApplicationPage extends Component {
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
                 <LinkButton onClick={this.goBack}>
                   <Icon type="arrow-left" style={{ paddingRight: "5px" }} />
-                  Return to Review Applications
+                  Return to Previous Page
                 </LinkButton>
               </Col>
               <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
