@@ -460,7 +460,10 @@ export class ContractedWorkPaymentView extends Component {
                 "This application does not contain any approved contracted work items! Please contact us.",
             }}
             dataSource={dataSource}
-            loading={!this.state.isLoaded}
+            loading={{
+              spinning: !this.state.isLoaded,
+              delay: 500,
+            }}
           />
         </Col>
       </Row>

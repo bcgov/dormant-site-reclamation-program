@@ -1,7 +1,6 @@
 from flask_restplus import Resource
 from werkzeug.exceptions import NotFound
 from flask import request, current_app
-from datetime import datetime
 
 from app.extensions import api
 from app.api.utils.resources_mixins import UserMixin
@@ -38,7 +37,7 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
         # Get pagination/sorting query params
         page_number = request.args.get('page', DEFAULT_PAGE_NUMBER, type=int)
         page_size = request.args.get('per_page', DEFAULT_PAGE_SIZE, type=int)
-        sort_field = request.args.get('sort_field', 'application_id', type=str)
+        sort_field = request.args.get('sort_field', 'review_deadlines', type=str)
         sort_dir = request.args.get('sort_dir', 'asc', type=str)
 
         # Get filtering query params
