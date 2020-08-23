@@ -194,7 +194,7 @@ class ContractedWorkPaymentStatus(Resource, UserMixin):
 
         contracted_work_payment_status_code = payment_status_data[
             'contracted_work_payment_status_code']
-        note = payment_status_data['note']
+        note = payment_status_data.get('note', None)
         status_change = ContractedWorkPaymentStatusChange(
             contracted_work_payment_status_code=contracted_work_payment_status_code,
             contracted_work_payment_code=contracted_work_payment_code,
