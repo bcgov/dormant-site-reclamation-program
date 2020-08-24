@@ -20,9 +20,11 @@ import { modalConfig } from "@/components/modalContent/config";
 import { openModal, closeModal } from "@/actions/modalActions";
 import LinkButton from "@/components/common/LinkButton";
 import { contractedWorkIdSorter } from "@/utils/helpers";
+import CustomPropTypes from "@/customPropTypes";
 
 const propTypes = {
   applicationGuid: PropTypes.string.isRequired,
+  applicationSummary: CustomPropTypes.applicationSummary.isRequired,
   applicationApprovedContractedWork: PropTypes.arrayOf(PropTypes.any).isRequired,
   contractedWorkPaymentStatusOptionsHash: PropTypes.objectOf(PropTypes.any),
   fetchApplicationApprovedContractedWorkById: PropTypes.func.isRequired,
@@ -111,6 +113,7 @@ export class ContractedWorkPaymentView extends Component {
       props: {
         title: `Provide Payment Information for Work ID ${record.work_id}`,
         contractedWorkPayment: record.work,
+        applicationSummary: this.props.applicationSummary,
         handleSubmitInterimContractedWorkPayment: this.handleSubmitInterimContractedWorkPayment,
         handleSubmitFinalContractedWorkPayment: this.handleSubmitFinalContractedWorkPayment,
         handleSubmitInterimContractedWorkPaymentProgressReport: this
@@ -400,9 +403,9 @@ export class ContractedWorkPaymentView extends Component {
                 successPercent={interimApprovedPercent}
                 format={(percent) => round(percent, 1) + "%"}
               />
-              {/* <Text type="secondary">
-                Final payment information for {interimInfoRequiredCount} work items is required.
-              </Text> */}
+              <Text type="secondary">
+                Interim payment information for {interimInfoRequiredCount} work items is required.
+              </Text>
             </Col>
             <Col md={24} lg={12}>
               <Title level={4}>Final Payments Progress</Title>
@@ -437,9 +440,9 @@ export class ContractedWorkPaymentView extends Component {
                 successPercent={finalApprovedPercent}
                 format={(percent) => round(percent, 1) + "%"}
               />
-              {/* <Text type="secondary">
+              <Text type="secondary">
                 Final payment information for {finalInfoRequiredCount} work items is required.
-              </Text> */}
+              </Text>
             </Col>
           </Row>
           <br />

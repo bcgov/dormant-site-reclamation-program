@@ -121,6 +121,8 @@ export class ApprovedContractedWorkPaymentTable extends Component {
           contracted_work_payment.interim_payment_status_code || "INFORMATION_REQUIRED",
         final_payment_status_code:
           contracted_work_payment.final_payment_status_code || "INFORMATION_REQUIRED",
+        has_interim_prfs: contracted_work_payment.has_interim_prfs || false,
+        has_final_prfs: contracted_work_payment.has_final_prfs || false,
         interim_eoc: contracted_work_payment.interim_eoc_application_document_guid,
         final_eoc: contracted_work_payment.final_eoc_application_document_guid,
         interim_report_days_until_deadline,
@@ -496,6 +498,10 @@ export class ApprovedContractedWorkPaymentTable extends Component {
             record.application_id !== this.state.selectedApplicationId) ||
             (record.interim_payment_status_code !== "APPROVED" &&
               record.final_payment_status_code !== "APPROVED")),
+        className:
+          record && (record.has_interim_prfs || record.has_final_prfs)
+            ? "approved-work-has-prf-checkbox"
+            : "",
       }),
     };
 
