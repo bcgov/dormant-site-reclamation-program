@@ -210,4 +210,5 @@ class PaymentDocument(AuditMixin, Base):
     @classmethod
     def find_by_guid(cls, application_guid, document_guid):
         return cls.query.filter_by(
-            application_guid=application_guid, document_guid=document_guid, active_ind=True).one()
+            application_guid=application_guid, document_guid=document_guid,
+            active_ind=True).first()

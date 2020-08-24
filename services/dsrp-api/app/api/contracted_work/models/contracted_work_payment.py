@@ -178,4 +178,4 @@ class ContractedWorkPayment(Base, AuditMixin):
 
     @classmethod
     def find_by_work_id(cls, work_id):
-        return cls.query.filter_by(work_id=work_id).one()
+        return cls.query.filter_by(work_id=work_id).first()
