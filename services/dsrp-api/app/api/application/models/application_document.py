@@ -36,4 +36,4 @@ class ApplicationDocument(AuditMixin, Base):
         return cls.query.filter_by(
             application_guid=application_guid,
             application_document_guid=application_document_guid,
-            active_ind=True).first()
+            active_ind=True).one_or_none()

@@ -65,7 +65,7 @@ class Application(Base, AuditMixin):
 
     @classmethod
     def find_by_guid(cls, guid):
-        return cls.query.filter_by(guid=guid).first()
+        return cls.query.filter_by(guid=guid).one_or_none()
 
     @validates('json')
     def validate_json(self, key, json):
@@ -174,7 +174,7 @@ class Application(Base, AuditMixin):
         approved_applications = []
 
         if application_id:
-            application = Application.query.filter_by(id=application_id).first()
+            application = Application.query.filter_by(id=application_id).one_or_none()
             application_guid = application.guid if application else None
             approved_applications = Application.query.filter_by(
                 id=application_id, application_status_code='FIRST_PAY_APPROVED').all()
