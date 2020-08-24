@@ -11,11 +11,13 @@ import { EOC_TEMPLATE } from "@/constants/assets";
 import { DATE_FORMAT } from "@/constants/strings";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import LinkButton from "@/components/common/LinkButton";
+import CustomPropTypes from "@/customPropTypes";
 
 const { Title, Text, Paragraph } = Typography;
 
 const propTypes = {
   contractedWorkPayment: PropTypes.objectOf(PropTypes.any).isRequired,
+  applicationSummary: CustomPropTypes.applicationSummary.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   handleSubmit: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
@@ -221,8 +223,9 @@ export class ContractedWorkPaymentForm extends Component {
               label={
                 <>
                   I certify that the above information is correct and has been reviewed and approved
-                  by <Text strong>[insert name here]</Text> and I declare that I have completed all
-                  required notifications and activities in accordance with the&nbsp;
+                  by <Text strong>{this.props.applicationSummary.applicant_name}</Text> and I
+                  declare that I have completed all required notifications and activities in
+                  accordance with the&nbsp;
                   <a
                     href="https://www.bclaws.ca/civix/document/id/complete/statreg/112_2019"
                     target="_blank"

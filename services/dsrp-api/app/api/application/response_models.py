@@ -73,5 +73,6 @@ APPLICATION_SUMMARY = api.model(
         'guid': fields.String,
         'application_status_code': fields.String,
         'submission_date': fields.DateTime,
-        'company_name': fields.String
+        'company_name': fields.String,
+        'applicant_name': fields.String
     })

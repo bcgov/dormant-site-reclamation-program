@@ -84,7 +84,10 @@ export class ViewApplicationStatusPage extends Component {
             <DocumentUploadForm applicationGuid={this.props.loadedApplication.guid} />
           )}
           {this.props.loadedApplication.application_status_code === "FIRST_PAY_APPROVED" && (
-            <ContractedWorkPaymentView applicationGuid={this.props.loadedApplication.guid} />
+            <ContractedWorkPaymentView
+              applicationGuid={this.props.loadedApplication.guid}
+              applicationSummary={this.props.loadedApplication}
+            />
           )}
           <br />
           <Paragraph>

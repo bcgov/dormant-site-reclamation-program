@@ -251,7 +251,7 @@ class Application(Base, AuditMixin):
         prov = _company_details.get('province')
 
         # Create applicant info
-        _applicant_name = f"{self.json['company_contact']['first_name']} {self.json['company_contact']['last_name']}"
+        _applicant_name = self.applicant_name
         result['applicant_name'] = _applicant_name
         result['applicant_address'] = f'{addr1}\n{addr2}{post_cd}\n{city}, {prov}'
         result['applicant_company_name'] = _company_name
@@ -276,6 +276,10 @@ class Application(Base, AuditMixin):
                 result['formatted_well_sites'] += site
 
         return result
+
+    @hybrid_property
+    def applicant_name(self):
+        return f"{self.json['company_contact']['first_name']} {self.json['company_contact']['last_name']}"
 
     @hybrid_property
     def applicant_email(self):

@@ -4,11 +4,13 @@ import PropTypes from "prop-types";
 import InterimContractedWorkPaymentForm from "@/components/forms/InterimContractedWorkPaymentForm";
 import FinalContractedWorkPaymentForm from "@/components/forms/FinalContractedWorkPaymentForm";
 import InterimReportForm from "@/components/forms/InterimReportForm";
+import CustomPropTypes from "@/customPropTypes";
 
 const { TabPane } = Tabs;
 
 const propTypes = {
   contractedWorkPayment: PropTypes.objectOf(PropTypes.any).isRequired,
+  applicationSummary: CustomPropTypes.applicationSummary.isRequired,
 };
 
 export class ContractedWorkPaymentModal extends Component {
@@ -32,6 +34,7 @@ export class ContractedWorkPaymentModal extends Component {
           onSubmit={this.handleSubmitInterimContractedWorkPayment}
           closeModal={this.props.closeModal}
           contractedWorkPayment={this.props.contractedWorkPayment}
+          applicationSummary={this.props.applicationSummary}
           initialValues={this.props.contractedWorkPayment.contracted_work_payment}
         />
       </TabPane>
@@ -49,6 +52,7 @@ export class ContractedWorkPaymentModal extends Component {
           onSubmit={this.handleSubmitFinalContractedWorkPayment}
           closeModal={this.props.closeModal}
           contractedWorkPayment={this.props.contractedWorkPayment}
+          applicationSummary={this.props.applicationSummary}
           initialValues={this.props.contractedWorkPayment.contracted_work_payment}
         />
       </TabPane>
