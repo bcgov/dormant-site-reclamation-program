@@ -7,7 +7,7 @@ import { renderConfig } from "@/components/common/config";
 import { required, number, requiredList, date } from "@/utils/validate";
 import { currencyMask } from "@/utils/helpers";
 import { EXCEL, PDF } from "@/constants/fileTypes";
-import { EOC_TEMPLATE } from "@/constants/assets";
+import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
 import { DATE_FORMAT } from "@/constants/strings";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import LinkButton from "@/components/common/LinkButton";
@@ -185,10 +185,10 @@ export class ContractedWorkPaymentForm extends Component {
                   <>
                     <div>Final Report</div>
                     Please&nbsp;
-                    <a href="#" target="_blank" rel="noopener noreferrer">
+                    <a href={FINAL_REPORT_TEMPLATE} target="_blank" rel="noopener noreferrer">
                       download
                     </a>
-                    &nbsp;and use the provided Final Report template.
+                    &nbsp;and use the provided Final Report template and upload it as a PDF.
                     {existingFinalReportGuid && (
                       <>
                         &nbsp;You can download your previously uploaded Final Report&nbsp;
@@ -218,13 +218,11 @@ export class ContractedWorkPaymentForm extends Component {
               />
             )}
             <Field
-              id={`${paymentType}_submission_confirmation`}
+              id={`${paymentType}_dormancy_and_shutdown_regulations_confirmation`}
               name={`${paymentType}_submission_confirmation`}
               label={
                 <>
-                  I certify that the above information is correct and has been reviewed and approved
-                  by <Text strong>{this.props.applicationSummary.applicant_name}</Text> and I
-                  declare that I have completed all required notifications and activities in
+                  I declare that I have completed all required notifications and activities in
                   accordance with the&nbsp;
                   <a
                     href="https://www.bclaws.ca/civix/document/id/complete/statreg/112_2019"
@@ -234,6 +232,19 @@ export class ContractedWorkPaymentForm extends Component {
                     Dormancy and Shutdown Regulations
                   </a>
                   .
+                </>
+              }
+              disabled={isViewOnly}
+              component={renderConfig.CHECKBOX}
+              validate={[required]}
+            />
+            <Field
+              id={`${paymentType}_submission_confirmation`}
+              name={`${paymentType}_submission_confirmation`}
+              label={
+                <>
+                  I certify that the above information is correct and has been reviewed and approved
+                  by <Text strong>{this.props.applicationSummary.applicant_name}</Text>.
                 </>
               }
               disabled={isViewOnly}
