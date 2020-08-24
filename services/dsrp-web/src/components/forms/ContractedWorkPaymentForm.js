@@ -70,7 +70,7 @@ export class ContractedWorkPaymentForm extends Component {
           must provide the information below. Upon submitting the form, it will be marked as ready
           for review and you will be <Text strong>unable to edit your submission</Text>. If an issue
           is found with your submission, you will be notified by email and be able to edit your
-          submission again. If an issue is not found with your submission, it will approved and
+          submission again. If an issue is not found with your submission, it will be approved and
           payment will be sent.
         </Paragraph>
 
