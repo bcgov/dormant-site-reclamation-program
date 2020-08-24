@@ -120,6 +120,11 @@ export class ContractedWorkPaymentForm extends Component {
               component={renderConfig.FIELD}
               validate={[required, number]}
               {...currencyMask}
+              onChange={(event, newValue) => {
+                if (newValue && newValue.toString().split(".")[0].length > 8) {
+                  event.preventDefault();
+                }
+              }}
             />
             {paymentType === "final" && (
               <Field
