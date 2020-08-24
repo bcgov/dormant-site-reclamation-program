@@ -37,7 +37,6 @@ class StaticContentResource(Resource):
     )
     def get(self):
         content_json = cache.get(STATIC_CONTENT_KEY)
-        content_json = None
         if not content_json:
             current_app.logger.debug('CACHE MISS - static-content')
             content = generate_static_content_dict()
