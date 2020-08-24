@@ -105,10 +105,8 @@ export class ApprovedContractedWorkPaymentTable extends Component {
           interim_report_days_until_deadline = -Infinity;
         } else {
           const daysToSubmit = 30;
-          let daysLeftCount =
-            daysToSubmit -
-            (moment() - moment(interim_payment_submission_date)) / (1000 * 60 * 60 * 24);
-          daysLeftCount = Math.round(daysLeftCount);
+          const daysLeftCount =
+            daysToSubmit - moment().diff(moment(interim_payment_submission_date), "days");
           interim_report_days_until_deadline = daysLeftCount;
         }
       }
