@@ -8,6 +8,7 @@ from sqlalchemy import desc, func, and_, select
 from app.extensions import db
 from app.api.utils.models_mixins import Base, AuditMixin
 from app.api.contracted_work.models.contracted_work_payment_status_change import ContractedWorkPaymentStatusChange
+from app.api.constants import REVIEW_DEADLINE_NOT_APPLICABLE, REVIEW_DEADLINE_PAID
 
 
 class ContractedWorkPayment(Base, AuditMixin):
@@ -134,7 +135,10 @@ class ContractedWorkPayment(Base, AuditMixin):
 
     @hybrid_property
     def review_deadlines(self):
-        review_deadlines = {'interim': 1000000, 'final': 1000000}
+        review_deadlines = {
+            'interim': REVIEW_DEADLINE_NOT_APPLICABLE,
+            'final': REVIEW_DEADLINE_NOT_APPLICABLE
+        }
 
         interim_payment_submission_date = self.interim_payment_submission_date
         final_payment_submission_date = self.final_payment_submission_date
@@ -147,10 +151,10 @@ class ContractedWorkPayment(Base, AuditMixin):
         # We don't need to review payments that have already completed the payment process
         if interim_payment_submission_date and self.interim_payment_status_code == 'APPROVED':
             interim_payment_submission_date = None
-            review_deadlines['interim'] = 20000000
+            review_deadlines['interim'] = REVIEW_DEADLINE_PAID
         if final_payment_submission_date and self.final_payment_status_code == 'APPROVED':
             final_payment_submission_date = None
-            review_deadlines['final'] = 20000000
+            review_deadlines['final'] = REVIEW_DEADLINE_PAID
 
         # Both interim and final have been submitted and have completed the payment process
         if interim_payment_submission_date is None and final_payment_submission_date is None:

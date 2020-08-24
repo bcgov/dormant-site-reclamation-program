@@ -449,14 +449,18 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         render: (text) => {
           let interim = text && text["interim"];
           interim =
-            !interim || interim === 1000000
+            !interim || interim === Strings.REVIEW_DEADLINE_NOT_APPLICABLE
               ? "N/A"
-              : interim === 20000000
+              : interim === Strings.REVIEW_DEADLINE_PAID
               ? "Paid"
               : `${interim} days`;
           let final = text && text["final"];
           final =
-            !final || final === 1000000 ? "N/A" : final === 20000000 ? "Paid" : `${final} days`;
+            !final || final === Strings.REVIEW_DEADLINE_NOT_APPLICABLE
+              ? "N/A"
+              : final === Strings.REVIEW_DEADLINE_PAID
+              ? "Paid"
+              : `${final} days`;
           return (
             <div title="Review Deadlines">
               <Row>

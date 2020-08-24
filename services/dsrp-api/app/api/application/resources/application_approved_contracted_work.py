@@ -4,7 +4,7 @@ from flask import request, current_app
 
 from app.extensions import api
 from app.api.utils.resources_mixins import UserMixin
-from app.api.constants import DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE
+from app.api.constants import DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, REVIEW_DEADLINE_NOT_APPLICABLE, REVIEW_DEADLINE_PAID
 from app.api.application.models.application import Application
 from app.api.utils.access_decorators import requires_role_admin
 from app.api.utils.helpers import apply_pagination_to_records
@@ -98,15 +98,15 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
             records.sort(key=lambda x: x[sort_field], reverse=reverse)
         elif sort_field in ('review_deadlines'):
             records.sort(
-                key=lambda x:
-                (x.get('contracted_work_payment') and
-                 (x['contracted_work_payment'][sort_field] and (
-                     (x['contracted_work_payment'][sort_field]['interim'], x[
-                         'contracted_work_payment'][sort_field]['final'])
-                     if x['contracted_work_payment'][sort_field]['interim'] <= x[
-                         'contracted_work_payment'][sort_field]['final'] else
-                     (x['contracted_work_payment'][sort_field]['final'],
-                      x['contracted_work_payment'][sort_field]['interim']))) or (1000000, 1000000)),
+                key=lambda x: (x.get('contracted_work_payment') and
+                               (x['contracted_work_payment'][sort_field] and (
+                                   (x['contracted_work_payment'][sort_field]['interim'], x[
+                                       'contracted_work_payment'][sort_field]['final'])
+                                   if x['contracted_work_payment'][sort_field]['interim'] <= x[
+                                       'contracted_work_payment'][sort_field]['final'] else
+                                   (x['contracted_work_payment'][sort_field]['final'], x[
+                                       'contracted_work_payment'][sort_field]['interim']))) or
+                               (REVIEW_DEADLINE_NOT_APPLICABLE, REVIEW_DEADLINE_NOT_APPLICABLE)),
                 reverse=reverse)
         elif sort_field in ('interim_payment_status_code', 'final_payment_status_code'):
             records.sort(
