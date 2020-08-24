@@ -21,4 +21,4 @@ class PaymentDocumentType(Base, AuditMixin):
 
     @classmethod
     def find_by_payment_document_code(cls, payment_document_code):
-        return cls.query.filter_by(payment_document_code=payment_document_code).first()
+        return cls.query.filter_by(payment_document_code=payment_document_code).one()

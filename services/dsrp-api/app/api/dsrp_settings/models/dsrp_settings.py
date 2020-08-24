@@ -15,7 +15,7 @@ class DSRPSettings(AuditMixin, Base):
 
     @classmethod
     def find_by_setting(cls, setting):
-        return cls.query.filter_by(setting=setting).first()
+        return cls.query.filter_by(setting=setting).one()
 
     @classmethod
     def get_all(cls):

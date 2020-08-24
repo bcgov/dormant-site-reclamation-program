@@ -50,7 +50,7 @@ class DocumentDownloadResource(Resource, UserMixin):
         else:
             document_guid = token_data['document_guid']
             app_doc = ApplicationDocument.query.filter_by(
-                application_document_guid=document_guid).first()
+                application_document_guid=document_guid).one()
             if not app_doc:
                 raise NotFound('No document was found with the corresponding download token')
             if attachment is not None:
@@ -82,7 +82,7 @@ class PaymentDocumentDownloadResource(Resource, UserMixin):
         #S3 Download Token
         else:
             document_guid = token_data['document_guid']
-            payment_doc = PaymentDocument.query.filter_by(document_guid=document_guid).first()
+            payment_doc = PaymentDocument.query.filter_by(document_guid=document_guid).one()
             if not payment_doc:
                 raise NotFound('No document was found with the corresponding download token')
             if attachment is not None:
