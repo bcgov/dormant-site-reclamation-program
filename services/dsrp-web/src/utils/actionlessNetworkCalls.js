@@ -5,7 +5,7 @@ import {
   GET_TOKEN_FOR_SHARED_COST_AGREE_LETTER,
   GET_FILE_WITH_TOKEN,
   GET_TOKEN_FOR_DOC,
-  APPLICATION_PAYMENT_DOCUMENT,
+  APPLICATION_PAYMENT_DOCUMENT_BY_GUID,
   GET_PAYMENT_DOCUMENT_WITH_TOKEN,
 } from "../constants/api";
 
@@ -57,7 +57,7 @@ export const downloadPaymentDocument = (
   return CustomAxios()
     .get(
       `${ENVIRONMENT.apiUrl +
-        APPLICATION_PAYMENT_DOCUMENT(application_guid, application_document_guid)}`,
+        APPLICATION_PAYMENT_DOCUMENT_BY_GUID(application_guid, application_document_guid)}`,
       createRequestHeader()
     )
     .then((response) => {

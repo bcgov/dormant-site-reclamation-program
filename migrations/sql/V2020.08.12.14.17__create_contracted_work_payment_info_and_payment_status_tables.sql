@@ -110,3 +110,11 @@ CREATE TABLE IF NOT EXISTS contracted_work_payment_status_change
 );
 
 ALTER TABLE contracted_work_payment_status_change OWNER TO dsrp;
+
+ALTER TABLE payment_document DROP COLUMN IF EXISTS work_ids;
+
+CREATE TABLE IF NOT EXISTS payment_document_contracted_work_payment_xref (
+    document_guid uuid REFERENCES payment_document(document_guid),
+    work_id varchar REFERENCES contracted_work_payment(work_id),
+    PRIMARY KEY(document_guid, work_id)
+);

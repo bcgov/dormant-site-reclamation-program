@@ -4,11 +4,24 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { isArray, isEmpty, startCase, camelCase } from "lodash";
-import { Table, Icon, Pagination, Menu, Dropdown, Input, Button, Popover, Divider } from "antd";
+import {
+  Table,
+  Icon,
+  Pagination,
+  Menu,
+  Dropdown,
+  Input,
+  Button,
+  Popover,
+  Divider,
+  Row,
+  Col,
+} from "antd";
 import { formatMoney } from "@/utils/helpers";
 import {
   getFilterListContractedWorkPaymentStatusOptions,
   getFilterListContractedWorkTypeOptions,
+  getDropdownContractedWorkPaymentStatusOptions,
 } from "@/selectors/staticContentSelectors";
 import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
@@ -17,7 +30,9 @@ const propTypes = {
   applicationsApprovedContractedWork: PropTypes.any.isRequired,
   filterListContractedWorkPaymentStatusOptions: PropTypes.objectOf(PropTypes.any).isRequired,
   filterListContractedWorkTypeOptions: PropTypes.objectOf(PropTypes.any).isRequired,
-  handleContractedWorkPaymentStatusChange: PropTypes.func.isRequired,
+  onSelectedRowsChanged: PropTypes.func.isRequired,
+  handleContractedWorkPaymentInterimStatusChange: PropTypes.func.isRequired,
+  handleContractedWorkPaymentFinalStatusChange: PropTypes.func.isRequired,
   contractedWorkPaymentStatusDropdownOptions: PropTypes.any.isRequired,
   contractedWorkPaymentStatusOptionsHash: PropTypes.any.isRequired,
   handleTableChange: PropTypes.func.isRequired,
@@ -28,7 +43,7 @@ const propTypes = {
 const defaultProps = {};
 
 const renderDropdownMenu = (option, onClick, record, currentStatus) => (
-  <Menu onClick={(item) => onClick(item, record)}>
+  <Menu onClick={(item) => onClick(item.key, record)}>
     {option
       .filter(({ value }) => value !== currentStatus)
       .map(({ label, value, description }) => (
@@ -71,6 +86,8 @@ const getApplicationIdFromWorkId = (workId) => parseInt(workId.split(".")[0]);
 export class ApprovedContractedWorkPaymentTable extends Component {
   state = {
     selectedRowKeys: [],
+    selectedApplicationId: null,
+    possibleSelectedRowKeys: [],
   };
 
   getParamFilteredValue = (key) => {
@@ -101,17 +118,9 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         interim_cost: parseFloat(contracted_work_payment.interim_actual_cost),
         final_cost: parseFloat(contracted_work_payment.final_actual_cost),
         interim_payment_status_code:
-          (contracted_work_payment.interim_payment_status_code &&
-            this.props.contractedWorkPaymentStatusOptionsHash[
-              contracted_work_payment.interim_payment_status_code
-            ]) ||
-          "Information Required",
+          contracted_work_payment.interim_payment_status_code || "INFORMATION_REQUIRED",
         final_payment_status_code:
-          (contracted_work_payment.final_payment_status_code &&
-            this.props.contractedWorkPaymentStatusOptionsHash[
-              contracted_work_payment.final_payment_status_code
-            ]) ||
-          "Information Required",
+          contracted_work_payment.final_payment_status_code || "INFORMATION_REQUIRED",
         interim_eoc: contracted_work_payment.interim_eoc_application_document_guid,
         final_eoc: contracted_work_payment.final_eoc_application_document_guid,
         interim_report_days_until_deadline,
@@ -183,10 +192,43 @@ export class ApprovedContractedWorkPaymentTable extends Component {
     );
   };
 
-  onSelectChange = (selectedRowKeys) =>
+  onSelectChange = (selectedRowKeys, selectedRows) => {
     this.setState({
       selectedRowKeys: selectedRowKeys,
     });
+    this.props.onSelectedRowsChanged(selectedRows);
+  };
+
+  onSelect = (record, selected, selectedRows) =>
+    this.setState({
+      selectedApplicationId: selected
+        ? record.application_id
+        : !isEmpty(selectedRows)
+        ? record.application_id
+        : null,
+    });
+
+  onSelectAll = (selected, selectedRows) => {
+    const selectedApplicationId = selected
+      ? this.state.selectedApplicationId
+        ? this.state.selectedApplicationId
+        : !isEmpty(selectedRows)
+        ? selectedRows[0].application_id
+        : null
+      : null;
+
+    selectedRows = selectedRows.filter(
+      ({ application_id }) => selectedApplicationId === application_id
+    );
+    const selectedRowKeys = selectedRows.reduce((list, record) => [...list, record.work_id], []);
+
+    this.setState({
+      selectedRowKeys: selectedRowKeys,
+      selectedApplicationId: selectedApplicationId,
+    });
+
+    this.props.onSelectedRowsChanged(selectedRows);
+  };
 
   render() {
     const columns = [
@@ -284,8 +326,27 @@ export class ApprovedContractedWorkPaymentTable extends Component {
               : null;
           return (
             <div title="Interim Status">
-              {note && popover(note, "table-record-tooltip")}
-              {text}
+              <span onClick={(e) => e.stopPropagation()}>
+                <Dropdown
+                  disabled={
+                    !record.contracted_work_payment ||
+                    isEmpty(record.contracted_work_payment.interim_payment_status)
+                  }
+                  overlay={renderDropdownMenu(
+                    this.props.contractedWorkPaymentStatusDropdownOptions,
+                    this.props.handleContractedWorkPaymentInterimStatusChange,
+                    record,
+                    text
+                  )}
+                  trigger={["hover", "click"]}
+                >
+                  <a>
+                    {note && popover(note, "table-record-tooltip")}
+                    {this.props.contractedWorkPaymentStatusOptionsHash[text]}
+                    <Icon type="down" className="table-status-dropdown-icon" />
+                  </a>
+                </Dropdown>
+              </span>
             </div>
           );
         },
@@ -352,8 +413,27 @@ export class ApprovedContractedWorkPaymentTable extends Component {
               : null;
           return (
             <div title="Final Status">
-              {note && popover(note, "table-record-tooltip")}
-              {text}
+              <span onClick={(e) => e.stopPropagation()}>
+                <Dropdown
+                  disabled={
+                    !record.contracted_work_payment ||
+                    isEmpty(record.contracted_work_payment.final_payment_status)
+                  }
+                  overlay={renderDropdownMenu(
+                    this.props.contractedWorkPaymentStatusDropdownOptions,
+                    this.props.handleContractedWorkPaymentFinalStatusChange,
+                    record,
+                    text
+                  )}
+                  trigger={["hover", "click"]}
+                >
+                  <a>
+                    {note && popover(note, "table-record-tooltip")}
+                    {this.props.contractedWorkPaymentStatusOptionsHash[text]}
+                    <Icon type="down" className="table-status-dropdown-icon" />
+                  </a>
+                </Dropdown>
+              </span>
             </div>
           );
         },
@@ -368,22 +448,26 @@ export class ApprovedContractedWorkPaymentTable extends Component {
           let interim = text && text["interim"];
           interim =
             !interim || interim === 1000000
-              ? "Not Submitted"
+              ? "N/A"
               : interim === 20000000
               ? "Paid"
               : `${interim} days`;
           let final = text && text["final"];
           final =
-            !final || final === 1000000
-              ? "Not Submitted"
-              : final === 20000000
-              ? "Paid"
-              : `${final} days`;
+            !final || final === 1000000 ? "N/A" : final === 20000000 ? "Paid" : `${final} days`;
           return (
             <div title="Review Deadlines">
-              {interim}
-              <Divider type="vertical" />
-              {final}
+              <Row>
+                <Col span={10} style={{ textAlign: "right" }}>
+                  {interim}
+                </Col>
+                <Col span={4} style={{ textAlign: "center" }}>
+                  <Divider type="vertical" style={{ width: 2 }} />
+                </Col>
+                <Col span={10} style={{ textAlign: "left" }}>
+                  {final}
+                </Col>
+              </Row>
             </div>
           );
         },
@@ -403,6 +487,16 @@ export class ApprovedContractedWorkPaymentTable extends Component {
     const rowSelection = {
       selectedRowKeys: this.state.selectedRowKeys,
       onChange: this.onSelectChange,
+      onSelect: this.onSelect,
+      onSelectAll: this.onSelectAll,
+      getCheckboxProps: (record) => ({
+        disabled:
+          record &&
+          ((this.state.selectedApplicationId &&
+            record.application_id !== this.state.selectedApplicationId) ||
+            (record.interim_payment_status_code !== "APPROVED" &&
+              record.final_payment_status_code !== "APPROVED")),
+      }),
     };
 
     return (
@@ -415,7 +509,10 @@ export class ApprovedContractedWorkPaymentTable extends Component {
           dataSource={this.transformRowData(this.props.applicationsApprovedContractedWork)}
           onChange={handleTableChange(this.props.handleTableChange, this.props.params)}
           className="table-headers-center"
-          loading={!this.props.isLoaded}
+          loading={{
+            spinning: !this.props.isLoaded,
+            delay: 500,
+          }}
         />
         <br />
         {!isEmpty(this.props.applicationsApprovedContractedWork) && (
@@ -447,6 +544,7 @@ const mapStateToProps = (state) => ({
     state
   ),
   filterListContractedWorkTypeOptions: getFilterListContractedWorkTypeOptions(state),
+  contractedWorkPaymentStatusDropdownOptions: getDropdownContractedWorkPaymentStatusOptions(state),
 });
 
 export default connect(mapStateToProps)(ApprovedContractedWorkPaymentTable);

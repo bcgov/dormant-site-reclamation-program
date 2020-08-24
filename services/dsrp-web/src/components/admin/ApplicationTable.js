@@ -303,8 +303,8 @@ export class ApplicationTable extends Component {
                 trigger={["hover", "click"]}
               >
                 <a>
-                  {this.props.applicationStatusOptionsHash[text] || Strings.ERROR}&nbsp;
-                  <Icon type="down" />
+                  {this.props.applicationStatusOptionsHash[text] || Strings.ERROR}
+                  <Icon type="down" className="table-status-dropdown-icon" />
                 </a>
               </Dropdown>
             </span>
@@ -432,8 +432,8 @@ export class ApplicationTable extends Component {
                 trigger={["hover", "click"]}
               >
                 <a>
-                  {this.props.contractedWorkStatusOptionsHash[text] || Strings.ERROR}&nbsp;
-                  <Icon type="down" />
+                  {this.props.contractedWorkStatusOptionsHash[text] || Strings.ERROR}
+                  <Icon type="down" className="table-status-dropdown-icon" />
                 </a>
               </Dropdown>
             </span>
@@ -473,7 +473,10 @@ export class ApplicationTable extends Component {
           onExpand={this.onExpand}
           onChange={handleTableChange(this.props.handleTableChange, this.props.params)}
           className="table-headers-center"
-          loading={!this.props.isLoaded}
+          loading={{
+            spinning: !this.props.isLoaded,
+            delay: 500,
+          }}
         />
         <br />
         {!isEmpty(this.props.applications) && (

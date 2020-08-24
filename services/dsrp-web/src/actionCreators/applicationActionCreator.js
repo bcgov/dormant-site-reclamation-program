@@ -121,11 +121,33 @@ export const createApplicationStatus = (guid, payload) => (dispatch) => {
     });
 };
 
-export const deleteApplicationPaymentDocument = (appGuid, documentGuid) => (dispatch) => {
+export const createApplicationPaymentDocument = (guid, payload) => (dispatch) => {
+  dispatch(request(reducerTypes.CREATE_APPLICATION_PAYMENT_DOCUMENT));
+  return CustomAxios()
+    .post(
+      ENVIRONMENT.apiUrl + API.APPLICATION_PAYMENT_DOCUMENT(guid),
+      payload,
+      createRequestHeader()
+    )
+    .then((response) => {
+      notification.success({
+        message: "PRF created successfully",
+        duration: 5,
+      });
+      dispatch(success(reducerTypes.CREATE_APPLICATION_PAYMENT_DOCUMENT));
+      return response;
+    })
+    .catch((err) => {
+      dispatch(error(reducerTypes.CREATE_APPLICATION_PAYMENT_DOCUMENT));
+      throw new Error(err);
+    });
+};
+
+export const deleteApplicationPaymentDocument = (guid, documentGuid) => (dispatch) => {
   dispatch(request(reducerTypes.DELETE_APPLICATION_PAYMENT_DOCUMENT));
   return CustomAxios()
     .delete(
-      ENVIRONMENT.apiUrl + API.APPLICATION_PAYMENT_DOCUMENT(appGuid, documentGuid),
+      ENVIRONMENT.apiUrl + API.APPLICATION_PAYMENT_DOCUMENT_BY_GUID(guid, documentGuid),
       createRequestHeader()
     )
     .then((response) => {

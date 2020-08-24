@@ -67,6 +67,23 @@ class ContractedWorkPayment(Base, AuditMixin):
         lazy='selectin',
         order_by='desc(ContractedWorkPaymentStatusChange.change_timestamp)')
 
+    payment_documents = db.relationship(
+        'PaymentDocument',
+        lazy='selectin',
+        secondary='payment_document_contracted_work_payment_xref')
+
+    @hybrid_property
+    def has_interim_prfs(self):
+        if self.payment_documents:
+            return any(doc.payment_document_code == 'INTERIM_PRF' for doc in self.payment_documents)
+        return False
+
+    @hybrid_property
+    def has_final_prfs(self):
+        if self.payment_documents:
+            return any(doc.payment_document_code == 'FINAL_PRF' for doc in self.payment_documents)
+        return False
+
     @hybrid_property
     def interim_payment_status_code(self):
         if self.interim_payment_status:

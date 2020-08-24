@@ -5,7 +5,7 @@ from app.api.application.resources.application_document import ApplicationDocume
 from app.api.application.resources.application_status import ApplicationStatusListResource
 from app.api.application.resources.application_summary import ApplicationSummaryResource
 from app.api.application.resources.gen_application_docs import GenerateApplicationDocumentResource
-from app.api.application.resources.application_payment_document import ApplicationPaymentDocumentResource
+from app.api.application.resources.payment_document import PaymentDocumentResource, PaymentDocumentListResource
 from app.api.application.resources.application_approved_contracted_work import ApplicationApprovedContractedWorkResource, ApplicationApprovedContractedWorkListResource
 from app.api.contracted_work.resources.contracted_work_payment import ContractedWorkPaymentInterim, ContractedWorkPaymentFinal, ContractedWorkPaymentInterimReport, ContractedWorkPaymentStatus
 
@@ -24,8 +24,9 @@ api.add_resource(GenerateApplicationDocumentResource,
 api.add_resource(ApplicationDocumentResource,
                  '/<string:application_guid>/documents/<string:document_guid>')
 api.add_resource(ApplicationDocumentListResource, '/<string:application_guid>/documents')
-api.add_resource(ApplicationPaymentDocumentResource,
+api.add_resource(PaymentDocumentResource,
                  '/<string:application_guid>/payment-doc/<string:document_guid>')
+api.add_resource(PaymentDocumentListResource, '/<string:application_guid>/payment-doc')
 
 # Contracted Work
 api.add_resource(ApplicationApprovedContractedWorkResource,

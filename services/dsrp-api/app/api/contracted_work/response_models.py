@@ -42,6 +42,8 @@ CONTRACTED_WORK_PAYMENT = api.model(
         'work_completion_date': fields.Date,
         'interim_payment_submission_date': fields.DateTime,
         'final_payment_submission_date': fields.DateTime,
+        'has_interim_prfs': fields.Boolean,
+        'has_final_prfs': fields.Boolean,
         'review_deadlines': fields.Raw,
         'interim_payment_status': fields.Nested(
             CONTRACTED_WORK_PAYMENT_STATUS_CHANGE, skip_none=True),

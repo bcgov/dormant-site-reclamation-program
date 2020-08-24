@@ -327,10 +327,9 @@ export class ContractedWorkPaymentView extends Component {
       },
     ];
 
-    let dataSource = this.transformRowData(this.props.applicationApprovedContractedWork);
-    dataSource = dataSource.sort(contractedWorkIdSorter);
-    console.log(dataSource);
-
+    const dataSource = this.transformRowData(this.props.applicationApprovedContractedWork).sort(
+      contractedWorkIdSorter
+    );
     const countOfApprovedWork = dataSource.length;
 
     // Determine how many contracted work items have been approved.

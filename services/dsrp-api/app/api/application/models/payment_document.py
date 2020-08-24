@@ -5,13 +5,14 @@ from sqlalchemy.dialects.postgresql import UUID, ARRAY, JSONB
 from sqlalchemy.schema import FetchedValue
 from datetime import datetime
 from marshmallow import fields
-from werkzeug.exceptions import NotImplemented
+from werkzeug.exceptions import NotImplemented, BadRequest
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from app.extensions import db
 from app.api.utils.models_mixins import AuditMixin, Base
 from app.api.company_payment_info.models import CompanyPaymentInfo
 from app.api.application.models.payment_document_type import PaymentDocumentType
+from app.api.application.models.payment_document_contracted_work_payment_xref import PaymentDocumentContractedWorkPaymentXref
 from app.api.contracted_work.models.contracted_work_payment import ContractedWorkPayment
 from app.api.services.object_store_storage_service import ObjectStoreStorageService
 from app.api.services.document_generator_service import DocumentGeneratorService, get_template_file_path
@@ -26,7 +27,7 @@ class PaymentDocument(AuditMixin, Base):
 
     __tablename__ = 'payment_document'
 
-    def __init__(self, application, **kwargs):
+    def __init__(self, application, work_ids=None, **kwargs):
         super(PaymentDocument, self).__init__(**kwargs)
 
         def create_invoice_number(application):
@@ -52,7 +53,7 @@ class PaymentDocument(AuditMixin, Base):
                 return {
                     'agreement_number': self.application.agreement_number,
                     'unique_id': unique_id,
-                    'amount': amount
+                    'amount': float(amount)
                 }
 
             def create_unique_id(work_id=None):
@@ -70,18 +71,17 @@ class PaymentDocument(AuditMixin, Base):
                 payment_details.append(create_payment_detail(unique_id, amount))
 
             elif self.payment_document_code in ('INTERIM_PRF', 'FINAL_PRF'):
-                for work_id in self.work_ids:
+                for contracted_work_payment in self.contracted_work_payments:
+                    if not contracted_work_payment:
+                        raise Exception(f'Contracted work payment is none!')
 
+                    work_id = contracted_work_payment.work_id
                     work = self.application.find_contracted_work_by_id(work_id)
                     if not work:
                         raise Exception(f'Work ID {work_id} does not exist on this application!')
 
                     if work.get('contracted_work_status_code', None) != 'APPROVED':
                         raise Exception(f'Work ID {work_id} is not approved!')
-
-                    contracted_work_payment = ContractedWorkPayment.find_by_work_id(work_id)
-                    if not contracted_work_payment:
-                        raise Exception(f'Work ID {work_id} contains no payment information!')
 
                     amount = None
                     if self.payment_document_code == 'INTERIM_PRF':
@@ -125,7 +125,11 @@ class PaymentDocument(AuditMixin, Base):
             qualified_receiver_name = company_info.qualified_receiver_name
             date_payment_authorized = today_date
             expense_authority_name = company_info.expense_authority_name
+
             payment_details = create_payment_details()
+            if not payment_details:
+                raise BadRequest('Payment details cannot be empty!')
+
             total_payment = sum([payment_detail['amount'] for payment_detail in payment_details])
 
             return {
@@ -157,6 +161,13 @@ class PaymentDocument(AuditMixin, Base):
         self.application = application
         self.payment_document_type = PaymentDocumentType.find_by_payment_document_code(
             self.payment_document_code)
+
+        for work_id in work_ids:
+            contracted_work_payment = ContractedWorkPayment.find_by_work_id(work_id)
+            if not contracted_work_payment:
+                raise Exception(f'Work ID has no payment information!')
+            self.contracted_work_payments.append(contracted_work_payment)
+
         self.content = create_content()
 
         # Generate the PRF
@@ -187,11 +198,14 @@ class PaymentDocument(AuditMixin, Base):
     invoice_number = db.Column(db.String, nullable=False)
     payment_document_code = db.Column(
         db.String, db.ForeignKey('payment_document_type.payment_document_code'), nullable=False)
-    work_ids = db.Column(ARRAY(db.String))
     content = db.Column(JSONB, nullable=False)
 
     application = db.relationship('Application', lazy='selectin')
     payment_document_type = db.relationship('PaymentDocumentType', lazy='selectin')
+    contracted_work_payments = db.relationship(
+        'ContractedWorkPayment',
+        lazy='selectin',
+        secondary='payment_document_contracted_work_payment_xref')
 
     @classmethod
     def find_by_guid(cls, application_guid, document_guid):

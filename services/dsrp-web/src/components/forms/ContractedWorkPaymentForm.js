@@ -137,7 +137,6 @@ export class ContractedWorkPaymentForm extends Component {
               name={`${paymentType}_eoc`}
               label={
                 <>
-                  {console.log(this.props)}
                   <div>Evidence of Cost</div>
                   Please&nbsp;
                   <a href={EOC_TEMPLATE} target="_blank" rel="noopener noreferrer">
