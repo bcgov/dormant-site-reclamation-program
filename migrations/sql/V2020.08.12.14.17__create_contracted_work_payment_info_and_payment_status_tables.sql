@@ -118,3 +118,5 @@ CREATE TABLE IF NOT EXISTS payment_document_contracted_work_payment_xref (
     work_id varchar REFERENCES contracted_work_payment(work_id),
     PRIMARY KEY(document_guid, work_id)
 );
+
+ALTER TABLE payment_document_contracted_work_payment_xref OWNER TO dsrp;
