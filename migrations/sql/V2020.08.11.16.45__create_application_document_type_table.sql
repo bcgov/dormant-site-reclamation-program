@@ -27,7 +27,11 @@ ON CONFLICT DO NOTHING;
 
 
 ALTER TABLE application_document
-ADD COLUMN application_document_code varchar,
+ADD COLUMN IF NOT EXISTS application_document_code varchar;
+
+ALTER TABLE application_document DROP CONSTRAINT IF EXISTS application_document_application_document_code_fkey;
+
+ALTER TABLE application_document 
 ADD CONSTRAINT application_document_application_document_code_fkey
 FOREIGN KEY (application_document_code)
 REFERENCES application_document_type(application_document_code)
