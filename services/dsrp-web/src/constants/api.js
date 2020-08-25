@@ -12,8 +12,26 @@ export const APPLICATION_BY_ID = (guid) => `/application/${guid}`;
 export const APPLICATION_SUMMARY_BY_ID = (guid) => `/application/${guid}/summary`;
 export const APPLICATION_REVIEW = (guid) => `${APPLICATION_BY_ID(guid)}/review`;
 export const APPLICATION_DOCUMENT = (guid) => `${APPLICATION_BY_ID(guid)}/documents`;
-export const APPLICATION_PAYMENT_DOCUMENT = (guid, documentGuid) =>
-  `/application/${guid}/payment-doc/${documentGuid}`;
+export const APPLICATION_PAYMENT_DOCUMENT = (guid) => `/application/${guid}/payment-doc`;
+export const APPLICATION_PAYMENT_DOCUMENT_BY_GUID = (guid, documentGuid) =>
+  `${APPLICATION_PAYMENT_DOCUMENT(guid)}/${documentGuid}`;
+export const APPLICATION_APPROVED_CONTRACTED_WORK = (params) =>
+  params
+    ? `/application/approved-contracted-work?${queryString.stringify(params)}`
+    : "/application/approved-contracted-work";
+export const APPLICATION_APPROVED_CONTRACTED_WORK_BY_ID = (guid) =>
+  `/application/${guid}/approved-contracted-work`;
+
+export const APPLICATION_CONTRACTED_WORK_PAYMENT = (applicationGuid, workId) =>
+  `/application/${applicationGuid}/contracted-work-payment/${workId}`;
+export const UPDATE_CONTRACTED_WORK_PAYMENT_INTERIM = (applicationGuid, workId) =>
+  `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/interim`;
+export const UPDATE_CONTRACTED_WORK_PAYMENT_FINAL = (applicationGuid, workId) =>
+  `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/final`;
+export const UPDATE_CONTRACTED_WORK_PAYMENT_INTERIM_REPORT = (applicationGuid, workId) =>
+  `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/interim-report`;
+export const CREATE_CONTRACTED_WORK_PAYMENT_STATUS = (applicationGuid, workId) =>
+  `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/status`;
 
 // Documents
 export const GET_TOKEN_FOR_DOC = (app_guid, doc_guid) =>

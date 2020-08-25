@@ -12,8 +12,15 @@ import {
 import { createSelector } from "reselect";
 import * as applicationReducer from "../reducers/applicationReducer";
 import { getWells, getLiabilities } from "@/selectors/OGCSelectors";
+import { contractedWorkIdSorter } from "@/utils/helpers";
 
-export const { getApplications, getApplication, getPageData } = applicationReducer;
+export const {
+  getApplications,
+  getApplication,
+  getApplicationApprovedContractedWork,
+  getApplicationsApprovedContractedWork,
+  getPageData,
+} = applicationReducer;
 
 const getLMR = (workType, liability) => {
   if (!liability) {
@@ -120,9 +127,7 @@ export const getApplicationsWellSitesContractedWork = createSelector(
         });
       });
     });
-    wellSitesContractedWork = wellSitesContractedWork.sort((a, b) =>
-      Number(a.work_id.split(".")[1]) > Number(b.work_id.split(".")[1]) ? 1 : -1
-    );
+    wellSitesContractedWork = wellSitesContractedWork.sort(contractedWorkIdSorter);
     return wellSitesContractedWork;
   }
 );

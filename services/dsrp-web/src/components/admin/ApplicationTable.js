@@ -61,18 +61,18 @@ export const toolTip = (title, extraClassName) => (
 export class ApplicationTable extends Component {
   state = { expandedRowKeys: [] };
 
-  onExpand = (expanded, record) => {
-    this.props.fetchLiabilities(record.key).then(() => {
-      this.props.fetchWells({ application_guid: record.key }).then(() => {
-        this.setState((prevState) => {
-          const expandedRowKeys = expanded
-            ? prevState.expandedRowKeys.concat(record.key)
-            : prevState.expandedRowKeys.filter((key) => key !== record.key);
-          return { expandedRowKeys };
-        });
-      });
-    });
-  };
+  onExpand = (expanded, record) =>
+    Promise.all([
+      this.props.fetchLiabilities(record.key),
+      this.props.fetchWells({ application_guid: record.key }),
+    ]).then(() =>
+      this.setState((prevState) => {
+        const expandedRowKeys = expanded
+          ? prevState.expandedRowKeys.concat(record.key)
+          : prevState.expandedRowKeys.filter((key) => key !== record.key);
+        return { expandedRowKeys };
+      })
+    );
 
   getSum = (guid, field) =>
     this.props.applicationsWellSitesContractedWork
@@ -149,7 +149,11 @@ export class ApplicationTable extends Component {
     clearFilters();
   };
 
-  columnSearchInput = (setSelectedKeys, selectedKeys, clearFilters, dataIndex, placeholder) => {
+  columnSearchInput = (dataIndex, placeholder) => ({
+    setSelectedKeys,
+    selectedKeys,
+    clearFilters,
+  }) => {
     return (
       <div style={{ padding: 8 }}>
         <Input
@@ -158,7 +162,7 @@ export class ApplicationTable extends Component {
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
           onPressEnter={() => this.handleSearch(selectedKeys, dataIndex)}
-          style={{ width: 188, marginBottom: 8, display: "block" }}
+          style={{ width: 188, marginBottom: 8, display: "block", fontSize: 12 }}
         />
         <Button
           type="primary"
@@ -197,22 +201,17 @@ export class ApplicationTable extends Component {
         dataIndex: "id",
         sortField: "id",
         sorter: true,
+        filterDropdown: this.columnSearchInput("id", "Enter Application ID"),
+        filterIcon: () => this.searchFilterIcon("id"),
         render: (text) => <div title={`Application ID: ${text}`}>{text}</div>,
       },
       {
         title: "Company",
         key: "company_name",
         dataIndex: "company_name",
-        render: (text) => <div title="Company">{text || Strings.DASH}</div>,
-        filterDropdown: ({ setSelectedKeys, selectedKeys, clearFilters }) =>
-          this.columnSearchInput(
-            setSelectedKeys,
-            selectedKeys,
-            clearFilters,
-            "company_name",
-            "Search Company..."
-          ),
+        filterDropdown: this.columnSearchInput("company_name", "Enter Company Name"),
         filterIcon: () => this.searchFilterIcon("company_name"),
+        render: (text) => <div title="Company">{text || Strings.DASH}</div>,
       },
       {
         title: "Received On",
@@ -304,8 +303,8 @@ export class ApplicationTable extends Component {
                 trigger={["hover", "click"]}
               >
                 <a>
-                  {this.props.applicationStatusOptionsHash[text] || Strings.ERROR}&nbsp;
-                  <Icon type="down" />
+                  {this.props.applicationStatusOptionsHash[text] || Strings.ERROR}
+                  <Icon type="down" className="table-status-dropdown-icon" />
                 </a>
               </Dropdown>
             </span>
@@ -382,10 +381,10 @@ export class ApplicationTable extends Component {
           const lmr = record.LMR && parseFloat(record.LMR.replace(/[^0-9.-]+/g, ""));
           return (
             <div style={{ textAlign: "right" }} title="Est. Cost">
-              {formatMoney(text) || Strings.DASH}
               {(lmr || lmr === 0) &&
                 Number(text) * 1.15 >= lmr &&
-                toolTip("Est. Cost exceeds LMR by 15% or more", "color-error")}
+                toolTip("Est. Cost exceeds LMR by 15% or more", "color-error table-record-tooltip")}
+              {formatMoney(text) || Strings.DASH}
             </div>
           );
         },
@@ -433,8 +432,8 @@ export class ApplicationTable extends Component {
                 trigger={["hover", "click"]}
               >
                 <a>
-                  {this.props.contractedWorkStatusOptionsHash[text] || Strings.ERROR}&nbsp;
-                  <Icon type="down" />
+                  {this.props.contractedWorkStatusOptionsHash[text] || Strings.ERROR}
+                  <Icon type="down" className="table-status-dropdown-icon" />
                 </a>
               </Dropdown>
             </span>
@@ -474,18 +473,25 @@ export class ApplicationTable extends Component {
           onExpand={this.onExpand}
           onChange={handleTableChange(this.props.handleTableChange, this.props.params)}
           className="table-headers-center"
-          loading={!this.props.isLoaded}
+          loading={{
+            spinning: !this.props.isLoaded,
+            delay: 500,
+          }}
         />
         <br />
         {!isEmpty(this.props.applications) && (
           <div className="center">
             <Pagination
               defaultCurrent={Number(this.props.params.page)}
-              current={Number(this.props.params.page)}
-              total={Number(this.props.pageData.total)}
-              pageSize={Number(this.props.params.per_page)}
+              defaultPageSize={Number(this.props.params.per_page)}
+              pageSizeOptions={Strings.PAGE_SIZE_OPTIONS}
+              current={this.props.pageData.current_page}
+              total={this.props.pageData.total}
+              pageSize={this.props.pageData.items_per_page}
               showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
               onChange={this.props.onPageChange}
+              onShowSizeChange={this.props.onPageChange}
+              showSizeChanger
             />
           </div>
         )}

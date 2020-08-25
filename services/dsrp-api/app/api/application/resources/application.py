@@ -14,7 +14,7 @@ from app.api.utils.resources_mixins import UserMixin
 from app.api.application.response_models import APPLICATION, APPLICATION_LIST
 from app.api.application.models.application import Application
 from app.api.application.models.application_status_change import ApplicationStatusChange
-from app.api.constants import PAGE_DEFAULT, PER_PAGE_DEFAULT, DISABLE_APP_SUBMIT_SETTING
+from app.api.constants import DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, DISABLE_APP_SUBMIT_SETTING
 from app.api.dsrp_settings.models.dsrp_settings import DSRPSettings
 
 
@@ -24,11 +24,12 @@ class ApplicationListResource(Resource, UserMixin):
     @requires_role_view_all
     def get(self):
         records, pagination_details = self._apply_filters_and_pagination(
-            page_number=request.args.get('page', PAGE_DEFAULT, type=int),
-            page_size=request.args.get('per_page', PER_PAGE_DEFAULT, type=int),
+            page_number=request.args.get('page', DEFAULT_PAGE_NUMBER, type=int),
+            page_size=request.args.get('per_page', DEFAULT_PAGE_SIZE, type=int),
             sort_field=request.args.get('sort_field', 'submission_date', type=str),
             sort_dir=request.args.get('sort_dir', 'asc', type=str),
             application_status_code=request.args.getlist('application_status_code', type=str),
+            id=request.args.get('id', type=int),
             guid=request.args.get('guid', type=str),
             company_name=request.args.get('company_name', type=str))
 
@@ -43,10 +44,11 @@ class ApplicationListResource(Resource, UserMixin):
         }
 
     def _apply_filters_and_pagination(self,
-                                      page_number=PAGE_DEFAULT,
-                                      page_size=PER_PAGE_DEFAULT,
+                                      page_number=DEFAULT_PAGE_NUMBER,
+                                      page_size=DEFAULT_PAGE_SIZE,
                                       sort_field=None,
                                       sort_dir=None,
+                                      id=None,
                                       guid=None,
                                       company_name=None,
                                       application_status_code=[]):
@@ -55,16 +57,15 @@ class ApplicationListResource(Resource, UserMixin):
 
         filters = []
 
+        if id:
+            filters.append(Application.id == id)
+
         if guid:
             filters.append(Application.guid == guid)
 
         if application_status_code:
-            base_query = base_query.outerjoin(
-                ApplicationStatusChange,
-                ApplicationStatusChange.application_guid == Application.guid)
             base_query = base_query.filter(
-                func.coalesce(ApplicationStatusChange.application_status_code,
-                              'NOT_STARTED').in_(application_status_code))
+                Application.application_status_code.in_(application_status_code))
 
         if company_name:
             filters.append(
@@ -74,27 +75,12 @@ class ApplicationListResource(Resource, UserMixin):
         base_query = base_query.filter(*filters)
 
         if sort_field and sort_dir:
-            sort_criteria = None
-            if sort_field == 'application_status_code':
-                if not application_status_code:
-                    base_query = base_query.outerjoin(
-                        ApplicationStatusChange,
-                        ApplicationStatusChange.application_guid == Application.guid)
-                if sort_dir == 'asc':
-                    base_query = base_query.order_by(
-                        asc(ApplicationStatusChange.application_status_code))
-                else:
-                    base_query = base_query.order_by(
-                        desc(ApplicationStatusChange.application_status_code))
-            else:
-                sort_criteria = [{
-                    'model': 'Application',
-                    'field': sort_field,
-                    'direction': sort_dir,
-                }]
-
-            if (sort_criteria):
-                base_query = apply_sort(base_query, sort_criteria)
+            sort_criteria = [{
+                'model': 'Application',
+                'field': sort_field,
+                'direction': sort_dir,
+            }]
+            base_query = apply_sort(base_query, sort_criteria)
 
         return apply_pagination(base_query, page_number, page_size)
 

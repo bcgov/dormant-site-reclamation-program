@@ -22,11 +22,6 @@
   background-color: $white; //#eee;
 }
 
-/* the border radius of the drop area */
-.filepond--panel-root {
-  border-radius: $border-radius-base;
-}
-
 /* the border radius of the file item */
 .filepond--item-panel {
   border-radius: $border-radius-base;
@@ -73,12 +68,28 @@
   background-color: $success-color;
 }
 
-/* bordered drop area */
-.filepond--panel-root {
+.has-error .filepond--wrapper {
+  border-color: $error-color;
+}
+
+.disabled {
+  & .filepond--panel-root,
+  .filepond--wrapper {
+    background-color: $background !important;
+  }
+  & .filepond--wrapper {
+    border-color: $gov-grey-dark;
+    cursor: not-allowed;
+  }
+}
+
+.filepond--wrapper {
   background-color: transparent;
   border: 2px solid $primary-color;
+  border-radius: $border-radius-base;
+  min-height: 4.75em;
 }
 
 .filepond--root {
-  max-height: 260px;
+  margin-bottom: 0;
 }

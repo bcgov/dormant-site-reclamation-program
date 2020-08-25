@@ -5,9 +5,9 @@ from app.api.utils.models_mixins import Base, AuditMixin
 
 
 class ContractedWorkStatus(Base, AuditMixin):
-    __tablename__ = "contracted_work_status"
+    __tablename__ = 'contracted_work_status'
 
-    contracted_work_status_code = db.Column(db.String, nullable=False, primary_key=True)
+    contracted_work_status_code = db.Column(db.String, primary_key=True)
     description = db.Column(db.String, nullable=False)
     active = db.Column(db.Boolean, nullable=False, server_default=FetchedValue())
 

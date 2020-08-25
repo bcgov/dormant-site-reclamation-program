@@ -95,6 +95,9 @@ h1.ant-typography,
   color: $white;
   border: 2px solid transparent;
   font-weight: bold;
+  &:last-child {
+    margin-right: 0;
+  }
 }
 
 .ant-tabs-tab:not(.ant-tabs-tab-active) {
@@ -117,12 +120,17 @@ h1.ant-typography,
   font-size: 24px;
 }
 
+.ant-tabs-center .ant-tabs-nav-scroll {
+  display: flex;
+  justify-content: center;
+}
+
 // Tables
 
 .ant-table {
   border: none !important;
   border-radius: 0 !important;
-  font-size: 12px;
+  font-size: $font-size-sm;
 
   table {
     overflow-x: auto;
@@ -245,6 +253,7 @@ tr.ant-table-expanded-row {
 }
 
 // Forms
+
 .ant-form-item-required {
   &::before {
     font-family: $font-family;
@@ -335,6 +344,11 @@ tr.ant-table-expanded-row {
 // Select
 
 .ant-select {
+  color: $primary-color;
+}
+
+// Progress
+.ant-progress-text {
   color: $primary-color;
 }
 

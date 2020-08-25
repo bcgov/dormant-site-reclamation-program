@@ -17,10 +17,18 @@ APPLICATION_STATUS = api.model(
     })
 
 APPLICATION_DOCUMENT = api.model(
-    "ApplicationDocument", {
+    'ApplicationDocument', {
         'application_document_guid': fields.String,
         'document_name': fields.String,
-        'upload_date': fields.DateTime,
+        'application_document_code': fields.String,
+        'upload_date': fields.DateTime
+    })
+
+APPLICATION_DOCUMENT_TYPE = api.model(
+    'ApplicationDocumentType', {
+        'application_document_code': fields.String,
+        'description': fields.String,
+        'long_description': fields.String
     })
 
 PAYMENT_DOCUMENT_TYPE = api.model(
@@ -31,7 +39,7 @@ PAYMENT_DOCUMENT_TYPE = api.model(
     })
 
 PAYMENT_DOCUMENT = api.model(
-    "PaymentDocument", {
+    'PaymentDocument', {
         'document_guid': fields.String,
         'document_name': fields.String,
         'upload_date': fields.DateTime,
@@ -41,7 +49,7 @@ PAYMENT_DOCUMENT = api.model(
     })
 
 APPLICATION_DOCUMENT_LIST = api.model(
-    "ApplicationDocumentList", {'documents': fields.List(fields.Nested(APPLICATION_DOCUMENT))})
+    'ApplicationDocumentList', {'documents': fields.List(fields.Nested(APPLICATION_DOCUMENT))})
 
 APPLICATION = api.model(
     'Application', {
@@ -65,5 +73,6 @@ APPLICATION_SUMMARY = api.model(
         'guid': fields.String,
         'application_status_code': fields.String,
         'submission_date': fields.DateTime,
-        'company_name': fields.String
+        'company_name': fields.String,
+        'applicant_name': fields.String
     })

@@ -9,7 +9,8 @@ import LinkButton from "@/components/common/LinkButton";
 const { Title } = Typography;
 
 const propTypes = {
-  application_guid: PropTypes.string.isRequired,
+  applicationDocumentTypeOptionsHash: PropTypes.objectOf(PropTypes.any).isRequired,
+  applicationGuid: PropTypes.string.isRequired,
   documents: PropTypes.arrayOf(document).isRequired,
 };
 
@@ -20,11 +21,15 @@ export const ViewApplicationDocuments = (props) => (
     </Title>
     <LinkButton
       title="shared_cost_agreement"
-      onClick={() => downloadGeneratedApplicationLetter(props.application_guid)}
+      onClick={() => downloadGeneratedApplicationLetter(props.applicationGuid)}
     >
       Shared Cost Agreement Letter Draft
     </LinkButton>
-    <DocumentTable application_guid={props.application_guid} documents={props.documents} />
+    <DocumentTable
+      applicationDocumentTypeOptionsHash={props.applicationDocumentTypeOptionsHash}
+      applicationGuid={props.applicationGuid}
+      documents={props.documents}
+    />
   </>
 );
 

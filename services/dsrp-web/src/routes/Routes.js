@@ -40,6 +40,11 @@ const Routes = () => (
     />
     <Route
       exact
+      path={routes.REVIEW_APPROVED_CONTRACTED_WORK.route}
+      component={AuthenticationGuard()(routes.REVIEW_APPROVED_CONTRACTED_WORK.component)}
+    />
+    <Route
+      exact
       path={routes.VIEW_APPLICATION.route}
       component={AuthenticationGuard()(routes.VIEW_APPLICATION.component)}
     />

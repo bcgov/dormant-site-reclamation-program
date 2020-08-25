@@ -26,8 +26,8 @@ class ApplicationStatusChange(Base, AuditMixin):
     change_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     note = db.Column(db.String, nullable=False)
 
-    application_status = db.relationship('ApplicationStatus')
-    application = db.relationship('Application')
+    application_status = db.relationship('ApplicationStatus', lazy='selectin')
+    application = db.relationship('Application', lazy='selectin')
 
     def __init__(self, application, **kwargs):
         super(ApplicationStatusChange, self).__init__(**kwargs)

@@ -29,6 +29,7 @@ from app.api.documents.response_models import DOWNLOAD_TOKEN_MODEL
 
 
 class ApplicationDocumentListResource(Resource, UserMixin):
+    # TODO: Protect me with OTP or separate endpoints for applicants/admins
     @api.doc(description='Register files that have been uploaded to the document store')
     def post(self, application_guid):
         application = Application.find_by_guid(application_guid)
@@ -41,7 +42,9 @@ class ApplicationDocumentListResource(Resource, UserMixin):
 
             for doc in docs:
                 new_doc = ApplicationDocument(
-                    document_name=doc['document_name'], object_store_path=doc['object_store_path'])
+                    document_name=doc['document_name'],
+                    object_store_path=doc['object_store_path'],
+                    application_document_code='SUPPORTING_DOC')
                 application.documents.append(new_doc)
                 application.save()
 
@@ -57,6 +60,7 @@ class ApplicationDocumentListResource(Resource, UserMixin):
 
 
 class ApplicationDocumentResource(Resource, UserMixin):
+    # TODO: Protect me with OTP or separate endpoints for applicants/admins
     @api.doc(description='Generate a token to retrieve a file object storage')
     @api.marshal_with(DOWNLOAD_TOKEN_MODEL, code=200)
     @requires_role_admin

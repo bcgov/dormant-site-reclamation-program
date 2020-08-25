@@ -7,21 +7,18 @@ import { withRouter } from "react-router-dom";
 import ViewApplicationStatusForm from "@/components/forms/ViewApplicationStatusForm";
 import ApplicationStatusCard from "@/components/pages/ApplicationStatusCard";
 import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
+import ContractedWorkPaymentView from "@/components/pages/ContractedWorkPaymentView";
 import { fetchApplicationSummaryById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
+import { HELP_EMAIL } from "@/constants/strings";
+import CustomPropTypes from "@/customPropTypes";
 import { PageTracker } from "@/utils/trackers";
 
 const { Paragraph, Title } = Typography;
 
 const propTypes = {
   fetchApplicationSummaryById: PropTypes.func.isRequired,
-  loadedApplication: PropTypes.shape({
-    guid: PropTypes.string,
-    application_status_code: PropTypes.string,
-    submission_date: PropTypes.string,
-    company_name: PropTypes.string,
-    json: PropTypes.any,
-  }),
+  loadedApplication: CustomPropTypes.applicationSummary,
   match: PropTypes.shape({
     params: {
       id: PropTypes.string,
@@ -55,6 +52,8 @@ export class ViewApplicationStatusPage extends Component {
       this.props.fetchApplicationSummaryById(this.props.match.params.id);
       this.setState({ guid: this.props.match.params.id });
     }
+
+    // this.onFormSubmit({ guid: "8b8ce987-b16d-4167-aff9-229e44cb8bc0" });
   };
 
   onFormSubmit = (values) => {
@@ -83,11 +82,20 @@ export class ViewApplicationStatusPage extends Component {
         <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
           <ApplicationStatusCard application={this.props.loadedApplication} />
           {this.props.loadedApplication.application_status_code === "WAIT_FOR_DOCS" && (
-            <>
-              <DocumentUploadForm applicationGuid={this.props.loadedApplication.guid} />
-            </>
+            <DocumentUploadForm applicationGuid={this.props.loadedApplication.guid} />
+          )}
+          {this.props.loadedApplication.application_status_code === "FIRST_PAY_APPROVED" && (
+            <ContractedWorkPaymentView
+              applicationGuid={this.props.loadedApplication.guid}
+              applicationSummary={this.props.loadedApplication}
+            />
           )}
           <br />
+          <Paragraph>
+            If you have any questions regarding your application,&nbsp;
+            <a href={`mailto:${HELP_EMAIL}`}>contact us</a> and be sure to include your reference
+            number.
+          </Paragraph>
           <Button onClick={() => this.setState({ guid: "" })}>Check another Application</Button>
         </Col>
       </Row>

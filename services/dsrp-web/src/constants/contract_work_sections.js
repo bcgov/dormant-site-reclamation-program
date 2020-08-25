@@ -14,6 +14,20 @@ const field = (fieldName, fieldLabel) => ({
   fieldLabel,
 });
 
+export const CONTRACT_WORK_TYPE_OPTIONS = [
+  { contracted_work_code: "abandonment", description: "Abandonment" },
+  {
+    contracted_work_code: "preliminary_site_investigation",
+    description: "Preliminary Site Investigation",
+  },
+  {
+    contracted_work_code: "detailed_site_investigation",
+    description: "Detailed Site Investigation",
+  },
+  { contracted_work_code: "remediation", description: "Remediation" },
+  { contracted_work_code: "reclamation", description: "Reclamation" },
+];
+
 export const CONTRACT_WORK_SECTIONS = [
   section("Abandonment", "abandonment", [
     subSection("Abandonment Planning and Logistics", [

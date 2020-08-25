@@ -5,7 +5,7 @@ import {
   formatDateTime,
   truncateFilename,
   dateSorter,
-  nullableStringSorter,
+  nullableStringOrNumberSorter,
 } from "@/utils/helpers";
 import { downloadPaymentDocument } from "@/utils/actionlessNetworkCalls";
 import * as Strings from "@/constants/strings";
@@ -28,12 +28,12 @@ const propTypes = {
 export const PaymentDocumentTable = (props) => {
   const columns = [
     {
-      title: "File name",
+      title: "Document Name",
       dataIndex: "document_name",
-      sorter: nullableStringSorter("document_name"),
+      sorter: nullableStringOrNumberSorter("document_name"),
       render: (text, record) => {
         return (
-          <div title="File name">
+          <div title="Document Name">
             <LinkButton
               title={text}
               onClick={() =>
@@ -51,22 +51,20 @@ export const PaymentDocumentTable = (props) => {
       },
     },
     {
-      title: "Invoice number",
+      title: "Invoice Number",
       dataIndex: "invoice_number",
-      render: (text) => <div title="Invoice number">{text || Strings.EMPTY_FIELD}</div>,
+      render: (text) => <div title="Invoice Number">{text || Strings.DASH}</div>,
     },
     {
-      title: "Upload date",
+      title: "Upload Date",
       dataIndex: "upload_date",
       sorter: dateSorter("upload_date"),
-      render: (text) => (
-        <div title="Upload date">{formatDateTime(text) || Strings.EMPTY_FIELD}</div>
-      ),
+      render: (text) => <div title="Upload Date">{formatDateTime(text) || Strings.DASH}</div>,
     },
     {
-      title: "Created by",
+      title: "Created By",
       dataIndex: "create_user",
-      render: (text) => <div title="Create user">{text || Strings.EMPTY_FIELD}</div>,
+      render: (text) => <div title="Created By">{text || Strings.DASH}</div>,
     },
     {
       title: "",

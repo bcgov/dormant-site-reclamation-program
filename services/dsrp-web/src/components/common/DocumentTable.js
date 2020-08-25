@@ -5,33 +5,33 @@ import {
   formatDateTime,
   truncateFilename,
   dateSorter,
-  nullableStringSorter,
+  nullableStringOrNumberSorter,
 } from "@/utils/helpers";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
-import * as Strings from "@/constants/strings";
 import CustomPropTypes from "@/customPropTypes";
 import LinkButton from "@/components/common/LinkButton";
 
 const propTypes = {
+  applicationDocumentTypeOptionsHash: PropTypes.objectOf(PropTypes.any).isRequired,
   documents: PropTypes.arrayOf(CustomPropTypes.document).isRequired,
   // eslint-disable-next-line react/no-unused-prop-types
-  application_guid: PropTypes.string.isRequired,
+  applicationGuid: PropTypes.string.isRequired,
 };
 
 export const DocumentTable = (props) => {
   const columns = [
     {
-      title: "File name",
+      title: "Document Name",
       dataIndex: "document_name",
-      sorter: nullableStringSorter("document_name"),
+      sorter: nullableStringOrNumberSorter("document_name"),
       render: (text, record) => {
         return (
-          <div title="File name">
+          <div title="Document Name">
             <LinkButton
               title={text}
               onClick={() =>
                 downloadDocument(
-                  props.application_guid,
+                  props.applicationGuid,
                   record.application_document_guid,
                   record.document_name
                 )
@@ -44,11 +44,17 @@ export const DocumentTable = (props) => {
       },
     },
     {
-      title: "Upload date",
+      title: "Upload Date",
       dataIndex: "upload_date",
       sorter: dateSorter("upload_date"),
+      render: (text) => <div title="Upload Date">{formatDateTime(text)}</div>,
+    },
+    {
+      title: "Document Type",
+      dataIndex: "application_document_code",
+      sorter: nullableStringOrNumberSorter("application_document_code"),
       render: (text) => (
-        <div title="Upload date">{formatDateTime(text) || Strings.EMPTY_FIELD}</div>
+        <div title="Document Type">{props.applicationDocumentTypeOptionsHash[text]}</div>
       ),
     },
   ];
@@ -60,7 +66,7 @@ export const DocumentTable = (props) => {
         align="left"
         pagination={false}
         columns={columns}
-        rowKey={(record) => record.mine_document_guid}
+        rowKey={(record) => record.application_document_guid}
         locale={{ emptyText: "This application does not contain any documents." }}
         dataSource={documents}
       />

@@ -11,7 +11,10 @@ import {
 export const {
   getStaticContentLoadingIsComplete,
   getApplicationStatusOptions,
+  getApplicationDocumentTypeOptions,
   getContractedWorkStatusOptions,
+  getContractedWorkPaymentStatusOptions,
+  getContractedWorkTypeOptions,
 } = staticContentReducer;
 
 export const getDropdownApplicationStatusOptions = createSelector(
@@ -35,6 +38,16 @@ export const getApplicationStatusOptionsHash = createSelector(
   createLabelHash
 );
 
+export const getDropdownApplicationDocumentTypeOptions = createSelector(
+  [getApplicationDocumentTypeOptions],
+  (options) => createDropDownList(options, "description", "application_document_code")
+);
+
+export const getApplicationDocumentTypeOptionsHash = createSelector(
+  [getDropdownApplicationDocumentTypeOptions],
+  createLabelHash
+);
+
 export const getDropdownContractedWorkStatusOptions = createSelector(
   [getContractedWorkStatusOptions],
   (options) => createDropDownList(options, "description", "contracted_work_status_code")
@@ -43,4 +56,24 @@ export const getDropdownContractedWorkStatusOptions = createSelector(
 export const getContractedWorkStatusOptionsHash = createSelector(
   [getDropdownContractedWorkStatusOptions],
   createLabelHash
+);
+
+export const getFilterListContractedWorkPaymentStatusOptions = createSelector(
+  [getContractedWorkPaymentStatusOptions],
+  (options) => createFilterList(options, "description", "contracted_work_payment_status_code")
+);
+
+export const getDropdownContractedWorkPaymentStatusOptions = createSelector(
+  [getContractedWorkPaymentStatusOptions],
+  (options) => createDropDownList(options, "description", "contracted_work_payment_status_code")
+);
+
+export const getContractedWorkPaymentStatusOptionsHash = createSelector(
+  [getDropdownContractedWorkPaymentStatusOptions],
+  createLabelHash
+);
+
+export const getFilterListContractedWorkTypeOptions = createSelector(
+  [getContractedWorkTypeOptions],
+  (options) => createFilterList(options, "description", "contracted_work_code")
 );

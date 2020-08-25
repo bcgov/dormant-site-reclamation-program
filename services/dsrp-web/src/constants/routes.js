@@ -4,6 +4,7 @@ import ReturnPage from "@/components/pages/ReturnPage";
 import SubmitApplicationPage from "@/components/pages/SubmitApplicationPage";
 import ViewApplicationStatusPage from "@/components/pages/ViewApplicationStatusPage";
 import ReviewApplicationsPage from "@/components/pages/ReviewApplicationsPage";
+import ReviewApprovedContractedWorkPage from "@/components/pages/ReviewApprovedContractedWorkPage";
 import ViewApplicationPage from "@/components/pages/ViewApplicationPage";
 import ApplicationSuccessPage from "@/components/pages/ApplicationSuccessPage";
 
@@ -44,6 +45,13 @@ export const REVIEW_APPLICATIONS = {
   dynamicRoute: ({ page, per_page, ...params }) =>
     `/review-applications?${queryString.stringify({ page, per_page, ...params })}`,
   component: ReviewApplicationsPage,
+};
+
+export const REVIEW_APPROVED_CONTRACTED_WORK = {
+  route: "/review-approved-contracted-work",
+  dynamicRoute: ({ page, per_page, ...params }) =>
+    `/review-approved-contracted-work?${queryString.stringify({ page, per_page, ...params })}`,
+  component: ReviewApprovedContractedWorkPage,
 };
 
 export const VIEW_APPLICATION = {

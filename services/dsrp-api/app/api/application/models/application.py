@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import current_app
 from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from sqlalchemy.orm import validates
 from sqlalchemy.schema import FetchedValue
 from sqlalchemy import select, desc, func
@@ -17,8 +17,10 @@ from .application_status_change import ApplicationStatusChange
 from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK
 from app.api.permit_holder.resources.permit_holder import PermitHolderResource
 from app.api.application.response_models import APPLICATION
+from app.api.contracted_work.response_models import CONTRACTED_WORK_PAYMENT
 from app.api.application.models.application_history import ApplicationHistory
 from app.api.application.models.payment_document import PaymentDocument
+from app.api.contracted_work.models.contracted_work_payment import ContractedWorkPayment
 from app.api.services.email_service import EmailService
 
 
@@ -50,8 +52,8 @@ class Application(Base, AuditMixin):
 
     status_changes = db.relationship(
         'ApplicationStatusChange',
-        lazy='joined',
-        order_by='desc(ApplicationStatusChange.application_status_change_id)',
+        lazy='select',
+        order_by='desc(ApplicationStatusChange.change_date)',
     )
 
     def __repr__(self):
@@ -63,7 +65,7 @@ class Application(Base, AuditMixin):
 
     @classmethod
     def find_by_guid(cls, guid):
-        return cls.query.filter_by(guid=guid).first()
+        return cls.query.filter_by(guid=guid).one_or_none()
 
     @validates('json')
     def validate_json(self, key, json):
@@ -140,6 +142,62 @@ class Application(Base, AuditMixin):
 
         return well_sites
 
+    @hybrid_method
+    def contracted_work(self, status, include_payment):
+        contracted_work = []
+        contracted_work_payments = None
+        if include_payment:
+            contracted_work_payments = marshal(
+                ContractedWorkPayment.find_by_application_guid(self.guid), CONTRACTED_WORK_PAYMENT)
+        for ws in self.well_sites_with_review_data:
+            for cw_type, cw_data in ws.get('contracted_work', {}).items():
+                if cw_data.get('contracted_work_status_code', None) != status:
+                    continue
+                cw_item = {}
+                cw_item['application_id'] = self.id
+                cw_item['application_guid'] = str(self.guid)
+                cw_item['contracted_work_type'] = cw_type
+                cw_item['well_authorization_number'] = ws['details']['well_authorization_number']
+                cw_item['estimated_shared_cost'] = self.calc_est_shared_cost(cw_data)
+                cw_item.update(cw_data)
+                if include_payment:
+                    cw_payment = next((cwp for cwp in contracted_work_payments
+                                       if cwp['work_id'] == cw_item['work_id']), None)
+                    cw_item['contracted_work_payment'] = cw_payment
+                contracted_work.append(cw_item)
+
+        return contracted_work
+
+    @classmethod
+    def all_approved_contracted_work(self, application_id):
+        contracted_work_payments = []
+        approved_applications = []
+
+        if application_id:
+            application = Application.query.filter_by(id=application_id).one_or_none()
+            application_guid = application.guid if application else None
+            approved_applications = Application.query.filter_by(
+                id=application_id, application_status_code='FIRST_PAY_APPROVED').all()
+            contracted_work_payments = ContractedWorkPayment.query.filter_by(
+                application_guid=application_guid).all()
+        else:
+            approved_applications = Application.query.filter_by(
+                application_status_code='FIRST_PAY_APPROVED').order_by(Application.id).all()
+            contracted_work_payments = ContractedWorkPayment.query.all()
+
+        contracted_work_payments_lookup = {}
+        for cwp in contracted_work_payments:
+            contracted_work_payments_lookup[cwp.work_id] = marshal(cwp, CONTRACTED_WORK_PAYMENT)
+
+        approved_applications_approved_contracted_work = []
+        for application in approved_applications:
+            for approved_work in application.contracted_work('APPROVED', False):
+                approved_work['contracted_work_payment'] = contracted_work_payments_lookup.get(
+                    approved_work['work_id'], None)
+                approved_applications_approved_contracted_work.append(approved_work)
+
+        return approved_applications_approved_contracted_work
+
     def find_contracted_work_by_id(self, work_id):
         for ws in self.well_sites_with_review_data:
             for cw_type, cw_data in ws.get('contracted_work', {}).items():
@@ -166,16 +224,10 @@ class Application(Base, AuditMixin):
                 total_est_shared_cost += self.calc_est_shared_cost(cw_data)
         return total_est_shared_cost
 
-    def calc_prf_phase_one_amount(self):
+    def calc_first_prf_amount(self):
         """Calculates this application's payment phase one amount, which is 10% of the total estimated shared cost."""
 
         return round(self.calc_total_est_shared_cost() * 0.10, 2)
-
-    def calc_est_shared_cost_interim_phase(self, contracted_work):
-        return round(self.calc_est_shared_cost(contracted_work) * 0.60, 2)
-
-    def calc_est_shared_cost_final_phase(self, contracted_work):
-        return round(self.calc_est_shared_cost(contracted_work) * 0.30, 2)
 
     @hybrid_property
     def shared_cost_agreement_template_json(self):
@@ -199,7 +251,7 @@ class Application(Base, AuditMixin):
         prov = _company_details.get('province')
 
         # Create applicant info
-        _applicant_name = f"{self.json['company_contact']['first_name']} {self.json['company_contact']['last_name']}"
+        _applicant_name = self.applicant_name
         result['applicant_name'] = _applicant_name
         result['applicant_address'] = f'{addr1}\n{addr2}{post_cd}\n{city}, {prov}'
         result['applicant_company_name'] = _company_name
@@ -224,6 +276,10 @@ class Application(Base, AuditMixin):
                 result['formatted_well_sites'] += site
 
         return result
+
+    @hybrid_property
+    def applicant_name(self):
+        return f"{self.json['company_contact']['first_name']} {self.json['company_contact']['last_name']}"
 
     @hybrid_property
     def applicant_email(self):
