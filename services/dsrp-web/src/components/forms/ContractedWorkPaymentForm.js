@@ -222,7 +222,7 @@ export class ContractedWorkPaymentForm extends Component {
             )}
             <Field
               id={`${paymentType}_dormancy_and_shutdown_regulations_confirmation`}
-              name={`${paymentType}_submission_confirmation`}
+              name={`${paymentType}_dormancy_and_shutdown_regulations_confirmation`}
               label={
                 <>
                   I declare that I have completed all required notifications and activities in
