@@ -162,11 +162,15 @@ class PaymentDocument(AuditMixin, Base):
         self.payment_document_type = PaymentDocumentType.find_by_payment_document_code(
             self.payment_document_code)
 
-        for work_id in work_ids:
-            contracted_work_payment = ContractedWorkPayment.find_by_work_id(work_id)
-            if not contracted_work_payment:
-                raise Exception(f'Work ID has no payment information!')
-            self.contracted_work_payments.append(contracted_work_payment)
+        if self.payment_document_code != 'FIRST_PRF':
+            if work_ids is None:
+                raise Exception(f'Work IDs must be provided!')
+
+            for work_id in work_ids:
+                contracted_work_payment = ContractedWorkPayment.find_by_work_id(work_id)
+                if not contracted_work_payment:
+                    raise Exception(f'Work ID has no payment information!')
+                self.contracted_work_payments.append(contracted_work_payment)
 
         self.content = create_content()
 
