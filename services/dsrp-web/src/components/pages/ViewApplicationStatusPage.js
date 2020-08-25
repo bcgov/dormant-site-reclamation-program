@@ -10,6 +10,7 @@ import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
 import ContractedWorkPaymentView from "@/components/pages/ContractedWorkPaymentView";
 import { fetchApplicationSummaryById } from "@/actionCreators/applicationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
+import { HELP_EMAIL } from "@/constants/strings";
 import CustomPropTypes from "@/customPropTypes";
 import { PageTracker } from "@/utils/trackers";
 
@@ -92,8 +93,8 @@ export class ViewApplicationStatusPage extends Component {
           <br />
           <Paragraph>
             If you have any questions regarding your application,&nbsp;
-            <a href="mailto:DormantSite.BC.Government@gov.bc.ca">contact us</a> and be sure to
-            include your reference number.
+            <a href={`mailto:${HELP_EMAIL}`}>contact us</a> and be sure to include your reference
+            number.
           </Paragraph>
           <Button onClick={() => this.setState({ guid: "" })}>Check another Application</Button>
         </Col>

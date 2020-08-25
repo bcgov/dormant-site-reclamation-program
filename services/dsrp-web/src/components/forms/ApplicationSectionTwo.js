@@ -9,7 +9,7 @@ import { sum, get, set, isEqual, isArrayLike, isEmpty, isObjectLike, debounce } 
 import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
-import { PROGRAM_START_DATE, PROGRAM_END_DATE, DATE_FORMAT } from "@/constants/strings";
+import { PROGRAM_START_DATE, PROGRAM_END_DATE, DATE_FORMAT, HELP_EMAIL } from "@/constants/strings";
 import {
   currencyMask,
   formatMoney,
@@ -316,7 +316,7 @@ const asyncValidateWell = async (values, field) => {
     if (response.data.records.length > 1)
       asyncValidateError(
         field,
-        "Multiple results for this Authorization Number. Please contact us for further assistance at DormantSite.BC.Government@gov.bc.ca"
+        `Multiple results for this Authorization Number. Please contact us for further assistance at ${HELP_EMAIL}`
       );
   });
 };

@@ -8,7 +8,7 @@ import { required, number, requiredList, date } from "@/utils/validate";
 import { currencyMask } from "@/utils/helpers";
 import { EXCEL, PDF } from "@/constants/fileTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
-import { DATE_FORMAT } from "@/constants/strings";
+import { DATE_FORMAT, HELP_EMAIL } from "@/constants/strings";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import LinkButton from "@/components/common/LinkButton";
 import CustomPropTypes from "@/customPropTypes";
@@ -67,11 +67,14 @@ export class ContractedWorkPaymentForm extends Component {
 
         <Paragraph>
           In order to process this work item&apos;s <Text strong>{paymentType} payment</Text>, you
-          must provide the information below. Upon submitting the form, it will be marked as ready
-          for review and you will be <Text strong>unable to edit your submission</Text>. If an issue
-          is found with your submission, you will be notified by email and be able to edit your
-          submission again. If an issue is not found with your submission, it will be approved and
-          payment will be sent.
+          must provide the information below. Upon submitting the form it will be marked as ready
+          for review and you will be <Text underline>unable to edit your submission</Text>. If an
+          issue is found with your submission, you will be notified by email and be able to edit
+          your submission again. If an issue is not found with your submission, it will be approved
+          and payment will be sent to the British Columbia mailing address provided in your
+          application. Please email&nbsp;
+          <a href={`mailto:${HELP_EMAIL}`}>{HELP_EMAIL}</a>
+          &nbsp;if there are any questions.
         </Paragraph>
 
         {paymentType === "interim" && (
