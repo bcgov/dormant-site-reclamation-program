@@ -82,11 +82,13 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
     {
       title: "Payment Percent",
       dataIndex: "payment_percent",
+      className: "table-column-right-align",
       render: (text) => <div>{text}</div>,
     },
     {
       title: "Est. Shared Cost",
       dataIndex: "payment_estimated_shared_cost",
+      className: "table-column-right-align",
       render: (text) => <div>{formatMoney(text)}</div>,
     },
     {
@@ -115,16 +117,19 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
     {
       title: "EoC Total Amount",
       dataIndex: "eoc_total_amount",
+      className: "table-column-right-align",
       render: (text) => <div>{formatMoney(text) || Strings.NA}</div>,
     },
     {
       title: "50% of EoC Total Amount",
       dataIndex: "half_eoc_total_amount",
+      className: "table-column-right-align",
       render: (text) => <div>{formatMoney(text) || Strings.NA}</div>,
     },
     {
       title: "Approved Amount",
       dataIndex: "approved_amount",
+      className: "table-column-right-align",
       render: (text, record) => (
         <div>
           {record.is_selected_type && record.previous_amount && (
@@ -142,6 +147,7 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
     {
       title: "Lost Eligible Funding",
       dataIndex: "lost_funds",
+      className: "table-column-right-align",
       render: (text) => <div>{formatMoney(text || 0)}</div>,
     },
   ];
