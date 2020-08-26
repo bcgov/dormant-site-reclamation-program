@@ -45,6 +45,17 @@
   text-align: center;
 }
 
+#approve-contracted-work-payment-table .ant-table-tbody > tr {
+  &:last-child td {
+    border-bottom: none;
+    border-top: solid 2px $primary-color;
+    font-weight: bold;
+  }
+  &:nth-last-child(2) td {
+    border-bottom: none;
+  }
+}
+
 // .approved-work-has-prf-checkbox .ant-checkbox-inner {
 //   border-color: $warning-color;
 // }

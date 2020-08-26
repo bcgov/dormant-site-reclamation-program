@@ -17,7 +17,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { startCase, camelCase, lowerCase } from "lodash";
 import { formatMoney, currencyMask, formatDate } from "@/utils/helpers";
-import { required } from "@/utils/validate";
+import { required, maxLength } from "@/utils/validate";
 import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
 import * as FORM from "@/constants/forms";
@@ -25,7 +25,7 @@ import * as Strings from "@/constants/strings";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import LinkButton from "@/components/common/LinkButton";
 
-const { Text, Title, Paragraph } = Typography;
+const { Text, Title } = Typography;
 
 const propTypes = {
   contractedWork: PropTypes.any.isRequired,
@@ -49,7 +49,25 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
 
   const renderFormStatusInformationRequired = () => (
     <>
-      <Field id="note" name="note" label="Note" component={renderConfig.AUTO_SIZE_FIELD} />
+      <Field
+        id="note"
+        name="note"
+        label={
+          <>
+            <Text className="color-primary" strong>
+              Note
+            </Text>
+            <br />
+            <Text>
+              Please provide a note indicating the reason for setting this work item's&nbsp;
+              {contractedWorkTypeFormId} payment status back to Information Required. This note will
+              &nbsp;be added to the email sent to the applicant to notify them.
+            </Text>
+          </>
+        }
+        component={renderConfig.AUTO_SIZE_FIELD}
+        validate={[required, maxLength(65536)]}
+      />
     </>
   );
 
@@ -90,7 +108,7 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
               Download
             </LinkButton>
           )) ||
-            Strings.NA}
+            (text === null && Strings.NA)}
         </div>
       ),
     },
@@ -234,10 +252,10 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
     {
       is_selected_type: null,
       previous_amount: null,
-      payment_type: "Total",
+      payment_type: null,
       payment_percent: `${firstPercent + interimPercent + finalPercent}%`,
       payment_estimated_shared_cost: firstEstSharedCost + interimEstSharedCost + finalEstSharedCost,
-      eoc_document_guid: null,
+      eoc_document_guid: "",
       eoc_total_amount: interimActualCost + finalActualCost,
       half_eoc_total_amount: interimHalfEocTotal + finalHalfEocTotal,
       approved_amount: firstEstSharedCost + interimApprovedAmount + finalApprovedAmount,
@@ -268,6 +286,7 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
 
   const renderFormStatusApproved = () => (
     <>
+      <br />
       <Descriptions title="Contracted Work Payment Information" column={1}>
         <Descriptions.Item label="Interim Report">
           {contractedWorkPayment.interim_report
@@ -299,7 +318,10 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
         </Descriptions.Item>
       </Descriptions>
 
+      <br />
+      <Title level={4}>Contracted Work Payment Information Breakdown</Title>
       <Table
+        id="approve-contracted-work-payment-table"
         columns={columns}
         dataSource={dataSource}
         pagination={false}
@@ -313,6 +335,7 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
         currentFinalApprovedAmount &&
         renderAlreadyApprovedAlert(currentFinalApprovedAmount, contractedWork.has_final_prfs)}
 
+      <br />
       <Field
         id="approved_amount"
         name="approved_amount"
