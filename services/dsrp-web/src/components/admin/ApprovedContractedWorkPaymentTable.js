@@ -300,7 +300,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
       //             downloadDocument(
       //               this.props.applicationGuid,
       //               text,
-      //               "Dormant Sites Reclamation Program - Evidence of Cost.pdf"
+      //               "Dormant Sites Reclamation Program - Evidence of Cost.xlsx"
       //             )
       //           }
       //         >
@@ -387,7 +387,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
       //             downloadDocument(
       //               this.props.applicationGuid,
       //               text,
-      //               "Dormant Sites Reclamation Program - Evidence of Cost.pdf"
+      //               "Dormant Sites Reclamation Program - Evidence of Cost.xlsx"
       //             )
       //           }
       //         >

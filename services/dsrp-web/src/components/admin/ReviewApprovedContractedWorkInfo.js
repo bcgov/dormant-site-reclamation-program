@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Button, Icon, Row, Col, Dropdown, Menu } from "antd";
 import { withRouter } from "react-router-dom";
-import { isEmpty } from "lodash";
+import { isEmpty, startCase, camelCase } from "lodash";
 import { bindActionCreators, compose } from "redux";
 import queryString from "query-string";
 import { openModal, closeModal } from "@/actions/modalActions";
@@ -105,26 +105,26 @@ export class ReviewApprovedContractedWorkInfo extends Component {
     this.setState({ selectedRows });
   };
 
-  openUpdateContractedWorkPaymentStatusModal = (item, record) => {
-    // this.props.openModal({
-    //   props: {
-    //     title: `Update Contracted Work Payment Status`,
-    //     status: item.key,
-    //     contractedWorkPayment: record,
-    //     onSubmit: this.handleContractedWorkPaymentStatusChange,
-    //   },
-    //   content: modalConfig.FOO,
-    // });
+  openUpdateContractedWorkPaymentStatusModal = (status, record, type) => {
+    this.props.openModal({
+      width: 1000,
+      props: {
+        title: `Update ${startCase(camelCase(type))} Payment Status for Work ID ${record.work_id}`,
+        contractedWorkPaymentStatusOptionsHash: this.props.contractedWorkPaymentStatusOptionsHash,
+        contractedWorkPaymentStatus: status,
+        contractedWorkPaymentType: type,
+        contractedWork: record,
+        onSubmit: this.handleContractedWorkPaymentStatusChange,
+      },
+      content: modalConfig.ADMIN_UPDATE_CONTRACTED_WORK_PAYMENT_STATUS,
+    });
   };
 
-  handleContractedWorkPaymentStatusChange = (status, record, type) => {
-    const payload = {
-      contracted_work_payment_status_code: status,
-      contracted_work_payment_code: type,
-    };
+  handleContractedWorkPaymentStatusChange = (record, payload) =>
     this.props
       .createContractedWorkPaymentStatus(record.application_guid, record.work_id, payload)
       .then(() => {
+        this.props.closeModal();
         this.setState({
           isLoaded: false,
         });
@@ -132,13 +132,12 @@ export class ReviewApprovedContractedWorkInfo extends Component {
           .fetchApplicationApprovedContractedWork(this.state.params)
           .then(() => this.setState({ isLoaded: true }));
       });
-  };
 
   handleContractedWorkPaymentInterimStatusChange = (status, record) =>
-    this.handleContractedWorkPaymentStatusChange(status, record, "INTERIM");
+    this.openUpdateContractedWorkPaymentStatusModal(status, record, "INTERIM");
 
   handleContractedWorkPaymentFinalStatusChange = (status, record) =>
-    this.handleContractedWorkPaymentStatusChange(status, record, "FINAL");
+    this.openUpdateContractedWorkPaymentStatusModal(status, record, "FINAL");
 
   handleCreatePaymentRequestForm = ({ key }) => {
     const paymentDocumentCode = key;

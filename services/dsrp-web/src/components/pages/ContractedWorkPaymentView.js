@@ -218,7 +218,7 @@ export class ContractedWorkPaymentView extends Component {
       //             downloadDocument(
       //               this.props.applicationGuid,
       //               text,
-      //               "Dormant Sites Reclamation Program - Evidence of Cost.pdf"
+      //               "Dormant Sites Reclamation Program - Evidence of Cost.xlsx"
       //             )
       //           }
       //         >
@@ -286,7 +286,7 @@ export class ContractedWorkPaymentView extends Component {
       //             downloadDocument(
       //               this.props.applicationGuid,
       //               text,
-      //               "Dormant Sites Reclamation Program - Evidence of Cost.pdf"
+      //               "Dormant Sites Reclamation Program - Evidence of Cost.xlsx"
       //             )
       //           }
       //         >
@@ -371,7 +371,7 @@ export class ContractedWorkPaymentView extends Component {
         <Col>
           <Row gutter={64} type="flex" justify="center" align="middle">
             <Col md={24} lg={12}>
-              <Title level={4}>Interim Payments Progress</Title>
+              <Title level={4}>Interim Payment Information Submission Progress</Title>
               <Row gutter={16} type="flex" justify="space-around" align="middle">
                 <Col style={{ textAlign: "center" }}>
                   <Text strong>
@@ -387,7 +387,7 @@ export class ContractedWorkPaymentView extends Component {
                     Ready for Review
                   </Text>
                   <br />
-                  {countOfApprovedWork - interimInfoRequiredCount}
+                  {countOfApprovedWork - (interimInfoRequiredCount + interimApprovedCount)}
                 </Col>
                 <Col style={{ textAlign: "center" }}>
                   <Text strong>
@@ -404,11 +404,12 @@ export class ContractedWorkPaymentView extends Component {
                 format={(percent) => round(percent, 1) + "%"}
               />
               <Text type="secondary">
-                Interim payment information for {interimInfoRequiredCount} work items is required.
+                Interim payment information is required for {interimInfoRequiredCount} contracted
+                work items.
               </Text>
             </Col>
             <Col md={24} lg={12}>
-              <Title level={4}>Final Payments Progress</Title>
+              <Title level={4}>Final Payment Information Submission Progress</Title>
               <Row gutter={16} type="flex" justify="space-around" align="middle">
                 <Col style={{ textAlign: "center" }}>
                   <Text strong>
@@ -424,7 +425,7 @@ export class ContractedWorkPaymentView extends Component {
                     Ready for Review
                   </Text>
                   <br />
-                  {countOfApprovedWork - finalInfoRequiredCount}
+                  {countOfApprovedWork - (finalInfoRequiredCount + finalApprovedCount)}
                 </Col>
                 <Col style={{ textAlign: "center" }}>
                   <Text strong>
@@ -441,7 +442,8 @@ export class ContractedWorkPaymentView extends Component {
                 format={(percent) => round(percent, 1) + "%"}
               />
               <Text type="secondary">
-                Final payment information for {finalInfoRequiredCount} work items is required.
+                Final payment information is required for {finalInfoRequiredCount} contracted work
+                items.
               </Text>
             </Col>
           </Row>

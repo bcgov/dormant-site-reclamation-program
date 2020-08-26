@@ -10,3 +10,7 @@ class ContractedWorkPaymentType(Base, AuditMixin):
 
     def __repr__(self):
         return f'<{self.__class__.__name__} {self.contracted_work_payment_code}>'
+
+    @classmethod
+    def find_by_code(cls, contracted_work_payment_code):
+        return cls.query.filter_by(contracted_work_payment_code=contracted_work_payment_code).one()

@@ -8,6 +8,8 @@ from app.api.utils.resources_mixins import UserMixin
 from app.api.application.models.application import Application
 from app.api.application.models.application_document import ApplicationDocument
 from app.api.contracted_work.models.contracted_work_payment import ContractedWorkPayment
+from app.api.contracted_work.models.contracted_work_payment_status import ContractedWorkPaymentStatus
+from app.api.contracted_work.models.contracted_work_payment_type import ContractedWorkPaymentType
 from app.api.contracted_work.models.contracted_work_payment_status_change import ContractedWorkPaymentStatusChange
 from app.api.utils.access_decorators import ADMIN
 
@@ -169,30 +171,62 @@ class ContractedWorkPaymentInterimReport(Resource, UserMixin):
         return '', 200
 
 
-class ContractedWorkPaymentStatus(Resource, UserMixin):
+class AdminContractedWorkPaymentStatusChange(Resource, UserMixin):
     @requires_role_admin
     def post(self, application_guid, work_id):
-        # Ensure that this work item exists on this application.
+        # Validate this contracted work item.
         application = Application.find_by_guid(application_guid)
         validate_application_contracted_work(application, work_id)
 
-        # Get the contracted work payment or create it if it doesn't exist.
+        # Get the payment status change data.
+        payment_status_data = request.json
+
+        current_app.logger.info(f'{payment_status_data}')
+
+        # Validate the contracted work payment code.
+        contracted_work_payment_code = payment_status_data['contracted_work_payment_code']
+        if not ContractedWorkPaymentType.find_by_code(contracted_work_payment_code):
+            raise BadRequest('Unknown contracted work payment code received!')
+
+        # Validate the contracted work payment status code.
+        contracted_work_payment_status_code = payment_status_data[
+            'contracted_work_payment_status_code']
+        if not ContractedWorkPaymentStatus.find_by_code(contracted_work_payment_status_code):
+            raise BadRequest('Unknown contracted work payment status code received!')
+
+        # Get the contracted work payment.
         payment = ContractedWorkPayment.find_by_work_id(work_id)
         if not payment:
             raise BadRequest(
-                'The applicant must submit payment information for this work item before its initial status can be changed'
+                'The applicant must submit payment information for this work item before its status can be changed'
             )
 
-        # Create the contracted work payment status change.
-        payment_status_data = request.json
-        contracted_work_payment_code = payment_status_data['contracted_work_payment_code']
-        contracted_work_payment_status_code = payment_status_data[
-            'contracted_work_payment_status_code']
+        # Validate the request to change the final payment status to approved.
+        if contracted_work_payment_code == 'FINAL' and contracted_work_payment_status_code == 'APPROVED':
+            if payment.interim_payment_status_code != 'APPROVED':
+                raise BadRequest('The interim payment must first be approved!')
+            if not payment.interim_paid_amount:
+                raise BadRequest('The interim payment must have an approved amount set!')
+            if not payment.interim_report:
+                raise BadRequest('The interim progress report must be provided!')
 
-        if contracted_work_payment_code == 'FINAL' and contracted_work_payment_status_code == 'APPROVED' and not payment.interim_report:
-            raise BadRequest(
-                'The interim progress report must be provided before you can approve the final payment information.'
-            )
+        if contracted_work_payment_status_code == 'APPROVED':
+            # TODO: Determine if we want to do any extra backend validation on this number.
+            approved_amount = payment_status_data['approved_amount']
+            if not approved_amount:
+                raise BadRequest('The amount to approve must be provided!')
+
+            if contracted_work_payment_code == 'INTERIM':
+                payment.interim_paid_amount = approved_amount
+            else:
+                payment.final_paid_amount = approved_amount
+
+        elif contracted_work_payment_status_code == 'READY_FOR_REVIEW':
+            pass
+        elif contracted_work_payment_status_code == 'INFORMATION_REQUIRED':
+            pass
+        else:
+            raise BadRequest('Unknown contracted work payment status code received!')
 
         note = payment_status_data.get('note', None)
         status_change = ContractedWorkPaymentStatusChange(

@@ -37,6 +37,14 @@
   margin-left: 4px;
 }
 
+.table-headers-center .ant-table-header-column {
+  text-align: center;
+}
+
+.table-rows-center td {
+  text-align: center;
+}
+
 // .approved-work-has-prf-checkbox .ant-checkbox-inner {
 //   border-color: $warning-color;
 // }
