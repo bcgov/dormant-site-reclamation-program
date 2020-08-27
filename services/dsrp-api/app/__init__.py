@@ -19,6 +19,7 @@ from app.api.liability.namespace import api as liability_api
 from app.api.orgbook.namespace import api as orgbook_api
 from app.api.documents.namespace import api as download_api
 from app.api.dsrp_settings.namespace import api as dsrp_settings_api
+from app.api.authorization.namespace import api as authorization
 
 from app.commands import register_commands
 from app.config import Config
@@ -86,6 +87,7 @@ def register_routes(app):
     api.add_namespace(well_api)
     api.add_namespace(liability_api)
     api.add_namespace(orgbook_api)
+    api.add_namespace(authorization)
 
     # Healthcheck endpoint
     @api.route('/health')
