@@ -100,8 +100,6 @@ export class ContractedWorkPaymentView extends Component {
               contracted_work_payment.final_payment_status_code
             ]) ||
           "Information Required",
-        interim_eoc: contracted_work_payment.interim_eoc_application_document_guid,
-        final_eoc: contracted_work_payment.final_eoc_application_document_guid,
         interim_report_days_until_deadline,
         work,
       };
@@ -207,29 +205,6 @@ export class ContractedWorkPaymentView extends Component {
         sorter: nullableStringOrNumberSorter("interim_cost"),
         render: (text) => <div title="Interim Cost">{formatMoney(text) || Strings.DASH}</div>,
       },
-      // {
-      //   title: "Interim EoC",
-      //   key: "interim_eoc",
-      //   dataIndex: "interim_eoc",
-      //   render: (text) => (
-      //     <div title="Interim EoC">
-      //       {(text && (
-      //         <LinkButton
-      //           onClick={() =>
-      //             downloadDocument(
-      //               this.props.applicationGuid,
-      //               text,
-      //               "Dormant Sites Reclamation Program - Evidence of Cost.xlsx"
-      //             )
-      //           }
-      //         >
-      //           Download
-      //         </LinkButton>
-      //       )) ||
-      //         Strings.DASH}
-      //     </div>
-      //   ),
-      // },
       {
         title: "Interim Status",
         key: "interim_status_description",
@@ -275,29 +250,6 @@ export class ContractedWorkPaymentView extends Component {
         sorter: nullableStringOrNumberSorter("final_cost"),
         render: (text) => <div title="Final Cost">{formatMoney(text) || Strings.DASH}</div>,
       },
-      // {
-      //   title: "Final EoC",
-      //   key: "final_eoc",
-      //   dataIndex: "final_eoc",
-      //   render: (text) => (
-      //     <div title="Final EoC">
-      //       {(text && (
-      //         <LinkButton
-      //           onClick={() =>
-      //             downloadDocument(
-      //               this.props.applicationGuid,
-      //               text,
-      //               "Dormant Sites Reclamation Program - Evidence of Cost.xlsx"
-      //             )
-      //           }
-      //         >
-      //           Download
-      //         </LinkButton>
-      //       )) ||
-      //         Strings.DASH}
-      //     </div>
-      //   ),
-      // },
       {
         title: "Final Status",
         key: "final_status_description",

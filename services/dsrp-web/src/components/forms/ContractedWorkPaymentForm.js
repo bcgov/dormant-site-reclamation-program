@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { Field } from "redux-form";
 import { Row, Col, Form, Button, Typography, Popconfirm, Alert } from "antd";
-import { capitalize } from "lodash";
+import { capitalize, isEmpty } from "lodash";
 import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
 import { required, number, requiredList, date } from "@/utils/validate";
 import { currencyMask } from "@/utils/helpers";
-import { EXCEL, PDF } from "@/constants/fileTypes";
+import { EXCEL, DOCX } from "@/constants/fileTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
 import { DATE_FORMAT, HELP_EMAIL } from "@/constants/strings";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
@@ -51,16 +51,22 @@ export class ContractedWorkPaymentForm extends Component {
         (interimPaymentStatus === "INFORMATION_REQUIRED" ||
           finalPaymentStatus !== "INFORMATION_REQUIRED"));
 
-    const existingEvidenceOfCostGuid = paymentInfo
+    const existingEvidenceOfCost = paymentInfo
       ? paymentType === "interim"
-        ? paymentInfo.interim_eoc_application_document_guid
+        ? isEmpty(paymentInfo.interim_eoc_document)
+          ? null
+          : paymentInfo.interim_eoc_document
         : paymentType === "final"
-        ? paymentInfo.final_eoc_application_document_guid
+        ? isEmpty(paymentInfo.final_eoc_document)
+          ? null
+          : paymentInfo.final_eoc_document
         : null
       : null;
 
-    const existingFinalReportGuid = paymentInfo
-      ? paymentInfo.final_report_application_document_guid
+    const existingFinalReport = paymentInfo
+      ? isEmpty(paymentInfo.final_report_document)
+        ? null
+        : paymentInfo.final_report_document
       : null;
 
     return (
@@ -159,15 +165,15 @@ export class ContractedWorkPaymentForm extends Component {
                     download
                   </a>
                   &nbsp;and use the provided Evidence of Cost template.
-                  {existingEvidenceOfCostGuid && (
+                  {existingEvidenceOfCost && (
                     <>
                       &nbsp;You can download your previously uploaded Evidence of Cost&nbsp;
                       <LinkButton
                         onClick={() =>
                           downloadDocument(
                             this.props.contractedWorkPayment.application_guid,
-                            existingEvidenceOfCostGuid,
-                            "Dormant Sites Reclamation Program - Evidence of Cost.xlsx"
+                            existingEvidenceOfCost.application_document_guid,
+                            existingEvidenceOfCost.document_name
                           )
                         }
                       >
@@ -198,15 +204,15 @@ export class ContractedWorkPaymentForm extends Component {
                       download
                     </a>
                     &nbsp;and use the provided Final Report template and upload it as a PDF.
-                    {existingFinalReportGuid && (
+                    {existingFinalReport && (
                       <>
                         &nbsp;You can download your previously uploaded Final Report&nbsp;
                         <LinkButton
                           onClick={() =>
                             downloadDocument(
                               this.props.contractedWorkPayment.application_guid,
-                              existingFinalReportGuid,
-                              "Dormant Sites Reclamation Program - Final Report.pdf"
+                              existingFinalReport.application_document_guid,
+                              existingFinalReport.document_name
                             )
                           }
                         >
@@ -221,7 +227,7 @@ export class ContractedWorkPaymentForm extends Component {
                 component={renderConfig.FILE_UPLOAD}
                 validate={[requiredList]}
                 labelIdle="Upload Final Report"
-                acceptedFileTypesMap={PDF}
+                acceptedFileTypesMap={DOCX}
                 allowMultiple={false}
                 allowRevert
               />

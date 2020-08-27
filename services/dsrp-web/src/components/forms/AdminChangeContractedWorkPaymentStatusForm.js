@@ -15,7 +15,7 @@ import {
 } from "antd";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { startCase, camelCase, lowerCase } from "lodash";
+import { startCase, camelCase, lowerCase, isEmpty } from "lodash";
 import { formatMoney, currencyMask, formatDate } from "@/utils/helpers";
 import { required, maxLength } from "@/utils/validate";
 import PropTypes from "prop-types";
@@ -94,17 +94,16 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
     },
     {
       title: "EoC Download",
-      dataIndex: "eoc_document_guid",
+      dataIndex: "eoc_document",
       render: (text) => (
         <div>
-          {(text && (
+          {(!isEmpty(text) && (
             <LinkButton
               onClick={() =>
                 downloadDocument(
                   props.contractedWork.application_guid,
-                  text,
-                  // TODO: Use stored title of actual document.
-                  "Dormant Sites Reclamation Program - Evidence of Cost.xlsx"
+                  text.application_document_guid,
+                  text.document_name
                 )
               }
             >
@@ -225,7 +224,7 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
       payment_percent: `${firstPercent}%`,
       estimated_shared_cost: contractedWork.estimated_shared_cost,
       payment_estimated_shared_cost: firstEstSharedCost,
-      eoc_document_guid: null,
+      eoc_document: null,
       eoc_total_amount: null,
       half_eoc_total_amount: null,
       approved_amount: firstEstSharedCost,
@@ -238,7 +237,7 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
       total_estimated_cost: contractedWork.contracted_work_total,
       payment_percent: `${interimPercent}%`,
       payment_estimated_shared_cost: interimEstSharedCost,
-      eoc_document_guid: contractedWork.interim_eoc,
+      eoc_document: contractedWork.interim_eoc_document,
       eoc_total_amount: interimActualCost,
       half_eoc_total_amount: interimHalfEocTotal,
       approved_amount: interimApprovedAmount,
@@ -250,7 +249,7 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
       payment_type: "Final",
       payment_percent: `${finalPercent}%`,
       payment_estimated_shared_cost: finalEstSharedCost,
-      eoc_document_guid: contractedWork.final_eoc,
+      eoc_document: contractedWork.final_eoc_document,
       eoc_total_amount: finalActualCost,
       half_eoc_total_amount: finalHalfEocTotal,
       approved_amount: finalApprovedAmount,
@@ -262,7 +261,7 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
       payment_type: null,
       payment_percent: `${firstPercent + interimPercent + finalPercent}%`,
       payment_estimated_shared_cost: firstEstSharedCost + interimEstSharedCost + finalEstSharedCost,
-      eoc_document_guid: "",
+      eoc_document: "",
       eoc_total_amount: interimActualCost + finalActualCost,
       half_eoc_total_amount: interimHalfEocTotal + finalHalfEocTotal,
       approved_amount: firstEstSharedCost + interimApprovedAmount + finalApprovedAmount,
@@ -316,13 +315,13 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
             : `Submission due in ${contractedWork.interim_report_days_until_deadline} days`}
         </Descriptions.Item>
         <Descriptions.Item label="Final Report">
-          {(contractedWorkPayment.final_report_application_document_guid && (
+          {(!isEmpty(contractedWorkPayment.final_report_document) && (
             <LinkButton
               onClick={() =>
                 downloadDocument(
                   contractedWork.application_guid,
-                  contractedWorkPayment.final_report_application_document_guid,
-                  "Dormant Sites Reclamation Program - Final Report.pdf"
+                  contractedWorkPayment.final_report_document.application_document_guid,
+                  contractedWorkPayment.final_report_document.document_name
                 )
               }
             >

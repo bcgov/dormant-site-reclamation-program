@@ -73,8 +73,10 @@ class ContractedWorkPaymentInterim(Resource, UserMixin):
         if payment.interim_eoc_document:
             payment.interim_eoc_document.active_ind = False
         interim_eoc_data = interim_payment_data['interim_eoc'][0]
+        filename = ApplicationDocument.create_filename(application, payment.work_id, 'INTERIM_EOC',
+                                                       'xlsx')
         interim_eoc = ApplicationDocument(
-            document_name=interim_eoc_data['filename'],
+            document_name=filename,
             object_store_path=interim_eoc_data['key'],
             application_document_code='INTERIM_EOC')
         application.documents.append(interim_eoc)
@@ -130,8 +132,10 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
         if payment.final_eoc_document:
             payment.final_eoc_document.active_ind = False
         final_eoc_data = final_payment_data['final_eoc'][0]
+        filename = ApplicationDocument.create_filename(application, payment.work_id, 'FINAL_EOC',
+                                                       'xlsx')
         final_eoc = ApplicationDocument(
-            document_name=final_eoc_data['filename'],
+            document_name=filename,
             object_store_path=final_eoc_data['key'],
             application_document_code='FINAL_EOC')
         application.documents.append(final_eoc)
@@ -142,8 +146,10 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
         if payment.final_report_document:
             payment.final_report_document.active_ind = False
         final_report_data = final_payment_data['final_report'][0]
+        filename = ApplicationDocument.create_filename(application, payment.work_id, 'FINAL_REPORT',
+                                                       'docx')
         final_report = ApplicationDocument(
-            document_name=final_report_data['filename'],
+            document_name=filename,
             object_store_path=final_report_data['key'],
             application_document_code='FINAL_REPORT')
         application.documents.append(final_report)

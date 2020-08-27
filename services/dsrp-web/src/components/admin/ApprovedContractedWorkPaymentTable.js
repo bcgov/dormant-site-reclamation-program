@@ -124,8 +124,15 @@ export class ApprovedContractedWorkPaymentTable extends Component {
           contracted_work_payment.final_payment_status_code || "INFORMATION_REQUIRED",
         has_interim_prfs: contracted_work_payment.has_interim_prfs || false,
         has_final_prfs: contracted_work_payment.has_final_prfs || false,
-        interim_eoc: contracted_work_payment.interim_eoc_application_document_guid,
-        final_eoc: contracted_work_payment.final_eoc_application_document_guid,
+        interim_eoc_document: isEmpty(contracted_work_payment.interim_eoc_document)
+          ? null
+          : contracted_work_payment.interim_eoc_document,
+        final_eoc_document: isEmpty(contracted_work_payment.final_eoc_document)
+          ? null
+          : contracted_work_payment.final_eoc_document,
+        final_report_document: isEmpty(contracted_work_payment.final_report_document)
+          ? null
+          : contracted_work_payment.final_report_document,
         interim_report_days_until_deadline,
         review_deadlines: contracted_work_payment ? contracted_work_payment.review_deadlines : null,
         work,
@@ -293,41 +300,12 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         filteredValue: this.getParamFilteredValue("contracted_work_type"),
         render: (text) => <div title="Work Type">{startCase(camelCase(text))}</div>,
       },
-      // {
-      //   title: "Est. Cost",
-      //   key: "contracted_work_total",
-      //   dataIndex: "contracted_work_total",
-      //   render: (text) => <div title="Est. Cost">{formatMoney(text) || Strings.DASH}</div>,
-      // },
       {
         title: "Interim Cost",
         key: "interim_cost",
         dataIndex: "interim_cost",
         render: (text) => <div title="Interim Cost">{formatMoney(text) || Strings.DASH}</div>,
       },
-      // {
-      //   title: "Interim EoC",
-      //   key: "interim_eoc",
-      //   dataIndex: "interim_eoc",
-      //   render: (text) => (
-      //     <div title="Interim EoC">
-      //       {(text && (
-      //         <LinkButton
-      //           onClick={() =>
-      //             downloadDocument(
-      //               this.props.applicationGuid,
-      //               text,
-      //               "Dormant Sites Reclamation Program - Evidence of Cost.xlsx"
-      //             )
-      //           }
-      //         >
-      //           Download
-      //         </LinkButton>
-      //       )) ||
-      //         Strings.DASH}
-      //     </div>
-      //   ),
-      // },
       {
         title: "Interim Status",
         key: "interim_payment_status_code",
@@ -368,53 +346,12 @@ export class ApprovedContractedWorkPaymentTable extends Component {
           );
         },
       },
-      // {
-      //   title: "Progress Report Status",
-      //   key: "interim_report_days_until_deadline",
-      //   dataIndex: "interim_report_days_until_deadline",
-      //   sortField: "interim_report_days_until_deadline",
-      //   sorter: false,
-      //   render: (text) => {
-      //     let display = null;
-      //     if (text === -Infinity) {
-      //       display = "Submitted";
-      //     } else if (text === Infinity) {
-      //       display = Strings.DASH;
-      //     } else {
-      //       display = `${text} days to submit`;
-      //     }
-      //     return <div title="Progress Report Status">{display}</div>;
-      //   },
-      // },
       {
         title: "Final Cost",
         key: "final_cost",
         dataIndex: "final_cost",
         render: (text) => <div title="Final Cost">{formatMoney(text) || Strings.DASH}</div>,
       },
-      // {
-      //   title: "Final EoC",
-      //   key: "final_eoc",
-      //   dataIndex: "final_eoc",
-      //   render: (text) => (
-      //     <div title="Final EoC">
-      //       {(text && (
-      //         <LinkButton
-      //           onClick={() =>
-      //             downloadDocument(
-      //               this.props.applicationGuid,
-      //               text,
-      //               "Dormant Sites Reclamation Program - Evidence of Cost.xlsx"
-      //             )
-      //           }
-      //         >
-      //           Download
-      //         </LinkButton>
-      //       )) ||
-      //         Strings.DASH}
-      //     </div>
-      //   ),
-      // },
       {
         title: "Final Status",
         key: "final_payment_status_code",
