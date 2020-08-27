@@ -18,6 +18,7 @@ class ContractedWorkPayment(Base, AuditMixin):
                  contracted_work_payment_code, **kwargs):
         super(ContractedWorkPayment, self).__init__(**kwargs)
         initial_status = ContractedWorkPaymentStatusChange(
+            contracted_work_payment=self,
             application=application,
             contracted_work_payment_status_code=contracted_work_payment_status_code,
             contracted_work_payment_code=contracted_work_payment_code)

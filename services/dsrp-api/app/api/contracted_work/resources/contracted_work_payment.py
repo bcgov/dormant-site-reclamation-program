@@ -56,6 +56,7 @@ class ContractedWorkPaymentInterim(Resource, UserMixin):
                     'Only contracted work payments with the status Information Required can be modified'
                 )
             status_change = ContractedWorkPaymentStatusChange(
+                contracted_work_payment=payment,
                 application=application,
                 contracted_work_payment_status_code='READY_FOR_REVIEW',
                 contracted_work_payment_code='INTERIM')
@@ -111,6 +112,7 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
                     'Only contracted work payments with the status Information Required can be modified'
                 )
             status_change = ContractedWorkPaymentStatusChange(
+                contracted_work_payment=payment,
                 application=application,
                 contracted_work_payment_status_code='READY_FOR_REVIEW',
                 contracted_work_payment_code='FINAL')
@@ -233,6 +235,7 @@ class AdminContractedWorkPaymentStatusChange(Resource, UserMixin):
             raise BadRequest('Unknown contracted work payment status code received!')
 
         status_change = ContractedWorkPaymentStatusChange(
+            contracted_work_payment=payment,
             application=application,
             contracted_work_payment_status_code=contracted_work_payment_status_code,
             contracted_work_payment_code=contracted_work_payment_code,
