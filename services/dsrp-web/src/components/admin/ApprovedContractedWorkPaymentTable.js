@@ -2,6 +2,7 @@ import moment from "moment";
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { Link } from "react-router-dom";
 import { isArray, isEmpty, startCase, camelCase } from "lodash";
 import {
@@ -18,6 +19,7 @@ import {
   Col,
 } from "antd";
 import { formatMoney } from "@/utils/helpers";
+import { openModal, closeModal } from "@/actions/modalActions";
 import {
   getFilterListContractedWorkPaymentStatusOptions,
   getFilterListContractedWorkTypeOptions,
@@ -25,6 +27,7 @@ import {
 } from "@/selectors/staticContentSelectors";
 import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
+import { modalConfig } from "@/components/modalContent/config";
 
 const propTypes = {
   applicationsApprovedContractedWork: PropTypes.any.isRequired,
@@ -38,6 +41,8 @@ const propTypes = {
   handleTableChange: PropTypes.func.isRequired,
   isLoaded: PropTypes.bool.isRequired,
   params: PropTypes.objectOf(PropTypes.any).isRequired,
+  openModal: PropTypes.func.isRequired,
+  closeModal: PropTypes.func.isRequired,
 };
 
 const defaultProps = {};
@@ -80,8 +85,6 @@ const popover = (message, extraClassName) => (
     <Icon type="info-circle" className={`icon-sm ${extraClassName}`} style={{ marginLeft: 4 }} />
   </Popover>
 );
-
-const getApplicationIdFromWorkId = (workId) => parseInt(workId.split(".")[0]);
 
 export class ApprovedContractedWorkPaymentTable extends Component {
   state = {
@@ -147,6 +150,20 @@ export class ApprovedContractedWorkPaymentTable extends Component {
     this.props.handleTableChange(params);
     clearFilters();
   };
+
+  openContractedWorkPaymentModal = (record) =>
+    this.props.openModal({
+      props: {
+        isAdminView: true,
+        title: `View Payment Information for Work ID ${record.work_id}`,
+        contractedWorkPayment: record.work,
+        applicationSummary: {},
+        handleSubmitInterimContractedWorkPayment: () => {},
+        handleSubmitFinalContractedWorkPayment: () => {},
+        handleSubmitInterimContractedWorkPaymentProgressReport: () => {},
+      },
+      content: modalConfig.CONTRACTED_WORK_PAYMENT,
+    });
 
   columnSearchInput = (dataIndex, placeholder) => ({
     setSelectedKeys,
@@ -480,7 +497,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         key: "operations",
         render: (text, record) => (
           <div style={{ float: "right" }}>
-            <Button type="link" onClick={() => {}}>
+            <Button type="link" onClick={() => this.openContractedWorkPaymentModal(record)}>
               <Icon type="form" className="icon-lg" />
             </Button>
           </div>
@@ -519,7 +536,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
           className="table-headers-center"
           loading={{
             spinning: !this.props.isLoaded,
-            delay: 500,
+            // delay: 500,
           }}
         />
         <br />
@@ -555,4 +572,13 @@ const mapStateToProps = (state) => ({
   contractedWorkPaymentStatusDropdownOptions: getDropdownContractedWorkPaymentStatusOptions(state),
 });
 
-export default connect(mapStateToProps)(ApprovedContractedWorkPaymentTable);
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      openModal,
+      closeModal,
+    },
+    dispatch
+  );
+
+export default connect(mapStateToProps, mapDispatchToProps)(ApprovedContractedWorkPaymentTable);

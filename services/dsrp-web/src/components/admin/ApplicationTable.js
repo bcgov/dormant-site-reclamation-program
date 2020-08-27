@@ -475,7 +475,7 @@ export class ApplicationTable extends Component {
           className="table-headers-center"
           loading={{
             spinning: !this.props.isLoaded,
-            delay: 500,
+            // delay: 500,
           }}
         />
         <br />

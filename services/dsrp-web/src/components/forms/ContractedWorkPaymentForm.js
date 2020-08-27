@@ -22,6 +22,7 @@ const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
   submitting: PropTypes.bool.isRequired,
+  isAdminView: PropTypes.bool.isRequired,
   paymentType: PropTypes.oneOf(["interim", "final"]),
 };
 
@@ -44,6 +45,7 @@ export class ContractedWorkPaymentForm extends Component {
       : "INFORMATION_REQUIRED";
 
     const isViewOnly =
+      this.props.isAdminView ||
       (paymentType === "interim" && interimPaymentStatus !== "INFORMATION_REQUIRED") ||
       (paymentType === "final" &&
         (interimPaymentStatus === "INFORMATION_REQUIRED" ||
@@ -65,19 +67,21 @@ export class ContractedWorkPaymentForm extends Component {
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <Title level={4}>{capitalize(paymentType)} Payment Information</Title>
 
-        <Paragraph>
-          In order to process this work item&apos;s <Text strong>{paymentType} payment</Text>, you
-          must provide the information below. Upon submitting the form it will be marked as ready
-          for review and you will be <Text underline>unable to edit your submission</Text>. If an
-          issue is found with your submission, you will be notified by email and be able to edit
-          your submission again. If an issue is not found with your submission, it will be approved
-          and payment will be sent to the British Columbia mailing address provided in your
-          application. Please email&nbsp;
-          <a href={`mailto:${HELP_EMAIL}`}>{HELP_EMAIL}</a>
-          &nbsp;if there are any questions.
-        </Paragraph>
+        {!this.props.isAdminView && (
+          <Paragraph>
+            In order to process this work item&apos;s <Text strong>{paymentType} payment</Text>, you
+            must provide the information below. Upon submitting the form it will be marked as ready
+            for review and you will be <Text underline>unable to edit your submission</Text>. If an
+            issue is found with your submission, you will be notified by email and be able to edit
+            your submission again. If an issue is not found with your submission, it will be
+            approved and payment will be sent to the British Columbia mailing address provided in
+            your application. Please email&nbsp;
+            <a href={`mailto:${HELP_EMAIL}`}>{HELP_EMAIL}</a>
+            &nbsp;if there are any questions.
+          </Paragraph>
+        )}
 
-        {paymentType === "interim" && (
+        {!this.props.isAdminView && paymentType === "interim" && (
           <Paragraph>
             Once you have submitted this work item&apos;s interim payment information, you
             have&nbsp;
@@ -87,14 +91,16 @@ export class ContractedWorkPaymentForm extends Component {
           </Paragraph>
         )}
 
-        {paymentType === "final" && interimPaymentStatus === "INFORMATION_REQUIRED" && (
-          <Paragraph>
-            <Alert
-              showIcon
-              message="You must complete and submit this work item's interim payment information before you can submit its final payment information."
-            />
-          </Paragraph>
-        )}
+        {!this.props.isAdminView &&
+          paymentType === "final" &&
+          interimPaymentStatus === "INFORMATION_REQUIRED" && (
+            <Paragraph>
+              <Alert
+                showIcon
+                message="You must complete and submit this work item's interim payment information before you can submit its final payment information."
+              />
+            </Paragraph>
+          )}
 
         <Row gutter={48}>
           <Col>
@@ -220,44 +226,53 @@ export class ContractedWorkPaymentForm extends Component {
                 allowRevert
               />
             )}
-            <Field
-              id={`${paymentType}_dormancy_and_shutdown_regulations_confirmation`}
-              name={`${paymentType}_dormancy_and_shutdown_regulations_confirmation`}
-              label={
-                <>
-                  I declare that I have completed all required notifications and activities in
-                  accordance with the&nbsp;
-                  <a
-                    href="https://www.bclaws.ca/civix/document/id/complete/statreg/112_2019"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Dormancy and Shutdown Regulations
-                  </a>
-                  .
-                </>
-              }
-              disabled={isViewOnly}
-              component={renderConfig.CHECKBOX}
-              validate={[required]}
-            />
-            <Field
-              id={`${paymentType}_submission_confirmation`}
-              name={`${paymentType}_submission_confirmation`}
-              label={
-                <>
-                  I certify that the above information is correct and has been reviewed and approved
-                  by <Text strong>{this.props.applicationSummary.applicant_name}</Text>.
-                </>
-              }
-              disabled={isViewOnly}
-              component={renderConfig.CHECKBOX}
-              validate={[required]}
-            />
-            <Paragraph>
-              Please keep your records available. If the province requests evidence of cost, it must
-              be provided within 30 days.
-            </Paragraph>
+
+            {!isViewOnly && (
+              <>
+                <Field
+                  id={`${paymentType}_dormancy_and_shutdown_regulations_confirmation`}
+                  name={`${paymentType}_dormancy_and_shutdown_regulations_confirmation`}
+                  label={
+                    <>
+                      I declare that I have completed all required notifications and activities in
+                      accordance with the&nbsp;
+                      <a
+                        href="https://www.bclaws.ca/civix/document/id/complete/statreg/112_2019"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Dormancy and Shutdown Regulations
+                      </a>
+                      .
+                    </>
+                  }
+                  disabled={isViewOnly}
+                  component={renderConfig.CHECKBOX}
+                  validate={[required]}
+                />
+                <Field
+                  id={`${paymentType}_submission_confirmation`}
+                  name={`${paymentType}_submission_confirmation`}
+                  label={
+                    <>
+                      I certify that the above information is correct and has been reviewed and
+                      approved by <Text strong>{this.props.applicationSummary.applicant_name}</Text>
+                      .
+                    </>
+                  }
+                  disabled={isViewOnly}
+                  component={renderConfig.CHECKBOX}
+                  validate={[required]}
+                />
+              </>
+            )}
+
+            {!this.props.isAdminView && (
+              <Paragraph>
+                Please keep your records available. If the province requests evidence of cost, it
+                must be provided within 30 days.
+              </Paragraph>
+            )}
           </Col>
         </Row>
         <div className="right">

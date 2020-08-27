@@ -73,6 +73,16 @@ export const getContractedWorkPaymentStatusOptionsHash = createSelector(
   createLabelHash
 );
 
+export const getDropdownContractedWorkTypeOptions = createSelector(
+  [getContractedWorkTypeOptions],
+  (options) => createDropDownList(options, "description", "contracted_work_code")
+);
+
+export const getContractedWorkTypeOptionsHash = createSelector(
+  [getDropdownContractedWorkTypeOptions],
+  createLabelHash
+);
+
 export const getFilterListContractedWorkTypeOptions = createSelector(
   [getContractedWorkTypeOptions],
   (options) => createFilterList(options, "description", "contracted_work_code")

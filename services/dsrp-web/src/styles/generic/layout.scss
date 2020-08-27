@@ -45,8 +45,8 @@
   text-align: center;
 }
 
-.table-column-right-align * {
-  text-align: right;
+tr .table-column-right-align:not(th) * {
+  text-align: right !important;
 }
 
 #approve-contracted-work-payment-table .ant-table-tbody > tr {

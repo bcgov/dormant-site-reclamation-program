@@ -106,7 +106,13 @@ export class ReviewApprovedContractedWorkInfo extends Component {
   };
 
   openUpdateContractedWorkPaymentStatusModal = (status, record, type) => {
-    this.props.openModal({
+    if (status === "READY_FOR_REVIEW") {
+      return this.handleContractedWorkPaymentStatusChange(record, {
+        contracted_work_payment_status_code: status,
+        contracted_work_payment_code: type,
+      });
+    }
+    return this.props.openModal({
       width: 1000,
       props: {
         title: `Update ${startCase(camelCase(type))} Payment Status for Work ID ${record.work_id}`,

@@ -11,6 +11,11 @@ const { TabPane } = Tabs;
 const propTypes = {
   contractedWorkPayment: PropTypes.objectOf(PropTypes.any).isRequired,
   applicationSummary: CustomPropTypes.applicationSummary.isRequired,
+  isAdminView: PropTypes.bool,
+};
+
+const defaultProps = {
+  isAdminView: false,
 };
 
 export class ContractedWorkPaymentModal extends Component {
@@ -36,6 +41,7 @@ export class ContractedWorkPaymentModal extends Component {
           contractedWorkPayment={this.props.contractedWorkPayment}
           applicationSummary={this.props.applicationSummary}
           initialValues={this.props.contractedWorkPayment.contracted_work_payment}
+          isAdminView={this.props.isAdminView}
         />
       </TabPane>
       <TabPane tab="Interim Progress Report" key="1">
@@ -44,6 +50,7 @@ export class ContractedWorkPaymentModal extends Component {
           closeModal={this.props.closeModal}
           contractedWorkPayment={this.props.contractedWorkPayment}
           initialValues={this.props.contractedWorkPayment.contracted_work_payment}
+          isAdminView={this.props.isAdminView}
         />
       </TabPane>
       <TabPane tab="Final Payment" key="2">
@@ -54,6 +61,7 @@ export class ContractedWorkPaymentModal extends Component {
           contractedWorkPayment={this.props.contractedWorkPayment}
           applicationSummary={this.props.applicationSummary}
           initialValues={this.props.contractedWorkPayment.contracted_work_payment}
+          isAdminView={this.props.isAdminView}
         />
       </TabPane>
     </Tabs>
@@ -61,5 +69,6 @@ export class ContractedWorkPaymentModal extends Component {
 }
 
 ContractedWorkPaymentModal.propTypes = propTypes;
+ContractedWorkPaymentModal.defaultProps = defaultProps;
 
 export default ContractedWorkPaymentModal;

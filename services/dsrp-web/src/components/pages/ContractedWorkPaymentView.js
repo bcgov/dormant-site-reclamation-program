@@ -29,6 +29,7 @@ const propTypes = {
   contractedWorkPaymentStatusOptionsHash: PropTypes.objectOf(PropTypes.any),
   fetchApplicationApprovedContractedWorkById: PropTypes.func.isRequired,
   openModal: PropTypes.func.isRequired,
+  closeModal: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -466,7 +467,7 @@ export class ContractedWorkPaymentView extends Component {
             dataSource={dataSource}
             loading={{
               spinning: !this.state.isLoaded,
-              delay: 500,
+              // delay: 500,
             }}
           />
         </Col>

@@ -14,9 +14,11 @@ from app.api.constants import REVIEW_DEADLINE_NOT_APPLICABLE, REVIEW_DEADLINE_PA
 class ContractedWorkPayment(Base, AuditMixin):
     __tablename__ = 'contracted_work_payment'
 
-    def __init__(self, contracted_work_payment_status_code, contracted_work_payment_code, **kwargs):
+    def __init__(self, application, contracted_work_payment_status_code,
+                 contracted_work_payment_code, **kwargs):
         super(ContractedWorkPayment, self).__init__(**kwargs)
         initial_status = ContractedWorkPaymentStatusChange(
+            application=application,
             contracted_work_payment_status_code=contracted_work_payment_status_code,
             contracted_work_payment_code=contracted_work_payment_code)
         self.status_changes.append(initial_status)
@@ -147,12 +149,11 @@ class ContractedWorkPayment(Base, AuditMixin):
         if interim_payment_submission_date is None and final_payment_submission_date is None:
             return review_deadlines
 
-        # TODO: Use the date/flag that the applicable (either interim or final) PRF was generated instead of APPROVED
-        # We don't need to review payments that have already completed the payment process
-        if interim_payment_submission_date and self.interim_payment_status_code == 'APPROVED':
+        # We don't need to review payments that have already had at least one PRF issued
+        if interim_payment_submission_date and self.has_interim_prfs:
             interim_payment_submission_date = None
             review_deadlines['interim'] = REVIEW_DEADLINE_PAID
-        if final_payment_submission_date and self.final_payment_status_code == 'APPROVED':
+        if final_payment_submission_date and self.has_final_prfs:
             final_payment_submission_date = None
             review_deadlines['final'] = REVIEW_DEADLINE_PAID
 

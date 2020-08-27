@@ -43,6 +43,7 @@ class ContractedWorkPaymentInterim(Resource, UserMixin):
         payment = ContractedWorkPayment.find_by_work_id(work_id)
         if not payment:
             payment = ContractedWorkPayment(
+                application=application,
                 application_guid=application_guid,
                 work_id=work_id,
                 contracted_work_payment_status_code='READY_FOR_REVIEW',
@@ -55,6 +56,7 @@ class ContractedWorkPaymentInterim(Resource, UserMixin):
                     'Only contracted work payments with the status Information Required can be modified'
                 )
             status_change = ContractedWorkPaymentStatusChange(
+                application=application,
                 contracted_work_payment_status_code='READY_FOR_REVIEW',
                 contracted_work_payment_code='INTERIM')
             payment.status_changes.append(status_change)
@@ -96,6 +98,7 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
         payment = ContractedWorkPayment.find_by_work_id(work_id)
         if not payment:
             payment = ContractedWorkPayment(
+                application=application,
                 application_guid=application_guid,
                 work_id=work_id,
                 contracted_work_payment_status_code='READY_FOR_REVIEW',
@@ -108,6 +111,7 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
                     'Only contracted work payments with the status Information Required can be modified'
                 )
             status_change = ContractedWorkPaymentStatusChange(
+                application=application,
                 contracted_work_payment_status_code='READY_FOR_REVIEW',
                 contracted_work_payment_code='FINAL')
             payment.status_changes.append(status_change)
@@ -230,6 +234,7 @@ class AdminContractedWorkPaymentStatusChange(Resource, UserMixin):
 
         note = payment_status_data.get('note', None)
         status_change = ContractedWorkPaymentStatusChange(
+            application=application,
             contracted_work_payment_status_code=contracted_work_payment_status_code,
             contracted_work_payment_code=contracted_work_payment_code,
             note=note)

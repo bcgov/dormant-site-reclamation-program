@@ -20,6 +20,7 @@ import { formatMoney, currencyMask, formatDate } from "@/utils/helpers";
 import { required, maxLength } from "@/utils/validate";
 import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
+import { getContractedWorkTypeOptionsHash } from "@/selectors/staticContentSelectors";
 import * as FORM from "@/constants/forms";
 import * as Strings from "@/constants/strings";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
@@ -32,6 +33,7 @@ const propTypes = {
   contractedWorkPaymentStatus: PropTypes.string.isRequired,
   contractedWorkPaymentType: PropTypes.string.isRequired,
   contractedWorkPaymentStatusOptionsHash: PropTypes.any.isRequired,
+  contractedWorkTypeOptionsHash: PropTypes.any.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
   submitting: PropTypes.bool.isRequired,
@@ -60,8 +62,8 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
             <br />
             <Text>
               Please provide a note indicating the reason for setting this work item's&nbsp;
-              {contractedWorkTypeFormId} payment status back to Information Required. This note will
-              &nbsp;be added to the email sent to the applicant to notify them.
+              <Text strong>{contractedWorkTypeFormId} payment status</Text> back to Information
+              Required. This note will be sent along in an email to the applicant to notify them.
             </Text>
           </>
         }
@@ -82,7 +84,6 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
     {
       title: "Payment Percent",
       dataIndex: "payment_percent",
-      className: "table-column-right-align",
       render: (text) => <div>{text}</div>,
     },
     {
@@ -292,6 +293,21 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
 
   const renderFormStatusApproved = () => (
     <>
+      <Descriptions title="Contracted Work Information" column={1}>
+        <Descriptions.Item label="Application Reference Number">
+          {contractedWork.application_guid}
+        </Descriptions.Item>
+        <Descriptions.Item label="Well Authorization Number">
+          {contractedWork.well_authorization_number}
+        </Descriptions.Item>
+        <Descriptions.Item label="Work ID">{contractedWork.work_id}</Descriptions.Item>
+        <Descriptions.Item label="Work Type">
+          {props.contractedWorkTypeOptionsHash[contractedWork.contracted_work_type]}
+        </Descriptions.Item>
+        <Descriptions.Item label="Planned End Date">
+          {formatDate(contractedWork.planned_end_date)}
+        </Descriptions.Item>
+      </Descriptions>
       <br />
       <Descriptions title="Contracted Work Payment Information" column={1}>
         <Descriptions.Item label="Interim Report">
@@ -306,7 +322,6 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
                 downloadDocument(
                   contractedWork.application_guid,
                   contractedWorkPayment.final_report_application_document_guid,
-                  // TODO: Use stored title of actual document.
                   "Dormant Sites Reclamation Program - Final Report.pdf"
                 )
               }
@@ -318,9 +333,6 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
         </Descriptions.Item>
         <Descriptions.Item label="Total Estimated Cost">
           {formatMoney(contractedWork.contracted_work_total)}
-        </Descriptions.Item>
-        <Descriptions.Item label="Estimated Shared Cost">
-          {formatMoney(contractedWork.estimated_shared_cost)}
         </Descriptions.Item>
       </Descriptions>
 
@@ -393,21 +405,7 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
   return (
     <Form layout="vertical" onSubmit={props.handleSubmit}>
       <Row gutter={48}>
-        <Col span={24}>
-          <Descriptions title="Contracted Work Information" column={1}>
-            <Descriptions.Item label="Application Reference Number">
-              {contractedWork.application_guid}
-            </Descriptions.Item>
-            <Descriptions.Item label="Well Authorization Number">
-              {contractedWork.well_authorization_number}
-            </Descriptions.Item>
-            <Descriptions.Item label="Work ID">{contractedWork.work_id}</Descriptions.Item>
-            <Descriptions.Item label="Planned End Date">
-              {formatDate(contractedWork.planned_end_date)}
-            </Descriptions.Item>
-          </Descriptions>
-        </Col>
-        <Col span={24}>{renderStatusForm()}</Col>
+        <Col>{renderStatusForm()}</Col>
       </Row>
       <div className="right">
         <Popconfirm
@@ -440,6 +438,7 @@ AdminChangeContractedWorkPaymentStatusForm.propTypes = propTypes;
 
 const mapStateToProps = (state) => ({
   formValues: getFormValues(FORM.ADMIN_UPDATE_CONTRACTED_WORK_PAYMENT_STATUS_FORM)(state),
+  contractedWorkTypeOptionsHash: getContractedWorkTypeOptionsHash(state),
 });
 
 const mapDispatchToProps = () => ({});
