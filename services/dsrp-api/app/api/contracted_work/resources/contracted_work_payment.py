@@ -185,8 +185,6 @@ class AdminContractedWorkPaymentStatusChange(Resource, UserMixin):
         # Get the payment status change data.
         payment_status_data = request.json
 
-        current_app.logger.info(f'{payment_status_data}')
-
         # Validate the contracted work payment code.
         contracted_work_payment_code = payment_status_data['contracted_work_payment_code']
         if not ContractedWorkPaymentType.find_by_code(contracted_work_payment_code):
@@ -214,6 +212,7 @@ class AdminContractedWorkPaymentStatusChange(Resource, UserMixin):
             if not payment.interim_report:
                 raise BadRequest('The interim progress report must be provided!')
 
+        note = payment_status_data.get('note', None)
         if contracted_work_payment_status_code == 'APPROVED':
             # TODO: Determine if we want to do any extra backend validation on this number.
             approved_amount = payment_status_data['approved_amount']
@@ -228,11 +227,11 @@ class AdminContractedWorkPaymentStatusChange(Resource, UserMixin):
         elif contracted_work_payment_status_code == 'READY_FOR_REVIEW':
             pass
         elif contracted_work_payment_status_code == 'INFORMATION_REQUIRED':
-            pass
+            if not note:
+                BadRequest('A note is mandatory for this status!')
         else:
             raise BadRequest('Unknown contracted work payment status code received!')
 
-        note = payment_status_data.get('note', None)
         status_change = ContractedWorkPaymentStatusChange(
             application=application,
             contracted_work_payment_status_code=contracted_work_payment_status_code,
