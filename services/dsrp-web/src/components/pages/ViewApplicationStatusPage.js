@@ -14,6 +14,7 @@ import { getApplication } from "@/reducers/applicationReducer";
 import { HELP_EMAIL } from "@/constants/strings";
 import CustomPropTypes from "@/customPropTypes";
 import { PageTracker } from "@/utils/trackers";
+import * as router from "@/constants/routes";
 
 const { Paragraph, Title } = Typography;
 
@@ -58,12 +59,12 @@ export class ViewApplicationStatusPage extends Component {
   };
 
   onFormSubmit = (values) => {
-    console.log("im getting called here right???");
-    this.props.createOTL(values.guid).then((response) => {
-      console.log("POST is getting called");
+    // request OTL and redirect to request-access page
+    return this.props.createOTL(values.guid).then(() => {
+      this.props.history.push(router.REQUEST_ACCESS.dynamicRoute("redirecting"));
+      this.setState({ guid: values.guid });
     });
     // this.props.fetchApplicationSummaryById(values.guid);
-    this.setState({ guid: values.guid });
   };
 
   render = () =>

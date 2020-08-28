@@ -12,9 +12,13 @@ import { createRequestHeader } from "../utils/requestHeaders";
 export const createOTL = (application_guid) => (dispatch) => {
   dispatch(request(reducerTypes.GET_OTL));
   return axios
-    .post(ENVIRONMENT.apiUrl + API.AUTHORIZE_OTP, createRequestHeader())
+    .post(ENVIRONMENT.apiUrl + API.AUTHORIZE_OTP, { application_guid }, createRequestHeader())
     .then((response) => {
       dispatch(success(reducerTypes.GET_OTL));
+      notification.success({
+        message: "One time password has been sent to your email. Please check",
+        duration: 10,
+      });
       // localStorage.setItem("jwt", response.data.access_token);
       return response;
     })

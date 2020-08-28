@@ -5,8 +5,10 @@ import PropTypes from "prop-types";
 import { bindActionCreators, compose } from "redux";
 import { withRouter } from "react-router-dom";
 import { getApplication } from "@/reducers/applicationReducer";
+import ViewApplicationStatusForm from "@/components/forms/ViewApplicationStatusForm";
 import CustomPropTypes from "@/customPropTypes";
 import { PageTracker } from "@/utils/trackers";
+import { exchangeOTLForOTP } from "@/actionCreators/authorizationActionCreator";
 
 const { Paragraph, Title } = Typography;
 
@@ -68,8 +70,8 @@ export class RequestAccessPage extends Component {
       </Row>
       <Row type="flex" justify="center" align="top">
         <Col xl={24} xxl={20} sm={22}>
-          <Paragraph>Did not receive the email? </Paragraph>
-          <Button>Request Access again</Button>
+          <Title level={3}>Did not receive the email? </Title>
+          <ViewApplicationStatusForm onSubmit={this.onFormSubmit} />
         </Col>
       </Row>
     </>
