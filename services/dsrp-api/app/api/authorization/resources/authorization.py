@@ -34,35 +34,37 @@ class AuthorizationResource(Resource, UserMixin):
         application_guid = data.get('application_guid')
         application = Application.find_by_guid(application_guid)
         otl_guid = uuid.uuid4().hex
+        otl = ONE_TIME_LINK_CACHE_KEY(otl_guid)
 
         # TODO replace text and url
         html_content = f"""
-            <p>
-                Clicking this button will issue a one time password to access your application information and submit 
-                subsequent documentation for the DSRP program, it’s only clickable one time, and expires in 4 hours
-            </p>
-
-            <table width="100%" cellspacing="0" cellpadding="0">
+        <table width="100%" style="font-size:12.0pt" >
             <tr>
                 <td>
-                    <table style="margin-left: auto; margin-right: auto;" cellspacing="0" cellpadding="0">
+                    Clicking this button will issue a one time password to access your application information and submit 
+                    subsequent documentation for the DSRP program, it’s only clickable one time, and expires in 4 hours
+                </td> 
+            </tr>   
+            <tr>
+                <td>
+                    <table style="margin-left: auto; margin-right: auto;">
                         <tr>
-                            <td style="border-radius: 2px;" bgcolor="#003366">
-                                <a href="{ONE_TIME_LINK_GENERATE_URL}" target="_blank" style="padding: 8px 12px; border: 1px solid #003366;border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block;">
+                            <td style="border-radius: 2px;" bgcolor="#003366" >
+                                <a href="{ONE_TIME_LINK_FRONTEND_URL(otl)}" target="_blank" style="padding: 8px 12px; border: 1px solid #003366;border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block;">
                                     Click             
                                 </a>
                             </td>
                         </tr>
                     </table>
                 </td>
-            </tr>"""
+            </tr>
+		</table>"""
 
         with EmailService() as es:
             es.send_email_to_applicant(
                 application, 'One time link password for application: {application_guid}',
                 html_content)
 
-        otl = ONE_TIME_LINK_CACHE_KEY(otl_guid)
         current_app.logger.debug(f"This is a OTL: {otl}")
         cache.set(otl, application.guid, timeout=TIMEOUT_4_HOURS)
 

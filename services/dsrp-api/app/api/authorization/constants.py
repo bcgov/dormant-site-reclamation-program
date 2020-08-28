@@ -1,6 +1,11 @@
+from app.config import Config
+
 ONE_TIME_LINK = "OTL"
 ONE_TIME_PASSWORD = "OTP"
-ONE_TIME_LINK_GENERATE_URL = "http://localhost:3000" # f"https://${BASE_ENV_URL}/view-status/${otl_guid}"
+
+
+def ONE_TIME_LINK_FRONTEND_URL(otl_guid):
+    return f"{Config.URL}/request-access/{otl_guid}"
 
 
 def ONE_TIME_LINK_CACHE_KEY(otl_guid):
