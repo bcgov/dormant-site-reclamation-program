@@ -1,12 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Table, Popconfirm, Button, Icon, Typography } from "antd";
-import {
-  formatDateTime,
-  truncateFilename,
-  dateSorter,
-  nullableStringOrNumberSorter,
-} from "@/utils/helpers";
+import { formatDateTime, dateSorter, nullableStringOrNumberSorter } from "@/utils/helpers";
 import { downloadPaymentDocument } from "@/utils/actionlessNetworkCalls";
 import * as Strings from "@/constants/strings";
 import CustomPropTypes from "@/customPropTypes";
@@ -44,7 +39,7 @@ export const PaymentDocumentTable = (props) => {
                 )
               }
             >
-              {truncateFilename(text)}
+              {text}
             </LinkButton>
           </div>
         );
