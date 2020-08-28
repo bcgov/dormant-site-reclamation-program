@@ -9,6 +9,7 @@ import ApplicationStatusCard from "@/components/pages/ApplicationStatusCard";
 import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
 import ContractedWorkPaymentView from "@/components/pages/ContractedWorkPaymentView";
 import { fetchApplicationSummaryById } from "@/actionCreators/applicationActionCreator";
+import { createOTL } from "@/actionCreators/authorizationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
 import { HELP_EMAIL } from "@/constants/strings";
 import CustomPropTypes from "@/customPropTypes";
@@ -57,7 +58,11 @@ export class ViewApplicationStatusPage extends Component {
   };
 
   onFormSubmit = (values) => {
-    this.props.fetchApplicationSummaryById(values.guid);
+    console.log("im getting called here right???");
+    this.props.createOTL(values.guid).then((response) => {
+      console.log("POST is getting called");
+    });
+    // this.props.fetchApplicationSummaryById(values.guid);
     this.setState({ guid: values.guid });
   };
 
@@ -72,7 +77,7 @@ export class ViewApplicationStatusPage extends Component {
           </Col>
         </Row>
         <Row type="flex" justify="center" align="top">
-          <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
+          <Col xl={24} xxl={20} sm={22}>
             <ViewApplicationStatusForm onSubmit={this.onFormSubmit} />
           </Col>
         </Row>
@@ -113,6 +118,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchApplicationSummaryById,
+      createOTL,
     },
     dispatch
   );

@@ -31,7 +31,7 @@ class ViewApplicationStatusForm extends Component {
         <Row className="steps-action">
           <Col>
             <Button type="primary" htmlType="submit">
-              Check Status
+              Request Access (wording?)
             </Button>
           </Col>
         </Row>
