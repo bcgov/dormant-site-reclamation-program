@@ -10,9 +10,6 @@ from app.api.authorization.constants import *
 VIEW_ALL = "view_all"
 ADMIN = "admin"
 
-SECRET_KEY = "1"
-SECRET_PASSWORD = "1"
-
 
 def requires_role_view_all(func):
     return _inner_wrapper(func, VIEW_ALL)
