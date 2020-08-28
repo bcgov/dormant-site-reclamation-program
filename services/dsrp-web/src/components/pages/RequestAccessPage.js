@@ -62,7 +62,7 @@ export class RequestAccessPage extends Component {
         <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
           <Result
             icon={<Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" />}
-            title="Password has been sent to your email"
+            title="One-Time Link has been sent to your email"
           />
           {/* <Title>Waiting...</Title>
           <Paragraph /> */}
@@ -70,7 +70,7 @@ export class RequestAccessPage extends Component {
       </Row>
       <Row type="flex" justify="center" align="top">
         <Col xl={24} xxl={20} sm={22}>
-          <Title level={3}>Did not receive the email? </Title>
+          <Title level={3}>If you did not receive, make the request again</Title>
           <ViewApplicationStatusForm onSubmit={this.onFormSubmit} />
         </Col>
       </Row>
