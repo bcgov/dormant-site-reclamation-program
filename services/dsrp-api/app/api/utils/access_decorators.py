@@ -56,14 +56,20 @@ def requires_otp(func):
     @wraps(func)
     def check_api_key(*args, **kwargs):
         # enforce admin permission
+        try:
+            return jwt.has_one_of_roles([ADMIN])(func)(*args, **kwargs)
+        except Exception as e:
+            current_app.logger.error(str(e))
+            pass
 
         link_key = request.headers.get(ONE_TIME_LINK)
         otp_key = request.headers.get(ONE_TIME_PASSWORD)
         if not link_key and not otp_key:
             # TODO ? this should be a user-friendly message "OTL generated and sent"
             current_app.logger.info("OTL and OTP is empty")
+            abort(401)
             # return func(*args, **kwargs)
-            redirect(ONE_TIME_LINK_GENERATE_URL)
+            # redirect(ONE_TIME_LINK_FRONTEND_URL)
         elif link_key and link_key == cache.get(ONE_TIME_LINK_CACHE_KEY(link_key)):
             current_app.logger.info("OTL IS PRESENT NEED TO GENERATE OTP")
             # TODO check if this key is present in cache: yes -> (then generate OTP, store in cache)? redirect to new URL or get OTP
