@@ -13,11 +13,6 @@ from app.api.authorization.constants import *
 from app.api.utils.custom_reqparser import CustomReqparser
 
 
-def datetime_converter(d):
-    if isinstance(d, datetime):
-        return d.__str__()
-
-
 class AuthorizationResource(Resource, UserMixin):
     parser = CustomReqparser()
     parser.add_argument('application_guid', type=str, help='', store_missing=False)
@@ -33,10 +28,8 @@ class AuthorizationResource(Resource, UserMixin):
         data = AuthorizationResource.parser.parse_args()
         application_guid = data.get('application_guid')
         application = Application.find_by_guid(application_guid)
-        otl_guid = uuid.uuid4().hex
-        otl = ONE_TIME_LINK_CACHE_KEY(otl_guid)
+        otl_guid = uuid.uuid4()
 
-        # TODO replace text and url
         html_content = f"""
         <table width="100%" style="font-size:12.0pt" >
             <tr>
@@ -50,7 +43,7 @@ class AuthorizationResource(Resource, UserMixin):
                     <table style="margin-left: auto; margin-right: auto;">
                         <tr>
                             <td style="border-radius: 2px;" bgcolor="#003366" >
-                                <a href="{ONE_TIME_LINK_FRONTEND_URL(otl)}" target="_blank" style="padding: 8px 12px; border: 1px solid #003366;border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block;">
+                                <a href="{ONE_TIME_LINK_FRONTEND_URL(otl_guid)}" target="_blank" style="padding: 8px 12px; border: 1px solid #003366;border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block;">
                                     Click             
                                 </a>
                             </td>
@@ -65,30 +58,34 @@ class AuthorizationResource(Resource, UserMixin):
                 application, f"One time link password for application: {application_guid}",
                 html_content)
 
-        current_app.logger.debug(f"This is a OTL: {otl}")
-        cache.set(otl, application.guid, timeout=TIMEOUT_4_HOURS)
+        current_app.logger.debug(f"This is a OTL: {otl_guid}")
+        cache.set(str(otl_guid), application_guid, timeout=TIMEOUT_4_HOURS)
 
         return "OK", 200
 
     @api.doc(description='generates and returns OTP')
     def put(self):
-        otp = None
+        otp_guid = None
         issued_time_utc = None
         timeout = TIMEOUT_4_HOURS
+
         data = AuthorizationResource.parser.parse_args()
         otl_guid = data.get('otl_guid')
-        app_id = cache.get(otl_guid)
-        current_app.logger.info(f'in otp: {app_id}')
-        if otl_guid and app_id:
+        app_guid = cache.get(otl_guid)
+
+        current_app.logger.info(f'this is app_guid: {app_guid}')
+
+        if otl_guid and app_guid:
             cache.delete(otl_guid)
-            otp = ONE_TIME_PASSWORD_CACHE_KEY(uuid.uuid4().hex)
+            otp_guid = uuid.uuid4()
             issued_time_utc = datetime.now(timezone.utc)
-            cache.set(otp, app_id, timeout=timeout)
+            cache.set(str(otp_guid), app_guid, timeout=timeout)
         else:
             abort(401)
 
         return jsonify({
-            "OTP": otp,
+            "OTP": otp_guid,
             "issued_time_utc": issued_time_utc.strftime("%d %b %Y %H:%M:%S"),
-            "timeout_minutes": TIMEOUT_4_HOURS
+            "timeout_minutes": TIMEOUT_4_HOURS,
+            "application_guid": app_guid
         })

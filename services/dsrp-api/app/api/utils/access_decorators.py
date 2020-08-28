@@ -62,20 +62,18 @@ def requires_otp(func):
             current_app.logger.error(str(e))
             pass
 
-        link_key = request.headers.get(ONE_TIME_LINK)
-        otp_key = request.headers.get(ONE_TIME_PASSWORD)
-        if not link_key and not otp_key:
-            # TODO ? this should be a user-friendly message "OTL generated and sent"
+        # TODO this checks for debug purpose, will be reworked in final pr
+        otl_guid = request.headers.get(ONE_TIME_LINK)
+        otp_guid = request.headers.get(ONE_TIME_PASSWORD)
+        if not otl_guid and not otp_guid:
             current_app.logger.info("OTL and OTP is empty")
             abort(401)
-            # return func(*args, **kwargs)
-            # redirect(ONE_TIME_LINK_FRONTEND_URL)
-        elif link_key and link_key == cache.get(ONE_TIME_LINK_CACHE_KEY(link_key)):
+        elif otl_guid and otl_guid == cache.get(otl_guid):
             current_app.logger.info("OTL IS PRESENT NEED TO GENERATE OTP")
-            # TODO check if this key is present in cache: yes -> (then generate OTP, store in cache)? redirect to new URL or get OTP
-        elif not link_key and otp_key:
+            abort(401)
+        elif not otl_guid and otp_guid:
             current_app.logger.info("OTL is not present but OTP is")
-            otp_app_guid = cache.get(ONE_TIME_PASSWORD_CACHE_KEY(otp_key))
+            otp_app_guid = cache.get(otp_guid)
             header_app_guid = request.headers.get("app_guid")
             if otp_app_guid and otp_app_guid == header_app_guid:
                 current_app.logger.info("OTP is correct")
