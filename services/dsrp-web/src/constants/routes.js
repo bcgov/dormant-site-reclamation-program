@@ -7,6 +7,7 @@ import ReviewApplicationsPage from "@/components/pages/ReviewApplicationsPage";
 import ReviewApprovedContractedWorkPage from "@/components/pages/ReviewApprovedContractedWorkPage";
 import ViewApplicationPage from "@/components/pages/ViewApplicationPage";
 import ApplicationSuccessPage from "@/components/pages/ApplicationSuccessPage";
+import RequestAccessPage from "@/components/pages/RequestAccessPage";
 
 export const HOME = {
   route: "/",
@@ -58,6 +59,12 @@ export const VIEW_APPLICATION = {
   route: "/review-applications/:id",
   dynamicRoute: (guid) => `/review-applications/${guid}`,
   component: ViewApplicationPage,
+};
+
+export const REQUEST_ACCESS = {
+  route: "/request-access/:id",
+  dynamicRoute: (guid) => `/request-access/${guid}`,
+  component: RequestAccessPage,
 };
 
 export const ORGBOOK_URL = "https://orgbook.gov.bc.ca";

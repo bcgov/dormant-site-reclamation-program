@@ -21,6 +21,7 @@ const Routes = () => (
       path={routes.VIEW_APPLICATION_STATUS.route}
       component={routes.VIEW_APPLICATION_STATUS.component}
     />
+    <Route exact path={routes.REQUEST_ACCESS.route} component={routes.REQUEST_ACCESS.component} />
     <Route
       exact
       path={routes.VIEW_APPLICATION_STATUS_LINK.route}
