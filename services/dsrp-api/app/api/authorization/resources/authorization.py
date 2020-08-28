@@ -62,7 +62,7 @@ class AuthorizationResource(Resource, UserMixin):
 
         with EmailService() as es:
             es.send_email_to_applicant(
-                application, 'One time link password for application: {application_guid}',
+                application, f"One time link password for application: {application_guid}",
                 html_content)
 
         current_app.logger.debug(f"This is a OTL: {otl}")

@@ -5,7 +5,7 @@ ONE_TIME_PASSWORD = "OTP"
 
 
 def ONE_TIME_LINK_FRONTEND_URL(otl_guid):
-    return f"{Config.URL}/request-access/{otl_guid}"
+    return f"{Config.URL}request-access/{otl_guid}"
 
 
 def ONE_TIME_LINK_CACHE_KEY(otl_guid):
