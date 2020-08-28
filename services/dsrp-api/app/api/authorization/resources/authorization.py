@@ -1,9 +1,8 @@
 from flask_restplus import Resource
-from flask import current_app, request, abort
+from flask import current_app, request, abort, jsonify
 import uuid
 import sys
 from datetime import datetime, timezone
-import json
 
 from app.extensions import cache, api
 from app.api.utils.resources_mixins import UserMixin
@@ -12,6 +11,11 @@ from app.api.services.email_service import EmailService
 from app.api.constants import TIMEOUT_4_HOURS
 from app.api.authorization.constants import *
 from app.api.utils.custom_reqparser import CustomReqparser
+
+
+def datetime_converter(d):
+    if isinstance(d, datetime):
+        return d.__str__()
 
 
 class AuthorizationResource(Resource, UserMixin):
@@ -81,12 +85,8 @@ class AuthorizationResource(Resource, UserMixin):
         else:
             abort(401)
 
-        return json.dumps(
-            {
-                "OTP": otp,
-                "issued_time_utc": issued_time_utc,
-                "timeout_minutes": TIMEOUT_4_HOURS
-            },
-            indent=4,
-            sort_keys=True,
-            default=str), 200
+        return jsonify({
+            "OTP": otp,
+            "issued_time_utc": issued_time_utc.strftime("%d %b %Y %H:%M:%S"),
+            "timeout_minutes": TIMEOUT_4_HOURS
+        })
