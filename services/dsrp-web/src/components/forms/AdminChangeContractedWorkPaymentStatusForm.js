@@ -47,6 +47,7 @@ export const toolTip = (title, extraClassName) => (
 
 const validateFormApprovedAmount = memoize(
   (
+    formApprovedAmount,
     paymentType,
     interimApprovedAmount,
     finalApprovedAmount,
@@ -60,16 +61,6 @@ const validateFormApprovedAmount = memoize(
     const interimLostFunds = interimEstSharedCost - interimApprovedAmount;
     const finalEligibleAmount = finalEstSharedCost + interimLostFunds;
     const finalLostFunds = finalEligibleAmount - finalApprovedAmount;
-
-    console.log(
-      paymentType,
-      interimApprovedAmount,
-      finalApprovedAmount,
-      interimEstSharedCost,
-      finalEstSharedCost,
-      interimHalfEocTotal,
-      finalHalfEocTotal
-    );
 
     if (paymentType === "INTERIM") {
       if (value > interimHalfEocTotal) {
@@ -414,23 +405,21 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
         name="approved_amount"
         label={
           <>
-            <Text className="color-primary" strong>
-              Approved {contractedWorkTypeDescription} Amount
-            </Text>
-            <br />
-            <Text>
+            <div>Approved {contractedWorkTypeDescription} Amount</div>
+            <div className="font-weight-normal">
               Please enter in the amount to approve for this work item's&nbsp;
               <Text strong>{contractedWorkTypeFormId} payment</Text>. This is the amount that will
               be used in generating future&nbsp;
               <Text strong>{contractedWorkTypeFormId} payment request forms</Text> containing this
               work item.
-            </Text>
+            </div>
           </>
         }
         component={renderConfig.FIELD}
         validate={[
           required,
           validateFormApprovedAmount(
+            formApprovedAmount,
             props.contractedWorkPaymentType,
             interimApprovedAmount,
             finalApprovedAmount,
@@ -466,8 +455,6 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
     default:
       throw new Error("Unknown contracted work payment status code received!");
   }
-
-  console.log(props);
 
   return (
     <Form layout="vertical" onSubmit={props.handleSubmit}>
