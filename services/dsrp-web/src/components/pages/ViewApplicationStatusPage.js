@@ -84,8 +84,6 @@ export class ViewApplicationStatusPage extends Component {
                 icon={<Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" />}
                 title="One-Time Link has been sent to your email"
               />
-              {/* <Title>Waiting...</Title>
-          <Paragraph /> */}
             </Col>
           </Row>
         )}
