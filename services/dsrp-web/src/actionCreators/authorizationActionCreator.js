@@ -38,7 +38,7 @@ export const exchangeOTLForOTP = (otl_guid) => (dispatch) => {
     .then((response) => {
       dispatch(success(reducerTypes.GET_OTP));
       console.log(response);
-      localStorage.setItem("otp", response.data.otp);
+      localStorage.setItem("otp", response.data.OTP);
       return response.data;
     })
     .catch(() => {
