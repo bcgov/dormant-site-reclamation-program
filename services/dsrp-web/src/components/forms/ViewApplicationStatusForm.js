@@ -16,6 +16,11 @@ class ViewApplicationStatusForm extends Component {
   render() {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
+        <Paragraph>
+          To View your application, enter your application reference number and request a one-time
+          use link. This Link is valid for 4 hours after the request is made. Request a one-time
+          link every time you access this application.
+        </Paragraph>
         <Row gutter={48}>
           <Col>
             <Field
@@ -27,18 +32,13 @@ class ViewApplicationStatusForm extends Component {
               validate={[required, exactLength(36)]}
               {...guidMask}
             />
-          </Col>
-        </Row>
-        <Row className="steps-action">
-          <Col>
             <Button type="primary" htmlType="submit">
               Request Link
             </Button>
-            <Paragraph>
-              To View your application, You must request a one-time-use link. This Link be valid for
-              4 hours after the request is made.{" "}
-            </Paragraph>
           </Col>
+        </Row>
+        <Row className="steps-action">
+          <Col></Col>
         </Row>
       </Form>
     );

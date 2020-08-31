@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Row, Col, Typography, Button } from "antd";
+import { Row, Col, Typography, Button, Result, Icon } from "antd";
 import PropTypes from "prop-types";
 import { bindActionCreators, compose } from "redux";
 import { withRouter } from "react-router-dom";
@@ -42,7 +42,7 @@ const isGuid = (input) => {
 };
 
 export class ViewApplicationStatusPage extends Component {
-  state = { guid: "" };
+  state = { guid: "", requestSent: false };
 
   componentDidMount = () => {
     if (
@@ -61,8 +61,8 @@ export class ViewApplicationStatusPage extends Component {
   onFormSubmit = (values) => {
     // request OTL and redirect to request-access page
     return this.props.createOTL(values.guid).then(() => {
-      this.props.history.push(router.REQUEST_ACCESS.dynamicRoute("redirecting"));
-      this.setState({ guid: values.guid });
+      // this.props.history.push(router.REQUEST_ACCESS.dynamicRoute("redirecting"));
+      this.setState({ guid: values.guid, requestSent: true });
     });
     // this.props.fetchApplicationSummaryById(values.guid);
   };
@@ -77,6 +77,18 @@ export class ViewApplicationStatusPage extends Component {
             <Paragraph />
           </Col>
         </Row>
+        {this.state.requestSent && (
+          <Row type="flex" justify="center" align="top" className="landing-header">
+            <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
+              <Result
+                icon={<Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" />}
+                title="One-Time Link has been sent to your email"
+              />
+              {/* <Title>Waiting...</Title>
+          <Paragraph /> */}
+            </Col>
+          </Row>
+        )}
         <Row type="flex" justify="center" align="top">
           <Col xl={24} xxl={20} sm={22}>
             <ViewApplicationStatusForm onSubmit={this.onFormSubmit} />
