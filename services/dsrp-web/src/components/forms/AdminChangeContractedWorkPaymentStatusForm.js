@@ -44,6 +44,7 @@ export const toolTip = (title, extraClassName) => (
     <Icon type="info-circle" className={`icon-sm ${extraClassName}`} style={{ marginLeft: 4 }} />
   </Tooltip>
 );
+
 const validateFormApprovedAmount = memoize(
   (
     paymentType,
@@ -61,7 +62,7 @@ const validateFormApprovedAmount = memoize(
     const finalLostFunds = finalEligibleAmount - finalApprovedAmount;
 
     if (paymentType === "INTERIM") {
-      if (value.toFixed(2) > interimHalfEocTotal.toFixed(2)) {
+      if (value > interimHalfEocTotal) {
         return `Cannot overpay on half of supplied EoC total of ${formatMoney(
           interimHalfEocTotal
         )}`;
@@ -75,7 +76,7 @@ const validateFormApprovedAmount = memoize(
     }
 
     if (paymentType === "FINAL") {
-      if (value.toFixed(2) > finalHalfEocTotal.toFixed(2)) {
+      if (value > finalHalfEocTotal) {
         return `Cannot overpay on half of supplied EoC total of ${formatMoney(finalHalfEocTotal)}`;
       }
 
@@ -499,5 +500,6 @@ export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: FORM.ADMIN_UPDATE_CONTRACTED_WORK_PAYMENT_STATUS_FORM,
+    enableReinitialize: true,
   })
 )(AdminChangeContractedWorkPaymentStatusForm);
