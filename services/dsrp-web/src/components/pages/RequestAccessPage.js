@@ -1,20 +1,20 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Typography } from "antd";
+import { Typography, Result, Icon, Row, Col } from "antd";
 import PropTypes from "prop-types";
 import { bindActionCreators, compose } from "redux";
 import { withRouter } from "react-router-dom";
 import { getApplication } from "@/reducers/applicationReducer";
-import CustomPropTypes from "@/customPropTypes";
 import Loading from "@/components/common/Loading";
 import { exchangeOTLForOTP } from "@/actionCreators/authorizationActionCreator";
 import * as router from "@/constants/routes";
+import { isGuid } from "@/utils/helpers";
+import LinkButton from "@/components/common/LinkButton";
 
-const { Paragraph, Title } = Typography;
+const { Text } = Typography;
 
 const propTypes = {
-  fetchApplicationSummaryById: PropTypes.func.isRequired,
-  loadedApplication: CustomPropTypes.applicationSummary,
+  exchangeOTLForOTP: PropTypes.func.isRequired,
   match: PropTypes.shape({
     params: {
       id: PropTypes.string,
@@ -23,20 +23,10 @@ const propTypes = {
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
 };
 
-const defaultProps = {
-  loadedApplication: { guid: "" },
-};
-
-const isGuid = (input) => {
-  if (input[0] === "{") {
-    input = input.substring(1, input.length - 1);
-  }
-  const regexGuid = /^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/gi;
-  return regexGuid.test(input);
-};
+const defaultProps = {};
 
 export class RequestAccessPage extends Component {
-  state = { guid: "" };
+  state = { isOTLExpired: false };
 
   componentDidMount = () => {
     if (
@@ -45,24 +35,48 @@ export class RequestAccessPage extends Component {
       this.props.match.params.id &&
       isGuid(this.props.match.params.id)
     ) {
-      this.props.exchangeOTLForOTP(this.props.match.params.id).then((data) => {
-        this.props.history.push(
-          router.VIEW_APPLICATION_STATUS_LINK.dynamicRoute(data.application_guid)
-        );
-      });
+      this.props
+        .exchangeOTLForOTP(this.props.match.params.id)
+        .then((data) => {
+          this.props.history.push(
+            router.VIEW_APPLICATION_STATUS_LINK.dynamicRoute(data.application_guid)
+          );
+        })
+        .catch(() => {
+          this.setState({ isOTLExpired: true });
+        });
     }
   };
 
-  onFormSubmit = (values) => {
-    this.props.exchangeOTLForOTP(values.guid);
-    this.setState({ guid: values.guid });
-  };
-
-  render = () => (
-    <>
+  render = () => {
+    return this.state.isOTLExpired ? (
+      <>
+        <Row type="flex" justify="center" align="top" className="landing-header">
+          <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
+            <Result
+              icon={<Icon type="exclamation-circle" />}
+              title="The one-time use link has expired"
+              subTitle={
+                <Text>
+                  Please return to the previous page and request a new Link
+                  <br />
+                  <LinkButton
+                    onClick={() =>
+                      this.props.history.push(router.VIEW_APPLICATION_STATUS_LINK.route)
+                    }
+                  >
+                    Return
+                  </LinkButton>
+                </Text>
+              }
+            />
+          </Col>
+        </Row>
+      </>
+    ) : (
       <Loading />
-    </>
-  );
+    );
+  };
 }
 
 RequestAccessPage.propTypes = propTypes;

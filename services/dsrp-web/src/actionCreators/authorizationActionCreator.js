@@ -39,11 +39,12 @@ export const exchangeOTLForOTP = (otl_guid) => (dispatch) => {
       localStorage.setItem("app_guid", response.data.application_guid);
       return response.data;
     })
-    .catch(() => {
+    .catch((err) => {
       notification.error({
         message: "Unexpected error occured, please try again",
         duration: 10,
       });
       dispatch(error(reducerTypes.GET_OTP));
+      throw new Error(err);
     });
 };
