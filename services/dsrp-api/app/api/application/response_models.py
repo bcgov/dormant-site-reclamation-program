@@ -24,6 +24,11 @@ APPLICATION_DOCUMENT = api.model(
         'upload_date': fields.DateTime
     })
 
+APPLICATION_DOCUMENT_SMALL = api.model('ApplicationDocument', {
+    'application_document_guid': fields.String,
+    'document_name': fields.String
+})
+
 APPLICATION_DOCUMENT_TYPE = api.model(
     'ApplicationDocumentType', {
         'application_document_code': fields.String,
@@ -59,8 +64,8 @@ APPLICATION = api.model(
         'submission_date': fields.DateTime,
         'json': fields.Raw,
         'review_json': fields.Raw,
-        'documents': fields.List(fields.Nested(APPLICATION_DOCUMENT)),
-        'payment_documents': fields.List(fields.Nested(PAYMENT_DOCUMENT)),
+        'documents': fields.List(fields.Nested(APPLICATION_DOCUMENT, skip_none=True)),
+        'payment_documents': fields.List(fields.Nested(PAYMENT_DOCUMENT, skip_none=True)),
         'edit_note': fields.String
     })
 

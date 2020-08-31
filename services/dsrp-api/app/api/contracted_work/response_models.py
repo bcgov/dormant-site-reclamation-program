@@ -1,6 +1,6 @@
 from app.extensions import api
 from flask_restplus import fields
-from app.api.application.response_models import APPLICATION_DOCUMENT
+from app.api.application.response_models import APPLICATION_DOCUMENT_SMALL
 
 CONTRACTED_WORK_STATUS = api.model('ContractedWorkStatus', {
     'contracted_work_status_code': fields.String,
@@ -14,12 +14,10 @@ CONTRACTED_WORK_PAYMENT_STATUS = api.model(
         'long_description': fields.String
     })
 
-CONTRACTED_WORK_PAYMENT_STATUS_CHANGE = api.model(
-    'ContractedWorkPaymentStatusChange', {
-        'contracted_work_payment_status_code': fields.String,
-        'change_timestamp': fields.DateTime,
-        'note': fields.String
-    })
+CONTRACTED_WORK_PAYMENT_STATUS_CHANGE = api.model('ContractedWorkPaymentStatusChange', {
+    'contracted_work_payment_status_code': fields.String,
+    'note': fields.String
+})
 
 CONTRACTED_WORK_PAYMENT = api.model(
     'ContractedWorkPayment', {
@@ -43,9 +41,9 @@ CONTRACTED_WORK_PAYMENT = api.model(
         'has_interim_prfs': fields.Boolean,
         'has_final_prfs': fields.Boolean,
         'review_deadlines': fields.Raw,
-        'interim_eoc_document': fields.Nested(APPLICATION_DOCUMENT, skip_none=True),
-        'final_eoc_document': fields.Nested(APPLICATION_DOCUMENT, skip_none=True),
-        'final_report_document': fields.Nested(APPLICATION_DOCUMENT, skip_none=True),
+        'interim_eoc_document': fields.Nested(APPLICATION_DOCUMENT_SMALL, skip_none=True),
+        'final_eoc_document': fields.Nested(APPLICATION_DOCUMENT_SMALL, skip_none=True),
+        'final_report_document': fields.Nested(APPLICATION_DOCUMENT_SMALL, skip_none=True),
         'interim_payment_status': fields.Nested(
             CONTRACTED_WORK_PAYMENT_STATUS_CHANGE, skip_none=True),
         'final_payment_status': fields.Nested(
