@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Icon } from "antd";
 import PropTypes from "prop-types";
 
 const propTypes = {
@@ -22,7 +23,15 @@ function AuthorizationTimer(props) {
     return () => clearInterval(timer);
   }, [counter]);
 
-  return <span className="header-authorization-timer">{prettyTimer(counter)}</span>;
+  return (
+    <span
+      title="You will be logged out after session times out"
+      className="header-authorization-timer"
+    >
+      <Icon type="history" className="icon-lg" style={{ marginRight: "5px" }} />
+      session expires in: {prettyTimer(counter)}
+    </span>
+  );
 }
 
 AuthorizationTimer.propTypes = propTypes;

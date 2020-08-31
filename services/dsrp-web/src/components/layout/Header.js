@@ -17,7 +17,7 @@ const propTypes = {
   xxl: PropTypes.number.isRequired,
 };
 
-const smallestDesktopWidth = 640;
+const smallestDesktopWidth = 1280;
 
 const notProd = () => {
   if (ENVIRONMENT.environment.match(/^(development|test)$/)) return true;
