@@ -28,7 +28,6 @@ export const createOTL = (application_guid) => (dispatch) => {
         duration: 10,
       });
       dispatch(error(reducerTypes.GET_OTL));
-      dispatch(unAuthenticateUser());
     });
 };
 
