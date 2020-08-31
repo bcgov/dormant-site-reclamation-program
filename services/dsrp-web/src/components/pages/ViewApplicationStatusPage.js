@@ -15,6 +15,7 @@ import { HELP_EMAIL } from "@/constants/strings";
 import CustomPropTypes from "@/customPropTypes";
 import { PageTracker } from "@/utils/trackers";
 import { isGuid } from "@/utils/helpers";
+import * as router from "@/constants/routes";
 
 const { Paragraph, Title } = Typography;
 
@@ -47,6 +48,11 @@ export class ViewApplicationStatusPage extends Component {
       this.props.fetchApplicationSummaryById(this.props.match.params.id);
       this.setState({ guid: this.props.match.params.id });
     }
+  };
+
+  handleCheckAnotherApplication = () => {
+    this.props.history.push(router.VIEW_APPLICATION_STATUS.route);
+    this.setState({ guid: "" });
   };
 
   onFormSubmit = (values) => {
@@ -101,7 +107,9 @@ export class ViewApplicationStatusPage extends Component {
             <a href={`mailto:${HELP_EMAIL}`}>contact us</a> and be sure to include your reference
             number.
           </Paragraph>
-          <Button onClick={() => this.setState({ guid: "" })}>Check another Application</Button>
+          <Button onClick={() => this.handleCheckAnotherApplication()}>
+            Check another Application
+          </Button>
         </Col>
       </Row>
     );
