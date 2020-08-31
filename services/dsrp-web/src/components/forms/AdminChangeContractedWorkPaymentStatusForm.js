@@ -61,9 +61,19 @@ const validateFormApprovedAmount = memoize(
     const finalEligibleAmount = finalEstSharedCost + interimLostFunds;
     const finalLostFunds = finalEligibleAmount - finalApprovedAmount;
 
+    console.log(
+      paymentType,
+      interimApprovedAmount,
+      finalApprovedAmount,
+      interimEstSharedCost,
+      finalEstSharedCost,
+      interimHalfEocTotal,
+      finalHalfEocTotal
+    );
+
     if (paymentType === "INTERIM") {
       if (value > interimHalfEocTotal) {
-        return `Cannot overpay on half of supplied EoC total of ${formatMoney(
+        return `Cannot overpay on half of supplied interim EoC total of ${formatMoney(
           interimHalfEocTotal
         )}`;
       }
@@ -77,7 +87,9 @@ const validateFormApprovedAmount = memoize(
 
     if (paymentType === "FINAL") {
       if (value > finalHalfEocTotal) {
-        return `Cannot overpay on half of supplied EoC total of ${formatMoney(finalHalfEocTotal)}`;
+        return `Cannot overpay on half of supplied final EoC total of ${formatMoney(
+          finalHalfEocTotal
+        )}`;
       }
 
       if (finalLostFunds.toFixed(2) < 0) {
@@ -454,6 +466,8 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
     default:
       throw new Error("Unknown contracted work payment status code received!");
   }
+
+  console.log(props);
 
   return (
     <Form layout="vertical" onSubmit={props.handleSubmit}>
