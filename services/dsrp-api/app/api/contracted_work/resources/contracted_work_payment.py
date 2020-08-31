@@ -69,19 +69,24 @@ class ContractedWorkPaymentInterim(Resource, UserMixin):
         payment.interim_number_of_workers = interim_payment_data['interim_number_of_workers']
         payment.interim_actual_cost = interim_payment_data['interim_actual_cost']
 
+        # The EoC is only required if it hasn't been provided yet.
+        interim_eoc_data = interim_payment_data.get('interim_eoc', [None])[0]
+        if not interim_eoc_data and not payment.interim_eoc_document:
+            raise BadRequest('Evidence of Cost is required!')
+
         # Create the EoC document and soft-delete the existing one (if it exists).
-        if payment.interim_eoc_document:
-            payment.interim_eoc_document.active_ind = False
-        interim_eoc_data = interim_payment_data['interim_eoc'][0]
-        filename = ApplicationDocument.create_filename(application, payment.work_id, 'INTERIM_EOC',
-                                                       'xlsx')
-        interim_eoc = ApplicationDocument(
-            document_name=filename,
-            object_store_path=interim_eoc_data['key'],
-            application_document_code='INTERIM_EOC')
-        application.documents.append(interim_eoc)
-        application.save()
-        payment.interim_eoc_application_document_guid = interim_eoc.application_document_guid
+        if interim_eoc_data:
+            if payment.interim_eoc_document:
+                payment.interim_eoc_document.active_ind = False
+            filename = ApplicationDocument.create_filename(application, payment.work_id,
+                                                           'INTERIM_EOC', 'xlsx')
+            interim_eoc = ApplicationDocument(
+                document_name=filename,
+                object_store_path=interim_eoc_data['key'],
+                application_document_code='INTERIM_EOC')
+            application.documents.append(interim_eoc)
+            application.save()
+            payment.interim_eoc_application_document_guid = interim_eoc.application_document_guid
 
         payment.save()
         return '', response_code
@@ -128,33 +133,43 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
         payment.final_actual_cost = final_payment_data['final_actual_cost']
         payment.work_completion_date = final_payment_data['work_completion_date']
 
+        # The EoC is only required if it hasn't been provided yet.
+        final_eoc_data = final_payment_data.get('final_eoc', [None])[0]
+        if not final_payment_data.get('final_eoc', None) and not payment.final_eoc_document:
+            raise BadRequest('Evidence of Cost is required!')
+
         # Create the EoC document and soft-delete the existing one (if it exists).
-        if payment.final_eoc_document:
-            payment.final_eoc_document.active_ind = False
-        final_eoc_data = final_payment_data['final_eoc'][0]
-        filename = ApplicationDocument.create_filename(application, payment.work_id, 'FINAL_EOC',
-                                                       'xlsx')
-        final_eoc = ApplicationDocument(
-            document_name=filename,
-            object_store_path=final_eoc_data['key'],
-            application_document_code='FINAL_EOC')
-        application.documents.append(final_eoc)
-        application.save()
-        payment.final_eoc_application_document_guid = final_eoc.application_document_guid
+        if final_eoc_data:
+            if payment.final_eoc_document:
+                payment.final_eoc_document.active_ind = False
+            filename = ApplicationDocument.create_filename(application, payment.work_id,
+                                                           'FINAL_EOC', 'xlsx')
+            final_eoc = ApplicationDocument(
+                document_name=filename,
+                object_store_path=final_eoc_data['key'],
+                application_document_code='FINAL_EOC')
+            application.documents.append(final_eoc)
+            application.save()
+            payment.final_eoc_application_document_guid = final_eoc.application_document_guid
+
+        # The Final Report is only required if it hasn't been provided yet.
+        final_report_data = final_payment_data.get('final_report', [None])[0]
+        if not final_report_data and not payment.final_report_document:
+            raise BadRequest('Final Report is required!')
 
         # Create the Final Report document and soft-delete the existing one (if it exists).
-        if payment.final_report_document:
-            payment.final_report_document.active_ind = False
-        final_report_data = final_payment_data['final_report'][0]
-        filename = ApplicationDocument.create_filename(application, payment.work_id, 'FINAL_REPORT',
-                                                       'docx')
-        final_report = ApplicationDocument(
-            document_name=filename,
-            object_store_path=final_report_data['key'],
-            application_document_code='FINAL_REPORT')
-        application.documents.append(final_report)
-        application.save()
-        payment.final_report_application_document_guid = final_report.application_document_guid
+        if final_report_data:
+            if payment.final_report_document:
+                payment.final_report_document.active_ind = False
+            filename = ApplicationDocument.create_filename(application, payment.work_id,
+                                                           'FINAL_REPORT', 'docx')
+            final_report = ApplicationDocument(
+                document_name=filename,
+                object_store_path=final_report_data['key'],
+                application_document_code='FINAL_REPORT')
+            application.documents.append(final_report)
+            application.save()
+            payment.final_report_application_document_guid = final_report.application_document_guid
 
         payment.save()
         return '', response_code

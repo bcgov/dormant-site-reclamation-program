@@ -59,9 +59,11 @@ class InterimReportForm extends Component {
               label={
                 <>
                   <div>Interim Progress Report</div>
-                  Please briefly describe the work that was completed as it relates to the contents
-                  of the provided interim Evidence of Cost document. Must be between 25 and 250
-                  characters.
+                  <div className="font-weight-normal">
+                    Please briefly describe the work that was completed as it relates to the
+                    contents of the provided interim Evidence of Cost document. Must be between 25
+                    and 250 characters.
+                  </div>
                 </>
               }
               disabled={isViewOnly}

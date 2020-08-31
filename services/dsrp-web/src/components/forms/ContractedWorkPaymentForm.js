@@ -160,33 +160,36 @@ export class ContractedWorkPaymentForm extends Component {
               label={
                 <>
                   <div>Evidence of Cost</div>
-                  Please&nbsp;
-                  <a href={EOC_TEMPLATE} target="_blank" rel="noopener noreferrer">
-                    download
-                  </a>
-                  &nbsp;and use the provided Evidence of Cost template.
-                  {existingEvidenceOfCost && (
-                    <>
-                      &nbsp;You can download your previously uploaded Evidence of Cost&nbsp;
-                      <LinkButton
-                        onClick={() =>
-                          downloadDocument(
-                            this.props.contractedWorkPayment.application_guid,
-                            existingEvidenceOfCost.application_document_guid,
-                            existingEvidenceOfCost.document_name
-                          )
-                        }
-                      >
-                        here
-                      </LinkButton>
-                      .
-                    </>
-                  )}
+                  <div className="font-weight-normal">
+                    Please&nbsp;
+                    <a href={EOC_TEMPLATE} target="_blank" rel="noopener noreferrer">
+                      download
+                    </a>
+                    &nbsp;and use the provided Evidence of Cost template.
+                    {existingEvidenceOfCost && (
+                      <>
+                        &nbsp;You can download your previously uploaded Evidence of Cost&nbsp;
+                        <LinkButton
+                          onClick={() =>
+                            downloadDocument(
+                              this.props.contractedWorkPayment.application_guid,
+                              existingEvidenceOfCost.application_document_guid,
+                              existingEvidenceOfCost.document_name
+                            )
+                          }
+                        >
+                          here
+                        </LinkButton>
+                        . If your original Evidence of Cost document has not changed, you do not
+                        need to re-upload it.
+                      </>
+                    )}
+                  </div>
                 </>
               }
               disabled={isViewOnly}
               component={renderConfig.FILE_UPLOAD}
-              validate={[requiredList]}
+              validate={existingEvidenceOfCost ? [] : [requiredList]}
               labelIdle="Upload Evidence of Cost"
               acceptedFileTypesMap={EXCEL}
               allowMultiple={false}
@@ -199,33 +202,36 @@ export class ContractedWorkPaymentForm extends Component {
                 label={
                   <>
                     <div>Final Report</div>
-                    Please&nbsp;
-                    <a href={FINAL_REPORT_TEMPLATE} target="_blank" rel="noopener noreferrer">
-                      download
-                    </a>
-                    &nbsp;and use the provided Final Report template and upload it as a PDF.
-                    {existingFinalReport && (
-                      <>
-                        &nbsp;You can download your previously uploaded Final Report&nbsp;
-                        <LinkButton
-                          onClick={() =>
-                            downloadDocument(
-                              this.props.contractedWorkPayment.application_guid,
-                              existingFinalReport.application_document_guid,
-                              existingFinalReport.document_name
-                            )
-                          }
-                        >
-                          here
-                        </LinkButton>
-                        .
-                      </>
-                    )}
+                    <div className="font-weight-normal">
+                      Please&nbsp;
+                      <a href={FINAL_REPORT_TEMPLATE} target="_blank" rel="noopener noreferrer">
+                        download
+                      </a>
+                      &nbsp;and use the provided Final Report template and upload it as a PDF.
+                      {existingFinalReport && (
+                        <>
+                          &nbsp;You can download your previously uploaded Final Report&nbsp;
+                          <LinkButton
+                            onClick={() =>
+                              downloadDocument(
+                                this.props.contractedWorkPayment.application_guid,
+                                existingFinalReport.application_document_guid,
+                                existingFinalReport.document_name
+                              )
+                            }
+                          >
+                            here
+                          </LinkButton>
+                          . If your original Final Report document has not changed, you do not need
+                          to re-upload it.
+                        </>
+                      )}
+                    </div>
                   </>
                 }
                 disabled={isViewOnly}
                 component={renderConfig.FILE_UPLOAD}
-                validate={[requiredList]}
+                validate={existingFinalReport ? [] : [requiredList]}
                 labelIdle="Upload Final Report"
                 acceptedFileTypesMap={DOCX}
                 allowMultiple={false}
