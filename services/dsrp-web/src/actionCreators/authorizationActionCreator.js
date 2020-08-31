@@ -32,13 +32,13 @@ export const createOTL = (application_guid) => (dispatch) => {
 };
 
 export const exchangeOTLForOTP = (otl_guid) => (dispatch) => {
-  dispatch(request(reducerTypes.AUTHENTICATE_USER));
+  dispatch(request(reducerTypes.GET_OTP));
   return axios
     .put(ENVIRONMENT.apiUrl + API.AUTHORIZE_OTP, { otl_guid }, createRequestHeader())
     .then((response) => {
-      dispatch(success(reducerTypes.AUTHENTICATE_USER));
+      dispatch(success(reducerTypes.GET_OTP));
       console.log(response);
-      localStorage.setItem("otp", response.OTP);
+      localStorage.setItem("otp", response.otp);
       return response;
     })
     .catch(() => {
@@ -46,7 +46,6 @@ export const exchangeOTLForOTP = (otl_guid) => (dispatch) => {
         message: "Unexpected error occured, please try again",
         duration: 10,
       });
-      dispatch(error(reducerTypes.AUTHENTICATE_USER));
-      dispatch(unAuthenticateUser());
+      dispatch(error(reducerTypes.GET_OTP));
     });
 };
