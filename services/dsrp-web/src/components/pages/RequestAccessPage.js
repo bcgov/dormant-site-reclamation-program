@@ -61,9 +61,7 @@ export class RequestAccessPage extends Component {
                   Please return to the previous page and request a new Link
                   <br />
                   <LinkButton
-                    onClick={() =>
-                      this.props.history.push(router.VIEW_APPLICATION_STATUS_LINK.route)
-                    }
+                    onClick={() => this.props.history.push(router.VIEW_APPLICATION_STATUS.route)}
                   >
                     Return
                   </LinkButton>

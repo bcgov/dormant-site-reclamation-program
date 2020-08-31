@@ -20,12 +20,13 @@ export const createOTL = (application_guid) => (dispatch) => {
       });
       return response;
     })
-    .catch(() => {
+    .catch((err) => {
       notification.error({
         message: "Unexpected error occured, please try again",
         duration: 10,
       });
       dispatch(error(reducerTypes.GET_OTL));
+      throw new Error(err);
     });
 };
 
