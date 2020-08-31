@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Row, Col, Typography, Button, Result, Icon } from "antd";
+import { Typography } from "antd";
 import PropTypes from "prop-types";
 import { bindActionCreators, compose } from "redux";
 import { withRouter } from "react-router-dom";
 import { getApplication } from "@/reducers/applicationReducer";
-import ViewApplicationStatusForm from "@/components/forms/ViewApplicationStatusForm";
 import CustomPropTypes from "@/customPropTypes";
-import { PageTracker } from "@/utils/trackers";
+import Loading from "@/components/common/Loading";
 import { exchangeOTLForOTP } from "@/actionCreators/authorizationActionCreator";
+import * as router from "@/constants/routes";
 
 const { Paragraph, Title } = Typography;
 
@@ -45,8 +45,9 @@ export class RequestAccessPage extends Component {
       this.props.match.params.id &&
       isGuid(this.props.match.params.id)
     ) {
-      this.props.exchangeOTLForOTP(this.props.match.params.id);
-      this.setState({ guid: this.props.match.params.id });
+      this.props.exchangeOTLForOTP(this.props.match.params.id).then((data) => {
+        this.props.history.push(router.VIEW_APPLICATION.dynamicRoute(data.application_guid));
+      });
     }
   };
 
@@ -57,23 +58,7 @@ export class RequestAccessPage extends Component {
 
   render = () => (
     <>
-      <PageTracker title="Request Access Page" />
-      <Row type="flex" justify="center" align="top" className="landing-header">
-        <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-          <Result
-            icon={<Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" />}
-            title="One-Time Link has been sent to your email"
-          />
-          {/* <Title>Waiting...</Title>
-          <Paragraph /> */}
-        </Col>
-      </Row>
-      <Row type="flex" justify="center" align="top">
-        <Col xl={24} xxl={20} sm={22}>
-          <Title level={3}>If you did not receive, make the request again</Title>
-          <ViewApplicationStatusForm onSubmit={this.onFormSubmit} />
-        </Col>
-      </Row>
+      <Loading />;
     </>
   );
 }

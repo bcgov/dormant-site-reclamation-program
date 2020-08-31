@@ -35,10 +35,11 @@ export const createOTL = (application_guid) => (dispatch) => {
 export const exchangeOTLForOTP = (otl_guid) => (dispatch) => {
   dispatch(request(reducerTypes.AUTHENTICATE_USER));
   return axios
-    .put(ENVIRONMENT.apiUrl + API.AUTHORIZE_OTP, createRequestHeader())
+    .put(ENVIRONMENT.apiUrl + API.AUTHORIZE_OTP, { otl_guid }, createRequestHeader())
     .then((response) => {
       dispatch(success(reducerTypes.AUTHENTICATE_USER));
-      // localStorage.setItem("jwt", response.data.access_token);
+      console.log(response);
+      localStorage.setItem("otp", response.OTP);
       return response;
     })
     .catch(() => {
