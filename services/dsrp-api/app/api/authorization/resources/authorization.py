@@ -77,6 +77,7 @@ class AuthorizationResource(Resource, UserMixin):
 
         if otl_guid and app_guid:
             cache.delete(otl_guid)
+            current_app.logger.info(f"OTL_GUID_VALUE: {cache.get(otl_guid)}")
             otp_guid = uuid.uuid4()
             issued_time_utc = datetime.now(timezone.utc)
             cache.set(str(otp_guid), app_guid, timeout=timeout)
@@ -85,7 +86,7 @@ class AuthorizationResource(Resource, UserMixin):
 
         return jsonify({
             "OTP": otp_guid,
-            "issued_time_utc": issued_time_utc.strftime("%d %b %Y %H:%M:%S"),
-            "timeout_minutes": TIMEOUT_4_HOURS,
+            "issued_time_utc": issued_time_utc.strftime("%d %b %Y %H:%M:%S %z"),
+            "timeout_seconds": TIMEOUT_4_HOURS,
             "application_guid": app_guid
         })

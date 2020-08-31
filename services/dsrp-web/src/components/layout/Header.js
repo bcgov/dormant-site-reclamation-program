@@ -8,6 +8,7 @@ import * as routes from "@/constants/routes";
 import { BC_GOV } from "@/constants/assets";
 
 import { ENVIRONMENT } from "@/constants/environment";
+import AuthorizationTimer from "../common/AuthorizationTimer";
 
 const propTypes = {
   xs: PropTypes.number.isRequired,
@@ -20,7 +21,7 @@ const smallestDesktopWidth = 640;
 
 const notProd = () => {
   if (ENVIRONMENT.environment.match(/^(development|test)$/)) return true;
-  else return false;
+  return false;
 };
 
 export const Header = (props) => (
@@ -47,6 +48,15 @@ export const Header = (props) => (
             </Link>
           </span>
           <span className="header-menu">
+            {localStorage.getItem("issued_time_utc") && localStorage.getItem("timeout_seconds") ? (
+              <AuthorizationTimer
+                issueDate={new Date(localStorage.getItem("issued_time_utc"))}
+                timeOut={Number(localStorage.getItem("timeout_seconds"))}
+              />
+            ) : (
+              <></>
+            )}
+
             <HeaderDropdown />
           </span>
         </div>
