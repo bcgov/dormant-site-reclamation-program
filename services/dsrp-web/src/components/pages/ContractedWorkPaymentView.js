@@ -160,126 +160,155 @@ export class ContractedWorkPaymentView extends Component {
   render() {
     const columns = [
       {
-        title: "Work ID",
-        key: "work_id",
-        dataIndex: "work_id",
-        sorter: (a, b) =>
-          Number(a.work_id.split(".")[1]) > Number(b.work_id.split(".")[1]) ? 1 : -1,
-        render: (text) => <div title="Work ID">{text}</div>,
+        title: "Work Information",
+        children: [
+          {
+            title: "Work ID",
+            key: "work_id",
+            dataIndex: "work_id",
+            sorter: (a, b) =>
+              Number(a.work_id.split(".")[1]) > Number(b.work_id.split(".")[1]) ? 1 : -1,
+            render: (text) => <div title="Work ID">{text}</div>,
+          },
+          {
+            title: "Well Auth No.",
+            key: "well_authorization_number",
+            dataIndex: "well_authorization_number",
+            sorter: (a, b) =>
+              isNaN(a.well_authorization_number) && isNaN(b.well_authorization_number)
+                ? (a.well_authorization_number || "").localeCompare(
+                    b.well_authorization_number || ""
+                  )
+                : a.well_authorization_number - b.well_authorization_number,
+            render: (text) => <div title="Well Auth No.">{text}</div>,
+          },
+          {
+            title: "Work Type",
+            key: "contracted_work_type_description",
+            dataIndex: "contracted_work_type_description",
+            sorter: nullableStringOrNumberSorter("contracted_work_type_description"),
+            render: (text) => <div title="Work Type">{text}</div>,
+          },
+          {
+            title: "Est. Cost",
+            key: "contracted_work_total",
+            dataIndex: "contracted_work_total",
+            sorter: nullableStringOrNumberSorter("contracted_work_total"),
+            render: (text) => <div title="Est. Cost">{formatMoney(text) || Strings.DASH}</div>,
+          },
+          {
+            title: "End Date",
+            key: "planned_end_date",
+            dataIndex: "planned_end_date",
+            sorter: dateSorter("planned_end_date"),
+            render: (text) => <div title="End Date">{formatDate(text)}</div>,
+          },
+        ],
       },
       {
-        title: "Well Auth No.",
-        key: "well_authorization_number",
-        dataIndex: "well_authorization_number",
-        sorter: (a, b) =>
-          isNaN(a.well_authorization_number) && isNaN(b.well_authorization_number)
-            ? (a.well_authorization_number || "").localeCompare(b.well_authorization_number || "")
-            : a.well_authorization_number - b.well_authorization_number,
-        render: (text) => <div title="Well Auth No.">{text}</div>,
+        title: "Interim Submission",
+        className: "interim-submission",
+        children: [
+          {
+            title: "Interim Cost",
+            key: "interim_cost",
+            dataIndex: "interim_cost",
+            sorter: nullableStringOrNumberSorter("interim_cost"),
+            render: (text) => <div title="Interim Cost">{formatMoney(text) || Strings.DASH}</div>,
+            // className: "interim-submission",
+          },
+          {
+            title: "Interim Status",
+            key: "interim_status_description",
+            dataIndex: "interim_status_description",
+            sorter: nullableStringOrNumberSorter("interim_status_description"),
+            // className: "interim-submission",
+            render: (text, record) => {
+              const statusCode =
+                record.contracted_work_payment &&
+                record.contracted_work_payment.interim_payment_status_code;
+              const note =
+                record.contracted_work_payment &&
+                record.contracted_work_payment.interim_payment_status
+                  ? record.contracted_work_payment.interim_payment_status.note
+                  : null;
+              return (
+                <div title="Interim Status">
+                  {note && popover(note, "table-record-tooltip")}
+                  {text}
+                </div>
+              );
+            },
+          },
+          {
+            title: "Progress Report Status",
+            key: "interim_report_days_until_deadline",
+            dataIndex: "interim_report_days_until_deadline",
+            sorter: nullableStringOrNumberSorter("interim_report_days_until_deadline"),
+            // className: "interim-submission",
+            render: (text) => {
+              let display = null;
+              if (text === -Infinity) {
+                display = "Submitted";
+              } else if (text === Infinity) {
+                display = Strings.DASH;
+              } else {
+                display = `${text} days to submit`;
+              }
+              return <div title="Progress Report Status">{display}</div>;
+            },
+          },
+        ],
       },
       {
-        title: "Work Type",
-        key: "contracted_work_type_description",
-        dataIndex: "contracted_work_type_description",
-        sorter: nullableStringOrNumberSorter("contracted_work_type_description"),
-        render: (text) => <div title="Work Type">{text}</div>,
+        title: "Final Submission",
+        className: "final-submission",
+        children: [
+          {
+            title: "Final Cost",
+            key: "final_cost",
+            dataIndex: "final_cost",
+            sorter: nullableStringOrNumberSorter("final_cost"),
+            render: (text) => <div title="Final Cost">{formatMoney(text) || Strings.DASH}</div>,
+          },
+          {
+            title: "Final Status",
+            key: "final_status_description",
+            dataIndex: "final_status_description",
+            sorter: nullableStringOrNumberSorter("final_status_description"),
+            render: (text, record) => {
+              const statusCode =
+                record.contracted_work_payment &&
+                record.contracted_work_payment.final_payment_status_code;
+              const note =
+                record.contracted_work_payment &&
+                record.contracted_work_payment.final_payment_status
+                  ? record.contracted_work_payment.final_payment_status.note
+                  : null;
+              return (
+                <div title="Final Status">
+                  {note && popover(note, "table-record-tooltip")}
+                  {text}
+                </div>
+              );
+            },
+          },
+        ],
       },
       {
-        title: "Est. Cost",
-        key: "contracted_work_total",
-        dataIndex: "contracted_work_total",
-        sorter: nullableStringOrNumberSorter("contracted_work_total"),
-        render: (text) => <div title="Est. Cost">{formatMoney(text) || Strings.DASH}</div>,
-      },
-      {
-        title: "End Date",
-        key: "planned_end_date",
-        dataIndex: "planned_end_date",
-        sorter: dateSorter("planned_end_date"),
-        render: (text) => <div title="End Date">{formatDate(text)}</div>,
-      },
-      {
-        title: "Interim Cost",
-        key: "interim_cost",
-        dataIndex: "interim_cost",
-        sorter: nullableStringOrNumberSorter("interim_cost"),
-        render: (text) => <div title="Interim Cost">{formatMoney(text) || Strings.DASH}</div>,
-      },
-      {
-        title: "Interim Status",
-        key: "interim_status_description",
-        dataIndex: "interim_status_description",
-        sorter: nullableStringOrNumberSorter("interim_status_description"),
-        render: (text, record) => {
-          const statusCode =
-            record.contracted_work_payment &&
-            record.contracted_work_payment.interim_payment_status_code;
-          const note =
-            record.contracted_work_payment && record.contracted_work_payment.interim_payment_status
-              ? record.contracted_work_payment.interim_payment_status.note
-              : null;
-          return (
-            <div title="Interim Status">
-              {note && popover(note, "table-record-tooltip")}
-              {text}
-            </div>
-          );
-        },
-      },
-      {
-        title: "Progress Report Status",
-        key: "interim_report_days_until_deadline",
-        dataIndex: "interim_report_days_until_deadline",
-        sorter: nullableStringOrNumberSorter("interim_report_days_until_deadline"),
-        render: (text) => {
-          let display = null;
-          if (text === -Infinity) {
-            display = "Submitted";
-          } else if (text === Infinity) {
-            display = Strings.DASH;
-          } else {
-            display = `${text} days to submit`;
-          }
-          return <div title="Progress Report Status">{display}</div>;
-        },
-      },
-      {
-        title: "Final Cost",
-        key: "final_cost",
-        dataIndex: "final_cost",
-        sorter: nullableStringOrNumberSorter("final_cost"),
-        render: (text) => <div title="Final Cost">{formatMoney(text) || Strings.DASH}</div>,
-      },
-      {
-        title: "Final Status",
-        key: "final_status_description",
-        dataIndex: "final_status_description",
-        sorter: nullableStringOrNumberSorter("final_status_description"),
-        render: (text, record) => {
-          const statusCode =
-            record.contracted_work_payment &&
-            record.contracted_work_payment.final_payment_status_code;
-          const note =
-            record.contracted_work_payment && record.contracted_work_payment.final_payment_status
-              ? record.contracted_work_payment.final_payment_status.note
-              : null;
-          return (
-            <div title="Final Status">
-              {note && popover(note, "table-record-tooltip")}
-              {text}
-            </div>
-          );
-        },
-      },
-      {
-        key: "operations",
-        render: (text, record) => (
-          <div style={{ float: "right" }}>
-            <Button type="link" onClick={() => this.openContractedWorkPaymentModal(record)}>
-              <Icon type="form" className="icon-lg" />
-            </Button>
-          </div>
-        ),
+        title: "",
+        children: [
+          {
+            key: "operations",
+            render: (text, record) => (
+              <div style={{ float: "right" }}>
+                <Button type="link" onClick={() => this.openContractedWorkPaymentModal(record)}>
+                  <Icon type="form" className="icon-lg" />
+                </Button>
+              </div>
+            ),
+          },
+        ],
       },
     ];
 
@@ -402,26 +431,35 @@ export class ContractedWorkPaymentView extends Component {
           </Row>
           <br />
           <br />
-          <Title level={2}>
-            Approved Contracted Work Payment Information
-            <Button type="link" onClick={this.handleRefresh} style={{ float: "right" }}>
-              <Icon type="reload" className="icon-lg" />
-              Refresh
-            </Button>
-          </Title>
-          <Table
-            columns={columns}
-            pagination={false}
-            locale={{
-              emptyText:
-                "This application does not contain any approved contracted work items! Please contact us.",
-            }}
-            dataSource={dataSource}
-            loading={{
-              spinning: !this.state.isLoaded,
-              // delay: 500,
-            }}
-          />
+          <Row>
+            <Col>
+              <Title level={2}>Interim and Final Payments</Title>
+              <Paragraph>This table shows all of the approved work for this application.</Paragraph>
+              <div style={{ float: "right" }}>
+                <Button type="link" onClick={this.handleRefresh}>
+                  <Icon type="reload" className="icon-lg" />
+                  Refresh
+                </Button>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Table
+                columns={columns}
+                pagination={false}
+                locale={{
+                  emptyText:
+                    "This application does not contain any approved contracted work items! Please contact us.",
+                }}
+                dataSource={dataSource}
+                loading={{
+                  spinning: !this.state.isLoaded,
+                  // delay: 500,
+                }}
+              />
+            </Col>
+          </Row>
         </Col>
       </Row>
     );

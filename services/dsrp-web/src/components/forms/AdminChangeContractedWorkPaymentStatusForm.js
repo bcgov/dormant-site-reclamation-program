@@ -15,7 +15,7 @@ import {
 } from "antd";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { startCase, camelCase, lowerCase, isEmpty } from "lodash";
+import { startCase, camelCase, lowerCase, isEmpty, memoize } from "lodash";
 import { formatMoney, currencyMask, formatDate } from "@/utils/helpers";
 import { required, maxLength } from "@/utils/validate";
 import PropTypes from "prop-types";
@@ -43,6 +43,51 @@ export const toolTip = (title, extraClassName) => (
   <Tooltip title={title} placement="right" mouseEnterDelay={0.3}>
     <Icon type="info-circle" className={`icon-sm ${extraClassName}`} style={{ marginLeft: 4 }} />
   </Tooltip>
+);
+const validateFormApprovedAmount = memoize(
+  (
+    paymentType,
+    interimApprovedAmount,
+    finalApprovedAmount,
+    interimEstSharedCost,
+    finalEstSharedCost,
+    interimHalfEocTotal,
+    finalHalfEocTotal
+  ) => (value) => {
+    interimApprovedAmount = paymentType === "INTERIM" ? value : interimApprovedAmount;
+    finalApprovedAmount = paymentType === "FINAL" ? value : finalApprovedAmount;
+    const interimLostFunds = interimEstSharedCost - interimApprovedAmount;
+    const finalEligibleAmount = finalEstSharedCost + interimLostFunds;
+    const finalLostFunds = finalEligibleAmount - finalApprovedAmount;
+
+    if (paymentType === "INTERIM") {
+      if (value.toFixed(2) > interimHalfEocTotal.toFixed(2)) {
+        return `Cannot overpay on half of supplied EoC total of ${formatMoney(
+          interimHalfEocTotal
+        )}`;
+      }
+
+      if (interimLostFunds.toFixed(2) < 0) {
+        return `Cannot overpay on agreed interim payment amount of ${formatMoney(
+          interimEstSharedCost
+        )}`;
+      }
+    }
+
+    if (paymentType === "FINAL") {
+      if (value.toFixed(2) > finalHalfEocTotal.toFixed(2)) {
+        return `Cannot overpay on half of supplied EoC total of ${formatMoney(finalHalfEocTotal)}`;
+      }
+
+      if (finalLostFunds.toFixed(2) < 0) {
+        return `Cannot overpay on agreed final payment amount (plus carry-over from unused interim funds) of ${formatMoney(
+          finalEligibleAmount
+        )}`;
+      }
+    }
+
+    return undefined;
+  }
 );
 
 export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
@@ -145,12 +190,15 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
       ),
     },
     {
-      title: "Lost Eligible Funding",
+      title: "Unused Funds",
       dataIndex: "lost_funds",
       className: "table-column-right-align",
       render: (text) => <div>{formatMoney(text || 0)}</div>,
     },
   ];
+
+  const contractedWork = props.contractedWork;
+  const contractedWorkPayment = contractedWork.contracted_work_payment;
 
   const formApprovedAmount =
     props.formValues && props.formValues.approved_amount
@@ -163,9 +211,6 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
 
   const getTypeEstSharedCost = (percent, estSharedCost) => estSharedCost * (percent / 100);
   const getTypeMaxEligibleAmount = (eocTotalAmount) => eocTotalAmount * 0.5;
-
-  const contractedWork = props.contractedWork;
-  const contractedWorkPayment = contractedWork.contracted_work_payment;
 
   const firstEstSharedCost = parseFloat(
     getTypeEstSharedCost(firstPercent, contractedWork.estimated_shared_cost)
@@ -269,8 +314,6 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
     },
   ];
 
-  console.log("dataSource:\n", dataSource);
-
   const renderAlreadyApprovedAlert = (previousApprovedAmount, hasPrfs) => (
     <>
       <Alert
@@ -312,7 +355,7 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
         <Descriptions.Item label="Interim Report">
           {contractedWorkPayment.interim_report
             ? contractedWorkPayment.interim_report
-            : `Submission due in ${contractedWork.interim_report_days_until_deadline} days`}
+            : `Due in ${contractedWork.interim_report_days_until_deadline} days`}
         </Descriptions.Item>
         <Descriptions.Item label="Final Report">
           {(!isEmpty(contractedWorkPayment.final_report_document) && (
@@ -364,14 +407,26 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
             <br />
             <Text>
               Please enter in the amount to approve for this work item's&nbsp;
-              <Text strong>{contractedWorkTypeFormId} payment</Text>. This is the amount that
-              &nbsp;will be used in generating future&nbsp;
-              {contractedWorkTypeFormId} payment request forms containing this work item.
+              <Text strong>{contractedWorkTypeFormId} payment</Text>. This is the amount that will
+              be used in generating future&nbsp;
+              <Text strong>{contractedWorkTypeFormId} payment request forms</Text> containing this
+              work item.
             </Text>
           </>
         }
         component={renderConfig.FIELD}
-        validate={[required]}
+        validate={[
+          required,
+          validateFormApprovedAmount(
+            props.contractedWorkPaymentType,
+            interimApprovedAmount,
+            finalApprovedAmount,
+            interimEstSharedCost,
+            finalEstSharedCost,
+            interimHalfEocTotal,
+            finalHalfEocTotal
+          ),
+        ]}
         inputStyle={{ textAlign: "right" }}
         placeholder="$0.00"
         {...currencyMask}
@@ -383,8 +438,6 @@ export const AdminChangeContractedWorkPaymentStatusForm = (props) => {
       />
     </>
   );
-
-  console.log(props);
 
   let renderStatusForm = null;
   switch (props.contractedWorkPaymentStatus) {

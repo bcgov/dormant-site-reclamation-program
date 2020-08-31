@@ -49,6 +49,12 @@ tr .table-column-right-align:not(th) * {
   text-align: right !important;
 }
 
+th.interim-submission {
+  // background-color: $table-bg !important;
+  border-left: solid 2px $primary-color;
+  border-right: solid 2px $primary-color;
+}
+
 #approve-contracted-work-payment-table .ant-table-tbody > tr {
   &:last-child td {
     border-bottom: none;
