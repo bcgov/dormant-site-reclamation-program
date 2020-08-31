@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import { reduxForm, Field } from "redux-form";
 import { Row, Col, Form, Button } from "antd";
 import PropTypes from "prop-types";
+import Paragraph from "antd/lib/typography/Paragraph";
 import { renderConfig } from "@/components/common/config";
 import { required, exactLength } from "@/utils/validate";
 import { guidMask } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
-import Paragraph from "antd/lib/typography/Paragraph";
 
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
@@ -38,7 +38,7 @@ class ViewApplicationStatusForm extends Component {
           </Col>
         </Row>
         <Row className="steps-action">
-          <Col></Col>
+          <Col />
         </Row>
       </Form>
     );
