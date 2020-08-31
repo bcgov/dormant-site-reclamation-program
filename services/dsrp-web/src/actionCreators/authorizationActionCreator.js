@@ -20,12 +20,13 @@ export const createOTL = (application_guid) => (dispatch) => {
       });
       return response;
     })
-    .catch(() => {
+    .catch((err) => {
       notification.error({
         message: "Unexpected error occured, please try again",
         duration: 10,
       });
       dispatch(error(reducerTypes.GET_OTL));
+      throw new Error(err);
     });
 };
 
@@ -41,11 +42,12 @@ export const exchangeOTLForOTP = (otl_guid) => (dispatch) => {
       localStorage.setItem("timeout_seconds", response.data.timeout_seconds);
       return response.data;
     })
-    .catch(() => {
+    .catch((err) => {
       notification.error({
         message: "Unexpected error occured, please try again",
         duration: 10,
       });
       dispatch(error(reducerTypes.GET_OTP));
+      throw new Error(err);
     });
 };

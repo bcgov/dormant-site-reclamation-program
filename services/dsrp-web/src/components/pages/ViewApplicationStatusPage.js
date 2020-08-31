@@ -14,12 +14,13 @@ import { getApplication } from "@/reducers/applicationReducer";
 import { HELP_EMAIL } from "@/constants/strings";
 import CustomPropTypes from "@/customPropTypes";
 import { PageTracker } from "@/utils/trackers";
-import * as router from "@/constants/routes";
+import { isGuid } from "@/utils/helpers";
 
 const { Paragraph, Title } = Typography;
 
 const propTypes = {
   fetchApplicationSummaryById: PropTypes.func.isRequired,
+  createOTL: PropTypes.func.isRequired,
   loadedApplication: CustomPropTypes.applicationSummary,
   match: PropTypes.shape({
     params: {
@@ -31,14 +32,6 @@ const propTypes = {
 
 const defaultProps = {
   loadedApplication: { guid: "" },
-};
-
-const isGuid = (input) => {
-  if (input[0] === "{") {
-    input = input.substring(1, input.length - 1);
-  }
-  const regexGuid = /^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/gi;
-  return regexGuid.test(input);
 };
 
 export class ViewApplicationStatusPage extends Component {
