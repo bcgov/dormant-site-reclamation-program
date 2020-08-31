@@ -54,17 +54,13 @@ export class ViewApplicationStatusPage extends Component {
       this.props.fetchApplicationSummaryById(this.props.match.params.id);
       this.setState({ guid: this.props.match.params.id });
     }
-
-    // this.onFormSubmit({ guid: "8b8ce987-b16d-4167-aff9-229e44cb8bc0" });
   };
 
   onFormSubmit = (values) => {
     // request OTL and redirect to request-access page
     return this.props.createOTL(values.guid).then(() => {
-      // this.props.history.push(router.REQUEST_ACCESS.dynamicRoute("redirecting"));
       this.setState({ guid: values.guid, requestSent: true });
     });
-    // this.props.fetchApplicationSummaryById(values.guid);
   };
 
   render = () =>

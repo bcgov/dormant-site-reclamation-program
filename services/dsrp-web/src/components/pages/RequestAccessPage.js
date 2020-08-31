@@ -46,7 +46,9 @@ export class RequestAccessPage extends Component {
       isGuid(this.props.match.params.id)
     ) {
       this.props.exchangeOTLForOTP(this.props.match.params.id).then((data) => {
-        this.props.history.push(router.VIEW_APPLICATION_STATUS.dynamicRoute(data.application_guid));
+        this.props.history.push(
+          router.VIEW_APPLICATION_STATUS_LINK.dynamicRoute(data.application_guid)
+        );
       });
     }
   };
