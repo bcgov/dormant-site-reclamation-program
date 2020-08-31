@@ -54,9 +54,9 @@ class AuthorizationResource(Resource, UserMixin):
 		</table>"""
 
         with EmailService() as es:
-            es.send_email_to_applicant(
-                application, f"One time link password for application: {application_guid}",
-                html_content)
+            es.send_email_to_applicant(application,
+                                       f"Dormant Site Reclamation Program one-time use link",
+                                       html_content)
 
         current_app.logger.debug(f"This is a OTL: {otl_guid}")
         cache.set(str(otl_guid), application_guid, timeout=TIMEOUT_4_HOURS)
