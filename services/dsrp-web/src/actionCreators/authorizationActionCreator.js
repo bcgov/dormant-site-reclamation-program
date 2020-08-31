@@ -9,6 +9,8 @@ import { createRequestHeader } from "../utils/requestHeaders";
 export const createOTL = (application_guid) => (dispatch) => {
   localStorage.removeItem("app_guid");
   localStorage.removeItem("otp");
+  localStorage.removeItem("timeout_seconds");
+  localStorage.removeItem("issue_time_utc");
   dispatch(request(reducerTypes.GET_OTL));
   return axios
     .post(ENVIRONMENT.apiUrl + API.AUTHORIZE_OTP, { application_guid }, createRequestHeader())
