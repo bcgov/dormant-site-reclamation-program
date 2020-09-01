@@ -71,7 +71,7 @@ export class ContractedWorkPaymentForm extends Component {
 
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
-        <Title level={4}>{capitalize(paymentType)} Payment Information</Title>
+        <Title level={4}>{capitalize(paymentType)} Payment Form</Title>
 
         {!this.props.isAdminView &&
           paymentType === "final" &&
@@ -86,25 +86,23 @@ export class ContractedWorkPaymentForm extends Component {
 
         {!this.props.isAdminView && (
           <Paragraph>
-            In order to process this work item&apos;s <Text strong>{paymentType} payment</Text>, you
-            must provide the information below. Upon submitting the form it will be marked as ready
-            for review and you will be <Text underline>unable to edit your submission</Text>. If an
-            issue is found with your submission, you will be notified by email and be able to edit
-            your submission again. If an issue is not found with your submission, it will be
-            approved and payment will be sent to the British Columbia mailing address provided in
-            your application. Please email&nbsp;
-            <a href={`mailto:${HELP_EMAIL}`}>{HELP_EMAIL}</a>
-            &nbsp;if there are any questions.
+            In order for your <Text strong>{paymentType} payment request</Text> to be processed, you
+            must complete this form with your Evidence of Cost.
           </Paragraph>
         )}
 
         {!this.props.isAdminView && paymentType === "interim" && (
           <Paragraph>
-            Once you have submitted this work item&apos;s interim payment information, you
-            have&nbsp;
-            <Text strong>30 days</Text> to complete the Interim Progress Report form available in
-            the <Text strong>Interim Progress Report</Text> tab above. Completion of this form is a
-            requirement for receiving final payment.
+            The Interim Progress Report must be submitted within&nbsp;
+            <Text strong>30 days</Text> of requesting an interim payment.
+          </Paragraph>
+        )}
+
+        {!this.props.isAdminView && (
+          <Paragraph>
+            Once you submit your request, you cannot edit it. If you have any questions,
+            contact&nbsp;
+            <a href={`mailto:${HELP_EMAIL}`}>{HELP_EMAIL}</a>.
           </Paragraph>
         )}
 
@@ -113,7 +111,7 @@ export class ContractedWorkPaymentForm extends Component {
             <Field
               id={`${paymentType}_total_hours_worked_to_date`}
               name={`${paymentType}_total_hours_worked_to_date`}
-              label="Total Number of Hours Worked"
+              label="Total Hours Worked"
               placeholder="0"
               disabled={isViewOnly}
               component={renderConfig.FIELD}
@@ -131,7 +129,7 @@ export class ContractedWorkPaymentForm extends Component {
             <Field
               id={`${paymentType}_actual_cost`}
               name={`${paymentType}_actual_cost`}
-              label="Evidence of Cost Invoice Amount Total"
+              label="Evidence of Cost Total"
               placeholder="$0.00"
               disabled={isViewOnly}
               component={renderConfig.FIELD}
@@ -159,13 +157,13 @@ export class ContractedWorkPaymentForm extends Component {
               name={`${paymentType}_eoc`}
               label={
                 <>
-                  <div>Evidence of Cost</div>
+                  <div>Evidence of Cost Upload</div>
                   <div className="font-weight-normal">
-                    Please&nbsp;
+                    Fill in the &nbsp;
                     <a href={EOC_TEMPLATE} target="_blank" rel="noopener noreferrer">
-                      download
+                      Evidence of Cost template
                     </a>
-                    &nbsp;and use the provided Evidence of Cost template.
+                    &nbsp;and upload it here.
                     {existingEvidenceOfCost &&
                       " If your original Evidence of Cost document has not changed, you do not need to re-upload it."}
                   </div>
