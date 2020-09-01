@@ -229,7 +229,7 @@ export class ContractedWorkPaymentView extends Component {
             dataIndex: "interim_cost",
             sorter: nullableStringOrNumberSorter("interim_cost"),
             render: (text) => <div title="Interim Cost">{formatMoney(text) || Strings.DASH}</div>,
-            // className: "interim-submission",
+            className: "interim-submission-left",
           },
           {
             title: "Interim Status",
@@ -259,7 +259,7 @@ export class ContractedWorkPaymentView extends Component {
             key: "interim_report_deadline",
             dataIndex: "interim_report_deadline",
             sorter: nullableStringOrNumberSorter("interim_report_deadline"),
-            // className: "interim-submission",
+            className: "interim-submission-right",
             render: (text) => {
               let display = null;
               if (text === -Infinity) {

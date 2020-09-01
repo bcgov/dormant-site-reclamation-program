@@ -49,11 +49,33 @@ tr .table-column-right-align:not(th) * {
   text-align: right !important;
 }
 
-th.interim-submission {
+th,
+td {
   // background-color: $table-bg !important;
-  border-left: solid 2px $primary-color;
-  border-right: solid 2px $primary-color;
+  &.interim-submission {
+    border-left: solid 2px $primary-color;
+    border-right: solid 2px $primary-color;
+  }
+  &.interim-submission-left {
+    border-left: solid 2px $primary-color;
+  }
+  &.interim-submission-right {
+    border-right: solid 2px $primary-color;
+  }
 }
+// td {
+//   // background-color: $table-bg !important;
+//   &.interim-submission {
+//     border-left: solid 2px $table-seperator;
+//     border-right: solid 2px $table-seperator;
+//   }
+//   &.interim-submission-left {
+//     border-left: solid 2px $table-seperator;
+//   }
+//   &.interim-submission-right {
+//     border-right: solid 2px $table-seperator;
+//   }
+// }
 
 #approve-contracted-work-payment-table .ant-table-tbody > tr {
   &:last-child td {
