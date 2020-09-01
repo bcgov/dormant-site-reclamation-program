@@ -24,7 +24,7 @@ export const createOTL = (application_guid) => (dispatch) => {
     })
     .catch((err) => {
       notification.error({
-        message: "Unexpected error occured, please try again",
+        message: "Unexpected error occurred, please try again",
         duration: 10,
       });
       dispatch(error(reducerTypes.GET_OTL));
@@ -46,10 +46,15 @@ export const exchangeOTLForOTP = (otl_guid) => (dispatch) => {
     })
     .catch((err) => {
       notification.error({
-        message: "Unexpected error occured, please try again",
+        message: "Unexpected error occurred, please try again",
         duration: 10,
       });
       dispatch(error(reducerTypes.GET_OTP));
       throw new Error(err);
     });
+};
+
+export const redirectToAccessPage = () => (dispatch) => {
+  dispatch(request(reducerTypes.REDIRECT_TO_ACCESS_REQUEST));
+  
 };

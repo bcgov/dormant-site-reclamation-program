@@ -45,7 +45,7 @@ export class RequestAccessPage extends Component {
         .catch(() => {
           this.setState({ isOTLExpired: true });
         });
-    }
+    } else this.setState({ isOTLExpired: true });
   };
 
   render = () => {
