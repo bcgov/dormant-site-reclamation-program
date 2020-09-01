@@ -50,14 +50,16 @@ tr .table-column-right-align:not(th) * {
 }
 
 th {
-  &.interim-submission {
+  &.interim-submission,
+  &.final-submission {
     border-left: solid 2px $primary-color;
     border-right: solid 2px $primary-color;
   }
   &.interim-submission-left {
     border-left: solid 2px $primary-color;
   }
-  &.interim-submission-right {
+  &.interim-submission-right,
+  &.final-submission-right {
     border-right: solid 2px $primary-color;
   }
 }
@@ -70,7 +72,8 @@ td {
     -webkit-box-shadow: inset 0 -2px 0 0 $table-seperator;
     -moz-box-shadow: inset 0 -2px 0 0 $table-seperator;
   }
-  &.interim-submission-right {
+  &.interim-submission-right,
+  &.final-submission-right {
     border-right: solid 2px $primary-color;
     border-bottom: none !important;
     box-shadow: inset 0 -2px 0 0 $table-seperator;
