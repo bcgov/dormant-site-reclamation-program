@@ -73,6 +73,17 @@ export class ContractedWorkPaymentForm extends Component {
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <Title level={4}>{capitalize(paymentType)} Payment Information</Title>
 
+        {!this.props.isAdminView &&
+          paymentType === "final" &&
+          interimPaymentStatus === "INFORMATION_REQUIRED" && (
+            <Paragraph>
+              <Alert
+                showIcon
+                message="You must complete and submit this work item's interim payment information before you can submit its final payment information."
+              />
+            </Paragraph>
+          )}
+
         {!this.props.isAdminView && (
           <Paragraph>
             In order to process this work item&apos;s <Text strong>{paymentType} payment</Text>, you
@@ -96,17 +107,6 @@ export class ContractedWorkPaymentForm extends Component {
             requirement for receiving final payment.
           </Paragraph>
         )}
-
-        {!this.props.isAdminView &&
-          paymentType === "final" &&
-          interimPaymentStatus === "INFORMATION_REQUIRED" && (
-            <Paragraph>
-              <Alert
-                showIcon
-                message="You must complete and submit this work item's interim payment information before you can submit its final payment information."
-              />
-            </Paragraph>
-          )}
 
         <Row gutter={48}>
           <Col>
@@ -166,34 +166,32 @@ export class ContractedWorkPaymentForm extends Component {
                       download
                     </a>
                     &nbsp;and use the provided Evidence of Cost template.
-                    {existingEvidenceOfCost && (
-                      <>
-                        &nbsp;You can download your previously uploaded Evidence of Cost&nbsp;
-                        <LinkButton
-                          onClick={() =>
-                            downloadDocument(
-                              this.props.contractedWorkPayment.application_guid,
-                              existingEvidenceOfCost.application_document_guid,
-                              existingEvidenceOfCost.document_name
-                            )
-                          }
-                        >
-                          here
-                        </LinkButton>
-                        . If your original Evidence of Cost document has not changed, you do not
-                        need to re-upload it.
-                      </>
-                    )}
+                    {existingEvidenceOfCost &&
+                      " If your original Evidence of Cost document has not changed, you do not need to re-upload it."}
                   </div>
                 </>
               }
               disabled={isViewOnly}
               component={renderConfig.FILE_UPLOAD}
               validate={existingEvidenceOfCost ? [] : [requiredList]}
-              labelIdle="Upload Evidence of Cost"
               acceptedFileTypesMap={EXCEL}
               allowMultiple={false}
               allowRevert
+              renderAfterInput={() =>
+                (existingEvidenceOfCost && (
+                  <LinkButton
+                    onClick={() =>
+                      downloadDocument(
+                        this.props.contractedWorkPayment.application_guid,
+                        existingEvidenceOfCost.application_document_guid,
+                        existingEvidenceOfCost.document_name
+                      )
+                    }
+                  >
+                    Download Uploaded Evidence of Cost
+                  </LinkButton>
+                )) || <></>
+              }
             />
             {paymentType === "final" && (
               <Field
@@ -208,34 +206,32 @@ export class ContractedWorkPaymentForm extends Component {
                         download
                       </a>
                       &nbsp;and use the provided Final Report template and upload it as a PDF.
-                      {existingFinalReport && (
-                        <>
-                          &nbsp;You can download your previously uploaded Final Report&nbsp;
-                          <LinkButton
-                            onClick={() =>
-                              downloadDocument(
-                                this.props.contractedWorkPayment.application_guid,
-                                existingFinalReport.application_document_guid,
-                                existingFinalReport.document_name
-                              )
-                            }
-                          >
-                            here
-                          </LinkButton>
-                          . If your original Final Report document has not changed, you do not need
-                          to re-upload it.
-                        </>
-                      )}
+                      {existingFinalReport &&
+                        " If your original Final Report document has not changed, you do not need to re-upload it."}
                     </div>
                   </>
                 }
                 disabled={isViewOnly}
                 component={renderConfig.FILE_UPLOAD}
                 validate={existingFinalReport ? [] : [requiredList]}
-                labelIdle="Upload Final Report"
                 acceptedFileTypesMap={DOCX}
                 allowMultiple={false}
                 allowRevert
+                renderAfterInput={() =>
+                  (existingFinalReport && (
+                    <LinkButton
+                      onClick={() =>
+                        downloadDocument(
+                          this.props.contractedWorkPayment.application_guid,
+                          existingFinalReport.application_document_guid,
+                          existingFinalReport.document_name
+                        )
+                      }
+                    >
+                      Download Uploaded Final Report
+                    </LinkButton>
+                  )) || <></>
+                }
               />
             )}
 

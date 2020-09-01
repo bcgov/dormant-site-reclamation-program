@@ -21,6 +21,7 @@ import { openModal, closeModal } from "@/actions/modalActions";
 import LinkButton from "@/components/common/LinkButton";
 import { contractedWorkIdSorter } from "@/utils/helpers";
 import CustomPropTypes from "@/customPropTypes";
+import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
 
 const propTypes = {
   applicationGuid: PropTypes.string.isRequired,
@@ -69,17 +70,16 @@ export class ContractedWorkPaymentView extends Component {
     const data = applicationApprovedContractedWork.map((work) => {
       const contracted_work_payment = work.contracted_work_payment || {};
       const { interim_payment_submission_date } = contracted_work_payment;
-      let interim_report_days_until_deadline = Infinity;
+      let interim_report_deadline = Infinity;
       if (interim_payment_submission_date) {
         if (contracted_work_payment.interim_report) {
-          interim_report_days_until_deadline = -Infinity;
+          interim_report_deadline = -Infinity;
         } else {
           const daysToSubmit = 30;
-          let daysLeftCount =
-            daysToSubmit -
-            (moment() - moment(interim_payment_submission_date)) / (1000 * 60 * 60 * 24);
-          daysLeftCount = Math.round(daysLeftCount);
-          interim_report_days_until_deadline = daysLeftCount;
+          interim_report_deadline = moment(interim_payment_submission_date).add(
+            daysToSubmit,
+            "days"
+          );
         }
       }
       return {
@@ -100,7 +100,7 @@ export class ContractedWorkPaymentView extends Component {
               contracted_work_payment.final_payment_status_code
             ]) ||
           "Information Required",
-        interim_report_days_until_deadline,
+        interim_report_deadline,
         work,
       };
     });
@@ -242,9 +242,9 @@ export class ContractedWorkPaymentView extends Component {
           },
           {
             title: "Progress Report Status",
-            key: "interim_report_days_until_deadline",
-            dataIndex: "interim_report_days_until_deadline",
-            sorter: nullableStringOrNumberSorter("interim_report_days_until_deadline"),
+            key: "interim_report_deadline",
+            dataIndex: "interim_report_deadline",
+            sorter: nullableStringOrNumberSorter("interim_report_deadline"),
             // className: "interim-submission",
             render: (text) => {
               let display = null;
@@ -253,7 +253,7 @@ export class ContractedWorkPaymentView extends Component {
               } else if (text === Infinity) {
                 display = Strings.DASH;
               } else {
-                display = `${text} days to submit`;
+                display = `Due ${formatDate(text)}`;
               }
               return <div title="Progress Report Status">{display}</div>;
             },
@@ -433,8 +433,24 @@ export class ContractedWorkPaymentView extends Component {
           <br />
           <Row>
             <Col>
-              <Title level={2}>Interim and Final Payments</Title>
+              <Title level={1}>Interim and Final Payments</Title>
               <Paragraph>This table shows all of the approved work for this application.</Paragraph>
+              <Paragraph>
+                The template documents required as part of interim and final payment submissions can
+                be downloaded here:
+                <ul>
+                  <li>
+                    <a href={EOC_TEMPLATE} target="_blank" rel="noopener noreferrer">
+                      Evidence of Cost Template
+                    </a>
+                  </li>
+                  <li>
+                    <a href={FINAL_REPORT_TEMPLATE} target="_blank" rel="noopener noreferrer">
+                      Final Report Template
+                    </a>
+                  </li>
+                </ul>
+              </Paragraph>
               <div style={{ float: "right" }}>
                 <Button type="link" onClick={this.handleRefresh}>
                   <Icon type="reload" className="icon-lg" />

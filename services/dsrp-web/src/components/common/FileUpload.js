@@ -22,6 +22,7 @@ const propTypes = {
   allowMultiple: PropTypes.bool,
   chunkSize: PropTypes.number,
   labelIdle: PropTypes.string,
+  renderAfterInput: PropTypes.func,
 };
 
 const defaultProps = {
@@ -33,6 +34,7 @@ const defaultProps = {
   onRemoveFile: () => {},
   chunkSize: 1048576, // 1MB
   labelIdle: "Drag & Drop your files or Browse",
+  renderAfterInput: () => <></>,
 };
 
 class FileUpload extends React.Component {
@@ -127,6 +129,7 @@ class FileUpload extends React.Component {
           acceptedFileTypes={acceptedFileTypes}
           fileValidateTypeLabelExpectedTypesMap={this.props.acceptedFileTypesMap}
         />
+        {this.props.renderAfterInput()}
       </Form.Item>
     );
   }
