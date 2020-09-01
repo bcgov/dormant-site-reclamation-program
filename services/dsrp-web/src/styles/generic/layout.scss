@@ -49,9 +49,7 @@ tr .table-column-right-align:not(th) * {
   text-align: right !important;
 }
 
-th,
-td {
-  // background-color: $table-bg !important;
+th {
   &.interim-submission {
     border-left: solid 2px $primary-color;
     border-right: solid 2px $primary-color;
@@ -63,19 +61,23 @@ td {
     border-right: solid 2px $primary-color;
   }
 }
-// td {
-//   // background-color: $table-bg !important;
-//   &.interim-submission {
-//     border-left: solid 2px $table-seperator;
-//     border-right: solid 2px $table-seperator;
-//   }
-//   &.interim-submission-left {
-//     border-left: solid 2px $table-seperator;
-//   }
-//   &.interim-submission-right {
-//     border-right: solid 2px $table-seperator;
-//   }
-// }
+
+td {
+  &.interim-submission-left {
+    border-left: solid 2px $primary-color;
+    border-bottom: none !important;
+    box-shadow: inset 0 -2px 0 0 $table-seperator;
+    -webkit-box-shadow: inset 0 -2px 0 0 $table-seperator;
+    -moz-box-shadow: inset 0 -2px 0 0 $table-seperator;
+  }
+  &.interim-submission-right {
+    border-right: solid 2px $primary-color;
+    border-bottom: none !important;
+    box-shadow: inset 0 -2px 0 0 $table-seperator;
+    -webkit-box-shadow: inset 0 -2px 0 0 $table-seperator;
+    -moz-box-shadow: inset 0 -2px 0 0 $table-seperator;
+  }
+}
 
 #approve-contracted-work-payment-table .ant-table-tbody > tr {
   &:last-child td {

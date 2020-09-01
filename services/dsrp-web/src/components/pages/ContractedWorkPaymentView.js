@@ -367,7 +367,7 @@ export class ContractedWorkPaymentView extends Component {
         <Col>
           <Row gutter={64} type="flex" justify="center" align="middle">
             <Col md={24} lg={12}>
-              <Title level={4}>Interim Payment Information Submission Progress</Title>
+              <Title level={4}>Interim Payment Submission Progress</Title>
               <Row gutter={16} type="flex" justify="space-around" align="middle">
                 <Col style={{ textAlign: "center" }}>
                   <Text strong>
@@ -405,7 +405,7 @@ export class ContractedWorkPaymentView extends Component {
               </Text>
             </Col>
             <Col md={24} lg={12}>
-              <Title level={4}>Final Payment Information Submission Progress</Title>
+              <Title level={4}>Final Payment Submission Progress</Title>
               <Row gutter={16} type="flex" justify="space-around" align="middle">
                 <Col style={{ textAlign: "center" }}>
                   <Text strong>
