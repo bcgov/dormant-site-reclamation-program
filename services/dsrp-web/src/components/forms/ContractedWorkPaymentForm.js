@@ -100,8 +100,9 @@ export class ContractedWorkPaymentForm extends Component {
 
         {!this.props.isAdminView && (
           <Paragraph>
-            Once you submit your request, you cannot edit it. If you have any questions,
-            contact&nbsp;
+            Once you submit your request, you cannot edit it.
+            <br />
+            If you have any questions, contact&nbsp;
             <a href={`mailto:${HELP_EMAIL}`}>{HELP_EMAIL}</a>.
           </Paragraph>
         )}
@@ -240,14 +241,14 @@ export class ContractedWorkPaymentForm extends Component {
                   name={`${paymentType}_dormancy_and_shutdown_regulations_confirmation`}
                   label={
                     <>
-                      I declare that I have completed all required notifications and activities in
-                      accordance with the&nbsp;
+                      I declare that all required notifications and activities have been submitted
+                      in accordance with the&nbsp;
                       <a
                         href="https://www.bclaws.ca/civix/document/id/complete/statreg/112_2019"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        Dormancy and Shutdown Regulations
+                        Dormancy and Shutdown Regulation
                       </a>
                       .
                     </>
@@ -275,8 +276,8 @@ export class ContractedWorkPaymentForm extends Component {
 
             {!this.props.isAdminView && (
               <Paragraph>
-                Please keep your records available. If the province requests evidence of cost, it
-                must be provided within 30 days.
+                Keep all records of original invoices for this work. If they are requested by the
+                Province, you will be required to provide them within 30 days of the request.
               </Paragraph>
             )}
           </Col>

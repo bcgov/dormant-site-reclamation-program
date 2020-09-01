@@ -12,10 +12,12 @@ const propTypes = {
   contractedWorkPayment: PropTypes.objectOf(PropTypes.any).isRequired,
   applicationSummary: CustomPropTypes.applicationSummary.isRequired,
   isAdminView: PropTypes.bool,
+  activeKey: PropTypes.string,
 };
 
 const defaultProps = {
   isAdminView: false,
+  activeKey: "interim_payment",
 };
 
 export class ContractedWorkPaymentModal extends Component {
@@ -32,8 +34,8 @@ export class ContractedWorkPaymentModal extends Component {
     );
 
   render = () => (
-    <Tabs type="card" className="ant-tabs-center">
-      <TabPane tab="Interim Payment" key="0">
+    <Tabs type="card" className="ant-tabs-center" defaultActiveKey={this.props.activeKey}>
+      <TabPane tab="Interim Payment" key="interim_payment">
         <InterimContractedWorkPaymentForm
           paymentType="interim"
           onSubmit={this.handleSubmitInterimContractedWorkPayment}
@@ -44,7 +46,7 @@ export class ContractedWorkPaymentModal extends Component {
           isAdminView={this.props.isAdminView}
         />
       </TabPane>
-      <TabPane tab="Interim Progress Report" key="1">
+      <TabPane tab="Interim Progress Report" key="interim_progress_report">
         <InterimReportForm
           onSubmit={this.handleSubmitInterimContractedWorkPaymentProgressReport}
           closeModal={this.props.closeModal}
@@ -53,7 +55,7 @@ export class ContractedWorkPaymentModal extends Component {
           isAdminView={this.props.isAdminView}
         />
       </TabPane>
-      <TabPane tab="Final Payment" key="2">
+      <TabPane tab="Final Payment" key="final_payment">
         <FinalContractedWorkPaymentForm
           paymentType="final"
           onSubmit={this.handleSubmitFinalContractedWorkPayment}

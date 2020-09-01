@@ -35,19 +35,19 @@ class InterimReportForm extends Component {
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <Title level={4}>Interim Progress Report</Title>
 
-        {!this.props.isAdminView && (
-          <Paragraph>
-            Completion of this form is a requirement for receiving final payment. Once the form has
-            been submitted you will be unable to modify it.
-          </Paragraph>
-        )}
-
         {!this.props.isAdminView && !haveInterimPaymentInfo && (
           <Paragraph>
             <Alert
               showIcon
               message="You must complete and submit this work item's interim payment information before you can submit its Interim Progress Report."
             />
+          </Paragraph>
+        )}
+
+        {!this.props.isAdminView && (
+          <Paragraph>
+            Completion of this form is a requirement for receiving final payment. Once the form has
+            been submitted you will be unable to modify it.
           </Paragraph>
         )}
 
@@ -60,9 +60,8 @@ class InterimReportForm extends Component {
                 <>
                   <div>Interim Progress Report</div>
                   <div className="font-weight-normal">
-                    Please briefly describe the work that was completed as it relates to the
-                    contents of the provided interim Evidence of Cost document. Must be between 25
-                    and 250 characters.
+                    Briefly describe the work that was reported in the uploaded interim Evidence of
+                    Cost file. Must be between 25 and 250 characters.
                   </div>
                 </>
               }

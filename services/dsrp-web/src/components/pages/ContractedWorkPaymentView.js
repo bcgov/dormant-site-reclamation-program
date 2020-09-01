@@ -3,7 +3,7 @@ import { bindActionCreators, compose } from "redux";
 import PropTypes from "prop-types";
 import moment from "moment";
 import { connect } from "react-redux";
-import { startCase, camelCase, round } from "lodash";
+import { startCase, camelCase, round, isEmpty } from "lodash";
 import { Row, Col, Typography, Table, Icon, Button, Popover, Progress } from "antd";
 import { formatDate, formatMoney, nullableStringOrNumberSorter, dateSorter } from "@/utils/helpers";
 import {
@@ -107,12 +107,25 @@ export class ContractedWorkPaymentView extends Component {
     return data;
   };
 
-  openContractedWorkPaymentModal = (record) =>
-    this.props.openModal({
+  openContractedWorkPaymentModal = (record) => {
+    // Set the default active tab to be the most relevant one for this work item.
+    let activeKey = "final_payment";
+    const contractedWorkPayment = record.contracted_work_payment;
+    if (
+      !contractedWorkPayment ||
+      contractedWorkPayment.interim_payment_status_code === "INFORMATION_REQUIRED"
+    ) {
+      activeKey = "interim_payment";
+    } else if (isEmpty(contractedWorkPayment.interim_report)) {
+      activeKey = "interim_progress_report";
+    }
+
+    return this.props.openModal({
       props: {
         title: `Provide Payment Information for Work ID ${record.work_id}`,
         contractedWorkPayment: record.work,
         applicationSummary: this.props.applicationSummary,
+        activeKey: activeKey,
         handleSubmitInterimContractedWorkPayment: this.handleSubmitInterimContractedWorkPayment,
         handleSubmitFinalContractedWorkPayment: this.handleSubmitFinalContractedWorkPayment,
         handleSubmitInterimContractedWorkPaymentProgressReport: this
@@ -120,6 +133,7 @@ export class ContractedWorkPaymentView extends Component {
       },
       content: modalConfig.CONTRACTED_WORK_PAYMENT,
     });
+  };
 
   handleSubmitInterimContractedWorkPayment = (contractedWorkPayment, values) =>
     this.props
