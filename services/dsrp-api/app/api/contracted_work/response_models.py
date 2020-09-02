@@ -50,16 +50,16 @@ CONTRACTED_WORK_PAYMENT = api.model(
             CONTRACTED_WORK_PAYMENT_STATUS_CHANGE, skip_none=True),
         'final_payment_status': fields.Nested(
             CONTRACTED_WORK_PAYMENT_STATUS_CHANGE, skip_none=True),
-        "surface_landowner": fields.String,
-        "reclamation_was_achieved": fields.Boolean,
-        "abandonment_cut_and_capped_completed": fields.Boolean,
-        "abandonment_notice_of_operations_submitted": fields.Boolean,
-        "abandonment_meters_of_pipeline_abandoned": fields.Integer,
-        "site_investigation_type_of_document_submitted": fields.String,
-        "site_investigation_concerns_identified": fields.Boolean,
-        "remediation_identified_contamination_meets_standards": fields.Boolean,
-        "remediation_type_of_document_submitted": fields.String,
-        "remediation_reclaimed_to_meet_cor_p1_requirements": fields.Boolean,
-        "reclamation_reclaimed_to_meet_cor_p2_requirements": fields.Boolean,
-        "reclamation_surface_reclamation_criteria_met": fields.Boolean
+        'surface_landowner': fields.String,
+        'reclamation_was_achieved': fields.Boolean,
+        'abandonment_cut_and_capped_completed': fields.Boolean,
+        'abandonment_notice_of_operations_submitted': fields.Boolean,
+        'abandonment_meters_of_pipeline_abandoned': fields.Integer,
+        'site_investigation_type_of_document_submitted': fields.String,
+        'site_investigation_concerns_identified': fields.Boolean,
+        'remediation_identified_contamination_meets_standards': fields.Boolean,
+        'remediation_type_of_document_submitted': fields.String,
+        'remediation_reclaimed_to_meet_cor_p1_requirements': fields.Boolean,
+        'reclamation_reclaimed_to_meet_cor_p2_requirements': fields.Boolean,
+        'reclamation_surface_reclamation_criteria_met': fields.Boolean
     })
