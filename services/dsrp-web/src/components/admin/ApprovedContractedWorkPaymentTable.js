@@ -271,6 +271,16 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         ),
       },
       {
+        title: "Company Name",
+        key: "company_name",
+        dataIndex: "company_name",
+        sortField: "company_name",
+        sorter: true,
+        filterDropdown: this.columnSearchInput("company_name", "Enter Company Name"),
+        filterIcon: () => this.searchFilterIcon("company_name"),
+        render: (text) => <div title="Company Name">{text}</div>,
+      },
+      {
         title: "Work ID",
         key: "work_id",
         dataIndex: "work_id",

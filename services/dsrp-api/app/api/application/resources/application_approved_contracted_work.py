@@ -32,7 +32,10 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
     def get(self):
         # Get all approved contracted work items on all approved applications
         application_id = request.args.get('application_id', type=int)
-        all_approved_contracted_work = Application.all_approved_contracted_work(application_id)
+        application_guid = request.args.get('application_guid', type=str)
+        company_name = request.args.get('company_name', type=str)
+        all_approved_contracted_work = Application.all_approved_contracted_work(
+            application_id, application_guid, company_name)
 
         # Get pagination/sorting query params
         page_number = request.args.get('page', DEFAULT_PAGE_NUMBER, type=int)
@@ -94,7 +97,7 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
             records.sort(
                 key=lambda x: (x['application_id'], int(x[sort_field].split('.')[1])),
                 reverse=reverse)
-        elif sort_field in ('application_id', 'work_id', 'contracted_work_type'):
+        elif sort_field in ('application_id', 'work_id', 'contracted_work_type', 'company_name'):
             records.sort(key=lambda x: x[sort_field], reverse=reverse)
         elif sort_field in ('review_deadlines'):
             records.sort(

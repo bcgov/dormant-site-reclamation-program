@@ -43,6 +43,8 @@ const defaultParams = {
   sort_field: "review_deadlines",
   sort_dir: "asc",
   application_id: undefined,
+  application_guid: undefined,
+  company_name: undefined,
   work_id: undefined,
   well_authorization_number: undefined,
   contracted_work_type: [],

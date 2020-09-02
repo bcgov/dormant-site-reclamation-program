@@ -4,7 +4,7 @@ from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from sqlalchemy.orm import validates
 from sqlalchemy.schema import FetchedValue
-from sqlalchemy import select, desc, func
+from sqlalchemy import select, desc, func, and_
 from marshmallow import fields
 from flask_restplus import marshal
 
@@ -107,6 +107,10 @@ class Application(Base, AuditMixin):
     def company_name(self):
         return self.json.get('company_details', {}).get('company_name', {}).get('label')
 
+    @company_name.expression
+    def company_name(self):
+        return Application.json['company_details']['company_name']['label'].astext
+
     @hybrid_property
     def agreement_number(self):
         return str(self.id).zfill(4)
@@ -156,6 +160,7 @@ class Application(Base, AuditMixin):
                 cw_item = {}
                 cw_item['application_id'] = self.id
                 cw_item['application_guid'] = str(self.guid)
+                cw_item['company_name'] = self.company_name
                 cw_item['contracted_work_type'] = cw_type
                 cw_item['well_authorization_number'] = ws['details']['well_authorization_number']
                 cw_item['estimated_shared_cost'] = self.calc_est_shared_cost(cw_data)
@@ -169,17 +174,26 @@ class Application(Base, AuditMixin):
         return contracted_work
 
     @classmethod
-    def all_approved_contracted_work(self, application_id):
+    def all_approved_contracted_work(self,
+                                     application_id=None,
+                                     application_guid=None,
+                                     company_name=None):
         contracted_work_payments = []
         approved_applications = []
 
-        if application_id:
-            application = Application.query.filter_by(id=application_id).one_or_none()
-            application_guid = application.guid if application else None
-            approved_applications = Application.query.filter_by(
-                id=application_id, application_status_code='FIRST_PAY_APPROVED').all()
-            contracted_work_payments = ContractedWorkPayment.query.filter_by(
-                application_guid=application_guid).all()
+        if application_id or application_guid or company_name:
+            if application_id and not application_guid:
+                application = Application.query.filter_by(id=application_id).one_or_none()
+                application_guid = application.guid if application else None
+            approved_applications = Application.query.filter(
+                and_(Application.application_status_code == 'FIRST_PAY_APPROVED',
+                     Application.id == application_id if application_id != None else True,
+                     Application.guid == application_guid if application_guid != None else True,
+                     Application.company_name == company_name
+                     if company_name != None else True)).order_by(Application.id).all()
+            approved_application_guids = [x.guid for x in approved_applications]
+            contracted_work_payments = ContractedWorkPayment.query.filter(
+                Application.guid.in_(approved_application_guids)).all()
         else:
             approved_applications = Application.query.filter_by(
                 application_status_code='FIRST_PAY_APPROVED').order_by(Application.id).all()
