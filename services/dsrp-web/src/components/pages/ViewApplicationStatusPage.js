@@ -9,7 +9,7 @@ import ApplicationStatusCard from "@/components/pages/ApplicationStatusCard";
 import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
 import ContractedWorkPaymentView from "@/components/pages/ContractedWorkPaymentView";
 import { fetchApplicationSummaryById } from "@/actionCreators/applicationActionCreator";
-import { createOTL } from "@/actionCreators/authorizationActionCreator";
+import { createOTL, endUserTemporarySession } from "@/actionCreators/authorizationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
 import { HELP_EMAIL } from "@/constants/strings";
 import CustomPropTypes from "@/customPropTypes";
@@ -29,6 +29,7 @@ const propTypes = {
     },
   }).isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
+  endUserTemporarySession: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -45,7 +46,9 @@ export class ViewApplicationStatusPage extends Component {
       this.props.match.params.id &&
       isGuid(this.props.match.params.id)
     ) {
-      this.props.fetchApplicationSummaryById(this.props.match.params.id);
+      this.props.fetchApplicationSummaryById(this.props.match.params.id).catch((error) => {
+        if (error.response.status === 403) this.props.endUserTemporarySession(this.props.history);
+      });
       this.setState({ guid: this.props.match.params.id });
     }
   };
@@ -57,9 +60,14 @@ export class ViewApplicationStatusPage extends Component {
 
   onFormSubmit = (values) => {
     // request OTL and redirect to request-access page
-    return this.props.createOTL(values.guid).then(() => {
-      this.setState({ guid: values.guid, requestSent: true });
-    });
+    return this.props
+      .createOTL(values.guid)
+      .then(() => {
+        this.setState({ guid: values.guid, requestSent: true });
+      })
+      .catch(() => {
+        this.props.endUserTemporarySession(this.props.history);
+      });
   };
 
   render = () =>
@@ -127,6 +135,7 @@ const mapDispatchToProps = (dispatch) =>
     {
       fetchApplicationSummaryById,
       createOTL,
+      endUserTemporarySession,
     },
     dispatch
   );

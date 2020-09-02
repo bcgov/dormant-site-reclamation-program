@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Icon } from "antd";
 import PropTypes from "prop-types";
-import { Redirect, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import { bindActionCreators, compose } from "redux";
 import { connect } from "react-redux";
-import * as router from "@/constants/routes";
 import { endUserTemporarySession } from "@/actionCreators/authorizationActionCreator";
+import { getIsTimerVisible } from "@/reducers/authorizationReducer";
 
 const propTypes = {
   issueDate: PropTypes.instanceOf(Date).isRequired,
   timeOut: PropTypes.number.isRequired,
   endUserTemporarySession: PropTypes.func.isRequired,
+  history: PropTypes.shape({ push: PropTypes.func }).isRequired,
+  isTimerVisible: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {};
@@ -29,16 +31,15 @@ function AuthorizationTimer(props) {
   const [counter, setCounter] = useState(endDate.getTime() - new Date().getTime());
 
   useEffect(() => {
-    const timer = counter > 0 && setInterval(() => setCounter(counter - 1000), 1000);
+    const timer =
+      counter > 0 && props.isTimerVisible && setInterval(() => setCounter(counter - 1000), 1000);
     if (counter <= 0) {
-      props.endUserTemporarySession();
+      props.endUserTemporarySession(props.history);
     }
     return () => clearInterval(timer);
   }, [counter]);
 
-  return counter < 0 ? (
-    <Redirect to={router.REQUEST_ACCESS.dynamicRoute()} />
-  ) : (
+  return (
     <span
       title="You will be logged out after session times out"
       className="header-authorization-timer"
@@ -52,7 +53,9 @@ function AuthorizationTimer(props) {
 AuthorizationTimer.propTypes = propTypes;
 AuthorizationTimer.defaultProps = defaultProps;
 
-const mapStateToProps = () => ({});
+const mapStateToProps = (state) => ({
+  isTimerVisible: getIsTimerVisible(state),
+});
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(

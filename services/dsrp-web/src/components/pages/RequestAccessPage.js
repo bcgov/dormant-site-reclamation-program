@@ -47,10 +47,10 @@ export class RequestAccessPage extends Component {
           );
         })
         .catch(() => {
-          this.props.endUserTemporarySession();
+          this.props.endUserTemporarySession(this.props.history);
         });
     } else {
-      this.props.endUserTemporarySession();
+      this.props.endUserTemporarySession(this.props.history);
     }
   };
 

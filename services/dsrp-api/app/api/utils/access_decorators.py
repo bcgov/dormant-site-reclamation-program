@@ -2,6 +2,7 @@ from functools import wraps
 from flask_jwt_oidc.exceptions import AuthError
 from werkzeug.exceptions import Forbidden
 from flask import current_app, request, abort, redirect
+import requests
 
 from app.extensions import jwt
 from app.extensions import cache
@@ -52,6 +53,8 @@ def _combine_role_flags(func, roles):
 def requires_otp(func):
     @wraps(func)
     def check_api_key(*args, **kwargs):
+        FORBIDDEN = requests.codes.forbidden
+
         # enforce admin permission
         try:
             return jwt.has_one_of_roles([ADMIN])(func)(*args, **kwargs)
@@ -64,10 +67,10 @@ def requires_otp(func):
         otp_guid = request.headers.get(ONE_TIME_PASSWORD)
         if not otl_guid and not otp_guid:
             current_app.logger.info("OTL and OTP is empty")
-            abort(401)
+            abort(FORBIDDEN)
         elif otl_guid and otl_guid == cache.get(otl_guid):
             current_app.logger.info("OTL IS PRESENT NEED TO GENERATE OTP")
-            abort(401)
+            abort(FORBIDDEN)
         elif not otl_guid and otp_guid:
             current_app.logger.info("OTL is not present but OTP is")
             otp_app_guid = cache.get(otp_guid)
@@ -77,9 +80,9 @@ def requires_otp(func):
                 return func(*args, **kwargs)
             else:
                 current_app.logger.info("OTP is linked to a different application")
-                abort(401)
+                abort(FORBIDDEN)
         else:
             current_app.logger.info("OTP is expired")
-            abort(401)
+            abort(FORBIDDEN)
 
     return check_api_key

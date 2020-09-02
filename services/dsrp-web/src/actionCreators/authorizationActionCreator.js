@@ -6,6 +6,7 @@ import * as API from "@/constants/api";
 import { ENVIRONMENT } from "@/constants/environment";
 import { createRequestHeader } from "../utils/requestHeaders";
 import * as authorizationActions from "@/actions/authorizationActions";
+import * as router from "@/constants/routes";
 
 export const createOTL = (application_guid) => (dispatch) => {
   localStorage.removeItem("app_guid");
@@ -61,12 +62,14 @@ export const exchangeOTLForOTP = (otl_guid) => (dispatch) => {
     });
 };
 
-export const endUserTemporarySession = () => (dispatch) => {
+export const endUserTemporarySession = (history) => (dispatch) => {
   dispatch(authorizationActions.endUserTemporarySession());
   localStorage.removeItem("app_guid");
   localStorage.removeItem("issued_time_utc");
   localStorage.removeItem("otp");
   localStorage.removeItem("timeout_seconds");
+
+  if (history) history.push(router.REQUEST_ACCESS.dynamicRoute());
 };
 
 export const initAuthorizationTimer = () => (dispatch) => {
