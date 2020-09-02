@@ -1,0 +1,18 @@
+ALTER TABLE contracted_work_payment
+
+ADD COLUMN surface_landowner varchar,
+ADD COLUMN reclamation_was_achieved boolean,
+
+ADD COLUMN abandonment_cut_and_capped_completed boolean,
+ADD COLUMN abandonment_notice_of_operations_submitted boolean,
+ADD COLUMN abandonment_meters_of_pipeline_abandoned integer,
+
+ADD COLUMN site_investigation_type_of_document_submitted varchar,
+ADD COLUMN site_investigation_concerns_identified boolean,
+
+ADD COLUMN remediation_identified_contamination_meets_standards boolean,
+ADD COLUMN remediation_type_of_document_submitted varchar,
+ADD COLUMN remediation_reclaimed_to_meet_cor_p1_requirements boolean,
+
+ADD COLUMN reclamation_reclaimed_to_meet_cor_p2_requirements boolean,
+ADD COLUMN reclamation_surface_reclamation_criteria_met boolean;

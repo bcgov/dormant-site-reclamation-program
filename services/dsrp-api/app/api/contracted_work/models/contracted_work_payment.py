@@ -83,6 +83,28 @@ class ContractedWorkPayment(Base, AuditMixin):
         lazy='selectin',
         secondary='payment_document_contracted_work_payment_xref')
 
+    # General Reporting
+    surface_landowner = db.Column(db.String)
+    reclamation_was_achieved = db.Column(db.Boolean)
+
+    # Abandonment Reporting
+    abandonment_cut_and_capped_completed = db.Column(db.Boolean)
+    abandonment_notice_of_operations_submitted = db.Column(db.Boolean)
+    abandonment_meters_of_pipeline_abandoned = db.Column(db.Integer)
+
+    # PSI and DSI Reporting
+    site_investigation_type_of_document_submitted = db.Column(db.String)
+    site_investigation_concerns_identified = db.Column(db.Boolean)
+
+    # Remediation Reporting
+    remediation_identified_contamination_meets_standards = db.Column(db.Boolean)
+    remediation_type_of_document_submitted = db.Column(db.String)
+    remediation_reclaimed_to_meet_cor_p1_requirements = db.Column(db.Boolean)
+
+    # Reclamation Reporting
+    reclamation_reclaimed_to_meet_cor_p2_requirements = db.Column(db.Boolean)
+    reclamation_surface_reclamation_criteria_met = db.Column(db.Boolean)
+
     @hybrid_property
     def has_interim_prfs(self):
         if self.payment_documents:
