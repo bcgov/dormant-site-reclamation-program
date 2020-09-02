@@ -14,6 +14,7 @@ import {
   Input,
   Button,
   Popover,
+  Tooltip,
   Divider,
   Row,
   Col,
@@ -343,10 +344,15 @@ export class ApprovedContractedWorkPaymentTable extends Component {
                     record,
                     text
                   )}
-                  trigger={["hover", "click"]}
+                  trigger={["click"]}
                 >
                   <a>
-                    {note && popover(note, "table-record-tooltip")}
+                    {record.has_interim_prfs && (
+                      <Tooltip title="This work item has been used to generate Interim PRFs">
+                        <Icon type="dollar" className="table-record-tooltip color-success" />
+                      </Tooltip>
+                    )}
+                    {note && popover(note, "table-record-tooltip color-warning")}
                     {this.props.contractedWorkPaymentStatusOptionsHash[text]}
                     <Icon type="down" className="table-status-dropdown-icon" />
                   </a>
@@ -389,10 +395,15 @@ export class ApprovedContractedWorkPaymentTable extends Component {
                     record,
                     text
                   )}
-                  trigger={["hover", "click"]}
+                  trigger={["click"]}
                 >
                   <a>
-                    {note && popover(note, "table-record-tooltip")}
+                    {record.has_final_prfs && (
+                      <Tooltip title="This work item has been used to generate Final PRFs">
+                        <Icon type="dollar" className="table-record-tooltip color-success" />
+                      </Tooltip>
+                    )}
+                    {note && popover(note, "table-record-tooltip color-warning")}
                     {this.props.contractedWorkPaymentStatusOptionsHash[text]}
                     <Icon type="down" className="table-status-dropdown-icon" />
                   </a>

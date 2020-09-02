@@ -300,7 +300,7 @@ export class ApplicationTable extends Component {
                   record,
                   text
                 )}
-                trigger={["hover", "click"]}
+                trigger={["click"]}
               >
                 <a>
                   {this.props.applicationStatusOptionsHash[text] || Strings.ERROR}
@@ -429,7 +429,7 @@ export class ApplicationTable extends Component {
                   record,
                   text
                 )}
-                trigger={["hover", "click"]}
+                trigger={["click"]}
               >
                 <a>
                   {this.props.contractedWorkStatusOptionsHash[text] || Strings.ERROR}

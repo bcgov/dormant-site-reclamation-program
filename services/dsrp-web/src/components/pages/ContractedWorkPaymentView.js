@@ -247,7 +247,7 @@ export class ContractedWorkPaymentView extends Component {
                   : null;
               return (
                 <div title="Interim Status">
-                  {note && popover(note, "table-record-tooltip")}
+                  {note && popover(note, "table-record-tooltip color-warning")}
                   {text}
                 </div>
               );
@@ -300,7 +300,7 @@ export class ContractedWorkPaymentView extends Component {
                   : null;
               return (
                 <div title="Final Status">
-                  {note && popover(note, "table-record-tooltip")}
+                  {note && popover(note, "table-record-tooltip color-warning")}
                   {text}
                 </div>
               );
