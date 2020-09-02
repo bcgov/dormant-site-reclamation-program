@@ -13,12 +13,11 @@ const propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
   location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
   userInfo: PropTypes.objectOf(PropTypes.string),
-  isAdmin: PropTypes.bool,
+  endUserTemporarySession: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
   userInfo: {},
-  isAdmin: false,
 };
 
 export class HeaderDropdown extends Component {
@@ -49,7 +48,10 @@ export class HeaderDropdown extends Component {
               </Button>
             </Menu.Item>
             <Menu.Item key="view-application-status" className="custom-menu-item">
-              <Button className="header-dropdown-item-button">
+              <Button
+                className="header-dropdown-item-button"
+                onClick={this.props.endUserTemporarySession}
+              >
                 <Link to={routes.VIEW_APPLICATION_STATUS.route}>Status</Link>
               </Button>
             </Menu.Item>
@@ -117,6 +119,7 @@ export class HeaderDropdown extends Component {
                 <Link
                   to={routes.VIEW_APPLICATION_STATUS.route}
                   className={this.setActiveLink(routes.VIEW_APPLICATION_STATUS.route)}
+                  onClick={() => this.props.endUserTemporarySession()}
                 >
                   Check Application Status
                 </Link>

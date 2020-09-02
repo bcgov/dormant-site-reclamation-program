@@ -13,7 +13,10 @@ import {
   getIssuedTimeUtc,
   getTimeOutSeconds,
 } from "@/reducers/authorizationReducer";
-import { initAuthorizationTimer } from "@/actionCreators/authorizationActionCreator";
+import {
+  initAuthorizationTimer,
+  endUserTemporarySession,
+} from "@/actionCreators/authorizationActionCreator";
 
 import { ENVIRONMENT } from "@/constants/environment";
 import AuthorizationTimer from "../common/AuthorizationTimer";
@@ -27,6 +30,7 @@ const propTypes = {
   isTimerVisible: PropTypes.bool.isRequired,
   timeOutSeconds: PropTypes.number,
   issuedTimeUtc: PropTypes.instanceOf(Date),
+  endUserTemporarySession: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -78,7 +82,7 @@ export const Header = (props) => {
                 <></>
               )}
 
-              <HeaderDropdown />
+              <HeaderDropdown endUserTemporarySession={() => props.endUserTemporarySession()} />
             </span>
           </div>
         </Col>
@@ -99,6 +103,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       initAuthorizationTimer,
+      endUserTemporarySession,
     },
     dispatch
   );

@@ -16,6 +16,7 @@ import CustomPropTypes from "@/customPropTypes";
 import { PageTracker } from "@/utils/trackers";
 import { isGuid } from "@/utils/helpers";
 import * as router from "@/constants/routes";
+import { getIsOTLExpired } from "@/reducers/authorizationReducer";
 
 const { Paragraph, Title } = Typography;
 
@@ -30,6 +31,7 @@ const propTypes = {
   }).isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
   endUserTemporarySession: PropTypes.func.isRequired,
+  isOTLExpired: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -54,6 +56,7 @@ export class ViewApplicationStatusPage extends Component {
   };
 
   handleCheckAnotherApplication = () => {
+    this.props.endUserTemporarySession();
     this.props.history.push(router.VIEW_APPLICATION_STATUS.route);
     this.setState({ guid: "" });
   };
@@ -71,7 +74,7 @@ export class ViewApplicationStatusPage extends Component {
   };
 
   render = () =>
-    this.props.loadedApplication.guid !== this.state.guid ? (
+    this.props.loadedApplication.guid !== this.state.guid || this.props.isOTLExpired ? (
       <>
         <PageTracker title="Application Status" />
         <Row type="flex" justify="center" align="top" className="landing-header">
@@ -92,7 +95,10 @@ export class ViewApplicationStatusPage extends Component {
         )}
         <Row type="flex" justify="center" align="top">
           <Col xl={24} xxl={20} sm={22}>
-            <ViewApplicationStatusForm onSubmit={this.onFormSubmit} />
+            <ViewApplicationStatusForm
+              onSubmit={this.onFormSubmit}
+              endUserTemporarySession={this.props.endUserTemporarySession}
+            />
           </Col>
         </Row>
       </>
@@ -128,6 +134,7 @@ ViewApplicationStatusPage.defaultProps = defaultProps;
 
 const mapStateToProps = (state) => ({
   loadedApplication: getApplication(state),
+  isOTLExpired: getIsOTLExpired(state),
 });
 
 const mapDispatchToProps = (dispatch) =>

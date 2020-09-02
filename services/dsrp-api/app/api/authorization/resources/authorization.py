@@ -31,31 +31,37 @@ class AuthorizationResource(Resource, UserMixin):
         otl_guid = uuid.uuid4()
 
         html_content = f"""
-        <table width="100%" style="font-size:12.0pt" >
+        <table width="100%" style="font-size:12.0pt; color:#595959 " >
             <tr>
                 <td>
-                    Clicking this button will issue a one time password to access your application information and submit 
-                    subsequent documentation for the DSRP program, it’s only clickable one time, and expires in 4 hours
+                    You have requested access to the Dormant Sites Reclamation Program site to view information about an application (see Reference Number above).
+                    <br/>
+                    <br/>
+                    Use the button below to access your application information and submit payment requests.
+                    <br/>
+                    This button can only be used once and access expires after four hours. If you need to access the application again, request another link on the website.
                 </td> 
             </tr>   
             <tr>
                 <td>
+                <br/>
                     <table style="margin-left: auto; margin-right: auto;">
                         <tr>
                             <td style="border-radius: 2px;" bgcolor="#003366" >
                                 <a href="{ONE_TIME_LINK_FRONTEND_URL(otl_guid)}" target="_blank" style="padding: 8px 12px; border: 1px solid #003366;border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block;">
-                                    Click             
+                                    View Application             
                                 </a>
                             </td>
                         </tr>
                     </table>
+                <br/>
                 </td>
             </tr>
 		</table>"""
 
         with EmailService() as es:
             es.send_email_to_applicant(application,
-                                       f"Dormant Site Reclamation Program one-time use link",
+                                       f"Dormant Site Reclamation Program – Access Request",
                                        html_content)
 
         current_app.logger.debug(f"This is a OTL: {otl_guid}")

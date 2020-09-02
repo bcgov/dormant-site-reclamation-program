@@ -11,14 +11,21 @@ import * as FORM from "@/constants/forms";
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   submitting: PropTypes.bool.isRequired,
+  endUserTemporarySession: PropTypes.func.isRequired,
 };
 
 const ViewApplicationStatusForm = (props) => (
-  <Form layout="vertical" onSubmit={props.handleSubmit}>
+  <Form
+    layout="vertical"
+    onSubmit={(data) => {
+      props.endUserTemporarySession();
+      props.handleSubmit(data);
+    }}
+  >
     <Paragraph>
       To View your application, enter your application reference number and request a one-time use
-      link. This Link is valid for 4 hours after the request is made. Request a one-time link every
-      time you access this application.
+      link. This link is valid for four hours after the request is made. If you need to access the
+      application again, enter the reference number and request a new link.
     </Paragraph>
     <Row gutter={48}>
       <Col>

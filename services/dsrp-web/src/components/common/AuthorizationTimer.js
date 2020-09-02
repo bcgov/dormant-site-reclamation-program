@@ -22,8 +22,8 @@ const prettyTimer = (difference) => {
   const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((difference % (1000 * 60)) / 1000);
   return hours + minutes + seconds > 0
-    ? `session expires in: ${hours}h ${minutes}m ${seconds}s `
-    : "session expired";
+    ? `Session expires in: ${hours}h ${minutes}m ${seconds}s `
+    : "Session expired";
 };
 
 function AuthorizationTimer(props) {
