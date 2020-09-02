@@ -5,6 +5,7 @@ import * as reducerTypes from "@/constants/reducerTypes";
 import * as API from "@/constants/api";
 import { ENVIRONMENT } from "@/constants/environment";
 import { createRequestHeader } from "../utils/requestHeaders";
+import * as authorizationActions from "@/actions/authorizationActions";
 
 export const createOTL = (application_guid) => (dispatch) => {
   localStorage.removeItem("app_guid");
@@ -42,6 +43,12 @@ export const exchangeOTLForOTP = (otl_guid) => (dispatch) => {
       localStorage.setItem("app_guid", response.data.application_guid);
       localStorage.setItem("issued_time_utc", response.data.issued_time_utc);
       localStorage.setItem("timeout_seconds", response.data.timeout_seconds);
+      dispatch(
+        authorizationActions.initUserAuthorizationTimer({
+          issuedTimeUtc: response.data.issued_time_utc,
+          timeOutSeconds: response.data.timeout_seconds,
+        })
+      );
       return response.data;
     })
     .catch((err) => {
@@ -54,7 +61,22 @@ export const exchangeOTLForOTP = (otl_guid) => (dispatch) => {
     });
 };
 
-export const redirectToAccessPage = () => (dispatch) => {
-  dispatch(request(reducerTypes.REDIRECT_TO_ACCESS_REQUEST));
-  
+export const endUserTemporarySession = () => (dispatch) => {
+  dispatch(authorizationActions.endUserTemporarySession());
+  localStorage.removeItem("app_guid");
+  localStorage.removeItem("issued_time_utc");
+  localStorage.removeItem("otp");
+  localStorage.removeItem("timeout_seconds");
+};
+
+export const initAuthorizationTimer = () => (dispatch) => {
+  const issuedTimeUtc = localStorage.getItem("issued_time_utc");
+  const timeOutSeconds = localStorage.getItem("timeout_seconds");
+  if (issuedTimeUtc && timeOutSeconds)
+    dispatch(
+      authorizationActions.initUserAuthorizationTimer({
+        issuedTimeUtc,
+        timeOutSeconds,
+      })
+    );
 };

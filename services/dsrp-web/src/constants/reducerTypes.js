@@ -7,6 +7,8 @@ export const GET_USER_INFO = "GET_USER_INFO";
 // OTP AUTHORIZATION
 export const GET_OTL = "GET_OTL";
 export const GET_OTP = "GET_OTP";
+export const END_USER_TEMPORARY_SESSION = "END_USER_TEMPORARY_SESSION";
+export const AUTHORIZATION = "AUTHORIZATION";
 
 // Misc
 export const STATIC_CONTENT = "STATIC_CONTENT";

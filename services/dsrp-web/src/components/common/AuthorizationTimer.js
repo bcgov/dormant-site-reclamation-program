@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Icon } from "antd";
 import PropTypes from "prop-types";
-import { Redirect } from "react-router-dom";
+import { Redirect, withRouter } from "react-router-dom";
+import { bindActionCreators, compose } from "redux";
+import { connect } from "react-redux";
 import * as router from "@/constants/routes";
-import { cleanUserOneTimeAuthorizationInfo } from "@/utils/helpers";
+import { endUserTemporarySession } from "@/actionCreators/authorizationActionCreator";
 
 const propTypes = {
   issueDate: PropTypes.instanceOf(Date).isRequired,
   timeOut: PropTypes.number.isRequired,
+  endUserTemporarySession: PropTypes.func.isRequired,
 };
+
+const defaultProps = {};
 
 const prettyTimer = (difference) => {
   const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -25,9 +30,8 @@ function AuthorizationTimer(props) {
 
   useEffect(() => {
     const timer = counter > 0 && setInterval(() => setCounter(counter - 1000), 1000);
-    // TODO dispatch redirect to access-request page with state false ?
     if (counter <= 0) {
-      cleanUserOneTimeAuthorizationInfo();
+      props.endUserTemporarySession();
     }
     return () => clearInterval(timer);
   }, [counter]);
@@ -46,5 +50,19 @@ function AuthorizationTimer(props) {
 }
 
 AuthorizationTimer.propTypes = propTypes;
+AuthorizationTimer.defaultProps = defaultProps;
 
-export default AuthorizationTimer;
+const mapStateToProps = () => ({});
+
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      endUserTemporarySession,
+    },
+    dispatch
+  );
+
+export default compose(
+  withRouter,
+  connect(mapStateToProps, mapDispatchToProps)
+)(AuthorizationTimer);

@@ -435,10 +435,3 @@ export const isGuid = (input) => {
   const regexGuid = /^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/gi;
   return regexGuid.test(input);
 };
-
-export const cleanUserOneTimeAuthorizationInfo = () => {
-  localStorage.removeItem("app_guid");
-  localStorage.removeItem("issued_time_utc");
-  localStorage.removeItem("OTP");
-  localStorage.removeItem("timeout_seconds");
-};

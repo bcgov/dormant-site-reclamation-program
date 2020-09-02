@@ -5,8 +5,12 @@ import PropTypes from "prop-types";
 import { bindActionCreators, compose } from "redux";
 import { withRouter } from "react-router-dom";
 import { getApplication } from "@/reducers/applicationReducer";
+import { getIsOTLExpired } from "@/reducers/authorizationReducer";
 import Loading from "@/components/common/Loading";
-import { exchangeOTLForOTP } from "@/actionCreators/authorizationActionCreator";
+import {
+  exchangeOTLForOTP,
+  endUserTemporarySession,
+} from "@/actionCreators/authorizationActionCreator";
 import * as router from "@/constants/routes";
 import { isGuid } from "@/utils/helpers";
 import LinkButton from "@/components/common/LinkButton";
@@ -21,13 +25,13 @@ const propTypes = {
     },
   }).isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
+  endUserTemporarySession: PropTypes.func.isRequired,
+  isOTLExpired: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {};
 
 export class RequestAccessPage extends Component {
-  state = { isOTLExpired: false };
-
   componentDidMount = () => {
     if (
       this.props.match &&
@@ -43,13 +47,15 @@ export class RequestAccessPage extends Component {
           );
         })
         .catch(() => {
-          this.setState({ isOTLExpired: true });
+          this.props.endUserTemporarySession();
         });
-    } else this.setState({ isOTLExpired: true });
+    } else {
+      this.props.endUserTemporarySession();
+    }
   };
 
   render = () => {
-    return this.state.isOTLExpired ? (
+    return this.props.isOTLExpired ? (
       <>
         <Row type="flex" justify="center" align="top" className="landing-header">
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
@@ -82,12 +88,14 @@ RequestAccessPage.defaultProps = defaultProps;
 
 const mapStateToProps = (state) => ({
   loadedApplication: getApplication(state),
+  isOTLExpired: getIsOTLExpired(state),
 });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       exchangeOTLForOTP,
+      endUserTemporarySession,
     },
     dispatch
   );
