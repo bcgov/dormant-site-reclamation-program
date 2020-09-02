@@ -7,13 +7,9 @@ export const PDF = {
   "application/pdf": ".pdf",
 };
 
-export const DOCX = {
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
-};
-
 export const DOC = {
   "application/msword": ".doc",
-  ...DOCX,
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
   "application/rtf": ".rtf",
 };
 

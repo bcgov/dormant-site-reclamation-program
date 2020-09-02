@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
 import { required, number, requiredList, date } from "@/utils/validate";
 import { currencyMask } from "@/utils/helpers";
-import { EXCEL, DOCX } from "@/constants/fileTypes";
+import { EXCEL, PDF } from "@/constants/fileTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
 import { DATE_FORMAT, HELP_EMAIL } from "@/constants/strings";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
@@ -198,7 +198,7 @@ export class ContractedWorkPaymentForm extends Component {
                       <a href={FINAL_REPORT_TEMPLATE} target="_blank" rel="noopener noreferrer">
                         Final Report template
                       </a>
-                      &nbsp;and upload it here.
+                      &nbsp;and upload it as a PDF here.
                       {existingFinalReport &&
                         " If your original Final Report document has not changed, you do not need to re-upload it."}
                     </div>
@@ -207,7 +207,7 @@ export class ContractedWorkPaymentForm extends Component {
                 disabled={isViewOnly}
                 component={renderConfig.FILE_UPLOAD}
                 validate={existingFinalReport ? [] : [requiredList]}
-                acceptedFileTypesMap={DOCX}
+                acceptedFileTypesMap={PDF}
                 allowMultiple={false}
                 allowRevert
                 renderAfterInput={() =>

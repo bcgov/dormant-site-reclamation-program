@@ -164,7 +164,7 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
             if payment.final_report_document:
                 payment.final_report_document.active_ind = False
             filename = ApplicationDocument.create_filename(application, payment.work_id,
-                                                           'FINAL_REPORT', 'docx')
+                                                           'FINAL_REPORT', 'pdf')
             final_report = ApplicationDocument(
                 document_name=filename,
                 object_store_path=final_report_data['key'],
