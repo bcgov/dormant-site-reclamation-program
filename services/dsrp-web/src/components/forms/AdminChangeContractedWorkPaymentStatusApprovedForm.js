@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import { Field, getFormValues } from "redux-form";
 import { Typography, Table, Alert, Descriptions } from "antd";
-import { compose } from "redux";
 import { connect } from "react-redux";
 import { startCase, camelCase, lowerCase, isEmpty, isEqual } from "lodash";
 import { formatMoney, currencyMask, formatDate } from "@/utils/helpers";
-import { required, maxLength } from "@/utils/validate";
+import { required } from "@/utils/validate";
 import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
 import { getContractedWorkTypeOptionsHash } from "@/selectors/staticContentSelectors";
@@ -18,8 +17,14 @@ const { Text, Title } = Typography;
 
 const propTypes = {
   contractedWork: PropTypes.any.isRequired,
-  contractedWorkPaymentType: PropTypes.string.isRequired,
   contractedWorkTypeOptionsHash: PropTypes.any.isRequired,
+  contractedWorkPaymentType: PropTypes.string,
+  isAdminView: PropTypes.bool,
+};
+
+const defaultProps = {
+  contractedWorkPaymentType: "interim",
+  isAdminView: false,
 };
 
 const validateFormApprovedAmount = (
@@ -220,6 +225,7 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
 
     const dataSource = [
       {
+        key: "initial",
         is_selected_type: null,
         previous_amount: null,
         payment_type: "Initial",
@@ -233,6 +239,7 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
         lost_funds: null,
       },
       {
+        key: "interim",
         is_selected_type: this.props.contractedWorkPaymentType === "INTERIM",
         previous_amount: currentInterimApprovedAmount,
         payment_type: "Interim",
@@ -246,6 +253,7 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
         lost_funds: interimLostFunds,
       },
       {
+        key: "final",
         is_selected_type: this.props.contractedWorkPaymentType === "FINAL",
         previous_amount: currentFinalApprovedAmount,
         payment_type: "Final",
@@ -258,6 +266,7 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
         lost_funds: finalLostFunds,
       },
       {
+        key: "total",
         is_selected_type: null,
         previous_amount: null,
         payment_type: null,
@@ -354,50 +363,55 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
           currentFinalApprovedAmount &&
           renderAlreadyApprovedAlert(currentFinalApprovedAmount, contractedWork.has_final_prfs)}
 
-        <br />
-        <Field
-          id="approved_amount"
-          name="approved_amount"
-          label={
-            <>
-              <div>Approved {contractedWorkTypeDescription} Amount</div>
-              <div className="font-weight-normal">
-                Please enter in the amount to approve for this work item's&nbsp;
-                <Text strong>{contractedWorkTypeFormId} payment</Text>. This is the amount that will
-                be used in generating future&nbsp;
-                <Text strong>{contractedWorkTypeFormId} payment request forms</Text> containing this
-                work item.
-              </div>
-            </>
-          }
-          component={renderConfig.FIELD}
-          validate={[
-            required,
-            validateFormApprovedAmount(
-              this.props.contractedWorkPaymentType,
-              interimApprovedAmount,
-              finalApprovedAmount,
-              interimEstSharedCost,
-              finalEstSharedCost,
-              interimHalfEocTotal,
-              finalHalfEocTotal
-            ),
-          ]}
-          inputStyle={{ textAlign: "right" }}
-          placeholder="$0.00"
-          {...currencyMask}
-          onChange={(event, newValue) => {
-            if (newValue && newValue.toString().split(".")[0].length > 8) {
-              event.preventDefault();
-            }
-          }}
-        />
+        {!this.props.isAdminView && (
+          <>
+            <br />
+            <Field
+              id="approved_amount"
+              name="approved_amount"
+              label={
+                <>
+                  <div>Approved {contractedWorkTypeDescription} Amount</div>
+                  <div className="font-weight-normal">
+                    Please enter in the amount to approve for this work item's&nbsp;
+                    <Text strong>{contractedWorkTypeFormId} payment</Text>. This is the amount that
+                    will be used in generating future&nbsp;
+                    <Text strong>{contractedWorkTypeFormId} payment request forms</Text> containing
+                    this work item.
+                  </div>
+                </>
+              }
+              component={renderConfig.FIELD}
+              validate={[
+                required,
+                validateFormApprovedAmount(
+                  this.props.contractedWorkPaymentType,
+                  interimApprovedAmount,
+                  finalApprovedAmount,
+                  interimEstSharedCost,
+                  finalEstSharedCost,
+                  interimHalfEocTotal,
+                  finalHalfEocTotal
+                ),
+              ]}
+              inputStyle={{ textAlign: "right" }}
+              placeholder="$0.00"
+              {...currencyMask}
+              onChange={(event, newValue) => {
+                if (newValue && newValue.toString().split(".")[0].length > 8) {
+                  event.preventDefault();
+                }
+              }}
+            />
+          </>
+        )}
       </>
     );
   }
 }
 
 AdminChangeContractedWorkPaymentStatusApprovedForm.propTypes = propTypes;
+AdminChangeContractedWorkPaymentStatusApprovedForm.defaultProps = defaultProps;
 
 const mapStateToProps = (state) => ({
   formValues: getFormValues(FORM.ADMIN_UPDATE_CONTRACTED_WORK_PAYMENT_STATUS_FORM)(state),

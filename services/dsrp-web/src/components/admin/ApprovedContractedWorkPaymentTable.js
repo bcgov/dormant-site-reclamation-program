@@ -163,7 +163,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
     this.props.openModal({
       props: {
         isAdminView: true,
-        title: `View Payment Information for Work ID ${record.work_id}`,
+        title: `View Applicant's Submissions for Work ID ${record.work_id}`,
         contractedWorkPayment: record.work,
         applicationSummary: {},
         handleSubmitInterimContractedWorkPayment: () => {},
@@ -171,6 +171,15 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         handleSubmitInterimContractedWorkPaymentProgressReport: () => {},
       },
       content: modalConfig.CONTRACTED_WORK_PAYMENT,
+    });
+
+  openAdminContractedWorkPaymentModal = (record) =>
+    this.props.openModal({
+      props: {
+        title: `View Information for Work ID ${record.work_id}`,
+        contractedWork: record,
+      },
+      content: modalConfig.ADMIN_CONTRACTED_WORK_PAYMENT,
     });
 
   columnSearchInput = (dataIndex, placeholder) => ({
@@ -457,9 +466,24 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         key: "operations",
         render: (text, record) => (
           <div style={{ float: "right" }}>
-            <Button type="link" onClick={() => this.openContractedWorkPaymentModal(record)}>
-              <Icon type="eye" className="icon-lg" />
-            </Button>
+            <Row>
+              <Col>
+                <Button
+                  type="link"
+                  onClick={() => this.openAdminContractedWorkPaymentModal(record)}
+                  style={{ marginRight: 10, padding: 0 }}
+                >
+                  <Icon type="solution" className="icon-lg" />
+                </Button>
+                <Button
+                  type="link"
+                  onClick={() => this.openContractedWorkPaymentModal(record)}
+                  style={{ padding: 0 }}
+                >
+                  <Icon type="eye" className="icon-lg" />
+                </Button>
+              </Col>
+            </Row>
           </div>
         ),
       },
