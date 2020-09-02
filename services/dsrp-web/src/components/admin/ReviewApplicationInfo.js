@@ -211,8 +211,8 @@ export class ReviewApplicationInfo extends Component {
           </Button>
         </div>
         <JumpToApplicationForm
-          onSubmit={this.search}
           initialValues={{ guid: this.state.params.guid }}
+          onSubmit={this.search}
         />
         <ApplicationTable
           applications={this.props.applications}

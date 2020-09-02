@@ -24,6 +24,7 @@ import {
 } from "@/selectors/staticContentSelectors";
 import ApprovedContractedWorkPaymentTable from "@/components/admin/ApprovedContractedWorkPaymentTable";
 import { modalConfig } from "@/components/modalContent/config";
+import JumpToApplicationForm from "@/components/forms/JumpToApplicationForm";
 
 const propTypes = {
   applicationsApprovedContractedWork: PropTypes.any.isRequired,
@@ -201,6 +202,11 @@ export class ReviewApprovedContractedWorkInfo extends Component {
     }
   }
 
+  handleApplicationGuidSearch = (values) => {
+    const params = { ...this.state.params, application_guid: values.guid };
+    this.handleTableChange(params);
+  };
+
   render() {
     const interimPrfRows = this.state.selectedRows.filter(
       (work) => work.interim_payment_status_code === "APPROVED"
@@ -227,6 +233,14 @@ export class ReviewApprovedContractedWorkInfo extends Component {
 
     return (
       <>
+        <Row>
+          <Col>
+            <JumpToApplicationForm
+              onSubmit={this.handleApplicationGuidSearch}
+              initialValues={{ guid: this.state.params.application_guid }}
+            />
+          </Col>
+        </Row>
         <Row>
           <Col>
             <Dropdown
