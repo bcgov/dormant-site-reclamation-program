@@ -307,6 +307,7 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
           <Descriptions.Item label="Application Reference Number">
             {contractedWork.application_guid}
           </Descriptions.Item>
+          <Descriptions.Item label="Company Name">{contractedWork.company_name}</Descriptions.Item>
           <Descriptions.Item label="Well Authorization Number">
             {contractedWork.well_authorization_number}
           </Descriptions.Item>
@@ -317,13 +318,39 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
           <Descriptions.Item label="Planned End Date">
             {formatDate(contractedWork.planned_end_date)}
           </Descriptions.Item>
+          <Descriptions.Item label="Total Estimated Cost">
+            {formatMoney(contractedWork.contracted_work_total)}
+          </Descriptions.Item>
         </Descriptions>
+
         <br />
-        <Descriptions title="Contracted Work Payment Information" column={1}>
+        <Descriptions title="Interim Payment Information" column={1}>
+          <Descriptions.Item label="Total Hours Worked">
+            {contractedWorkPayment.interim_total_hours_worked_to_date || Strings.DASH}
+          </Descriptions.Item>
+          <Descriptions.Item label="Total Number of Workers">
+            {contractedWorkPayment.interim_number_of_workers || Strings.DASH}
+          </Descriptions.Item>
+          <Descriptions.Item label="Submitter Name">
+            {contractedWorkPayment.interim_submitter_name || Strings.DASH}
+          </Descriptions.Item>
           <Descriptions.Item label="Interim Report">
             {contractedWorkPayment.interim_report
               ? contractedWorkPayment.interim_report
               : `Due in ${contractedWork.interim_report_days_until_deadline} days`}
+          </Descriptions.Item>
+        </Descriptions>
+
+        <br />
+        <Descriptions title="Final Payment Information" column={1}>
+          <Descriptions.Item label="Total Hours Worked">
+            {contractedWorkPayment.final_total_hours_worked_to_date || Strings.DASH}
+          </Descriptions.Item>
+          <Descriptions.Item label="Total Number of Workers">
+            {contractedWorkPayment.final_number_of_workers || Strings.DASH}
+          </Descriptions.Item>
+          <Descriptions.Item label="Submitter Name">
+            {contractedWorkPayment.final_submitter_name || Strings.DASH}
           </Descriptions.Item>
           <Descriptions.Item label="Final Report">
             {(!isEmpty(contractedWorkPayment.final_report_document) && (
@@ -340,9 +367,6 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
               </LinkButton>
             )) ||
               "Not yet submitted"}
-          </Descriptions.Item>
-          <Descriptions.Item label="Total Estimated Cost">
-            {formatMoney(contractedWork.contracted_work_total)}
           </Descriptions.Item>
         </Descriptions>
 

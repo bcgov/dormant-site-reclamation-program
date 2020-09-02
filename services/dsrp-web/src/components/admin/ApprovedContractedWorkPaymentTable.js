@@ -471,7 +471,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
                 <Button
                   type="link"
                   onClick={() => this.openAdminContractedWorkPaymentModal(record)}
-                  style={{ marginRight: 10, padding: 0 }}
+                  style={{ marginRight: 15, padding: 0 }}
                 >
                   <Icon type="solution" className="icon-lg" />
                 </Button>
