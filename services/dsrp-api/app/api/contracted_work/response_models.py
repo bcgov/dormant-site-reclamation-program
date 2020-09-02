@@ -36,6 +36,8 @@ CONTRACTED_WORK_PAYMENT = api.model(
         'final_number_of_workers': fields.Integer,
         'interim_report': fields.String,
         'work_completion_date': fields.Date,
+        'interim_submitter_name': fields.String,
+        'final_submitter_name': fields.String,
         'interim_payment_submission_date': fields.DateTime,
         'final_payment_submission_date': fields.DateTime,
         'has_interim_prfs': fields.Boolean,

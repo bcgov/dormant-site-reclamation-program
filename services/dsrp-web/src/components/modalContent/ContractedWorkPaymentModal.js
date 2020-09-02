@@ -33,41 +33,80 @@ export class ContractedWorkPaymentModal extends Component {
       values
     );
 
-  render = () => (
-    <Tabs type="card" className="ant-tabs-center" defaultActiveKey={this.props.activeKey}>
-      <TabPane tab="Interim Payment" key="interim_payment">
-        <InterimContractedWorkPaymentForm
-          paymentType="interim"
-          onSubmit={this.handleSubmitInterimContractedWorkPayment}
-          closeModal={this.props.closeModal}
-          contractedWorkPayment={this.props.contractedWorkPayment}
-          applicationSummary={this.props.applicationSummary}
-          initialValues={this.props.contractedWorkPayment.contracted_work_payment}
-          isAdminView={this.props.isAdminView}
-        />
-      </TabPane>
-      <TabPane tab="Interim Progress Report" key="interim_progress_report">
-        <InterimReportForm
-          onSubmit={this.handleSubmitInterimContractedWorkPaymentProgressReport}
-          closeModal={this.props.closeModal}
-          contractedWorkPayment={this.props.contractedWorkPayment}
-          initialValues={this.props.contractedWorkPayment.contracted_work_payment}
-          isAdminView={this.props.isAdminView}
-        />
-      </TabPane>
-      <TabPane tab="Final Payment" key="final_payment">
-        <FinalContractedWorkPaymentForm
-          paymentType="final"
-          onSubmit={this.handleSubmitFinalContractedWorkPayment}
-          closeModal={this.props.closeModal}
-          contractedWorkPayment={this.props.contractedWorkPayment}
-          applicationSummary={this.props.applicationSummary}
-          initialValues={this.props.contractedWorkPayment.contracted_work_payment}
-          isAdminView={this.props.isAdminView}
-        />
-      </TabPane>
-    </Tabs>
-  );
+  render = () => {
+    const { contractedWorkPayment } = this.props;
+    const paymentInfo = contractedWorkPayment.contracted_work_payment;
+
+    const interimPaymentStatus = paymentInfo
+      ? paymentInfo.interim_payment_status_code
+      : "INFORMATION_REQUIRED";
+
+    const interimExtraInitialValues =
+      interimPaymentStatus !== "INFORMATION_REQUIRED"
+        ? {
+            interim_submission_confirmation: true,
+            interim_dormancy_and_shutdown_regulations_confirmation: true,
+          }
+        : {};
+
+    const interimInitialValues = {
+      ...interimExtraInitialValues,
+      ...this.props.contractedWorkPayment.contracted_work_payment,
+    };
+
+    const finalPaymentStatus = paymentInfo
+      ? paymentInfo.final_payment_status_code
+      : "INFORMATION_REQUIRED";
+
+    const finalExtraInitialValues =
+      finalPaymentStatus !== "INFORMATION_REQUIRED"
+        ? {
+            final_submission_confirmation: true,
+            final_dormancy_and_shutdown_regulations_confirmation: true,
+          }
+        : {};
+
+    const finalInitialValues = {
+      ...finalExtraInitialValues,
+      ...this.props.contractedWorkPayment.contracted_work_payment,
+    };
+
+    return (
+      <Tabs type="card" className="ant-tabs-center" defaultActiveKey={this.props.activeKey}>
+        <TabPane tab="Interim Payment" key="interim_payment">
+          <InterimContractedWorkPaymentForm
+            paymentType="interim"
+            onSubmit={this.handleSubmitInterimContractedWorkPayment}
+            closeModal={this.props.closeModal}
+            contractedWorkPayment={this.props.contractedWorkPayment}
+            applicationSummary={this.props.applicationSummary}
+            initialValues={interimInitialValues}
+            isAdminView={this.props.isAdminView}
+          />
+        </TabPane>
+        <TabPane tab="Interim Progress Report" key="interim_progress_report">
+          <InterimReportForm
+            onSubmit={this.handleSubmitInterimContractedWorkPaymentProgressReport}
+            closeModal={this.props.closeModal}
+            contractedWorkPayment={this.props.contractedWorkPayment}
+            initialValues={interimInitialValues}
+            isAdminView={this.props.isAdminView}
+          />
+        </TabPane>
+        <TabPane tab="Final Payment" key="final_payment">
+          <FinalContractedWorkPaymentForm
+            paymentType="final"
+            onSubmit={this.handleSubmitFinalContractedWorkPayment}
+            closeModal={this.props.closeModal}
+            contractedWorkPayment={this.props.contractedWorkPayment}
+            applicationSummary={this.props.applicationSummary}
+            initialValues={finalInitialValues}
+            isAdminView={this.props.isAdminView}
+          />
+        </TabPane>
+      </Tabs>
+    );
+  };
 }
 
 ContractedWorkPaymentModal.propTypes = propTypes;

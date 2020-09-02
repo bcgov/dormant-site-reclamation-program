@@ -43,6 +43,9 @@ class ContractedWorkPayment(Base, AuditMixin):
 
     work_completion_date = db.Column(db.Date)
 
+    interim_submitter_name = db.Column(db.String)
+    final_submitter_name = db.Column(db.String)
+
     interim_eoc_application_document_guid = db.Column(
         UUID(as_uuid=True),
         db.ForeignKey('application_document.application_document_guid'),

@@ -73,39 +73,33 @@ export class ContractedWorkPaymentForm extends Component {
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <Title level={4}>{capitalize(paymentType)} Payment Form</Title>
 
-        {!this.props.isAdminView &&
-          paymentType === "final" &&
-          interimPaymentStatus === "INFORMATION_REQUIRED" && (
-            <Paragraph>
-              <Alert
-                showIcon
-                message="You must complete and submit this work item's interim payment information before you can submit its final payment information."
-              />
-            </Paragraph>
-          )}
-
-        {!this.props.isAdminView && (
+        {paymentType === "final" && interimPaymentStatus === "INFORMATION_REQUIRED" && (
           <Paragraph>
-            In order for your <Text strong>{paymentType} payment request</Text> to be processed, you
-            must complete this form with your Evidence of Cost.
+            <Alert
+              showIcon
+              message="You must complete and submit this work item's interim payment information before you can submit its final payment information."
+            />
           </Paragraph>
         )}
 
-        {!this.props.isAdminView && paymentType === "interim" && (
+        <Paragraph>
+          In order for your <Text strong>{paymentType} payment request</Text> to be processed, you
+          must complete this form with your Evidence of Cost.
+        </Paragraph>
+
+        {paymentType === "interim" && (
           <Paragraph>
             The Interim Progress Report must be submitted within&nbsp;
             <Text strong>30 days</Text> of requesting an interim payment.
           </Paragraph>
         )}
 
-        {!this.props.isAdminView && (
-          <Paragraph>
-            Once you submit your request, you cannot edit it.
-            <br />
-            If you have any questions, contact&nbsp;
-            <a href={`mailto:${HELP_EMAIL}`}>{HELP_EMAIL}</a>.
-          </Paragraph>
-        )}
+        <Paragraph>
+          Once you submit your request, you cannot edit it.
+          <br />
+          If you have any questions, contact&nbsp;
+          <a href={`mailto:${HELP_EMAIL}`}>{HELP_EMAIL}</a>.
+        </Paragraph>
 
         <Row gutter={48}>
           <Col>
@@ -160,7 +154,7 @@ export class ContractedWorkPaymentForm extends Component {
                 <>
                   <div>Evidence of Cost Upload</div>
                   <div className="font-weight-normal">
-                    Fill in the &nbsp;
+                    Fill in the&nbsp;
                     <a href={EOC_TEMPLATE} target="_blank" rel="noopener noreferrer">
                       Evidence of Cost template
                     </a>
@@ -200,11 +194,11 @@ export class ContractedWorkPaymentForm extends Component {
                   <>
                     <div>Final Report</div>
                     <div className="font-weight-normal">
-                      Please&nbsp;
+                      Fill in the&nbsp;
                       <a href={FINAL_REPORT_TEMPLATE} target="_blank" rel="noopener noreferrer">
-                        download
+                        Final Report template
                       </a>
-                      &nbsp;and use the provided Final Report template and upload it as a PDF.
+                      &nbsp;and upload it here.
                       {existingFinalReport &&
                         " If your original Final Report document has not changed, you do not need to re-upload it."}
                     </div>
@@ -234,52 +228,50 @@ export class ContractedWorkPaymentForm extends Component {
               />
             )}
 
-            {!isViewOnly && (
-              <>
-                <Field
-                  id={`${paymentType}_dormancy_and_shutdown_regulations_confirmation`}
-                  name={`${paymentType}_dormancy_and_shutdown_regulations_confirmation`}
-                  label={
-                    <>
-                      I declare that all required notifications and activities have been submitted
-                      in accordance with the&nbsp;
-                      <a
-                        href="https://www.bclaws.ca/civix/document/id/complete/statreg/112_2019"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Dormancy and Shutdown Regulation
-                      </a>
-                      .
-                    </>
-                  }
-                  disabled={isViewOnly}
-                  component={renderConfig.CHECKBOX}
-                  validate={[required]}
-                />
-                <Field
-                  id={`${paymentType}_submission_confirmation`}
-                  name={`${paymentType}_submission_confirmation`}
-                  label={
-                    <>
-                      I certify that the above information is correct and has been reviewed and
-                      approved by <Text strong>{this.props.applicationSummary.applicant_name}</Text>
-                      .
-                    </>
-                  }
-                  disabled={isViewOnly}
-                  component={renderConfig.CHECKBOX}
-                  validate={[required]}
-                />
-              </>
-            )}
+            <Form.Item label="Certification">
+              <Field
+                id={`${paymentType}_submission_confirmation`}
+                name={`${paymentType}_submission_confirmation`}
+                label="I certify that the above information is correct and has been reviewed and approved by a senior officer of the recipient organization."
+                disabled={isViewOnly}
+                component={renderConfig.CHECKBOX}
+                validate={[required]}
+              />
+              <Field
+                id={`${paymentType}_dormancy_and_shutdown_regulations_confirmation`}
+                name={`${paymentType}_dormancy_and_shutdown_regulations_confirmation`}
+                label={
+                  <>
+                    I declare that all required notifications and activities have been submitted in
+                    accordance with the&nbsp;
+                    <a
+                      href="https://www.bclaws.ca/civix/document/id/complete/statreg/112_2019"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Dormancy and Shutdown Regulation
+                    </a>
+                    .
+                  </>
+                }
+                disabled={isViewOnly}
+                component={renderConfig.CHECKBOX}
+                validate={[required]}
+              />
+              <Field
+                id={`${paymentType}_submitter_name`}
+                name={`${paymentType}_submitter_name`}
+                placeholder="Type Your Name"
+                disabled={isViewOnly}
+                component={renderConfig.FIELD}
+                validate={[required]}
+              />
+            </Form.Item>
 
-            {!this.props.isAdminView && (
-              <Paragraph>
-                Keep all records of original invoices for this work. If they are requested by the
-                Province, you will be required to provide them within 30 days of the request.
-              </Paragraph>
-            )}
+            <Paragraph>
+              Keep all records of original invoices for this work. If they are requested by the
+              Province, you will be required to provide them within 30 days of the request.
+            </Paragraph>
           </Col>
         </Row>
         <div className="right">

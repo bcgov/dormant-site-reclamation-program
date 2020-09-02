@@ -106,7 +106,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
               </Text>
               <br />
               <Text>
-                Please provide a note indicating the reason for setting this work item's&nbsp;
+                Provide a note indicating the reason for setting this work item's&nbsp;
                 <Text strong>{contractedWorkTypeFormId} payment status</Text> back to Information
                 Required. This note will be sent along in an email to the applicant to notify them.
               </Text>

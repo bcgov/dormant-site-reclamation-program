@@ -68,6 +68,7 @@ class ContractedWorkPaymentInterim(Resource, UserMixin):
             'interim_total_hours_worked_to_date']
         payment.interim_number_of_workers = interim_payment_data['interim_number_of_workers']
         payment.interim_actual_cost = interim_payment_data['interim_actual_cost']
+        payment.interim_submitter_name = interim_payment_data['interim_submitter_name']
 
         # The EoC is only required if it hasn't been provided yet.
         interim_eoc_data = interim_payment_data.get('interim_eoc', [None])[0]
@@ -132,6 +133,7 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
         payment.final_number_of_workers = final_payment_data['final_number_of_workers']
         payment.final_actual_cost = final_payment_data['final_actual_cost']
         payment.work_completion_date = final_payment_data['work_completion_date']
+        payment.final_submitter_name = final_payment_data['final_submitter_name']
 
         # The EoC is only required if it hasn't been provided yet.
         final_eoc_data = final_payment_data.get('final_eoc', [None])[0]
