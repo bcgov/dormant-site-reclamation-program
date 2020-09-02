@@ -315,6 +315,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         title: "Interim Cost",
         key: "interim_cost",
         dataIndex: "interim_cost",
+        className: "table-column-right-align",
         render: (text) => <div title="Interim Cost">{formatMoney(text) || Strings.DASH}</div>,
       },
       {
@@ -366,6 +367,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         title: "Final Cost",
         key: "final_cost",
         dataIndex: "final_cost",
+        className: "table-column-right-align",
         render: (text) => <div title="Final Cost">{formatMoney(text) || Strings.DASH}</div>,
       },
       {

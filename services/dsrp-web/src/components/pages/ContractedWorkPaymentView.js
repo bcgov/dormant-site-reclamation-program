@@ -227,9 +227,9 @@ export class ContractedWorkPaymentView extends Component {
             title: "Interim Cost",
             key: "interim_cost",
             dataIndex: "interim_cost",
+            className: "interim-submission-left",
             sorter: nullableStringOrNumberSorter("interim_cost"),
             render: (text) => <div title="Interim Cost">{formatMoney(text) || Strings.DASH}</div>,
-            className: "interim-submission-left",
           },
           {
             title: "Interim Status",
@@ -288,6 +288,7 @@ export class ContractedWorkPaymentView extends Component {
             title: "Final Status",
             key: "final_status_description",
             dataIndex: "final_status_description",
+            className: "final-submission-right",
             sorter: nullableStringOrNumberSorter("final_status_description"),
             render: (text, record) => {
               const statusCode =
@@ -305,7 +306,6 @@ export class ContractedWorkPaymentView extends Component {
                 </div>
               );
             },
-            className: "final-submission-right",
           },
         ],
       },
