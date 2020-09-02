@@ -458,7 +458,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         render: (text, record) => (
           <div style={{ float: "right" }}>
             <Button type="link" onClick={() => this.openContractedWorkPaymentModal(record)}>
-              <Icon type="form" className="icon-lg" />
+              <Icon type="eye" className="icon-lg" />
             </Button>
           </div>
         ),

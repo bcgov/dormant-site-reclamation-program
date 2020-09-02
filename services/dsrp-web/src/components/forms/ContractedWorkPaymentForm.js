@@ -181,7 +181,7 @@ export class ContractedWorkPaymentForm extends Component {
                       )
                     }
                   >
-                    Download Uploaded Evidence of Cost
+                    Download previously uploaded Evidence of Cost
                   </LinkButton>
                 )) || <></>
               }
@@ -221,7 +221,7 @@ export class ContractedWorkPaymentForm extends Component {
                         )
                       }
                     >
-                      Download Uploaded Final Report
+                      Download previously uploaded Final Report
                     </LinkButton>
                   )) || <></>
                 }
