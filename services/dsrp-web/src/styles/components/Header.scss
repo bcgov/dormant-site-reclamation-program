@@ -81,6 +81,10 @@
 }
 
 .header-authorization-timer {
-  font-size: 1.3rem;
-  color: bisque;
+  font-size: $heading-3-size;
+  color: $white;
+
+  & .anticon {
+    font-size: $heading-3-size;
+  }
 }

@@ -13,16 +13,19 @@ const propTypes = {
   endUserTemporarySession: PropTypes.func.isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
   isTimerVisible: PropTypes.bool.isRequired,
+  className: PropTypes.string,
 };
 
-const defaultProps = {};
+const defaultProps = {
+  className: "header-authorization-timer",
+};
 
 const prettyTimer = (difference) => {
   const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((difference % (1000 * 60)) / 1000);
   return hours + minutes + seconds > 0
-    ? `Session expires in: ${hours}h ${minutes}m ${seconds}s `
+    ? `Session expires in: ${hours}h ${(`0${  minutes}`).slice(-2)}m ${(`0${  seconds}`).slice(-2)}s `
     : "Session expired";
 };
 
@@ -40,11 +43,8 @@ function AuthorizationTimer(props) {
   }, [counter]);
 
   return (
-    <span
-      title="You will be logged out after session times out"
-      className="header-authorization-timer"
-    >
-      <Icon type="history" className="icon-lg" style={{ marginRight: "5px" }} />
+    <span title="You will be logged out after session times out" className={props.className}>
+      <Icon type="clock-circle" style={{ marginRight: "7px" }} />
       {prettyTimer(counter)}
     </span>
   );

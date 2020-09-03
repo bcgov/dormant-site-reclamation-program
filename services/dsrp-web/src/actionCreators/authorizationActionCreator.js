@@ -25,10 +25,12 @@ export const createOTL = (application_guid) => (dispatch) => {
       return response;
     })
     .catch((err) => {
+      const message = err.response.data.message ?? "Unexpected error occurred, please try again";
       notification.error({
-        message: "Unexpected error occurred, please try again",
+        message,
         duration: 10,
       });
+
       dispatch(error(reducerTypes.GET_OTL));
       throw new Error(err);
     });
@@ -53,8 +55,9 @@ export const exchangeOTLForOTP = (otl_guid) => (dispatch) => {
       return response.data;
     })
     .catch((err) => {
+      const message = err.response.data.message ?? "Unexpected error occurred, please try again";
       notification.error({
-        message: "Unexpected error occurred, please try again",
+        message,
         duration: 10,
       });
       dispatch(error(reducerTypes.GET_OTP));

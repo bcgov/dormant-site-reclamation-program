@@ -50,7 +50,7 @@ def _combine_role_flags(func, roles):
     return flags
 
 
-def requires_otp(func):
+def requires_otp_or_admin(func):
     @wraps(func)
     def check_api_key(*args, **kwargs):
         FORBIDDEN = requests.codes.forbidden

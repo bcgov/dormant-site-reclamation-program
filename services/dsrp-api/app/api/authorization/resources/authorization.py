@@ -3,6 +3,7 @@ from flask import current_app, request, abort, jsonify
 import uuid
 import sys
 from datetime import datetime, timezone
+from werkzeug.exceptions import NotFound
 
 from app.extensions import cache, api
 from app.api.utils.resources_mixins import UserMixin
@@ -29,6 +30,9 @@ class AuthorizationResource(Resource, UserMixin):
         application_guid = data.get('application_guid')
         application = Application.find_by_guid(application_guid)
         otl_guid = uuid.uuid4()
+
+        if application is None:
+            raise NotFound('No application was found matching the provided reference number')
 
         html_content = f"""
         <table width="100%" style="font-size:12.0pt; color:#595959 " >
