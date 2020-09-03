@@ -527,7 +527,6 @@ export class ApprovedContractedWorkPaymentTable extends Component {
           className="table-headers-center"
           loading={{
             spinning: !this.props.isLoaded,
-            // delay: 500,
           }}
         />
         <br />

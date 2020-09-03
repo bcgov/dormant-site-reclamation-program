@@ -486,7 +486,6 @@ export class ContractedWorkPaymentView extends Component {
                 dataSource={dataSource}
                 loading={{
                   spinning: !this.state.isLoaded,
-                  // delay: 500,
                 }}
               />
             </Col>
