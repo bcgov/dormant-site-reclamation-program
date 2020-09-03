@@ -4,7 +4,7 @@ import { Row, Col, Form, Button, Typography, Popconfirm, Alert } from "antd";
 import { capitalize, isEmpty } from "lodash";
 import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
-import { required, number, requiredList, date } from "@/utils/validate";
+import { required, number, notZero, requiredList, date } from "@/utils/validate";
 import { currencyMask, metersMask } from "@/utils/helpers";
 import { EXCEL, PDF } from "@/constants/fileTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
@@ -77,7 +77,7 @@ const renderReportingFields = (workType, isViewOnly) => {
               label="If pipeline was abandoned as part of the Dormant Site Abandonment process, provide the length (approximate) of pipeline abandoned (meters)."
               placeholder="Not applicable"
               disabled={isViewOnly}
-              validate={[(value) => (value === 0 ? "Value cannot be 0" : undefined)]}
+              validate={[notZero]}
               component={renderConfig.FIELD}
               {...metersMask}
             />
