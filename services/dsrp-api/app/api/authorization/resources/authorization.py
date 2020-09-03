@@ -12,12 +12,15 @@ from app.api.services.email_service import EmailService
 from app.api.constants import TIMEOUT_4_HOURS
 from app.api.authorization.constants import *
 from app.api.utils.custom_reqparser import CustomReqparser
+from app.config import Config
 
 
 class AuthorizationResource(Resource, UserMixin):
     parser = CustomReqparser()
     parser.add_argument('application_guid', type=str, help='', store_missing=False)
     parser.add_argument('otl_guid', type=str, help='', store_missing=False)
+
+    ONE_TIME_PASSWORD_TIMEOUT_SECONDS = Config.ONE_TIME_PASSWORD_TIMEOUT_SECONDS
 
     @api.doc(description='authorization endpoint is reachable')
     def get(self):
@@ -69,7 +72,10 @@ class AuthorizationResource(Resource, UserMixin):
                                        html_content)
 
         current_app.logger.debug(f"This is a OTL: {otl_guid}")
-        cache.set(str(otl_guid), application_guid, timeout=TIMEOUT_4_HOURS)
+        cache.set(
+            str(otl_guid),
+            application_guid,
+            timeout=AuthorizationResource.ONE_TIME_PASSWORD_TIMEOUT_SECONDS)
 
         return "OK", 200
 
@@ -77,7 +83,7 @@ class AuthorizationResource(Resource, UserMixin):
     def put(self):
         otp_guid = None
         issued_time_utc = None
-        timeout = TIMEOUT_4_HOURS
+        timeout = AuthorizationResource.ONE_TIME_PASSWORD_TIMEOUT_SECONDS
 
         data = AuthorizationResource.parser.parse_args()
         otl_guid = data.get('otl_guid')
@@ -97,6 +103,6 @@ class AuthorizationResource(Resource, UserMixin):
         return jsonify({
             "OTP": otp_guid,
             "issued_time_utc": issued_time_utc.strftime("%d %b %Y %H:%M:%S %z"),
-            "timeout_seconds": TIMEOUT_4_HOURS,
+            "timeout_seconds": AuthorizationResource.ONE_TIME_PASSWORD_TIMEOUT_SECONDS,
             "application_guid": app_guid
         })

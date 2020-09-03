@@ -47,7 +47,8 @@ class Config(object):
     )
     JWT_OIDC_AUDIENCE = os.environ.get('JWT_OIDC_AUDIENCE', 'dsrp')
     JWT_OIDC_ALGORITHMS = os.environ.get('JWT_OIDC_ALGORITHMS', 'RS256')
-
+    # OTP
+    ONE_TIME_PASSWORD_TIMEOUT_SECONDS = os.environ.get('ONE_TIME_PASSWORD_TIMEOUT_SECONDS', 14400)
     # RequestParser global config
     BUNDLE_ERRORS = True
 
@@ -89,8 +90,15 @@ class Config(object):
     S3_PREFIX = os.environ.get('S3_PREFIX', 'dsrp-applications/')
 
     # SMTP
+    # SMTP_CRED_HOST = os.environ.get('SMTP_CRED_HOST', None)
+    # SMTP_ENABLED = SMTP_CRED_HOST is not None
+    # SMTP_CRED = {'host': SMTP_CRED_HOST, 'port': 25, 'user': None, 'pwrd': None}
     SMTP_CRED_HOST = os.environ.get('SMTP_CRED_HOST', None)
     SMTP_ENABLED = SMTP_CRED_HOST is not None
+    SMTP_PORT = os.environ.get('SMTP_PORT', None)
+    SMTP_USER = os.environ.get('SMTP_USER', None)
+    SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', None)
+    SMTP_IS_TEST_MODE = os.environ.get('SMTP_IS_TEST_MODE', None)
     SMTP_CRED = {'host': SMTP_CRED_HOST, 'port': 25, 'user': None, 'pwrd': None}
 
     # Email
