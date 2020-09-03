@@ -24,8 +24,9 @@ const prettyTimer = (difference) => {
   const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+  const addLeadingZero = (number) => `0${number}`.slice(-2);
   return hours + minutes + seconds > 0
-    ? `Session expires in: ${hours}h ${(`0${  minutes}`).slice(-2)}m ${(`0${  seconds}`).slice(-2)}s `
+    ? `Session expires in: ${hours}h ${addLeadingZero(minutes)}m ${addLeadingZero(seconds)}s `
     : "Session expired";
 };
 
