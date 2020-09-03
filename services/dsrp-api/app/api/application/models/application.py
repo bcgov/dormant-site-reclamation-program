@@ -218,6 +218,12 @@ class Application(Base, AuditMixin):
                 if cw_data['work_id'] == work_id:
                     return cw_data
 
+    def find_contracted_work_type_by_work_id(self, work_id):
+        for ws in self.well_sites_with_review_data:
+            for cw_type, cw_data in ws.get('contracted_work', {}).items():
+                if cw_data['work_id'] == work_id:
+                    return cw_type
+
     def calc_est_shared_cost(self, contracted_work):
         """Calculates the contracted work item's Estimated Shared Cost, which is half of the estimated cost \
             unless that value is $100,000 or more, then it is $100,000.

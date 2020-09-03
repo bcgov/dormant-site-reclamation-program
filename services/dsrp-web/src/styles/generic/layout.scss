@@ -49,6 +49,15 @@ tr .table-column-right-align:not(th) * {
   text-align: right !important;
 }
 
+.final-report-fields {
+  padding-top: 24px;
+  padding-left: 24px;
+  padding-right: 24px;
+  margin-bottom: 24px;
+  background-color: $table-seperator;
+  border-radius: 5px;
+}
+
 th {
   &.interim-submission,
   &.final-submission {

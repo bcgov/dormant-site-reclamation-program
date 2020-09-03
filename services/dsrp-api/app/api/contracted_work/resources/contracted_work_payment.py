@@ -103,7 +103,6 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
         validate_application_contracted_work(application, work_id)
 
         # Get the contracted work payment or create it if it doesn't exist.
-        # TODO: Determine if we should create it OR send a bad request indicating that you must submit Interim info first.
         payment = ContractedWorkPayment.find_by_work_id(work_id)
         if not payment:
             payment = ContractedWorkPayment(
@@ -134,6 +133,67 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
         payment.final_actual_cost = final_payment_data['final_actual_cost']
         payment.work_completion_date = final_payment_data['work_completion_date']
         payment.final_submitter_name = final_payment_data['final_submitter_name']
+
+        # Update the general reporting data point "surface landowner".
+        surface_landowner = final_payment_data['surface_landowner']
+        if surface_landowner not in ('Crown', 'Freehold', 'Both'):
+            raise BadRequest('Unknown "surface landowner" value received!')
+        payment.surface_landowner = surface_landowner
+
+        # Update the general reporting data point "reclamation was achieved".
+        reclamation_was_achieved = final_payment_data['reclamation_was_achieved']
+        if reclamation_was_achieved not in ('true', 'false'):
+            raise BadRequest('Unknown "reclamation was achieved" value received!')
+        payment.reclamation_was_achieved = bool(reclamation_was_achieved)
+
+        # Update the work-type specific reporting data points.
+        contracted_work_type = application.find_contracted_work_type_by_work_id(payment.work_id)
+
+        # Abandonment reporting
+        if contracted_work_type == 'abandonment':
+            payment.abandonment_cut_and_capped_completed = bool(
+                final_payment_data['abandonment_cut_and_capped_completed'])
+
+            payment.abandonment_notice_of_operations_submitted = bool(
+                final_payment_data['abandonment_notice_of_operations_submitted'])
+
+            payment.abandonment_meters_of_pipeline_abandoned = int(
+                final_payment_data['abandonment_meters_of_pipeline_abandoned'])
+
+        # Reclamation reporting
+        elif contracted_work_type == 'reclamation':
+            payment.reclamation_reclaimed_to_meet_cor_p2_requirements = bool(
+                final_payment_data['reclamation_reclaimed_to_meet_cor_p2_requirements'])
+
+            payment.reclamation_surface_reclamation_criteria_met = bool(
+                final_payment_data['reclamation_surface_reclamation_criteria_met'])
+
+        # Remediation reporting
+        elif contracted_work_type == 'remediation':
+            remediation_type_of_document_submitted = final_payment_data[
+                'remediation_type_of_document_submitted']
+            if remediation_type_of_document_submitted not in ('COR_P1', 'DSAF', 'NONE'):
+                raise BadRequest('Unknown "remediation type of document submitted" value received!')
+            payment.remediation_type_of_document_submitted = remediation_type_of_document_submitted
+
+            payment.remediation_identified_contamination_meets_standards = bool(
+                final_payment_data['remediation_identified_contamination_meets_standards'])
+
+            payment.remediation_reclaimed_to_meet_cor_p1_requirements = bool(
+                final_payment_data['remediation_reclaimed_to_meet_cor_p1_requirements'])
+
+        # Site investigation reporting
+        elif contracted_work_type in ('preliminary_site_investigation',
+                                      'detailed_site_investigation'):
+            site_investigation_type_of_document_submitted = final_payment_data[
+                'site_investigation_type_of_document_submitted']
+            if site_investigation_type_of_document_submitted not in ('COR_P1', 'DSAF', 'NONE'):
+                raise BadRequest(
+                    'Unknown "site investigation type of document submitted" value received!')
+            payment.site_investigation_type_of_document_submitted = site_investigation_type_of_document_submitted
+
+            payment.site_investigation_concerns_identified = bool(
+                final_payment_data['site_investigation_concerns_identified'])
 
         # The EoC is only required if it hasn't been provided yet.
         final_eoc_data = final_payment_data.get('final_eoc', [None])[0]

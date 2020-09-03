@@ -85,6 +85,15 @@ export const currencyMask = createNumberMask({
   stringValue: false,
 });
 
+export const metersMask = createNumberMask({
+  prefix: "",
+  suffix: " meters",
+  decimalPlaces: 0,
+  allowEmpty: true,
+  stringValue: false,
+  allowNegative: false,
+});
+
 export const phoneMask = createTextMask({
   pattern: "(999) 999-9999",
   // placeholder: '_',

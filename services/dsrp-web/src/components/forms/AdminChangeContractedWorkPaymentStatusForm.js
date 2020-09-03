@@ -11,7 +11,7 @@ import { getContractedWorkTypeOptionsHash } from "@/selectors/staticContentSelec
 import * as FORM from "@/constants/forms";
 import AdminChangeContractedWorkPaymentStatusApprovedForm from "@/components/forms/AdminChangeContractedWorkPaymentStatusApprovedForm";
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 const propTypes = {
   contractedWork: PropTypes.any.isRequired,
@@ -35,15 +35,12 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
           name="note"
           label={
             <>
-              <Text className="color-primary" strong>
-                Note
-              </Text>
-              <br />
-              <Text>
+              <div>Note</div>
+              <div className="font-weight-normal">
                 Provide a note indicating the reason for setting this work item's&nbsp;
                 <Text strong>{contractedWorkTypeFormId} payment status</Text> back to Information
                 Required. This note will be sent along in an email to the applicant to notify them.
-              </Text>
+              </div>
             </>
           }
           component={renderConfig.AUTO_SIZE_FIELD}
