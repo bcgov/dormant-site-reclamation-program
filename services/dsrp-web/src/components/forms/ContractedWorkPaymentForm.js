@@ -74,7 +74,7 @@ const renderReportingFields = (workType, isViewOnly) => {
             <Field
               id="abandonment_meters_of_pipeline_abandoned"
               name="abandonment_meters_of_pipeline_abandoned"
-              label="If pipeline was abandoned as part of the Dormant Site Abandonment process, provide the length (approximate) of pipeline abandoned (meters)."
+              label="If pipeline was abandoned as part of the Dormant Site Abandonment process, provide the length (approximate) of pipeline abandoned (metres)."
               placeholder="Not applicable"
               disabled={isViewOnly}
               validate={[notZero]}

@@ -87,7 +87,7 @@ export const currencyMask = createNumberMask({
 
 export const metersMask = createNumberMask({
   prefix: "",
-  suffix: " meters",
+  suffix: " metres",
   decimalPlaces: 0,
   allowEmpty: true,
   stringValue: false,
