@@ -72,7 +72,9 @@ export const endUserTemporarySession = (history) => (dispatch) => {
   localStorage.removeItem("otp");
   localStorage.removeItem("timeout_seconds");
 
-  if (history) history.push(router.REQUEST_ACCESS.dynamicRoute());
+  if (history) {
+    history.push(router.REQUEST_ACCESS.dynamicRoute());
+  }
 };
 
 export const initAuthorizationTimer = () => (dispatch) => {

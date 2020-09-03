@@ -26,8 +26,6 @@ const propTypes = {
   loadBulkStaticContent: PropTypes.func.isRequired,
 };
 
-const defaultProps = {};
-
 class App extends Component {
   state = { isIE: true, isMobile: true };
 
@@ -82,8 +80,6 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = () => ({});
-
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
@@ -93,10 +89,9 @@ const mapDispatchToProps = (dispatch) =>
   );
 
 App.propTypes = propTypes;
-App.defaultProps = defaultProps;
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(null, mapDispatchToProps),
   hot(module),
   AuthenticationGuard(true)
 )(App);

@@ -20,6 +20,8 @@ export const authorizationReducer = (state = initialState, action) => {
         ...state,
         isOTLExpired: true,
         isTimerVisible: false,
+        issuedTimeUtc: null,
+        timeOutSeconds: null,
         redirect: route.REQUEST_ACCESS.route,
       };
     case ActionTypes.INIT_TEMPORARY_USER_SESSION:

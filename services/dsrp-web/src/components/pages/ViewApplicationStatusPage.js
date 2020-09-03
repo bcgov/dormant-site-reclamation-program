@@ -49,7 +49,9 @@ export class ViewApplicationStatusPage extends Component {
       isGuid(this.props.match.params.id)
     ) {
       this.props.fetchApplicationSummaryById(this.props.match.params.id).catch((error) => {
-        if (error.response.status === 403) this.props.endUserTemporarySession(this.props.history);
+        if (error.response.status === 403) {
+          this.props.endUserTemporarySession(this.props.history);
+        }
       });
       this.setState({ guid: this.props.match.params.id });
     }

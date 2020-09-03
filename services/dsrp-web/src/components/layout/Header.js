@@ -73,15 +73,12 @@ export const Header = (props) => {
               </Link>
             </span>
             <span className="header-menu">
-              {props.isTimerVisible && props.issuedTimeUtc && props.timeOutSeconds ? (
+              {props.isTimerVisible && props.issuedTimeUtc && props.timeOutSeconds && (
                 <AuthorizationTimer
                   issueDate={props.issuedTimeUtc}
                   timeOut={props.timeOutSeconds}
                 />
-              ) : (
-                <></>
               )}
-
               <HeaderDropdown endUserTemporarySession={() => props.endUserTemporarySession()} />
             </span>
           </div>

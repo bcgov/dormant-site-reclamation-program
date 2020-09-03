@@ -60,7 +60,6 @@ def requires_otp_or_admin(func):
             return jwt.has_one_of_roles([ADMIN])(func)(*args, **kwargs)
         except Exception as e:
             current_app.logger.error(str(e))
-            pass
 
         # TODO this checks for debug purpose, will be reworked in final pr
         otl_guid = request.headers.get(ONE_TIME_LINK)

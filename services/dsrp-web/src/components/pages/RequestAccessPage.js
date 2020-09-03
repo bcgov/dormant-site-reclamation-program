@@ -64,7 +64,7 @@ export class RequestAccessPage extends Component {
               title="The one-time use link has expired"
               subTitle={
                 <Text>
-                  Please return to the previous page and request a new Link
+                  Please return to the previous page and request a new One-Time Link
                   <br />
                   <LinkButton
                     onClick={() => this.props.history.push(router.VIEW_APPLICATION_STATUS.route)}
