@@ -46,17 +46,22 @@ const propTypes = {
   closeModal: PropTypes.func.isRequired,
 };
 
-const defaultProps = {};
-
-const renderDropdownMenu = (option, onClick, record, currentStatus) => (
+const renderDropdownMenu = (option, onClick, record, currentStatus, isFinalPayment) => (
   <Menu onClick={(item) => onClick(item.key, record)}>
     {option
       .filter(({ value }) => value !== currentStatus)
-      .map(({ label, value, description }) => (
-        <Menu.Item title={description} key={value}>
-          {label}
-        </Menu.Item>
-      ))}
+      .map(({ label, value, description }) => {
+        // Admins cannot approve the final payment until the interim payment has been approved before.
+        const disabled =
+          isFinalPayment &&
+          value === "APPROVED" &&
+          (!record.contracted_work_payment || !record.contracted_work_payment.interim_paid_amount);
+        return (
+          <Menu.Item title={description} key={value} disabled={disabled}>
+            {label}
+          </Menu.Item>
+        );
+      })}
   </Menu>
 );
 
@@ -352,7 +357,8 @@ export class ApprovedContractedWorkPaymentTable extends Component {
                     this.props.contractedWorkPaymentStatusDropdownOptions,
                     this.props.handleContractedWorkPaymentInterimStatusChange,
                     record,
-                    text
+                    text,
+                    false
                   )}
                   trigger={["click"]}
                 >
@@ -404,7 +410,8 @@ export class ApprovedContractedWorkPaymentTable extends Component {
                     this.props.contractedWorkPaymentStatusDropdownOptions,
                     this.props.handleContractedWorkPaymentFinalStatusChange,
                     record,
-                    text
+                    text,
+                    true
                   )}
                   trigger={["click"]}
                 >
@@ -546,7 +553,6 @@ export class ApprovedContractedWorkPaymentTable extends Component {
 }
 
 ApprovedContractedWorkPaymentTable.propTypes = propTypes;
-ApprovedContractedWorkPaymentTable.defaultProps = defaultProps;
 
 const mapStateToProps = (state) => ({
   filterListContractedWorkPaymentStatusOptions: getFilterListContractedWorkPaymentStatusOptions(
