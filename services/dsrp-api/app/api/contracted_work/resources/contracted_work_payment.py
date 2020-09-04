@@ -12,6 +12,7 @@ from app.api.contracted_work.models.contracted_work_payment_status import Contra
 from app.api.contracted_work.models.contracted_work_payment_type import ContractedWorkPaymentType
 from app.api.contracted_work.models.contracted_work_payment_status_change import ContractedWorkPaymentStatusChange
 from app.api.utils.access_decorators import ADMIN
+from app.api.utils.access_decorators import requires_otp_or_admin
 
 
 def validate_application_contracted_work(application, work_id):
@@ -31,7 +32,7 @@ def validate_application_contracted_work(application, work_id):
 
 
 class ContractedWorkPaymentInterim(Resource, UserMixin):
-    # TODO: Protect me with OTP
+    @requires_otp_or_admin
     def put(self, application_guid, work_id):
         response_code = 200
 
@@ -99,7 +100,7 @@ class ContractedWorkPaymentInterim(Resource, UserMixin):
 
 
 class ContractedWorkPaymentFinal(Resource, UserMixin):
-    # TODO: Protect me with OTP
+    @requires_otp_or_admin
     def put(self, application_guid, work_id):
         response_code = 200
 
@@ -252,7 +253,7 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
 
 
 class ContractedWorkPaymentInterimReport(Resource, UserMixin):
-    # TODO: Protect me with OTP
+    @requires_otp_or_admin
     def put(self, application_guid, work_id):
         # Ensure that this work item exists on this application.
         application = Application.find_by_guid(application_guid)

@@ -53,3 +53,6 @@ export const LIABILITY = (guid) => (guid ? `/liability?application_guid=${guid}`
 
 // appSettings
 export const APP_SETTINGS = "/settings";
+
+// OTP AUTHORIZATION
+export const AUTHORIZE_OTP = "/authorization";

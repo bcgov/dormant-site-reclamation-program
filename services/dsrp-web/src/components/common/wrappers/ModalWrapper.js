@@ -11,6 +11,12 @@ import {
   getClearOnSubmit,
   getWidth,
 } from "@/selectors/modalSelectors";
+import {
+  getIsTimerVisible,
+  getIssuedTimeUtc,
+  getTimeOutSeconds,
+} from "@/reducers/authorizationReducer";
+import AuthorizationTimer from "@/components/common/AuthorizationTimer";
 
 const propTypes = {
   closeModal: PropTypes.func.isRequired,
@@ -19,6 +25,9 @@ const propTypes = {
   content: PropTypes.func,
   width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   props: PropTypes.objectOf(PropTypes.any),
+  isTimerVisible: PropTypes.bool.isRequired,
+  issuedTimeUtc: PropTypes.instanceOf(Date),
+  timeOutSeconds: PropTypes.number,
 };
 
 const defaultProps = {
@@ -28,6 +37,8 @@ const defaultProps = {
     onSubmit: () => {},
     afterClose: () => {},
   },
+  timeOutSeconds: null,
+  issuedTimeUtc: null,
 };
 
 export class ModalWrapper extends Component {
@@ -48,6 +59,17 @@ export class ModalWrapper extends Component {
     }
   };
 
+  getFooter = () =>
+    this.props.isTimerVisible &&
+    this.props.issuedTimeUtc &&
+    this.props.timeOutSeconds && (
+      <AuthorizationTimer
+        issueDate={this.props.issuedTimeUtc}
+        timeOut={this.props.timeOutSeconds}
+        className="authorization-timer-modal"
+      />
+    );
+
   render() {
     const ChildComponent = this.props.content;
     return (
@@ -55,7 +77,7 @@ export class ModalWrapper extends Component {
         title={this.props.props.title}
         visible={this.props.isModalOpen}
         width={this.props.width}
-        footer={null}
+        footer={this.getFooter()}
         closable={false}
       >
         {ChildComponent && (
@@ -76,6 +98,9 @@ const mapStateToProps = (state) => ({
   content: getContent(state),
   clearOnSubmit: getClearOnSubmit(state),
   width: getWidth(state),
+  isTimerVisible: getIsTimerVisible(state),
+  issuedTimeUtc: getIssuedTimeUtc(state),
+  timeOutSeconds: getTimeOutSeconds(state),
 });
 
 const mapDispatchToProps = (dispatch) =>

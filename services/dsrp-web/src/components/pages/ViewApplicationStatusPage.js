@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Row, Col, Typography, Button } from "antd";
+import { Row, Col, Typography, Button, Result, Icon } from "antd";
 import PropTypes from "prop-types";
 import { bindActionCreators, compose } from "redux";
 import { withRouter } from "react-router-dom";
@@ -9,15 +9,20 @@ import ApplicationStatusCard from "@/components/pages/ApplicationStatusCard";
 import DocumentUploadForm from "@/components/forms/DocumentUploadForm";
 import ContractedWorkPaymentView from "@/components/pages/ContractedWorkPaymentView";
 import { fetchApplicationSummaryById } from "@/actionCreators/applicationActionCreator";
+import { createOTL, endUserTemporarySession } from "@/actionCreators/authorizationActionCreator";
 import { getApplication } from "@/reducers/applicationReducer";
 import { HELP_EMAIL } from "@/constants/strings";
 import CustomPropTypes from "@/customPropTypes";
 import { PageTracker } from "@/utils/trackers";
+import { isGuid } from "@/utils/helpers";
+import * as router from "@/constants/routes";
+import { getIsOTLExpired } from "@/reducers/authorizationReducer";
 
 const { Paragraph, Title } = Typography;
 
 const propTypes = {
   fetchApplicationSummaryById: PropTypes.func.isRequired,
+  createOTL: PropTypes.func.isRequired,
   loadedApplication: CustomPropTypes.applicationSummary,
   match: PropTypes.shape({
     params: {
@@ -25,22 +30,16 @@ const propTypes = {
     },
   }).isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
+  endUserTemporarySession: PropTypes.func.isRequired,
+  isOTLExpired: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
   loadedApplication: { guid: "" },
 };
 
-const isGuid = (input) => {
-  if (input[0] === "{") {
-    input = input.substring(1, input.length - 1);
-  }
-  const regexGuid = /^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/gi;
-  return regexGuid.test(input);
-};
-
 export class ViewApplicationStatusPage extends Component {
-  state = { guid: "" };
+  state = { guid: "", requestSent: false };
 
   componentDidMount = () => {
     if (
@@ -49,20 +48,35 @@ export class ViewApplicationStatusPage extends Component {
       this.props.match.params.id &&
       isGuid(this.props.match.params.id)
     ) {
-      this.props.fetchApplicationSummaryById(this.props.match.params.id);
+      this.props.fetchApplicationSummaryById(this.props.match.params.id).catch((error) => {
+        if (error.response.status === 403) {
+          this.props.endUserTemporarySession(this.props.history);
+        }
+      });
       this.setState({ guid: this.props.match.params.id });
     }
+  };
 
-    // this.onFormSubmit({ guid: "8b8ce987-b16d-4167-aff9-229e44cb8bc0" });
+  handleCheckAnotherApplication = () => {
+    this.props.endUserTemporarySession();
+    this.props.history.push(router.VIEW_APPLICATION_STATUS.route);
+    this.setState({ guid: "" });
   };
 
   onFormSubmit = (values) => {
-    this.props.fetchApplicationSummaryById(values.guid);
-    this.setState({ guid: values.guid });
+    // request OTL and redirect to request-access page
+    return this.props
+      .createOTL(values.guid)
+      .then(() => {
+        this.setState({ guid: values.guid, requestSent: true });
+      })
+      .catch(() => {
+        this.props.endUserTemporarySession(this.props.history);
+      });
   };
 
   render = () =>
-    this.props.loadedApplication.guid !== this.state.guid ? (
+    this.props.loadedApplication.guid !== this.state.guid || this.props.isOTLExpired ? (
       <>
         <PageTracker title="Application Status" />
         <Row type="flex" justify="center" align="top" className="landing-header">
@@ -71,9 +85,22 @@ export class ViewApplicationStatusPage extends Component {
             <Paragraph />
           </Col>
         </Row>
+        {this.state.requestSent && (
+          <Row type="flex" justify="center" align="top" className="landing-header">
+            <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
+              <Result
+                icon={<Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" />}
+                title="One-Time Link has been sent to your email"
+              />
+            </Col>
+          </Row>
+        )}
         <Row type="flex" justify="center" align="top">
-          <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-            <ViewApplicationStatusForm onSubmit={this.onFormSubmit} />
+          <Col xl={24} xxl={20} sm={22}>
+            <ViewApplicationStatusForm
+              onSubmit={this.onFormSubmit}
+              endUserTemporarySession={this.props.endUserTemporarySession}
+            />
           </Col>
         </Row>
       </>
@@ -96,7 +123,9 @@ export class ViewApplicationStatusPage extends Component {
             <a href={`mailto:${HELP_EMAIL}`}>contact us</a> and be sure to include your reference
             number.
           </Paragraph>
-          <Button onClick={() => this.setState({ guid: "" })}>Check another Application</Button>
+          <Button onClick={() => this.handleCheckAnotherApplication()}>
+            Check another Application
+          </Button>
         </Col>
       </Row>
     );
@@ -107,12 +136,15 @@ ViewApplicationStatusPage.defaultProps = defaultProps;
 
 const mapStateToProps = (state) => ({
   loadedApplication: getApplication(state),
+  isOTLExpired: getIsOTLExpired(state),
 });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchApplicationSummaryById,
+      createOTL,
+      endUserTemporarySession,
     },
     dispatch
   );

@@ -59,6 +59,11 @@
       "value": "template.dsrp-metabase-key"
     },
     {
+      "name": "ONE_TIME_PASSWORD_TIMEOUT_SECONDS",
+      "required": false,
+      "value": "14400"
+    },
+    {
       "name": "REDIS_CONFIG_NAME",
       "required": false,
       "value": "template.dsrp-redis-secret"
@@ -329,6 +334,10 @@
                   {
                     "name": "JWT_OIDC_ALGORITHMS",
                     "value": "RS256"
+                  },
+                  {
+                    "name": "ONE_TIME_PASSWORD_TIMEOUT_SECONDS",
+                    "value": "${ONE_TIME_PASSWORD_TIMEOUT_SECONDS}"
                   },
                   {
                     "name": "BASE_PATH",

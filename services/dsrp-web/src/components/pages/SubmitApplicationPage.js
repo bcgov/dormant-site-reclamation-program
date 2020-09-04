@@ -9,18 +9,21 @@ import { getAppSettings } from "@/selectors/appSettingsSelectors";
 import * as Strings from "@/constants/strings";
 import Loading from "@/components/common/Loading";
 import { PageTracker } from "@/utils/trackers";
+import { endUserTemporarySession } from "@/actionCreators/authorizationActionCreator";
 
 const { Title, Paragraph } = Typography;
 
 const propTypes = {
   appSettings: PropTypes.objectOf(PropTypes.any).isRequired,
   fetchAppSettings: PropTypes.func.isRequired,
+  endUserTemporarySession: PropTypes.func.isRequired,
 };
 
 export class SubmitApplicationPage extends Component {
   state = { isLoaded: false };
 
   componentDidMount() {
+    this.props.endUserTemporarySession();
     this.props.fetchAppSettings().then(() => {
       this.setState({ isLoaded: true });
     });
@@ -86,6 +89,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchAppSettings,
+      endUserTemporarySession,
     },
     dispatch
   );

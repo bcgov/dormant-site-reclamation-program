@@ -9,12 +9,14 @@ import { fetchAppSettings } from "@/actionCreators/appSettingsActionCreator";
 import { getAppSettings } from "@/selectors/appSettingsSelectors";
 import * as Strings from "@/constants/strings";
 import { PageTracker } from "@/utils/trackers";
+import { endUserTemporarySession } from "@/actionCreators/authorizationActionCreator";
 
 const { Paragraph, Title } = Typography;
 
 const propTypes = {
   appSettings: PropTypes.objectOf(PropTypes.any).isRequired,
   fetchAppSettings: PropTypes.func.isRequired,
+  endUserTemporarySession: PropTypes.func.isRequired,
 };
 
 export class LandingPage extends Component {
@@ -98,7 +100,11 @@ export class LandingPage extends Component {
               <Col>
                 {!this.state.appsDisabled && (
                   <Link to={routes.SUBMIT_APPLICATION.route} style={{ textDecoration: "none" }}>
-                    <Button type="primary" size="large">
+                    <Button
+                      type="primary"
+                      size="large"
+                      onClick={() => this.props.endUserTemporarySession()}
+                    >
                       Apply Now
                     </Button>
                   </Link>
@@ -120,6 +126,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchAppSettings,
+      endUserTemporarySession,
     },
     dispatch
   );

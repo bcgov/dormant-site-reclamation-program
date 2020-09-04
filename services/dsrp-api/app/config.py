@@ -47,7 +47,8 @@ class Config(object):
     )
     JWT_OIDC_AUDIENCE = os.environ.get('JWT_OIDC_AUDIENCE', 'dsrp')
     JWT_OIDC_ALGORITHMS = os.environ.get('JWT_OIDC_ALGORITHMS', 'RS256')
-
+    # OTP
+    ONE_TIME_PASSWORD_TIMEOUT_SECONDS = os.environ.get('ONE_TIME_PASSWORD_TIMEOUT_SECONDS', 14400)
     # RequestParser global config
     BUNDLE_ERRORS = True
 
