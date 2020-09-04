@@ -476,19 +476,21 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         key: "operations",
         render: (text, record) => (
           <div style={{ float: "right" }}>
-            <Row>
-              <Col>
+            <Row type="flex" justify="space-around" align="middle">
+              <Col span={10}>
                 <Button
                   type="link"
                   onClick={() => this.openAdminContractedWorkPaymentModal(record)}
-                  style={{ marginRight: 15, padding: 0 }}
+                  style={{ paddingLeft: 12, paddingRight: 12 }}
                 >
                   <Icon type="solution" className="icon-lg" />
                 </Button>
+              </Col>
+              <Col span={10}>
                 <Button
                   type="link"
                   onClick={() => this.openContractedWorkPaymentModal(record)}
-                  style={{ padding: 0 }}
+                  style={{ paddingLeft: 12, paddingRight: 12 }}
                 >
                   <Icon type="eye" className="icon-lg" />
                 </Button>
