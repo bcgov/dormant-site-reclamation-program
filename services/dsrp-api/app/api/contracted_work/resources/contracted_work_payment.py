@@ -149,23 +149,31 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
         # Update the work-type specific reporting data points.
         contracted_work_type = application.find_contracted_work_type_by_work_id(payment.work_id)
 
+        def parseBool(value):
+            if value not in ('true', 'false'):
+                raise BadRequest(f'{value} is not a valid boolean value')
+            return value == 'true'
+
         # Abandonment reporting
         if contracted_work_type == 'abandonment':
-            payment.abandonment_cut_and_capped_completed = bool(
+            payment.abandonment_cut_and_capped_completed = parseBool(
                 final_payment_data['abandonment_cut_and_capped_completed'])
 
-            payment.abandonment_notice_of_operations_submitted = bool(
+            payment.abandonment_notice_of_operations_submitted = parseBool(
                 final_payment_data['abandonment_notice_of_operations_submitted'])
 
-            payment.abandonment_meters_of_pipeline_abandoned = int(
-                final_payment_data['abandonment_meters_of_pipeline_abandoned'])
+            payment.abandonment_was_pipeline_abandoned = parseBool(
+                final_payment_data['abandonment_was_pipeline_abandoned'])
+
+            payment.abandonment_metres_of_pipeline_abandoned = int(
+                final_payment_data['abandonment_metres_of_pipeline_abandoned'])
 
         # Reclamation reporting
         elif contracted_work_type == 'reclamation':
-            payment.reclamation_reclaimed_to_meet_cor_p2_requirements = bool(
+            payment.reclamation_reclaimed_to_meet_cor_p2_requirements = parseBool(
                 final_payment_data['reclamation_reclaimed_to_meet_cor_p2_requirements'])
 
-            payment.reclamation_surface_reclamation_criteria_met = bool(
+            payment.reclamation_surface_reclamation_criteria_met = parseBool(
                 final_payment_data['reclamation_surface_reclamation_criteria_met'])
 
         # Remediation reporting
@@ -176,10 +184,10 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
                 raise BadRequest('Unknown "remediation type of document submitted" value received!')
             payment.remediation_type_of_document_submitted = remediation_type_of_document_submitted
 
-            payment.remediation_identified_contamination_meets_standards = bool(
+            payment.remediation_identified_contamination_meets_standards = parseBool(
                 final_payment_data['remediation_identified_contamination_meets_standards'])
 
-            payment.remediation_reclaimed_to_meet_cor_p1_requirements = bool(
+            payment.remediation_reclaimed_to_meet_cor_p1_requirements = parseBool(
                 final_payment_data['remediation_reclaimed_to_meet_cor_p1_requirements'])
 
         # Site investigation reporting
@@ -192,7 +200,7 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
                     'Unknown "site investigation type of document submitted" value received!')
             payment.site_investigation_type_of_document_submitted = site_investigation_type_of_document_submitted
 
-            payment.site_investigation_concerns_identified = bool(
+            payment.site_investigation_concerns_identified = parseBool(
                 final_payment_data['site_investigation_concerns_identified'])
 
         # The EoC is only required if it hasn't been provided yet.

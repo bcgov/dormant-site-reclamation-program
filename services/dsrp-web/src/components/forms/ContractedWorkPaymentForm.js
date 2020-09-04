@@ -30,11 +30,38 @@ const defaultProps = {
   paymentType: "interim",
 };
 
+const docSubmittedDropdownOptions = [
+  { value: "COR_P1", label: "Yes - Certificate of Restoration (Part 1)" },
+  { value: "DSAF", label: "Yes - Dormancy Site Assessment Form" },
+  { value: "NONE", label: "No" },
+];
+
+const booleanDropdownOptions = [
+  { value: "true", label: "Yes" },
+  { value: "false", label: "No" },
+];
+
+const booleanFormat = (value) =>
+  value === true || value === false || value === "true" || value === "false"
+    ? value.toString()
+    : undefined;
+
 const renderReportingFields = (workType, isViewOnly) => {
   const workTypeName =
     workType === "preliminary_site_investigation" || workType === "detailed_site_investigation"
       ? "Site Investigation"
       : capitalize(workType);
+
+  const validateMetresPipelineAbandoned = (value, allValues) => {
+    if (
+      value &&
+      (!allValues.abandonment_was_pipeline_abandoned ||
+        allValues.abandonment_was_pipeline_abandoned === "false")
+    ) {
+      return "You cannot provide this field if pipeline was not abandoned";
+    }
+    return undefined;
+  };
 
   return (
     <Row className="final-report-fields">
@@ -61,23 +88,52 @@ const renderReportingFields = (workType, isViewOnly) => {
               id="abandonment_cut_and_capped_completed"
               name="abandonment_cut_and_capped_completed"
               label="Was Well Abandonment completed to Cut and Capped?"
+              placeholder="Select an option"
               disabled={isViewOnly}
-              component={renderConfig.CHECKBOX}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
             />
             <Field
               id="abandonment_notice_of_operations_submitted"
               name="abandonment_notice_of_operations_submitted"
               label="Was a Notice of Operations (NOO) form submission completed using the OGC eSubmission portal?"
+              placeholder="Select an option"
               disabled={isViewOnly}
-              component={renderConfig.CHECKBOX}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
             />
             <Field
-              id="abandonment_meters_of_pipeline_abandoned"
-              name="abandonment_meters_of_pipeline_abandoned"
-              label="If pipeline was abandoned as part of the Dormant Site Abandonment process, provide the length (approximate) of pipeline abandoned (metres)."
-              placeholder="Not applicable"
+              id="abandonment_was_pipeline_abandoned"
+              name="abandonment_was_pipeline_abandoned"
+              label="Was pipeline abandoned as part of the Dormant Site Abandonment process?"
+              placeholder="Select an option"
               disabled={isViewOnly}
-              validate={[notZero]}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
+            />
+            <Field
+              id="abandonment_metres_of_pipeline_abandoned"
+              name="abandonment_metres_of_pipeline_abandoned"
+              label={
+                <>
+                  <div>
+                    If pipeline was abandoned as part of the Dormant Site Abandonment process,
+                    provide the length (approximate) of pipeline abandoned (metres).
+                  </div>
+                  <div className="font-weight-normal">
+                    If you are unsure of the approximate length, please leave this field blank.
+                  </div>
+                </>
+              }
+              placeholder="0 metres"
+              disabled={isViewOnly}
+              validate={[validateMetresPipelineAbandoned, notZero]}
               component={renderConfig.FIELD}
               {...metersMask}
             />
@@ -90,8 +146,12 @@ const renderReportingFields = (workType, isViewOnly) => {
               id="remediation_identified_contamination_meets_standards"
               name="remediation_identified_contamination_meets_standards"
               label="Was all identified contamination relating to the Dormant Site remediated to meet Contaminated Sites Regulations remediation standards or risk-based standards relevant to the Site?"
+              placeholder="Select an option"
               disabled={isViewOnly}
-              component={renderConfig.CHECKBOX}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
             />
             <Field
               id="remediation_type_of_document_submitted"
@@ -102,18 +162,18 @@ const renderReportingFields = (workType, isViewOnly) => {
               component={renderConfig.SELECT}
               validate={[required]}
               format={null}
-              data={[
-                { value: "COR_P1", label: "Yes - Certificate of Restoration (Part 1)" },
-                { value: "DSAF", label: "Yes - Dormancy Site Assessment Form" },
-                { value: "NONE", label: "No" },
-              ]}
+              data={docSubmittedDropdownOptions}
             />
             <Field
               id="remediation_reclaimed_to_meet_cor_p1_requirements"
               name="remediation_reclaimed_to_meet_cor_p1_requirements"
               label="Was the Dormant Site reclaimed to meet Certificate of Restoration (Part 1) requirements?"
+              placeholder="Select an option"
               disabled={isViewOnly}
-              component={renderConfig.CHECKBOX}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
             />
           </>
         )}
@@ -124,15 +184,23 @@ const renderReportingFields = (workType, isViewOnly) => {
               id="reclamation_reclaimed_to_meet_cor_p2_requirements"
               name="reclamation_reclaimed_to_meet_cor_p2_requirements"
               label="Was the Dormant Site reclaimed to meet Certificate of Restoration (Part 2) requirements?"
+              placeholder="Select an option"
               disabled={isViewOnly}
-              component={renderConfig.CHECKBOX}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
             />
             <Field
               id="reclamation_surface_reclamation_criteria_met"
               name="reclamation_surface_reclamation_criteria_met"
               label="Has the surface reclamation been completed to match surrounding natural contour and revegetated with ecologically suitable species?"
+              placeholder="Select an option"
               disabled={isViewOnly}
-              component={renderConfig.CHECKBOX}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
             />
           </>
         )}
@@ -149,18 +217,18 @@ const renderReportingFields = (workType, isViewOnly) => {
               component={renderConfig.SELECT}
               validate={[required]}
               format={null}
-              data={[
-                { value: "COR_P1", label: "Yes - Certificate of Restoration (Part 1)" },
-                { value: "DSAF", label: "Yes - Dormancy Site Assessment Form" },
-                { value: "NONE", label: "No" },
-              ]}
+              data={docSubmittedDropdownOptions}
             />
             <Field
               id="site_investigation_concerns_identified"
               name="site_investigation_concerns_identified"
               label="Were any concerns identified through site investigation that are specific to other interested parties (e.g. landowners, municipalities, regional districts or local Indigenous nations)?"
+              placeholder="Select an option"
               disabled={isViewOnly}
-              component={renderConfig.CHECKBOX}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
             />
           </>
         )}
@@ -173,7 +241,7 @@ const renderReportingFields = (workType, isViewOnly) => {
           disabled={isViewOnly}
           component={renderConfig.SELECT}
           validate={[required]}
-          format={(value) => (value ? value.toString() : undefined)}
+          format={booleanFormat}
           data={[
             { value: "true", label: `${workTypeName} Complete` },
             { value: "false", label: `${workTypeName} Not Complete` },

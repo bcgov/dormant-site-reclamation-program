@@ -415,9 +415,12 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
                   contractedWorkPayment.abandonment_notice_of_operations_submitted
                 )}
               </Descriptions.Item>
+              <Descriptions.Item label="Was pipeline abandoned as part of the Dormant Site Abandonment process?">
+                {formatBooleanField(contractedWorkPayment.abandonment_was_pipeline_abandoned)}
+              </Descriptions.Item>
               <Descriptions.Item label="If pipeline was abandoned as part of the Dormant Site Abandonment process, provide the length (approximate) of pipeline abandoned (metres).">
-                {(contractedWorkPayment.abandonment_meters_of_pipeline_abandoned &&
-                  `${contractedWorkPayment.abandonment_meters_of_pipeline_abandoned} metres`) ||
+                {(contractedWorkPayment.abandonment_metres_of_pipeline_abandoned &&
+                  `${contractedWorkPayment.abandonment_metres_of_pipeline_abandoned} metres`) ||
                   Strings.DASH}
               </Descriptions.Item>
             </>

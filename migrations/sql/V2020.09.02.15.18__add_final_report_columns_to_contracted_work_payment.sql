@@ -5,7 +5,8 @@ ADD COLUMN reclamation_was_achieved boolean,
 
 ADD COLUMN abandonment_cut_and_capped_completed boolean,
 ADD COLUMN abandonment_notice_of_operations_submitted boolean,
-ADD COLUMN abandonment_meters_of_pipeline_abandoned integer,
+ADD COLUMN abandonment_was_pipeline_abandoned boolean,
+ADD COLUMN abandonment_metres_of_pipeline_abandoned integer,
 
 ADD COLUMN site_investigation_type_of_document_submitted varchar,
 ADD COLUMN site_investigation_concerns_identified boolean,

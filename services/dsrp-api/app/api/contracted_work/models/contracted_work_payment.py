@@ -90,7 +90,8 @@ class ContractedWorkPayment(Base, AuditMixin):
     # Abandonment Reporting
     abandonment_cut_and_capped_completed = db.Column(db.Boolean)
     abandonment_notice_of_operations_submitted = db.Column(db.Boolean)
-    abandonment_meters_of_pipeline_abandoned = db.Column(db.Integer)
+    abandonment_was_pipeline_abandoned = db.Column(db.Boolean)
+    abandonment_metres_of_pipeline_abandoned = db.Column(db.Integer)
 
     # PSI and DSI Reporting
     site_investigation_type_of_document_submitted = db.Column(db.String)
