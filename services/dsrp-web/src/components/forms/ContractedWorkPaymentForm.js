@@ -386,7 +386,7 @@ export class ContractedWorkPaymentForm extends Component {
                   }
                   disabled={isViewOnly}
                   component={renderConfig.AUTO_SIZE_FIELD}
-                  validate={[required, minLength(25), maxLength(250)]}
+                  validate={[minLength(25), maxLength(250)]}
                 />
               )}
 
