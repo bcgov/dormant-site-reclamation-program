@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Field, getFormValues } from "redux-form";
 import { Typography, Table, Alert, Descriptions } from "antd";
 import { connect } from "react-redux";
-import { startCase, camelCase, lowerCase, isEmpty, isEqual } from "lodash";
+import { startCase, camelCase, lowerCase, isEmpty, isEqual, capitalize } from "lodash";
 import { formatMoney, currencyMask, formatDate } from "@/utils/helpers";
 import { required } from "@/utils/validate";
 import PropTypes from "prop-types";
@@ -81,6 +81,12 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
       camelCase(this.props.contractedWorkPaymentType)
     );
     const contractedWorkTypeFormId = lowerCase(this.props.contractedWorkPaymentType);
+
+    const workType = this.props.contractedWork.contracted_work_type;
+    const workTypeName =
+      workType === "preliminary_site_investigation" || workType === "detailed_site_investigation"
+        ? "Site Investigation"
+        : capitalize(workType);
 
     const columns = [
       {
@@ -301,6 +307,18 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
       </>
     );
 
+    const formatBooleanField = (value) =>
+      value === null ? Strings.DASH : value === true ? "Yes" : "No";
+
+    const formatDocSubmitted = (value) =>
+      value === null
+        ? Strings.DASH
+        : value === "NONE"
+        ? "No"
+        : value === "COR_P1"
+        ? "Yes - Certificate of Restoration (Part 1)"
+        : "Yes - Dormancy Site Assessment Form";
+
     return (
       <>
         <Descriptions title="Contracted Work Information" column={1}>
@@ -368,6 +386,89 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
             )) ||
               "Not yet submitted"}
           </Descriptions.Item>
+        </Descriptions>
+
+        <br />
+        <Descriptions
+          title="Final Report - Reporting Information"
+          column={1}
+          layout="vertical"
+          colon={false}
+        >
+          <Descriptions.Item label="Surface Landowner">
+            {contractedWorkPayment.surface_landowner || Strings.DASH}
+          </Descriptions.Item>
+          <Descriptions.Item label="Level of Reclamation achieved for the Dormant Site">
+            {(contractedWorkPayment.reclamation_was_achieved === null && Strings.DASH) ||
+              (contractedWorkPayment.reclamation_was_achieved === true &&
+                `${workTypeName} Complete`) ||
+              `${workTypeName} Not Complete`}
+          </Descriptions.Item>
+
+          {workType === "abandonment" && (
+            <>
+              <Descriptions.Item label="Was Well Abandonment completed to Cut and Capped?">
+                {formatBooleanField(contractedWorkPayment.abandonment_cut_and_capped_completed)}
+              </Descriptions.Item>
+              <Descriptions.Item label="Was a Notice of Operations (NOO) form submission completed using the OGC eSubmission portal?">
+                {formatBooleanField(
+                  contractedWorkPayment.abandonment_notice_of_operations_submitted
+                )}
+              </Descriptions.Item>
+              <Descriptions.Item label="If pipeline was abandoned as part of the Dormant Site Abandonment process, provide the length (approximate) of pipeline abandoned (metres).">
+                {(contractedWorkPayment.abandonment_meters_of_pipeline_abandoned &&
+                  `${contractedWorkPayment.abandonment_meters_of_pipeline_abandoned} metres`) ||
+                  Strings.DASH}
+              </Descriptions.Item>
+            </>
+          )}
+
+          {workType === "remediation" && (
+            <>
+              <Descriptions.Item label="Was all identified contamination relating to the Dormant Site remediated to meet Contaminated Sites Regulations remediation standards or risk-based standards relevant to the Site?">
+                {formatBooleanField(
+                  contractedWorkPayment.remediation_identified_contamination_meets_standards
+                )}
+              </Descriptions.Item>
+              <Descriptions.Item label="Has a Certificate of Restoration (Part 1) or a Dormancy Site Assessment Form been submitted to the OGC?">
+                {formatDocSubmitted(contractedWorkPayment.remediation_type_of_document_submitted)}
+              </Descriptions.Item>
+              <Descriptions.Item label="Was the Dormant Site reclaimed to meet Certificate of Restoration (Part 1) requirements?">
+                {formatBooleanField(
+                  contractedWorkPayment.remediation_reclaimed_to_meet_cor_p1_requirements
+                )}
+              </Descriptions.Item>
+            </>
+          )}
+
+          {workType === "reclamation" && (
+            <>
+              <Descriptions.Item label="Was the Dormant Site reclaimed to meet Certificate of Restoration (Part 2) requirements?">
+                {formatBooleanField(
+                  contractedWorkPayment.reclamation_reclaimed_to_meet_cor_p2_requirements
+                )}
+              </Descriptions.Item>
+              <Descriptions.Item label="Has the surface reclamation been completed to match surrounding natural contour and revegetated with ecologically suitable species?">
+                {formatBooleanField(
+                  contractedWorkPayment.reclamation_surface_reclamation_criteria_met
+                )}
+              </Descriptions.Item>
+            </>
+          )}
+
+          {(workType === "preliminary_site_investigation" ||
+            workType === "detailed_site_investigation") && (
+            <>
+              <Descriptions.Item label="Was the Dormant Site reclaimed to meet Certificate of Restoration (Part 2) requirements?">
+                {formatDocSubmitted(
+                  contractedWorkPayment.site_investigation_type_of_document_submitted
+                )}
+              </Descriptions.Item>
+              <Descriptions.Item label="Were any concerns identified through site investigation that are specific to other interested parties (e.g. landowners, municipalities, regional districts or local Indigenous nations)?">
+                {formatBooleanField(contractedWorkPayment.site_investigation_concerns_identified)}
+              </Descriptions.Item>
+            </>
+          )}
         </Descriptions>
 
         <br />
