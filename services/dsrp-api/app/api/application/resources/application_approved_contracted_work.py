@@ -8,10 +8,11 @@ from app.api.constants import DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, REVIEW_DEA
 from app.api.application.models.application import Application
 from app.api.utils.access_decorators import requires_role_admin
 from app.api.utils.helpers import apply_pagination_to_records
+from app.api.utils.access_decorators import requires_otp_or_admin
 
 
 class ApplicationApprovedContractedWorkResource(Resource, UserMixin):
-    # TODO: Protect me with OTP
+    @requires_otp_or_admin
     @api.doc(
         description=
         'Get the information required for an applicant to manage the approved contracted work payment information on their application.'

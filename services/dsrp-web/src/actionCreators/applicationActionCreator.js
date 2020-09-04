@@ -67,7 +67,7 @@ export const fetchApplicationSummaryById = (guid) => (dispatch) => {
     })
     .catch((err) => {
       dispatch(error(reducerTypes.GET_APPLICATION_SUMMARY));
-      throw new Error(err);
+      throw err;
     });
 };
 

@@ -17,6 +17,7 @@ from app.api.utils.access_decorators import ADMIN
 from app.api.utils.resources_mixins import UserMixin
 from app.api.utils.access_decorators import requires_role_view_all, requires_role_admin
 from app.api.constants import DOWNLOAD_TOKEN, TIMEOUT_5_MINUTES
+from app.api.utils.access_decorators import requires_otp_or_admin
 
 from app.api.application.models.application import Application
 from app.api.application.models.application_document import ApplicationDocument
@@ -29,7 +30,7 @@ from app.api.documents.response_models import DOWNLOAD_TOKEN_MODEL
 
 
 class ApplicationDocumentListResource(Resource, UserMixin):
-    # TODO: Protect me with OTP or separate endpoints for applicants/admins
+    @requires_otp_or_admin
     @api.doc(description='Register files that have been uploaded to the document store')
     def post(self, application_guid):
         application = Application.find_by_guid(application_guid)
@@ -60,10 +61,9 @@ class ApplicationDocumentListResource(Resource, UserMixin):
 
 
 class ApplicationDocumentResource(Resource, UserMixin):
-    # TODO: Protect me with OTP or separate endpoints for applicants/admins
     @api.doc(description='Generate a token to retrieve a file object storage')
     @api.marshal_with(DOWNLOAD_TOKEN_MODEL, code=200)
-    @requires_role_admin
+    @requires_otp_or_admin
     def get(self, application_guid, document_guid):
         app_document = ApplicationDocument.find_by_guid(application_guid, document_guid)
         if not app_document:

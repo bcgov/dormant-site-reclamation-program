@@ -79,3 +79,12 @@
     text-decoration: none;
   }
 }
+
+.header-authorization-timer {
+  font-size: $heading-3-size;
+  color: $white;
+
+  & .anticon {
+    font-size: $heading-3-size;
+  }
+}

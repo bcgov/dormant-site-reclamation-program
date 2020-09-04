@@ -7,7 +7,7 @@ import { Layout, BackTop, Row, Col, Spin, Icon } from "antd";
 import PropTypes from "prop-types";
 import MediaQuery from "react-responsive";
 import Routes from "./routes/Routes";
-import { Header } from "@/components/layout/Header";
+import Header from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import ModalWrapper from "@/components/common/wrappers/ModalWrapper";
 import AuthenticationGuard from "@/hoc/AuthenticationGuard";
@@ -16,7 +16,6 @@ import { detectIE } from "@/utils/environmentUtils";
 import configureStore from "./store/configureStore";
 import ScrollToTopWrapper from "@/components/common/wrappers/ScrollToTopWrapper";
 import { loadBulkStaticContent } from "@/actionCreators/staticContentActionCreator";
-import { getStaticContentLoadingIsComplete } from "@/selectors/staticContentSelectors";
 import { MatomoLinkTracing } from "@/utils/trackers";
 
 export const store = configureStore();
@@ -25,11 +24,6 @@ Spin.setDefaultIndicator(<Icon type="loading" style={{ fontSize: 40 }} />);
 
 const propTypes = {
   loadBulkStaticContent: PropTypes.func.isRequired,
-  getStaticContentLoadingIsComplete: PropTypes.func,
-};
-
-const defaultProps = {
-  getStaticContentLoadingIsComplete: () => {},
 };
 
 class App extends Component {
@@ -86,10 +80,6 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  staticContentLoadingIsComplete: getStaticContentLoadingIsComplete(state),
-});
-
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
@@ -99,10 +89,9 @@ const mapDispatchToProps = (dispatch) =>
   );
 
 App.propTypes = propTypes;
-App.defaultProps = defaultProps;
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(null, mapDispatchToProps),
   hot(module),
   AuthenticationGuard(true)
 )(App);

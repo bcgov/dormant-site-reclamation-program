@@ -6,6 +6,7 @@ import orgbookReducerObject from "./reducers/orgbookReducer";
 import OGCReducerObject from "./reducers/OGCReducer";
 import applicationReducerObject from "./reducers/applicationReducer";
 import appSettingsReducerObject from "./reducers/appSettingsReducer";
+import authorizationReducerObject from "./reducers/authorizationReducer";
 
 export const authenticationReducer = authenticationReducerObject;
 export const networkReducer = networkReducerObject;
@@ -15,3 +16,4 @@ export const orgbookReducer = orgbookReducerObject;
 export const OGCReducer = OGCReducerObject;
 export const applicationReducer = applicationReducerObject;
 export const appSettingsReducer = appSettingsReducerObject;
+export const authorizationReducer = authorizationReducerObject;
