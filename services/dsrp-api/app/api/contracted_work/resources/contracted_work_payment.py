@@ -70,6 +70,11 @@ class ContractedWorkPaymentInterim(Resource, UserMixin):
         payment.interim_actual_cost = interim_payment_data['interim_actual_cost']
         payment.interim_submitter_name = interim_payment_data['interim_submitter_name']
 
+        # The interim report is optional at this step.
+        interim_report = interim_payment_data.get('interim_report')
+        if interim_report:
+            payment.interim_report = interim_report
+
         # The EoC is only required if it hasn't been provided yet.
         interim_eoc_data = interim_payment_data.get('interim_eoc', [None])[0]
         if not interim_eoc_data and not payment.interim_eoc_document:
@@ -162,11 +167,12 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
             payment.abandonment_notice_of_operations_submitted = parseBool(
                 final_payment_data['abandonment_notice_of_operations_submitted'])
 
-            payment.abandonment_was_pipeline_abandoned = parseBool(
+            abandonment_was_pipeline_abandoned = parseBool(
                 final_payment_data['abandonment_was_pipeline_abandoned'])
-
-            payment.abandonment_metres_of_pipeline_abandoned = int(
-                final_payment_data['abandonment_metres_of_pipeline_abandoned'])
+            payment.abandonment_was_pipeline_abandoned = abandonment_was_pipeline_abandoned
+            if abandonment_was_pipeline_abandoned:
+                payment.abandonment_metres_of_pipeline_abandoned = int(
+                    final_payment_data['abandonment_metres_of_pipeline_abandoned'])
 
         # Reclamation reporting
         elif contracted_work_type == 'reclamation':

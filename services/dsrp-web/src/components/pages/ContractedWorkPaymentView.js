@@ -18,7 +18,6 @@ import { getContractedWorkPaymentStatusOptionsHash } from "@/selectors/staticCon
 import * as Strings from "@/constants/strings";
 import { modalConfig } from "@/components/modalContent/config";
 import { openModal, closeModal } from "@/actions/modalActions";
-import LinkButton from "@/components/common/LinkButton";
 import { contractedWorkIdSorter } from "@/utils/helpers";
 import CustomPropTypes from "@/customPropTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
@@ -40,7 +39,10 @@ const defaultProps = {
 const { Paragraph, Title, Text } = Typography;
 
 const popover = (message, extraClassName) => (
-  <Popover title="Admin Note" content={message}>
+  <Popover
+    title={<div className="font-size-small">Admin Note</div>}
+    content={<div className="font-size-small">{message}</div>}
+  >
     <Icon type="info-circle" className={`icon-sm ${extraClassName}`} style={{ marginLeft: 4 }} />
   </Popover>
 );
@@ -207,6 +209,7 @@ export class ContractedWorkPaymentView extends Component {
             title: "Est. Cost",
             key: "contracted_work_total",
             dataIndex: "contracted_work_total",
+            className: "table-column-right-align",
             sorter: nullableStringOrNumberSorter("contracted_work_total"),
             render: (text) => <div title="Est. Cost">{formatMoney(text) || Strings.DASH}</div>,
           },
@@ -224,15 +227,15 @@ export class ContractedWorkPaymentView extends Component {
         className: "interim-submission",
         children: [
           {
-            title: "Interim Cost",
+            title: "Actual Cost",
             key: "interim_cost",
             dataIndex: "interim_cost",
-            className: "interim-submission-left",
+            className: "interim-submission-left table-column-right-align",
             sorter: nullableStringOrNumberSorter("interim_cost"),
-            render: (text) => <div title="Interim Cost">{formatMoney(text) || Strings.DASH}</div>,
+            render: (text) => <div title="Actual Cost">{formatMoney(text) || Strings.DASH}</div>,
           },
           {
-            title: "Interim Status",
+            title: "Status",
             key: "interim_status_description",
             dataIndex: "interim_status_description",
             sorter: nullableStringOrNumberSorter("interim_status_description"),
@@ -246,7 +249,7 @@ export class ContractedWorkPaymentView extends Component {
                   ? record.contracted_work_payment.interim_payment_status.note
                   : null;
               return (
-                <div title="Interim Status">
+                <div title="Status">
                   {note && popover(note, "table-record-tooltip color-warning")}
                   {text}
                 </div>
@@ -254,7 +257,7 @@ export class ContractedWorkPaymentView extends Component {
             },
           },
           {
-            title: "Progress Report Status",
+            title: "Progress Report",
             key: "interim_report_deadline",
             dataIndex: "interim_report_deadline",
             sorter: nullableStringOrNumberSorter("interim_report_deadline"),
@@ -268,7 +271,7 @@ export class ContractedWorkPaymentView extends Component {
               } else {
                 display = `Due ${formatDate(text)}`;
               }
-              return <div title="Progress Report Status">{display}</div>;
+              return <div title="Progress Report">{display}</div>;
             },
           },
         ],
@@ -278,14 +281,15 @@ export class ContractedWorkPaymentView extends Component {
         className: "final-submission-right",
         children: [
           {
-            title: "Final Cost",
+            title: "Actual Cost",
             key: "final_cost",
             dataIndex: "final_cost",
+            className: "table-column-right-align",
             sorter: nullableStringOrNumberSorter("final_cost"),
-            render: (text) => <div title="Final Cost">{formatMoney(text) || Strings.DASH}</div>,
+            render: (text) => <div title="Actual Cost">{formatMoney(text) || Strings.DASH}</div>,
           },
           {
-            title: "Final Status",
+            title: "Status",
             key: "final_status_description",
             dataIndex: "final_status_description",
             className: "final-submission-right",
@@ -300,7 +304,7 @@ export class ContractedWorkPaymentView extends Component {
                   ? record.contracted_work_payment.final_payment_status.note
                   : null;
               return (
-                <div title="Final Status">
+                <div title="Status">
                   {note && popover(note, "table-record-tooltip color-warning")}
                   {text}
                 </div>

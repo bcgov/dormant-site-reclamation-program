@@ -87,7 +87,10 @@ const handleTableChange = (updateParams, tableFilters) => (pagination, filters, 
 };
 
 const popover = (message, extraClassName) => (
-  <Popover title="Admin Note" content={message}>
+  <Popover
+    title={<div className="font-size-small">Admin Note</div>}
+    content={<div className="font-size-small">{message}</div>}
+  >
     <Icon type="info-circle" className={`icon-sm ${extraClassName}`} style={{ marginLeft: 4 }} />
   </Popover>
 );
@@ -122,8 +125,8 @@ export class ApprovedContractedWorkPaymentTable extends Component {
       return {
         ...work,
         key: work.work_id,
-        interim_cost: parseFloat(contracted_work_payment.interim_actual_cost),
-        final_cost: parseFloat(contracted_work_payment.final_actual_cost),
+        interim_paid_amount: parseFloat(contracted_work_payment.interim_paid_amount),
+        final_paid_amount: parseFloat(contracted_work_payment.final_paid_amount),
         interim_payment_status_code:
           contracted_work_payment.interim_payment_status_code || "INFORMATION_REQUIRED",
         final_payment_status_code:
@@ -326,11 +329,11 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         render: (text) => <div title="Work Type">{startCase(camelCase(text))}</div>,
       },
       {
-        title: "Interim Cost",
-        key: "interim_cost",
-        dataIndex: "interim_cost",
+        title: "Interim Approved",
+        key: "interim_paid_amount",
+        dataIndex: "interim_paid_amount",
         className: "table-column-right-align",
-        render: (text) => <div title="Interim Cost">{formatMoney(text) || Strings.DASH}</div>,
+        render: (text) => <div title="Interim Approved">{formatMoney(text) || Strings.DASH}</div>,
       },
       {
         title: "Interim Status",
@@ -379,11 +382,11 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         },
       },
       {
-        title: "Final Cost",
-        key: "final_cost",
-        dataIndex: "final_cost",
+        title: "Final Approved",
+        key: "final_paid_amount",
+        dataIndex: "final_paid_amount",
         className: "table-column-right-align",
-        render: (text) => <div title="Final Cost">{formatMoney(text) || Strings.DASH}</div>,
+        render: (text) => <div title="Final Approved">{formatMoney(text) || Strings.DASH}</div>,
       },
       {
         title: "Final Status",

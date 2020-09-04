@@ -4,7 +4,16 @@ import { Row, Col, Form, Button, Typography, Popconfirm, Alert } from "antd";
 import { capitalize, isEmpty } from "lodash";
 import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
-import { required, number, notZero, requiredList, date } from "@/utils/validate";
+import {
+  required,
+  number,
+  notZero,
+  requiredList,
+  date,
+  dateNotInFuture,
+  minLength,
+  maxLength,
+} from "@/utils/validate";
 import { currencyMask, metersMask } from "@/utils/helpers";
 import { EXCEL, PDF } from "@/constants/fileTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
@@ -358,6 +367,29 @@ export class ContractedWorkPaymentForm extends Component {
                 }
               }}
             />
+
+            {paymentType === "interim" &&
+              (!paymentInfo || !paymentInfo.interim_payment_status_code) && (
+                <Field
+                  id="interim_report"
+                  name="interim_report"
+                  label={
+                    <>
+                      <div>Interim Progress Report</div>
+                      <div className="font-weight-normal">
+                        Briefly describe the work that was reported in the uploaded interim Evidence
+                        of Cost file. If you do not submit this now, you will have to submit the
+                        Interim Progress Report using the Interim Progress Report tab above. Must be
+                        between 25 and 250 characters.
+                      </div>
+                    </>
+                  }
+                  disabled={isViewOnly}
+                  component={renderConfig.AUTO_SIZE_FIELD}
+                  validate={[required, minLength(25), maxLength(250)]}
+                />
+              )}
+
             {paymentType === "final" && (
               <Field
                 id="work_completion_date"
@@ -366,9 +398,10 @@ export class ContractedWorkPaymentForm extends Component {
                 placeholder={DATE_FORMAT}
                 disabled={isViewOnly}
                 component={renderConfig.DATE}
-                validate={[required, date]}
+                validate={[required, date, dateNotInFuture]}
               />
             )}
+
             <Field
               id={`${paymentType}_eoc`}
               name={`${paymentType}_eoc`}
@@ -408,6 +441,7 @@ export class ContractedWorkPaymentForm extends Component {
                 )) || <></>
               }
             />
+
             {paymentType === "final" && (
               <>
                 <Field
