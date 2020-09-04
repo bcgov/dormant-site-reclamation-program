@@ -2,6 +2,7 @@ import moment from "moment";
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { Link } from "react-router-dom";
 import { isArray, isEmpty, startCase, camelCase } from "lodash";
 import {
@@ -13,11 +14,13 @@ import {
   Input,
   Button,
   Popover,
+  Tooltip,
   Divider,
   Row,
   Col,
 } from "antd";
 import { formatMoney } from "@/utils/helpers";
+import { openModal, closeModal } from "@/actions/modalActions";
 import {
   getFilterListContractedWorkPaymentStatusOptions,
   getFilterListContractedWorkTypeOptions,
@@ -25,6 +28,7 @@ import {
 } from "@/selectors/staticContentSelectors";
 import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
+import { modalConfig } from "@/components/modalContent/config";
 
 const propTypes = {
   applicationsApprovedContractedWork: PropTypes.any.isRequired,
@@ -38,19 +42,26 @@ const propTypes = {
   handleTableChange: PropTypes.func.isRequired,
   isLoaded: PropTypes.bool.isRequired,
   params: PropTypes.objectOf(PropTypes.any).isRequired,
+  openModal: PropTypes.func.isRequired,
+  closeModal: PropTypes.func.isRequired,
 };
 
-const defaultProps = {};
-
-const renderDropdownMenu = (option, onClick, record, currentStatus) => (
+const renderDropdownMenu = (option, onClick, record, currentStatus, isFinalPayment) => (
   <Menu onClick={(item) => onClick(item.key, record)}>
     {option
       .filter(({ value }) => value !== currentStatus)
-      .map(({ label, value, description }) => (
-        <Menu.Item title={description} key={value}>
-          {label}
-        </Menu.Item>
-      ))}
+      .map(({ label, value, description }) => {
+        // Admins cannot approve the final payment until the interim payment has been approved before.
+        const disabled =
+          isFinalPayment &&
+          value === "APPROVED" &&
+          (!record.contracted_work_payment || !record.contracted_work_payment.interim_paid_amount);
+        return (
+          <Menu.Item title={description} key={value} disabled={disabled}>
+            {label}
+          </Menu.Item>
+        );
+      })}
   </Menu>
 );
 
@@ -76,12 +87,13 @@ const handleTableChange = (updateParams, tableFilters) => (pagination, filters, 
 };
 
 const popover = (message, extraClassName) => (
-  <Popover title="Admin Note" content={message}>
+  <Popover
+    title={<div className="font-size-small">Admin Note</div>}
+    content={<div className="font-size-small">{message}</div>}
+  >
     <Icon type="info-circle" className={`icon-sm ${extraClassName}`} style={{ marginLeft: 4 }} />
   </Popover>
 );
-
-const getApplicationIdFromWorkId = (workId) => parseInt(workId.split(".")[0]);
 
 export class ApprovedContractedWorkPaymentTable extends Component {
   state = {
@@ -113,16 +125,23 @@ export class ApprovedContractedWorkPaymentTable extends Component {
       return {
         ...work,
         key: work.work_id,
-        interim_cost: parseFloat(contracted_work_payment.interim_actual_cost),
-        final_cost: parseFloat(contracted_work_payment.final_actual_cost),
+        interim_paid_amount: parseFloat(contracted_work_payment.interim_paid_amount),
+        final_paid_amount: parseFloat(contracted_work_payment.final_paid_amount),
         interim_payment_status_code:
           contracted_work_payment.interim_payment_status_code || "INFORMATION_REQUIRED",
         final_payment_status_code:
           contracted_work_payment.final_payment_status_code || "INFORMATION_REQUIRED",
         has_interim_prfs: contracted_work_payment.has_interim_prfs || false,
         has_final_prfs: contracted_work_payment.has_final_prfs || false,
-        interim_eoc: contracted_work_payment.interim_eoc_application_document_guid,
-        final_eoc: contracted_work_payment.final_eoc_application_document_guid,
+        interim_eoc_document: isEmpty(contracted_work_payment.interim_eoc_document)
+          ? null
+          : contracted_work_payment.interim_eoc_document,
+        final_eoc_document: isEmpty(contracted_work_payment.final_eoc_document)
+          ? null
+          : contracted_work_payment.final_eoc_document,
+        final_report_document: isEmpty(contracted_work_payment.final_report_document)
+          ? null
+          : contracted_work_payment.final_report_document,
         interim_report_days_until_deadline,
         review_deadlines: contracted_work_payment ? contracted_work_payment.review_deadlines : null,
         work,
@@ -147,6 +166,29 @@ export class ApprovedContractedWorkPaymentTable extends Component {
     this.props.handleTableChange(params);
     clearFilters();
   };
+
+  openContractedWorkPaymentModal = (record) =>
+    this.props.openModal({
+      props: {
+        isAdminView: true,
+        title: `View Applicant's Submissions for Work ID ${record.work_id}`,
+        contractedWorkPayment: record.work,
+        applicationSummary: {},
+        handleSubmitInterimContractedWorkPayment: () => {},
+        handleSubmitFinalContractedWorkPayment: () => {},
+        handleSubmitInterimContractedWorkPaymentProgressReport: () => {},
+      },
+      content: modalConfig.CONTRACTED_WORK_PAYMENT,
+    });
+
+  openAdminContractedWorkPaymentModal = (record) =>
+    this.props.openModal({
+      props: {
+        title: `View Information for Work ID ${record.work_id}`,
+        contractedWork: record,
+      },
+      content: modalConfig.ADMIN_CONTRACTED_WORK_PAYMENT,
+    });
 
   columnSearchInput = (dataIndex, placeholder) => ({
     setSelectedKeys,
@@ -247,6 +289,16 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         ),
       },
       {
+        title: "Company Name",
+        key: "company_name",
+        dataIndex: "company_name",
+        sortField: "company_name",
+        sorter: true,
+        filterDropdown: this.columnSearchInput("company_name", "Enter Company Name"),
+        filterIcon: () => this.searchFilterIcon("company_name"),
+        render: (text) => <div title="Company Name">{text}</div>,
+      },
+      {
         title: "Work ID",
         key: "work_id",
         dataIndex: "work_id",
@@ -276,41 +328,13 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         filteredValue: this.getParamFilteredValue("contracted_work_type"),
         render: (text) => <div title="Work Type">{startCase(camelCase(text))}</div>,
       },
-      // {
-      //   title: "Est. Cost",
-      //   key: "contracted_work_total",
-      //   dataIndex: "contracted_work_total",
-      //   render: (text) => <div title="Est. Cost">{formatMoney(text) || Strings.DASH}</div>,
-      // },
       {
-        title: "Interim Cost",
-        key: "interim_cost",
-        dataIndex: "interim_cost",
-        render: (text) => <div title="Interim Cost">{formatMoney(text) || Strings.DASH}</div>,
+        title: "Interim Approved",
+        key: "interim_paid_amount",
+        dataIndex: "interim_paid_amount",
+        className: "table-column-right-align",
+        render: (text) => <div title="Interim Approved">{formatMoney(text) || Strings.DASH}</div>,
       },
-      // {
-      //   title: "Interim EoC",
-      //   key: "interim_eoc",
-      //   dataIndex: "interim_eoc",
-      //   render: (text) => (
-      //     <div title="Interim EoC">
-      //       {(text && (
-      //         <LinkButton
-      //           onClick={() =>
-      //             downloadDocument(
-      //               this.props.applicationGuid,
-      //               text,
-      //               "Dormant Sites Reclamation Program - Evidence of Cost.pdf"
-      //             )
-      //           }
-      //         >
-      //           Download
-      //         </LinkButton>
-      //       )) ||
-      //         Strings.DASH}
-      //     </div>
-      //   ),
-      // },
       {
         title: "Interim Status",
         key: "interim_payment_status_code",
@@ -336,12 +360,18 @@ export class ApprovedContractedWorkPaymentTable extends Component {
                     this.props.contractedWorkPaymentStatusDropdownOptions,
                     this.props.handleContractedWorkPaymentInterimStatusChange,
                     record,
-                    text
+                    text,
+                    false
                   )}
-                  trigger={["hover", "click"]}
+                  trigger={["click"]}
                 >
                   <a>
-                    {note && popover(note, "table-record-tooltip")}
+                    {record.has_interim_prfs && (
+                      <Tooltip title="This work item has been used to generate Interim PRFs">
+                        <Icon type="dollar" className="table-record-tooltip color-success" />
+                      </Tooltip>
+                    )}
+                    {note && popover(note, "table-record-tooltip color-warning")}
                     {this.props.contractedWorkPaymentStatusOptionsHash[text]}
                     <Icon type="down" className="table-status-dropdown-icon" />
                   </a>
@@ -351,53 +381,13 @@ export class ApprovedContractedWorkPaymentTable extends Component {
           );
         },
       },
-      // {
-      //   title: "Progress Report Status",
-      //   key: "interim_report_days_until_deadline",
-      //   dataIndex: "interim_report_days_until_deadline",
-      //   sortField: "interim_report_days_until_deadline",
-      //   sorter: false,
-      //   render: (text) => {
-      //     let display = null;
-      //     if (text === -Infinity) {
-      //       display = "Submitted";
-      //     } else if (text === Infinity) {
-      //       display = Strings.DASH;
-      //     } else {
-      //       display = `${text} days to submit`;
-      //     }
-      //     return <div title="Progress Report Status">{display}</div>;
-      //   },
-      // },
       {
-        title: "Final Cost",
-        key: "final_cost",
-        dataIndex: "final_cost",
-        render: (text) => <div title="Final Cost">{formatMoney(text) || Strings.DASH}</div>,
+        title: "Final Approved",
+        key: "final_paid_amount",
+        dataIndex: "final_paid_amount",
+        className: "table-column-right-align",
+        render: (text) => <div title="Final Approved">{formatMoney(text) || Strings.DASH}</div>,
       },
-      // {
-      //   title: "Final EoC",
-      //   key: "final_eoc",
-      //   dataIndex: "final_eoc",
-      //   render: (text) => (
-      //     <div title="Final EoC">
-      //       {(text && (
-      //         <LinkButton
-      //           onClick={() =>
-      //             downloadDocument(
-      //               this.props.applicationGuid,
-      //               text,
-      //               "Dormant Sites Reclamation Program - Evidence of Cost.pdf"
-      //             )
-      //           }
-      //         >
-      //           Download
-      //         </LinkButton>
-      //       )) ||
-      //         Strings.DASH}
-      //     </div>
-      //   ),
-      // },
       {
         title: "Final Status",
         key: "final_payment_status_code",
@@ -423,12 +413,18 @@ export class ApprovedContractedWorkPaymentTable extends Component {
                     this.props.contractedWorkPaymentStatusDropdownOptions,
                     this.props.handleContractedWorkPaymentFinalStatusChange,
                     record,
-                    text
+                    text,
+                    true
                   )}
-                  trigger={["hover", "click"]}
+                  trigger={["click"]}
                 >
                   <a>
-                    {note && popover(note, "table-record-tooltip")}
+                    {record.has_final_prfs && (
+                      <Tooltip title="This work item has been used to generate Final PRFs">
+                        <Icon type="dollar" className="table-record-tooltip color-success" />
+                      </Tooltip>
+                    )}
+                    {note && popover(note, "table-record-tooltip color-warning")}
                     {this.props.contractedWorkPaymentStatusOptionsHash[text]}
                     <Icon type="down" className="table-status-dropdown-icon" />
                   </a>
@@ -480,9 +476,26 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         key: "operations",
         render: (text, record) => (
           <div style={{ float: "right" }}>
-            <Button type="link" onClick={() => {}}>
-              <Icon type="form" className="icon-lg" />
-            </Button>
+            <Row type="flex" justify="space-around" align="middle">
+              <Col span={10}>
+                <Button
+                  type="link"
+                  onClick={() => this.openAdminContractedWorkPaymentModal(record)}
+                  style={{ paddingLeft: 12, paddingRight: 12 }}
+                >
+                  <Icon type="solution" className="icon-lg" />
+                </Button>
+              </Col>
+              <Col span={10}>
+                <Button
+                  type="link"
+                  onClick={() => this.openContractedWorkPaymentModal(record)}
+                  style={{ paddingLeft: 12, paddingRight: 12 }}
+                >
+                  <Icon type="eye" className="icon-lg" />
+                </Button>
+              </Col>
+            </Row>
           </div>
         ),
       },
@@ -519,7 +532,6 @@ export class ApprovedContractedWorkPaymentTable extends Component {
           className="table-headers-center"
           loading={{
             spinning: !this.props.isLoaded,
-            delay: 500,
           }}
         />
         <br />
@@ -545,7 +557,6 @@ export class ApprovedContractedWorkPaymentTable extends Component {
 }
 
 ApprovedContractedWorkPaymentTable.propTypes = propTypes;
-ApprovedContractedWorkPaymentTable.defaultProps = defaultProps;
 
 const mapStateToProps = (state) => ({
   filterListContractedWorkPaymentStatusOptions: getFilterListContractedWorkPaymentStatusOptions(
@@ -555,4 +566,13 @@ const mapStateToProps = (state) => ({
   contractedWorkPaymentStatusDropdownOptions: getDropdownContractedWorkPaymentStatusOptions(state),
 });
 
-export default connect(mapStateToProps)(ApprovedContractedWorkPaymentTable);
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      openModal,
+      closeModal,
+    },
+    dispatch
+  );
+
+export default connect(mapStateToProps, mapDispatchToProps)(ApprovedContractedWorkPaymentTable);

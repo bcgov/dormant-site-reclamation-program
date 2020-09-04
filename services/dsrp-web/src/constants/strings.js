@@ -1,5 +1,6 @@
 export const ERROR = "Error";
 export const DASH = "-";
+export const NA = "N/A";
 export const DATE_FORMAT = "YYYY-MM-DD";
 export const DEFAULT_PAGE_NUMBER = 1;
 export const PAGE_SIZE_OPTIONS = [5, 10, 25, 50, 100, 250];

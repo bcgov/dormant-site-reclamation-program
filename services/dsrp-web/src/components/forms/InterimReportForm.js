@@ -13,6 +13,7 @@ const propTypes = {
   closeModal: PropTypes.func.isRequired,
   contractedWorkPayment: PropTypes.objectOf(PropTypes.any).isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  isAdminView: PropTypes.bool.isRequired,
 };
 
 class InterimReportForm extends Component {
@@ -27,23 +28,26 @@ class InterimReportForm extends Component {
       this.props.contractedWorkPayment.contracted_work_payment &&
       this.props.contractedWorkPayment.contracted_work_payment.interim_report !== null;
 
-    const isViewOnly = !haveInterimPaymentInfo || haveInterimProgressReport;
+    const isViewOnly =
+      this.props.isAdminView || !haveInterimPaymentInfo || haveInterimProgressReport;
 
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <Title level={4}>Interim Progress Report</Title>
 
-        <Paragraph>
-          Completion of this form is a requirement for receiving final payment. Once the form has
-          been submitted you will be unable to modify it.
-        </Paragraph>
-
-        {!haveInterimPaymentInfo && (
+        {!this.props.isAdminView && !haveInterimPaymentInfo && (
           <Paragraph>
             <Alert
               showIcon
               message="You must complete and submit this work item's interim payment information before you can submit its Interim Progress Report."
             />
+          </Paragraph>
+        )}
+
+        {!this.props.isAdminView && (
+          <Paragraph>
+            Completion of this form is a requirement for receiving final payment. Once the form has
+            been submitted you will be unable to modify it.
           </Paragraph>
         )}
 
@@ -55,9 +59,10 @@ class InterimReportForm extends Component {
               label={
                 <>
                   <div>Interim Progress Report</div>
-                  Please briefly describe the work that was completed as it relates to the contents
-                  of the provided interim Evidence of Cost document. Must be between 25 and 250
-                  characters.
+                  <div className="font-weight-normal">
+                    Briefly describe the work that was reported in the uploaded interim Evidence of
+                    Cost file. Must be between 25 and 250 characters.
+                  </div>
                 </>
               }
               disabled={isViewOnly}

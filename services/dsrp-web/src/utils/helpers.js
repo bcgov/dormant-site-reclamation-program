@@ -85,6 +85,15 @@ export const currencyMask = createNumberMask({
   stringValue: false,
 });
 
+export const metersMask = createNumberMask({
+  prefix: "",
+  suffix: " metres",
+  decimalPlaces: 0,
+  allowEmpty: true,
+  stringValue: false,
+  allowNegative: false,
+});
+
 export const phoneMask = createTextMask({
   pattern: "(999) 999-9999",
   // placeholder: '_',
@@ -342,7 +351,8 @@ export const flattenObject = (ob) => {
 };
 
 export const formatMoney = (value) => {
-  const number = isNaN(value) ? (isNaN(Number(value)) ? null : Number(value)) : value;
+  let number = isNaN(value) ? (isNaN(Number(value)) ? null : Number(value)) : value;
+  number = number !== null ? (Number(number).toFixed(2) === "-0.00" ? 0 : number) : null;
   return number !== null
     ? Number(number).toLocaleString("en-US", { style: "currency", currency: "USD" })
     : null;

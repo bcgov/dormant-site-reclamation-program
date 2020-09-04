@@ -16,7 +16,7 @@ const propTypes = {
 
 export const AdminEditApplicationForm = (props) => (
   <Form layout="vertical" onSubmit={props.handleSubmit}>
-    <Text>Please provide a note indicating the reason for editing the application.</Text>
+    <Text>Provide a note indicating the reason for editing the application.</Text>
     <br />
     <br />
     <Row gutter={48}>

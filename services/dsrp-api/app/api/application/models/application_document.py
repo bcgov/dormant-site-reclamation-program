@@ -37,3 +37,12 @@ class ApplicationDocument(AuditMixin, Base):
             application_guid=application_guid,
             application_document_guid=application_document_guid,
             active_ind=True).one_or_none()
+
+    @classmethod
+    def create_filename(cls, application, work_id, application_document_code, extension):
+        existing_count = ApplicationDocument.query.filter_by(
+            application_guid=application.guid,
+            application_document_code=application_document_code).count()
+        existing_count = str(existing_count).zfill(4)
+        filename = f'DSRP-{application.agreement_number}-{work_id.split(".")[1]}-{existing_count}-{application_document_code.replace("_", "-")}.{extension}'
+        return filename

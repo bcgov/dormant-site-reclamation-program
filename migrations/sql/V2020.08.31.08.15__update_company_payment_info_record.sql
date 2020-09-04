@@ -1,0 +1,1 @@
+UPDATE company_payment_info SET company_address = 'PO BOX 170 RPO DOWNTOWN, FORT ST. JOHN, V1J0K9' WHERE company_name = 'TERVITA CORPORATION';

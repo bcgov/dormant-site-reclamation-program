@@ -1,11 +1,20 @@
 import React, { Component } from "react";
 import { Field } from "redux-form";
 import { Row, Col, Form, Button, Typography, Popconfirm, Alert } from "antd";
-import { capitalize } from "lodash";
+import { capitalize, isEmpty } from "lodash";
 import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
-import { required, number, requiredList, date } from "@/utils/validate";
-import { currencyMask } from "@/utils/helpers";
+import {
+  required,
+  number,
+  notZero,
+  requiredList,
+  date,
+  dateNotInFuture,
+  minLength,
+  maxLength,
+} from "@/utils/validate";
+import { currencyMask, metersMask } from "@/utils/helpers";
 import { EXCEL, PDF } from "@/constants/fileTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
 import { DATE_FORMAT, HELP_EMAIL } from "@/constants/strings";
@@ -22,11 +31,234 @@ const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
   submitting: PropTypes.bool.isRequired,
+  isAdminView: PropTypes.bool.isRequired,
   paymentType: PropTypes.oneOf(["interim", "final"]),
 };
 
 const defaultProps = {
   paymentType: "interim",
+};
+
+const docSubmittedDropdownOptions = [
+  { value: "COR_P1", label: "Yes - Certificate of Restoration (Part 1)" },
+  { value: "DSAF", label: "Yes - Dormancy Site Assessment Form" },
+  { value: "NONE", label: "No" },
+];
+
+const booleanDropdownOptions = [
+  { value: "true", label: "Yes" },
+  { value: "false", label: "No" },
+];
+
+const booleanFormat = (value) =>
+  value === true || value === false || value === "true" || value === "false"
+    ? value.toString()
+    : undefined;
+
+const renderReportingFields = (workType, isViewOnly) => {
+  const workTypeName =
+    workType === "preliminary_site_investigation" || workType === "detailed_site_investigation"
+      ? "Site Investigation"
+      : capitalize(workType);
+
+  const validateMetresPipelineAbandoned = (value, allValues) => {
+    if (
+      value &&
+      (!allValues.abandonment_was_pipeline_abandoned ||
+        allValues.abandonment_was_pipeline_abandoned === "false")
+    ) {
+      return "You cannot provide this field if pipeline was not abandoned";
+    }
+    return undefined;
+  };
+
+  return (
+    <Row className="final-report-fields">
+      <Col>
+        <Field
+          id="surface_landowner"
+          name="surface_landowner"
+          label="Surface Landowner"
+          placeholder="Select an option"
+          disabled={isViewOnly}
+          component={renderConfig.SELECT}
+          validate={[required]}
+          format={null}
+          data={[
+            { value: "Crown", label: "Crown" },
+            { value: "Freehold", label: "Freehold" },
+            { value: "Both", label: "Both" },
+          ]}
+        />
+
+        {workType === "abandonment" && (
+          <>
+            <Field
+              id="abandonment_cut_and_capped_completed"
+              name="abandonment_cut_and_capped_completed"
+              label="Was Well Abandonment completed to Cut and Capped?"
+              placeholder="Select an option"
+              disabled={isViewOnly}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
+            />
+            <Field
+              id="abandonment_notice_of_operations_submitted"
+              name="abandonment_notice_of_operations_submitted"
+              label="Was a Notice of Operations (NOO) form submission completed using the OGC eSubmission portal?"
+              placeholder="Select an option"
+              disabled={isViewOnly}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
+            />
+            <Field
+              id="abandonment_was_pipeline_abandoned"
+              name="abandonment_was_pipeline_abandoned"
+              label="Was pipeline abandoned as part of the Dormant Site Abandonment process?"
+              placeholder="Select an option"
+              disabled={isViewOnly}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
+            />
+            <Field
+              id="abandonment_metres_of_pipeline_abandoned"
+              name="abandonment_metres_of_pipeline_abandoned"
+              label={
+                <>
+                  <div>
+                    If pipeline was abandoned as part of the Dormant Site Abandonment process,
+                    provide the length (approximate) of pipeline abandoned (metres).
+                  </div>
+                  <div className="font-weight-normal">
+                    If you are unsure of the approximate length, please leave this field blank.
+                  </div>
+                </>
+              }
+              placeholder="0 metres"
+              disabled={isViewOnly}
+              validate={[validateMetresPipelineAbandoned, notZero]}
+              component={renderConfig.FIELD}
+              {...metersMask}
+            />
+          </>
+        )}
+
+        {workType === "remediation" && (
+          <>
+            <Field
+              id="remediation_identified_contamination_meets_standards"
+              name="remediation_identified_contamination_meets_standards"
+              label="Was all identified contamination relating to the Dormant Site remediated to meet Contaminated Sites Regulations remediation standards or risk-based standards relevant to the Site?"
+              placeholder="Select an option"
+              disabled={isViewOnly}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
+            />
+            <Field
+              id="remediation_type_of_document_submitted"
+              name="remediation_type_of_document_submitted"
+              label="Has a Certificate of Restoration (Part 1) or a Dormancy Site Assessment Form been submitted to the OGC?"
+              placeholder="Select an option"
+              disabled={isViewOnly}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={null}
+              data={docSubmittedDropdownOptions}
+            />
+            <Field
+              id="remediation_reclaimed_to_meet_cor_p1_requirements"
+              name="remediation_reclaimed_to_meet_cor_p1_requirements"
+              label="Was the Dormant Site reclaimed to meet Certificate of Restoration (Part 1) requirements?"
+              placeholder="Select an option"
+              disabled={isViewOnly}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
+            />
+          </>
+        )}
+
+        {workType === "reclamation" && (
+          <>
+            <Field
+              id="reclamation_reclaimed_to_meet_cor_p2_requirements"
+              name="reclamation_reclaimed_to_meet_cor_p2_requirements"
+              label="Was the Dormant Site reclaimed to meet Certificate of Restoration (Part 2) requirements?"
+              placeholder="Select an option"
+              disabled={isViewOnly}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
+            />
+            <Field
+              id="reclamation_surface_reclamation_criteria_met"
+              name="reclamation_surface_reclamation_criteria_met"
+              label="Has the surface reclamation been completed to match surrounding natural contour and revegetated with ecologically suitable species?"
+              placeholder="Select an option"
+              disabled={isViewOnly}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
+            />
+          </>
+        )}
+
+        {(workType === "preliminary_site_investigation" ||
+          workType === "detailed_site_investigation") && (
+          <>
+            <Field
+              id="site_investigation_type_of_document_submitted"
+              name="site_investigation_type_of_document_submitted"
+              label="Has a Certificate of Restoration (Part 1) or a Dormancy Site Assessment Form been submitted to the OGC?"
+              placeholder="Select an option"
+              disabled={isViewOnly}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={null}
+              data={docSubmittedDropdownOptions}
+            />
+            <Field
+              id="site_investigation_concerns_identified"
+              name="site_investigation_concerns_identified"
+              label="Were any concerns identified through site investigation that are specific to other interested parties (e.g. landowners, municipalities, regional districts or local Indigenous nations)?"
+              placeholder="Select an option"
+              disabled={isViewOnly}
+              component={renderConfig.SELECT}
+              validate={[required]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
+            />
+          </>
+        )}
+
+        <Field
+          id="reclamation_was_achieved"
+          name="reclamation_was_achieved"
+          label="Level of Reclamation achieved for the Dormant Site"
+          placeholder="Select an option"
+          disabled={isViewOnly}
+          component={renderConfig.SELECT}
+          validate={[required]}
+          format={booleanFormat}
+          data={[
+            { value: "true", label: `${workTypeName} Complete` },
+            { value: "false", label: `${workTypeName} Not Complete` },
+          ]}
+        />
+      </Col>
+    </Row>
+  );
 };
 
 // eslint-disable-next-line react/prefer-stateless-function
@@ -44,48 +276,33 @@ export class ContractedWorkPaymentForm extends Component {
       : "INFORMATION_REQUIRED";
 
     const isViewOnly =
+      this.props.isAdminView ||
       (paymentType === "interim" && interimPaymentStatus !== "INFORMATION_REQUIRED") ||
       (paymentType === "final" &&
         (interimPaymentStatus === "INFORMATION_REQUIRED" ||
           finalPaymentStatus !== "INFORMATION_REQUIRED"));
 
-    const existingEvidenceOfCostGuid = paymentInfo
+    const existingEvidenceOfCost = paymentInfo
       ? paymentType === "interim"
-        ? paymentInfo.interim_eoc_application_document_guid
+        ? isEmpty(paymentInfo.interim_eoc_document)
+          ? null
+          : paymentInfo.interim_eoc_document
         : paymentType === "final"
-        ? paymentInfo.final_eoc_application_document_guid
+        ? isEmpty(paymentInfo.final_eoc_document)
+          ? null
+          : paymentInfo.final_eoc_document
         : null
       : null;
 
-    const existingFinalReportGuid = paymentInfo
-      ? paymentInfo.final_report_application_document_guid
+    const existingFinalReport = paymentInfo
+      ? isEmpty(paymentInfo.final_report_document)
+        ? null
+        : paymentInfo.final_report_document
       : null;
 
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
-        <Title level={4}>{capitalize(paymentType)} Payment Information</Title>
-
-        <Paragraph>
-          In order to process this work item&apos;s <Text strong>{paymentType} payment</Text>, you
-          must provide the information below. Upon submitting the form it will be marked as ready
-          for review and you will be <Text underline>unable to edit your submission</Text>. If an
-          issue is found with your submission, you will be notified by email and be able to edit
-          your submission again. If an issue is not found with your submission, it will be approved
-          and payment will be sent to the British Columbia mailing address provided in your
-          application. Please email&nbsp;
-          <a href={`mailto:${HELP_EMAIL}`}>{HELP_EMAIL}</a>
-          &nbsp;if there are any questions.
-        </Paragraph>
-
-        {paymentType === "interim" && (
-          <Paragraph>
-            Once you have submitted this work item&apos;s interim payment information, you
-            have&nbsp;
-            <Text strong>30 days</Text> to complete the Interim Progress Report form available in
-            the <Text strong>Interim Progress Report</Text> tab above. Completion of this form is a
-            requirement for receiving final payment.
-          </Paragraph>
-        )}
+        <Title level={4}>{capitalize(paymentType)} Payment Form</Title>
 
         {paymentType === "final" && interimPaymentStatus === "INFORMATION_REQUIRED" && (
           <Paragraph>
@@ -96,12 +313,31 @@ export class ContractedWorkPaymentForm extends Component {
           </Paragraph>
         )}
 
+        <Paragraph>
+          In order for your <Text strong>{paymentType} payment request</Text> to be processed, you
+          must complete this form with your Evidence of Cost.
+        </Paragraph>
+
+        {paymentType === "interim" && (
+          <Paragraph>
+            The Interim Progress Report must be submitted within&nbsp;
+            <Text strong>30 days</Text> of requesting an interim payment.
+          </Paragraph>
+        )}
+
+        <Paragraph>
+          Once you submit your request, you cannot edit it.
+          <br />
+          If you have any questions, contact&nbsp;
+          <a href={`mailto:${HELP_EMAIL}`}>{HELP_EMAIL}</a>.
+        </Paragraph>
+
         <Row gutter={48}>
           <Col>
             <Field
               id={`${paymentType}_total_hours_worked_to_date`}
               name={`${paymentType}_total_hours_worked_to_date`}
-              label="Total Number of Hours Worked"
+              label="Total Hours Worked"
               placeholder="0"
               disabled={isViewOnly}
               component={renderConfig.FIELD}
@@ -119,7 +355,7 @@ export class ContractedWorkPaymentForm extends Component {
             <Field
               id={`${paymentType}_actual_cost`}
               name={`${paymentType}_actual_cost`}
-              label="Evidence of Cost Invoice Amount Total"
+              label="Evidence of Cost Total"
               placeholder="$0.00"
               disabled={isViewOnly}
               component={renderConfig.FIELD}
@@ -131,6 +367,29 @@ export class ContractedWorkPaymentForm extends Component {
                 }
               }}
             />
+
+            {paymentType === "interim" &&
+              (!paymentInfo || !paymentInfo.interim_payment_status_code) && (
+                <Field
+                  id="interim_report"
+                  name="interim_report"
+                  label={
+                    <>
+                      <div>Interim Progress Report</div>
+                      <div className="font-weight-normal">
+                        Briefly describe the work that was reported in the uploaded interim Evidence
+                        of Cost file. If you do not submit this now, you will have to submit the
+                        Interim Progress Report using the Interim Progress Report tab above. Must be
+                        between 25 and 250 characters.
+                      </div>
+                    </>
+                  }
+                  disabled={isViewOnly}
+                  component={renderConfig.AUTO_SIZE_FIELD}
+                  validate={[minLength(25), maxLength(250)]}
+                />
+              )}
+
             {paymentType === "final" && (
               <Field
                 id="work_completion_date"
@@ -139,124 +398,153 @@ export class ContractedWorkPaymentForm extends Component {
                 placeholder={DATE_FORMAT}
                 disabled={isViewOnly}
                 component={renderConfig.DATE}
-                validate={[required, date]}
+                validate={[required, date, dateNotInFuture]}
               />
             )}
+
             <Field
               id={`${paymentType}_eoc`}
               name={`${paymentType}_eoc`}
               label={
                 <>
-                  <div>Evidence of Cost</div>
-                  Please&nbsp;
-                  <a href={EOC_TEMPLATE} target="_blank" rel="noopener noreferrer">
-                    download
-                  </a>
-                  &nbsp;and use the provided Evidence of Cost template.
-                  {existingEvidenceOfCostGuid && (
-                    <>
-                      &nbsp;You can download your previously uploaded Evidence of Cost&nbsp;
-                      <LinkButton
-                        onClick={() =>
-                          downloadDocument(
-                            this.props.contractedWorkPayment.application_guid,
-                            existingEvidenceOfCostGuid,
-                            "Dormant Sites Reclamation Program - Evidence of Cost.xlsx"
-                          )
-                        }
-                      >
-                        here
-                      </LinkButton>
-                      .
-                    </>
-                  )}
+                  <div>Evidence of Cost Upload</div>
+                  <div className="font-weight-normal">
+                    Fill in the&nbsp;
+                    <a href={EOC_TEMPLATE} target="_blank" rel="noopener noreferrer">
+                      Evidence of Cost template
+                    </a>
+                    &nbsp;and upload it here.
+                    {existingEvidenceOfCost &&
+                      " If your original Evidence of Cost document has not changed, you do not need to re-upload it."}
+                  </div>
                 </>
               }
               disabled={isViewOnly}
               component={renderConfig.FILE_UPLOAD}
-              validate={[requiredList]}
-              labelIdle="Upload Evidence of Cost"
+              validate={existingEvidenceOfCost ? [] : [requiredList]}
               acceptedFileTypesMap={EXCEL}
               allowMultiple={false}
               allowRevert
+              renderAfterInput={() =>
+                (existingEvidenceOfCost && (
+                  <LinkButton
+                    onClick={() =>
+                      downloadDocument(
+                        this.props.contractedWorkPayment.application_guid,
+                        existingEvidenceOfCost.application_document_guid,
+                        existingEvidenceOfCost.document_name
+                      )
+                    }
+                  >
+                    Download previously uploaded Evidence of Cost
+                  </LinkButton>
+                )) || <></>
+              }
             />
+
             {paymentType === "final" && (
+              <>
+                <Field
+                  id="final_report"
+                  name="final_report"
+                  label={
+                    <>
+                      <div>Final Report</div>
+                      <div className="font-weight-normal">
+                        Fill in the&nbsp;
+                        <a href={FINAL_REPORT_TEMPLATE} target="_blank" rel="noopener noreferrer">
+                          Final Report template
+                        </a>
+                        &nbsp;and upload it as a PDF here.
+                        {existingFinalReport &&
+                          " If your original Final Report document has not changed, you do not need to re-upload it."}
+                      </div>
+                    </>
+                  }
+                  disabled={isViewOnly}
+                  component={renderConfig.FILE_UPLOAD}
+                  validate={existingFinalReport ? [] : [requiredList]}
+                  acceptedFileTypesMap={PDF}
+                  allowMultiple={false}
+                  allowRevert
+                  renderAfterInput={() =>
+                    (existingFinalReport && (
+                      <LinkButton
+                        onClick={() =>
+                          downloadDocument(
+                            this.props.contractedWorkPayment.application_guid,
+                            existingFinalReport.application_document_guid,
+                            existingFinalReport.document_name
+                          )
+                        }
+                      >
+                        Download previously uploaded Final Report
+                      </LinkButton>
+                    )) || <></>
+                  }
+                />
+                <Form.Item
+                  label={
+                    <>
+                      <div>Final Report - Key Reporting Data</div>
+                      <div className="font-weight-normal">
+                        Enter in the below form fields as they are provided in the uploaded Final
+                        Report document.
+                      </div>
+                    </>
+                  }
+                >
+                  {renderReportingFields(
+                    this.props.contractedWorkPayment.contracted_work_type,
+                    isViewOnly
+                  )}
+                </Form.Item>
+              </>
+            )}
+
+            <Form.Item label="Certification">
               <Field
-                id="final_report"
-                name="final_report"
+                id={`${paymentType}_submission_confirmation`}
+                name={`${paymentType}_submission_confirmation`}
+                label="I certify that the above information is correct and has been reviewed and approved by a senior officer of the recipient organization."
+                disabled={isViewOnly}
+                component={renderConfig.CHECKBOX}
+                validate={[required]}
+              />
+              <Field
+                id={`${paymentType}_dormancy_and_shutdown_regulations_confirmation`}
+                name={`${paymentType}_dormancy_and_shutdown_regulations_confirmation`}
                 label={
                   <>
-                    <div>Final Report</div>
-                    Please&nbsp;
-                    <a href={FINAL_REPORT_TEMPLATE} target="_blank" rel="noopener noreferrer">
-                      download
+                    I declare that all required notifications and activities have been submitted in
+                    accordance with the&nbsp;
+                    <a
+                      href="https://www.bclaws.ca/civix/document/id/complete/statreg/112_2019"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Dormancy and Shutdown Regulation
                     </a>
-                    &nbsp;and use the provided Final Report template and upload it as a PDF.
-                    {existingFinalReportGuid && (
-                      <>
-                        &nbsp;You can download your previously uploaded Final Report&nbsp;
-                        <LinkButton
-                          onClick={() =>
-                            downloadDocument(
-                              this.props.contractedWorkPayment.application_guid,
-                              existingFinalReportGuid,
-                              "Dormant Sites Reclamation Program - Final Report.pdf"
-                            )
-                          }
-                        >
-                          here
-                        </LinkButton>
-                        .
-                      </>
-                    )}
+                    .
                   </>
                 }
                 disabled={isViewOnly}
-                component={renderConfig.FILE_UPLOAD}
-                validate={[requiredList]}
-                labelIdle="Upload Final Report"
-                acceptedFileTypesMap={PDF}
-                allowMultiple={false}
-                allowRevert
+                component={renderConfig.CHECKBOX}
+                validate={[required]}
               />
-            )}
-            <Field
-              id={`${paymentType}_dormancy_and_shutdown_regulations_confirmation`}
-              name={`${paymentType}_dormancy_and_shutdown_regulations_confirmation`}
-              label={
-                <>
-                  I declare that I have completed all required notifications and activities in
-                  accordance with the&nbsp;
-                  <a
-                    href="https://www.bclaws.ca/civix/document/id/complete/statreg/112_2019"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Dormancy and Shutdown Regulations
-                  </a>
-                  .
-                </>
-              }
-              disabled={isViewOnly}
-              component={renderConfig.CHECKBOX}
-              validate={[required]}
-            />
-            <Field
-              id={`${paymentType}_submission_confirmation`}
-              name={`${paymentType}_submission_confirmation`}
-              label={
-                <>
-                  I certify that the above information is correct and has been reviewed and approved
-                  by <Text strong>{this.props.applicationSummary.applicant_name}</Text>.
-                </>
-              }
-              disabled={isViewOnly}
-              component={renderConfig.CHECKBOX}
-              validate={[required]}
-            />
+              <Field
+                id={`${paymentType}_submitter_name`}
+                name={`${paymentType}_submitter_name`}
+                placeholder="Type Your Name"
+                disabled={isViewOnly}
+                component={renderConfig.FIELD}
+                validate={[required]}
+              />
+            </Form.Item>
+
             <Paragraph>
-              Please keep your records available. If the province requests evidence of cost, it must
-              be provided within 30 days.
+              Keep all records of original invoices for this work. If they are requested by the
+              Province, you will be required to provide them within 30 days of the request.
             </Paragraph>
           </Col>
         </Row>

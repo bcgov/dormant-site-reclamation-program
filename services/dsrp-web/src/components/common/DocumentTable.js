@@ -1,12 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Table } from "antd";
-import {
-  formatDateTime,
-  truncateFilename,
-  dateSorter,
-  nullableStringOrNumberSorter,
-} from "@/utils/helpers";
+import { formatDateTime, dateSorter, nullableStringOrNumberSorter } from "@/utils/helpers";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import CustomPropTypes from "@/customPropTypes";
 import LinkButton from "@/components/common/LinkButton";
@@ -37,7 +32,7 @@ export const DocumentTable = (props) => {
                 )
               }
             >
-              {truncateFilename(text)}
+              {text}
             </LinkButton>
           </div>
         );

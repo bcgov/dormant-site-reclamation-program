@@ -14,9 +14,12 @@ from app.api.constants import REVIEW_DEADLINE_NOT_APPLICABLE, REVIEW_DEADLINE_PA
 class ContractedWorkPayment(Base, AuditMixin):
     __tablename__ = 'contracted_work_payment'
 
-    def __init__(self, contracted_work_payment_status_code, contracted_work_payment_code, **kwargs):
+    def __init__(self, application, contracted_work_payment_status_code,
+                 contracted_work_payment_code, **kwargs):
         super(ContractedWorkPayment, self).__init__(**kwargs)
         initial_status = ContractedWorkPaymentStatusChange(
+            contracted_work_payment=self,
+            application=application,
             contracted_work_payment_status_code=contracted_work_payment_status_code,
             contracted_work_payment_code=contracted_work_payment_code)
         self.status_changes.append(initial_status)
@@ -40,6 +43,9 @@ class ContractedWorkPayment(Base, AuditMixin):
 
     work_completion_date = db.Column(db.Date)
 
+    interim_submitter_name = db.Column(db.String)
+    final_submitter_name = db.Column(db.String)
+
     interim_eoc_application_document_guid = db.Column(
         UUID(as_uuid=True),
         db.ForeignKey('application_document.application_document_guid'),
@@ -55,13 +61,17 @@ class ContractedWorkPayment(Base, AuditMixin):
         unique=True)
 
     interim_eoc_document = db.relationship(
-        'ApplicationDocument', lazy='select', foreign_keys=[interim_eoc_application_document_guid])
+        'ApplicationDocument',
+        lazy='selectin',
+        foreign_keys=[interim_eoc_application_document_guid])
     final_eoc_document = db.relationship(
-        'ApplicationDocument', lazy='select', foreign_keys=[final_eoc_application_document_guid])
+        'ApplicationDocument', lazy='selectin', foreign_keys=[final_eoc_application_document_guid])
 
     interim_report = db.Column(db.String)
     final_report_document = db.relationship(
-        'ApplicationDocument', lazy='select', foreign_keys=[final_report_application_document_guid])
+        'ApplicationDocument',
+        lazy='selectin',
+        foreign_keys=[final_report_application_document_guid])
 
     status_changes = db.relationship(
         'ContractedWorkPaymentStatusChange',
@@ -72,6 +82,29 @@ class ContractedWorkPayment(Base, AuditMixin):
         'PaymentDocument',
         lazy='selectin',
         secondary='payment_document_contracted_work_payment_xref')
+
+    # General Reporting
+    surface_landowner = db.Column(db.String)
+    reclamation_was_achieved = db.Column(db.Boolean)
+
+    # Abandonment Reporting
+    abandonment_cut_and_capped_completed = db.Column(db.Boolean)
+    abandonment_notice_of_operations_submitted = db.Column(db.Boolean)
+    abandonment_was_pipeline_abandoned = db.Column(db.Boolean)
+    abandonment_metres_of_pipeline_abandoned = db.Column(db.Integer)
+
+    # PSI and DSI Reporting
+    site_investigation_type_of_document_submitted = db.Column(db.String)
+    site_investigation_concerns_identified = db.Column(db.Boolean)
+
+    # Remediation Reporting
+    remediation_identified_contamination_meets_standards = db.Column(db.Boolean)
+    remediation_type_of_document_submitted = db.Column(db.String)
+    remediation_reclaimed_to_meet_cor_p1_requirements = db.Column(db.Boolean)
+
+    # Reclamation Reporting
+    reclamation_reclaimed_to_meet_cor_p2_requirements = db.Column(db.Boolean)
+    reclamation_surface_reclamation_criteria_met = db.Column(db.Boolean)
 
     @hybrid_property
     def has_interim_prfs(self):
@@ -147,12 +180,11 @@ class ContractedWorkPayment(Base, AuditMixin):
         if interim_payment_submission_date is None and final_payment_submission_date is None:
             return review_deadlines
 
-        # TODO: Use the date/flag that the applicable (either interim or final) PRF was generated instead of APPROVED
-        # We don't need to review payments that have already completed the payment process
-        if interim_payment_submission_date and self.interim_payment_status_code == 'APPROVED':
+        # We don't need to review payments that have already had at least one PRF issued
+        if interim_payment_submission_date and self.has_interim_prfs:
             interim_payment_submission_date = None
             review_deadlines['interim'] = REVIEW_DEADLINE_PAID
-        if final_payment_submission_date and self.final_payment_status_code == 'APPROVED':
+        if final_payment_submission_date and self.has_final_prfs:
             final_payment_submission_date = None
             review_deadlines['final'] = REVIEW_DEADLINE_PAID
 

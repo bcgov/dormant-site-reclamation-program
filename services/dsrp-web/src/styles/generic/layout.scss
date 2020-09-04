@@ -37,6 +37,71 @@
   margin-left: 4px;
 }
 
+.table-headers-center .ant-table-header-column {
+  text-align: center;
+}
+
+.table-rows-center td {
+  text-align: center;
+}
+
+tr .table-column-right-align:not(th) * {
+  text-align: right !important;
+}
+
+.final-report-fields {
+  padding-top: 24px;
+  padding-left: 24px;
+  padding-right: 24px;
+  margin-bottom: 24px;
+  background-color: $card-bg;
+  border-radius: 5px;
+}
+
+th {
+  &.interim-submission,
+  &.final-submission {
+    border-left: solid 2px $primary-color;
+    border-right: solid 2px $primary-color;
+  }
+  &.interim-submission-left {
+    border-left: solid 2px $primary-color;
+  }
+  &.interim-submission-right,
+  &.final-submission-right {
+    border-right: solid 2px $primary-color;
+  }
+}
+
+td {
+  &.interim-submission-left {
+    border-left: solid 2px $primary-color;
+    border-bottom: none !important;
+    box-shadow: inset 0 -2px 0 0 $table-seperator;
+    -webkit-box-shadow: inset 0 -2px 0 0 $table-seperator;
+    -moz-box-shadow: inset 0 -2px 0 0 $table-seperator;
+  }
+  &.interim-submission-right,
+  &.final-submission-right {
+    border-right: solid 2px $primary-color;
+    border-bottom: none !important;
+    box-shadow: inset 0 -2px 0 0 $table-seperator;
+    -webkit-box-shadow: inset 0 -2px 0 0 $table-seperator;
+    -moz-box-shadow: inset 0 -2px 0 0 $table-seperator;
+  }
+}
+
+#approve-contracted-work-payment-table .ant-table-tbody > tr {
+  &:last-child td {
+    border-bottom: none;
+    border-top: solid 2px $primary-color;
+    font-weight: bold;
+  }
+  &:nth-last-child(2) td {
+    border-bottom: none;
+  }
+}
+
 // .approved-work-has-prf-checkbox .ant-checkbox-inner {
 //   border-color: $warning-color;
 // }

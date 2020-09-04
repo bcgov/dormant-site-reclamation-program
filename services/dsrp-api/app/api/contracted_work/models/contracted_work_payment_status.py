@@ -18,3 +18,8 @@ class ContractedWorkPaymentStatus(Base, AuditMixin):
     @classmethod
     def get_active(cls):
         return cls.query.filter_by(active=True).all()
+
+    @classmethod
+    def find_by_code(cls, contracted_work_payment_status_code):
+        return cls.query.filter_by(
+            contracted_work_payment_status_code=contracted_work_payment_status_code).one()
