@@ -12,6 +12,11 @@ const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   submitting: PropTypes.bool.isRequired,
   endUserTemporarySession: PropTypes.func.isRequired,
+  initialValues: PropTypes.objectOf(PropTypes.any),
+};
+
+const defaultProps = {
+  initialValues: {},
 };
 
 const ViewApplicationStatusForm = (props) => (
@@ -50,7 +55,9 @@ const ViewApplicationStatusForm = (props) => (
 );
 
 ViewApplicationStatusForm.propTypes = propTypes;
+ViewApplicationStatusForm.defaultProps = defaultProps;
 
 export default reduxForm({
   form: FORM.VIEW_APPLICATION_STATUS_FORM,
+  enableReinitialize: true,
 })(ViewApplicationStatusForm);

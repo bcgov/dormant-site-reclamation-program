@@ -435,3 +435,9 @@ export const isGuid = (input) => {
   const regexGuid = /^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/gi;
   return regexGuid.test(input);
 };
+
+export const isUserTemporarySessionStarted = () =>
+  localStorage.getItem("app_guid") &&
+  localStorage.getItem("issued_time_utc") &&
+  localStorage.getItem("otp") &&
+  localStorage.getItem("timeout_seconds");
