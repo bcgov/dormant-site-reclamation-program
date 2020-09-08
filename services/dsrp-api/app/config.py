@@ -93,6 +93,12 @@ class Config(object):
     SMTP_CRED_HOST = os.environ.get('SMTP_CRED_HOST', None)
     SMTP_ENABLED = SMTP_CRED_HOST is not None
     SMTP_CRED = {'host': SMTP_CRED_HOST, 'port': 25, 'user': None, 'pwrd': None}
+    SMTP_PORT = os.environ.get('SMTP_PORT', None)
+    SMTP_USER = os.environ.get('SMTP_USER', None)
+    SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', None)
+    SMTP_IS_TEST_MODE = os.environ.get('SMTP_IS_TEST_MODE', False)
+    EMAIL_TO = os.environ.get('EMAIL_TO', None)
+    EMAIL_FROM = os.environ.get('EMAIL_FROM', None)
 
     # Email
     PROGRAM_EMAIL = 'DormantSite.BC.Government@gov.bc.ca'
