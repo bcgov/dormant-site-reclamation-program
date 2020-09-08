@@ -1,0 +1,1 @@
+UPDATE company_payment_info SET company_address = '37 COLLINS ROAD, DAWSON CREEK, BC, V1G4T9' WHERE company_name = 'SAVANNA WELL SERVICING INC.';
