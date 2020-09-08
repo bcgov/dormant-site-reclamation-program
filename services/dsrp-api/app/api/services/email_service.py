@@ -22,9 +22,17 @@ class EmailService():
         if not Config.SMTP_ENABLED:
             return self
 
-        self.smtp = smtplib.SMTP()
-        self.smtp.set_debuglevel(0)
-        self.smtp.connect(self.SMTP_CRED['host'], self.SMTP_CRED['port'])
+        self.smtp = None
+        if Config.SMTP_IS_TEST_MODE:
+            self.smtp = smtplib.SMTP_SSL(Config.SMTP_CRED_HOST, Config.SMTP_PORT)
+            self.smtp.set_debuglevel(1)
+            self.smtp.ehlo()
+            self.smtp.login(Config.SMTP_USER, Config.SMTP_PASSWORD)
+        else:
+            self.smtp = smtplib.SMTP()
+            self.smtp.set_debuglevel(0)
+            self.smtp.connect(self.SMTP_CRED['host'], self.SMTP_CRED['port'])
+
         current_app.logger.info(
             f'Opening connection to {self.SMTP_CRED["host"]}:{self.SMTP_CRED["port"]}')
 
@@ -134,9 +142,9 @@ class EmailService():
             return
 
         msg = MIMEMultipart()
-        msg['From'] = from_email
-        msg['To'] = to_email
-        msg['Subject'] = subject
+        msg['From'] = Config.EMAIL_FROM if Config.SMTP_IS_TEST_MODE else from_email
+        msg['Subject'] = f'''[LOCAL]{subject}''' if Config.SMTP_IS_TEST_MODE else subject
+        msg['To'] = Config.EMAIL_TO if Config.SMTP_IS_TEST_MODE else to_email
 
         html = f'<html><head></head><body>{html_body}{signature}</body></html>'
         msg.attach(MIMEText(html, 'html'))
