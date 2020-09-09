@@ -148,15 +148,33 @@ export class ReviewApprovedContractedWorkInfo extends Component {
   handleContractedWorkPaymentFinalStatusChange = (status, record) =>
     this.openUpdateContractedWorkPaymentStatusModal(status, record, "FINAL");
 
-  handleCreatePaymentRequestForm = ({ key }) => {
+  handleCreatePaymentRequestForm = (paymentDocumentCode) => (values) => {
+    const contractedWork = values;
+    const applicationGuid = contractedWork[0].application_guid;
+    const workIds = contractedWork.reduce((list, work) => [...list, work.work_id], []);
+    const payload = { work_ids: workIds, payment_document_code: paymentDocumentCode };
+
+    return this.props.createApplicationPaymentDocument(applicationGuid, payload).then(() => {
+      this.setState({ isLoaded: false });
+      this.props.closeModal();
+      this.props
+        .fetchApplicationApprovedContractedWork(this.state.params)
+        .then(() => this.setState({ isLoaded: true }));
+    });
+  };
+
+  openCreatePaymentRequestFormModal = ({ key }) => {
     const paymentDocumentCode = key;
 
+    let paymentDocumentDescription = null;
     let contractedWork = this.state.selectedRows;
     if (paymentDocumentCode === "INTERIM_PRF") {
+      paymentDocumentDescription = "Interim PRF";
       contractedWork = contractedWork.filter(
         (work) => work.interim_payment_status_code === "APPROVED"
       );
     } else if (paymentDocumentCode === "FINAL_PRF") {
+      paymentDocumentDescription = "Final PRF";
       contractedWork = contractedWork.filter(
         (work) => work.final_payment_status_code === "APPROVED"
       );
@@ -164,15 +182,14 @@ export class ReviewApprovedContractedWorkInfo extends Component {
       throw new Error("Unknown payment document code received!");
     }
 
-    const applicationGuid = contractedWork[0].application_guid;
-    const workIds = contractedWork.reduce((list, work) => [...list, work.work_id], []);
-    const payload = { work_ids: workIds, payment_document_code: paymentDocumentCode };
-
-    this.props.createApplicationPaymentDocument(applicationGuid, payload).then(() => {
-      this.setState({ isLoaded: false });
-      this.props
-        .fetchApplicationApprovedContractedWork(this.state.params)
-        .then(() => this.setState({ isLoaded: true }));
+    return this.props.openModal({
+      props: {
+        title: `Generate and Send ${paymentDocumentDescription}`,
+        paymentDocumentCode: paymentDocumentCode,
+        contractedWork: contractedWork,
+        onSubmit: this.handleCreatePaymentRequestForm(paymentDocumentCode),
+      },
+      content: modalConfig.ADMIN_CREATE_PRF,
     });
   };
 
@@ -221,7 +238,7 @@ export class ReviewApprovedContractedWorkInfo extends Component {
     const selectedTotal = this.state.selectedRows.length;
 
     const menu = (
-      <Menu onClick={this.handleCreatePaymentRequestForm}>
+      <Menu onClick={this.openCreatePaymentRequestFormModal}>
         <Menu.Item key="INTERIM_PRF" disabled={!canCreateInterimPrf}>
           Interim PRF ({interimPrfRows.length}/{selectedTotal} items)
         </Menu.Item>

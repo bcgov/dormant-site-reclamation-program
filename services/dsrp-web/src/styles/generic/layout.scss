@@ -91,7 +91,7 @@ td {
   }
 }
 
-#approve-contracted-work-payment-table .ant-table-tbody > tr {
+.total-row-table .ant-table-tbody > tr {
   &:last-child td {
     border-bottom: none;
     border-top: solid 2px $primary-color;
