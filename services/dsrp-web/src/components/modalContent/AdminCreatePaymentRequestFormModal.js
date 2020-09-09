@@ -81,7 +81,7 @@ export class AdminCreatePaymentRequestFormModal extends Component {
       {
         title: "Action",
         key: "action",
-        className: "table-column-right-align",
+        className: "table-header-center-align table-column-center-align",
         render: (text, record) => (
           <div>
             {!record.isTotalRow && (

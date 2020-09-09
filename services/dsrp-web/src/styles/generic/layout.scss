@@ -49,6 +49,11 @@ tr .table-column-right-align:not(th) * {
   text-align: right !important;
 }
 
+.table-header-center-align,
+.table-column-center-align {
+  text-align: center !important;
+}
+
 .final-report-fields {
   padding-top: 24px;
   padding-left: 24px;
