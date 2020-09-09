@@ -79,8 +79,8 @@ export class AdminCreatePaymentRequestFormModal extends Component {
         render: (text) => <div title="">{formatMoney(text)}</div>,
       },
       {
-        title: "",
-        key: "operations",
+        title: "Action",
+        key: "action",
         className: "table-column-right-align",
         render: (text, record) => (
           <div>
