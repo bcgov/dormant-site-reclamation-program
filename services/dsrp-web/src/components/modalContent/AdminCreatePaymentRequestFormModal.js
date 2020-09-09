@@ -89,7 +89,7 @@ export class AdminCreatePaymentRequestFormModal extends Component {
                 type="link"
                 onClick={() => this.handleRemoveWorkItem(record.work_id)}
                 className="font-size-small"
-                disabled={this.state.selectedContractedWork.length === 1}
+                disabled={this.state.selectedContractedWork.length === 1 || this.state.submitting}
               >
                 Remove
               </Button>
