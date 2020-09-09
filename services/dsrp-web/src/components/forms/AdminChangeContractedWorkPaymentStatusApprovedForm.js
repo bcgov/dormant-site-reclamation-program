@@ -171,7 +171,7 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
         : null;
 
     const contractedWork = this.props.contractedWork;
-    const contractedWorkPayment = contractedWork.contracted_work_payment;
+    const contractedWorkPayment = contractedWork.contracted_work_payment || {};
 
     const firstPercent = 10;
     const interimPercent = 60;
@@ -319,6 +319,8 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
         ? "Yes - Certificate of Restoration (Part 1)"
         : "Yes - Dormancy Site Assessment Form";
 
+    const contractedWorkPaymentExists = !isEmpty(contractedWorkPayment);
+
     return (
       <>
         <Descriptions title="Contracted Work Information" column={1}>
@@ -353,9 +355,11 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
             {contractedWorkPayment.interim_submitter_name || Strings.DASH}
           </Descriptions.Item>
           <Descriptions.Item label="Interim Report">
-            {contractedWorkPayment.interim_report
+            {contractedWorkPaymentExists
               ? contractedWorkPayment.interim_report
-              : `Due in ${contractedWork.interim_report_days_until_deadline} days`}
+                ? contractedWorkPayment.interim_report
+                : `Due in ${contractedWork.interim_report_days_until_deadline} days`
+              : Strings.DASH}
           </Descriptions.Item>
         </Descriptions>
 
@@ -371,20 +375,22 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
             {contractedWorkPayment.final_submitter_name || Strings.DASH}
           </Descriptions.Item>
           <Descriptions.Item label="Final Report">
-            {(!isEmpty(contractedWorkPayment.final_report_document) && (
-              <LinkButton
-                onClick={() =>
-                  downloadDocument(
-                    contractedWork.application_guid,
-                    contractedWorkPayment.final_report_document.application_document_guid,
-                    contractedWorkPayment.final_report_document.document_name
-                  )
-                }
-              >
-                Download
-              </LinkButton>
-            )) ||
-              "Not yet submitted"}
+            {(contractedWorkPaymentExists &&
+              ((!isEmpty(contractedWorkPayment.final_report_document) && (
+                <LinkButton
+                  onClick={() =>
+                    downloadDocument(
+                      contractedWork.application_guid,
+                      contractedWorkPayment.final_report_document.application_document_guid,
+                      contractedWorkPayment.final_report_document.document_name
+                    )
+                  }
+                >
+                  Download
+                </LinkButton>
+              )) ||
+                "Not yet submitted")) ||
+              Strings.DASH}
           </Descriptions.Item>
         </Descriptions>
 
@@ -396,10 +402,12 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
           colon={false}
         >
           <Descriptions.Item label="Surface Landowner">
-            {contractedWorkPayment.surface_landowner || Strings.DASH}
+            {contractedWorkPaymentExists ? contractedWorkPayment.surface_landowner : Strings.DASH}
           </Descriptions.Item>
           <Descriptions.Item label="Level of Reclamation achieved for the Dormant Site">
-            {(contractedWorkPayment.reclamation_was_achieved === null && Strings.DASH) ||
+            {((!contractedWorkPaymentExists ||
+              contractedWorkPayment.reclamation_was_achieved === null) &&
+              Strings.DASH) ||
               (contractedWorkPayment.reclamation_was_achieved === true &&
                 `${workTypeName} Complete`) ||
               `${workTypeName} Not Complete`}
@@ -411,15 +419,20 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
                 {formatBooleanField(contractedWorkPayment.abandonment_cut_and_capped_completed)}
               </Descriptions.Item>
               <Descriptions.Item label="Was a Notice of Operations (NOO) form submission completed using the OGC eSubmission portal?">
-                {formatBooleanField(
-                  contractedWorkPayment.abandonment_notice_of_operations_submitted
-                )}
+                {(contractedWorkPaymentExists &&
+                  formatBooleanField(
+                    contractedWorkPayment.abandonment_notice_of_operations_submitted
+                  )) ||
+                  Strings.DASH}
               </Descriptions.Item>
               <Descriptions.Item label="Was pipeline abandoned as part of the Dormant Site Abandonment process?">
-                {formatBooleanField(contractedWorkPayment.abandonment_was_pipeline_abandoned)}
+                {(contractedWorkPaymentExists &&
+                  formatBooleanField(contractedWorkPayment.abandonment_was_pipeline_abandoned)) ||
+                  Strings.DASH}
               </Descriptions.Item>
               <Descriptions.Item label="If pipeline was abandoned as part of the Dormant Site Abandonment process, provide the length (approximate) of pipeline abandoned (metres).">
-                {(contractedWorkPayment.abandonment_metres_of_pipeline_abandoned &&
+                {(contractedWorkPaymentExists &&
+                  contractedWorkPayment.abandonment_metres_of_pipeline_abandoned &&
                   `${contractedWorkPayment.abandonment_metres_of_pipeline_abandoned} metres`) ||
                   Strings.DASH}
               </Descriptions.Item>
@@ -429,17 +442,25 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
           {workType === "remediation" && (
             <>
               <Descriptions.Item label="Was all identified contamination relating to the Dormant Site remediated to meet Contaminated Sites Regulations remediation standards or risk-based standards relevant to the Site?">
-                {formatBooleanField(
-                  contractedWorkPayment.remediation_identified_contamination_meets_standards
-                )}
+                {(contractedWorkPaymentExists &&
+                  formatBooleanField(
+                    contractedWorkPayment.remediation_identified_contamination_meets_standards
+                  )) ||
+                  Strings.DASH}
               </Descriptions.Item>
               <Descriptions.Item label="Has a Certificate of Restoration (Part 1) or a Dormancy Site Assessment Form been submitted to the OGC?">
-                {formatDocSubmitted(contractedWorkPayment.remediation_type_of_document_submitted)}
+                {(contractedWorkPaymentExists &&
+                  formatDocSubmitted(
+                    contractedWorkPayment.remediation_type_of_document_submitted
+                  )) ||
+                  Strings.DASH}
               </Descriptions.Item>
               <Descriptions.Item label="Was the Dormant Site reclaimed to meet Certificate of Restoration (Part 1) requirements?">
-                {formatBooleanField(
-                  contractedWorkPayment.remediation_reclaimed_to_meet_cor_p1_requirements
-                )}
+                {(contractedWorkPaymentExists &&
+                  formatBooleanField(
+                    contractedWorkPayment.remediation_reclaimed_to_meet_cor_p1_requirements
+                  )) ||
+                  Strings.DASH}
               </Descriptions.Item>
             </>
           )}
@@ -447,14 +468,18 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
           {workType === "reclamation" && (
             <>
               <Descriptions.Item label="Was the Dormant Site reclaimed to meet Certificate of Restoration (Part 2) requirements?">
-                {formatBooleanField(
-                  contractedWorkPayment.reclamation_reclaimed_to_meet_cor_p2_requirements
-                )}
+                {(contractedWorkPaymentExists &&
+                  formatBooleanField(
+                    contractedWorkPayment.reclamation_reclaimed_to_meet_cor_p2_requirements
+                  )) ||
+                  Strings.DASH}
               </Descriptions.Item>
               <Descriptions.Item label="Has the surface reclamation been completed to match surrounding natural contour and revegetated with ecologically suitable species?">
-                {formatBooleanField(
-                  contractedWorkPayment.reclamation_surface_reclamation_criteria_met
-                )}
+                {(contractedWorkPaymentExists &&
+                  formatBooleanField(
+                    contractedWorkPayment.reclamation_surface_reclamation_criteria_met
+                  )) ||
+                  Strings.DASH}
               </Descriptions.Item>
             </>
           )}
@@ -463,12 +488,18 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
             workType === "detailed_site_investigation") && (
             <>
               <Descriptions.Item label="Was the Dormant Site reclaimed to meet Certificate of Restoration (Part 2) requirements?">
-                {formatDocSubmitted(
-                  contractedWorkPayment.site_investigation_type_of_document_submitted
-                )}
+                {(contractedWorkPaymentExists &&
+                  formatDocSubmitted(
+                    contractedWorkPayment.site_investigation_type_of_document_submitted
+                  )) ||
+                  Strings.DASH}
               </Descriptions.Item>
               <Descriptions.Item label="Were any concerns identified through site investigation that are specific to other interested parties (e.g. landowners, municipalities, regional districts or local Indigenous nations)?">
-                {formatBooleanField(contractedWorkPayment.site_investigation_concerns_identified)}
+                {(contractedWorkPaymentExists &&
+                  formatBooleanField(
+                    contractedWorkPayment.site_investigation_concerns_identified
+                  )) ||
+                  Strings.DASH}
               </Descriptions.Item>
             </>
           )}

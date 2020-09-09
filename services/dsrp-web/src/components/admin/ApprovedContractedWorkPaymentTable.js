@@ -350,33 +350,13 @@ export class ApprovedContractedWorkPaymentTable extends Component {
               : null;
           return (
             <div title="Interim Status">
-              <span onClick={(e) => e.stopPropagation()}>
-                <Dropdown
-                  disabled={
-                    !record.contracted_work_payment ||
-                    isEmpty(record.contracted_work_payment.interim_payment_status)
-                  }
-                  overlay={renderDropdownMenu(
-                    this.props.contractedWorkPaymentStatusDropdownOptions,
-                    this.props.handleContractedWorkPaymentInterimStatusChange,
-                    record,
-                    text,
-                    false
-                  )}
-                  trigger={["click"]}
-                >
-                  <a>
-                    {record.has_interim_prfs && (
-                      <Tooltip title="This work item has been used to generate Interim PRFs">
-                        <Icon type="dollar" className="table-record-tooltip color-success" />
-                      </Tooltip>
-                    )}
-                    {note && popover(note, "table-record-tooltip color-warning")}
-                    {this.props.contractedWorkPaymentStatusOptionsHash[text]}
-                    <Icon type="down" className="table-status-dropdown-icon" />
-                  </a>
-                </Dropdown>
-              </span>
+              {record.has_interim_prfs && (
+                <Tooltip title="This work item has been used to generate Interim PRFs">
+                  <Icon type="dollar" className="table-record-tooltip color-success" />
+                </Tooltip>
+              )}
+              {note && popover(note, "table-record-tooltip color-warning")}
+              {this.props.contractedWorkPaymentStatusOptionsHash[text]}
             </div>
           );
         },
@@ -403,33 +383,13 @@ export class ApprovedContractedWorkPaymentTable extends Component {
               : null;
           return (
             <div title="Final Status">
-              <span onClick={(e) => e.stopPropagation()}>
-                <Dropdown
-                  disabled={
-                    !record.contracted_work_payment ||
-                    isEmpty(record.contracted_work_payment.final_payment_status)
-                  }
-                  overlay={renderDropdownMenu(
-                    this.props.contractedWorkPaymentStatusDropdownOptions,
-                    this.props.handleContractedWorkPaymentFinalStatusChange,
-                    record,
-                    text,
-                    true
-                  )}
-                  trigger={["click"]}
-                >
-                  <a>
-                    {record.has_final_prfs && (
-                      <Tooltip title="This work item has been used to generate Final PRFs">
-                        <Icon type="dollar" className="table-record-tooltip color-success" />
-                      </Tooltip>
-                    )}
-                    {note && popover(note, "table-record-tooltip color-warning")}
-                    {this.props.contractedWorkPaymentStatusOptionsHash[text]}
-                    <Icon type="down" className="table-status-dropdown-icon" />
-                  </a>
-                </Dropdown>
-              </span>
+              {record.has_final_prfs && (
+                <Tooltip title="This work item has been used to generate Final PRFs">
+                  <Icon type="dollar" className="table-record-tooltip color-success" />
+                </Tooltip>
+              )}
+              {note && popover(note, "table-record-tooltip color-warning")}
+              {this.props.contractedWorkPaymentStatusOptionsHash[text]}
             </div>
           );
         },
@@ -476,26 +436,9 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         key: "operations",
         render: (text, record) => (
           <div style={{ float: "right" }}>
-            <Row type="flex" justify="space-around" align="middle">
-              <Col span={10}>
-                <Button
-                  type="link"
-                  onClick={() => this.openAdminContractedWorkPaymentModal(record)}
-                  style={{ paddingLeft: 12, paddingRight: 12 }}
-                >
-                  <Icon type="solution" className="icon-lg" />
-                </Button>
-              </Col>
-              <Col span={10}>
-                <Button
-                  type="link"
-                  onClick={() => this.openContractedWorkPaymentModal(record)}
-                  style={{ paddingLeft: 12, paddingRight: 12 }}
-                >
-                  <Icon type="eye" className="icon-lg" />
-                </Button>
-              </Col>
-            </Row>
+            <Button type="link" onClick={() => this.openAdminContractedWorkPaymentModal(record)}>
+              <Icon type="solution" className="icon-lg" />
+            </Button>
           </div>
         ),
       },
