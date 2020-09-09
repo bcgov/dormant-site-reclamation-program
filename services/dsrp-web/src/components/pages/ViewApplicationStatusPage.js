@@ -14,7 +14,7 @@ import { getApplication } from "@/reducers/applicationReducer";
 import { HELP_EMAIL } from "@/constants/strings";
 import CustomPropTypes from "@/customPropTypes";
 import { PageTracker } from "@/utils/trackers";
-import { isGuid } from "@/utils/helpers";
+import { isGuid, isUserTemporarySessionStarted } from "@/utils/helpers";
 import * as router from "@/constants/routes";
 import { getIsOTLExpired } from "@/reducers/authorizationReducer";
 
@@ -48,12 +48,16 @@ export class ViewApplicationStatusPage extends Component {
       this.props.match.params.id &&
       isGuid(this.props.match.params.id)
     ) {
-      this.props.fetchApplicationSummaryById(this.props.match.params.id).catch((error) => {
-        if (error.response.status === 403) {
-          this.props.endUserTemporarySession(this.props.history);
-        }
-      });
+      if (isUserTemporarySessionStarted()) {
+        this.props.fetchApplicationSummaryById(this.props.match.params.id).catch((error) => {
+          if (error.response.status === 403) {
+            this.props.endUserTemporarySession(this.props.history);
+          }
+        });
+      }
       this.setState({ guid: this.props.match.params.id });
+    } else {
+      this.props.endUserTemporarySession();
     }
   };
 
@@ -100,6 +104,7 @@ export class ViewApplicationStatusPage extends Component {
             <ViewApplicationStatusForm
               onSubmit={this.onFormSubmit}
               endUserTemporarySession={this.props.endUserTemporarySession}
+              initialValues={{ guid: this.state.guid }}
             />
           </Col>
         </Row>
