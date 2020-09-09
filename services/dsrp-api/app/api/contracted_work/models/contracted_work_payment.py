@@ -109,13 +109,15 @@ class ContractedWorkPayment(Base, AuditMixin):
     @hybrid_property
     def has_interim_prfs(self):
         if self.payment_documents:
-            return any(doc.payment_document_code == 'INTERIM_PRF' for doc in self.payment_documents)
+            return any(doc.active_ind and doc.payment_document_code == 'INTERIM_PRF'
+                       for doc in self.payment_documents)
         return False
 
     @hybrid_property
     def has_final_prfs(self):
         if self.payment_documents:
-            return any(doc.payment_document_code == 'FINAL_PRF' for doc in self.payment_documents)
+            return any(doc.active_ind and doc.payment_document_code == 'FINAL_PRF'
+                       for doc in self.payment_documents)
         return False
 
     @hybrid_property
