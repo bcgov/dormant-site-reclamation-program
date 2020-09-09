@@ -182,11 +182,9 @@ export class ReviewApprovedContractedWorkInfo extends Component {
       throw new Error("Unknown payment document code received!");
     }
 
-    const applicationId = contractedWork[0].application_id;
     return this.props.openModal({
-      width: 1000,
       props: {
-        title: `Create ${paymentDocumentDescription} for Application ID ${applicationId}`,
+        title: `Generate and Send ${paymentDocumentDescription}`,
         paymentDocumentCode: paymentDocumentCode,
         contractedWork: contractedWork,
         onSubmit: this.handleCreatePaymentRequestForm(paymentDocumentCode),

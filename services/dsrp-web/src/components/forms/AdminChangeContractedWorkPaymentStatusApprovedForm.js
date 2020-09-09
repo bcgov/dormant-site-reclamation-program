@@ -477,11 +477,10 @@ export class AdminChangeContractedWorkPaymentStatusApprovedForm extends Componen
         <br />
         <Title level={4}>Contracted Work Payment Information Breakdown</Title>
         <Table
-          id="approve-contracted-work-payment-table"
           columns={columns}
           dataSource={dataSource}
           pagination={false}
-          className="table-headers-center table-rows-center"
+          className="total-row-table table-headers-center table-rows-center"
         />
 
         {this.props.contractedWorkPaymentType === "INTERIM" &&
