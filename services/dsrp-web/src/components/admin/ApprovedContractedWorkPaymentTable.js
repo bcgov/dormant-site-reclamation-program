@@ -18,8 +18,9 @@ import {
   Divider,
   Row,
   Col,
+  Typography,
 } from "antd";
-import { formatMoney } from "@/utils/helpers";
+import { formatMoney, formatDate, formatDateTimeFine } from "@/utils/helpers";
 import { openModal, closeModal } from "@/actions/modalActions";
 import {
   getFilterListContractedWorkPaymentStatusOptions,
@@ -29,6 +30,8 @@ import {
 import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
 import { modalConfig } from "@/components/modalContent/config";
+
+const { Text } = Typography;
 
 const propTypes = {
   applicationsApprovedContractedWork: PropTypes.any.isRequired,
@@ -198,7 +201,6 @@ export class ApprovedContractedWorkPaymentTable extends Component {
     return (
       <div style={{ padding: 8 }}>
         <Input
-          ref={(node) => {}}
           placeholder={placeholder}
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
@@ -403,18 +405,24 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         render: (text) => {
           let interim = text && text["interim"];
           interim =
-            !interim || interim === Strings.REVIEW_DEADLINE_NOT_APPLICABLE
-              ? "N/A"
-              : interim === Strings.REVIEW_DEADLINE_PAID
-              ? "Paid"
-              : `${interim} days`;
+            !interim || interim === Strings.REVIEW_DEADLINE_NOT_APPLICABLE ? (
+              "N/A"
+            ) : interim === Strings.REVIEW_DEADLINE_PAID ? (
+              "Paid"
+            ) : (
+              <Text title={formatDateTimeFine(interim)}>{formatDate(interim)}</Text>
+            );
+
           let final = text && text["final"];
           final =
-            !final || final === Strings.REVIEW_DEADLINE_NOT_APPLICABLE
-              ? "N/A"
-              : final === Strings.REVIEW_DEADLINE_PAID
-              ? "Paid"
-              : `${final} days`;
+            !final || final === Strings.REVIEW_DEADLINE_NOT_APPLICABLE ? (
+              "N/A"
+            ) : final === Strings.REVIEW_DEADLINE_PAID ? (
+              "Paid"
+            ) : (
+              <Text title={formatDateTimeFine(final)}>{formatDate(final)}</Text>
+            );
+
           return (
             <div title="Review Deadlines">
               <Row>
