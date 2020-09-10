@@ -14,8 +14,8 @@ import {
   minLength,
   maxLength,
 } from "@/utils/validate";
-import { currencyMask, metersMask, formatTitleString } from "@/utils/helpers";
-import { EXCEL, PDF } from "@/constants/fileTypes";
+import { currencyMask, metersMask } from "@/utils/helpers";
+import { PDF } from "@/constants/fileTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
 import { DATE_FORMAT, HELP_EMAIL } from "@/constants/strings";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
@@ -539,7 +539,7 @@ export class ContractedWorkPaymentForm extends Component {
                     <a href={EOC_TEMPLATE} target="_blank" rel="noopener noreferrer">
                       Evidence of Cost form
                     </a>
-                    &nbsp;and attach it here
+                    &nbsp;and upload it as a PDF here.
                     {existingEvidenceOfCost &&
                       " If your original Evidence of Cost document has not changed, you do not need to re-upload it."}
                   </div>
@@ -548,7 +548,7 @@ export class ContractedWorkPaymentForm extends Component {
               disabled={isViewOnly}
               component={renderConfig.FILE_UPLOAD}
               validate={existingEvidenceOfCost ? [] : [requiredList]}
-              acceptedFileTypesMap={EXCEL}
+              acceptedFileTypesMap={PDF}
               allowMultiple={false}
               allowRevert
               renderAfterInput={() =>
