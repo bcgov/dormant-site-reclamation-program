@@ -4,13 +4,11 @@ import AdminChangeContractedWorkPaymentStatusForm from "@/components/forms/Admin
 
 const propTypes = {
   contractedWork: PropTypes.any.isRequired,
-  contractedWorkPaymentStatus: PropTypes.string.isRequired,
-  contractedWorkPaymentType: PropTypes.string.isRequired,
   contractedWorkPaymentStatusOptionsHash: PropTypes.any.isRequired,
   closeModal: PropTypes.func.isRequired,
 };
 
-export const AdminChangeContractedWorkPaymentStatusModal = (props) => {
+export const AdminReviewContractedWorkPaymentModal = (props) => {
   const handleSubmit = (values) =>
     props.onSubmit(props.contractedWork, {
       contracted_work_payment_status_code: props.contractedWorkPaymentStatus,
@@ -18,7 +16,7 @@ export const AdminChangeContractedWorkPaymentStatusModal = (props) => {
       ...values,
     });
 
-  const getInitialApprovedAmount = () => {
+  const getInitialApprovedAmount = (contractedWorkPaymentType) => {
     const getTypeEstSharedCost = (percent, estSharedCost) => estSharedCost * (percent / 100);
     const getTypeMaxEligibleAmount = (eocTotalAmount) => eocTotalAmount * 0.5;
 
@@ -53,9 +51,9 @@ export const AdminChangeContractedWorkPaymentStatusModal = (props) => {
 
     // Determine the appropriate initial approved amount
     let initialApprovedAmount = null;
-    if (props.contractedWorkPaymentType === "INTERIM") {
+    if (contractedWorkPaymentType === "INTERIM") {
       initialApprovedAmount = Math.min(interimEstSharedCost, interimHalfEocTotal);
-    } else if (props.contractedWorkPaymentType === "FINAL") {
+    } else if (contractedWorkPaymentType === "FINAL") {
       initialApprovedAmount = Math.min(finalEligibleAmount, finalHalfEocTotal);
     } else {
       throw new Error("Unknown contracted work payment code received!");
@@ -64,14 +62,15 @@ export const AdminChangeContractedWorkPaymentStatusModal = (props) => {
     return initialApprovedAmount;
   };
 
-  const initialValues = { approved_amount: getInitialApprovedAmount() };
+  const initialValues = {
+    interim_initial_approved_amount: getInitialApprovedAmount("INTERIM"),
+    final_initial_approved_amount: getInitialApprovedAmount("FINAL"),
+  };
 
   return (
     <AdminChangeContractedWorkPaymentStatusForm
       onSubmit={handleSubmit}
       contractedWork={props.contractedWork}
-      contractedWorkPaymentStatus={props.contractedWorkPaymentStatus}
-      contractedWorkPaymentType={props.contractedWorkPaymentType}
       contractedWorkPaymentStatusOptionsHash={props.contractedWorkPaymentStatusOptionsHash}
       initialValues={initialValues}
       closeModal={props.closeModal}
@@ -79,6 +78,6 @@ export const AdminChangeContractedWorkPaymentStatusModal = (props) => {
   );
 };
 
-AdminChangeContractedWorkPaymentStatusModal.propTypes = propTypes;
+AdminReviewContractedWorkPaymentModal.propTypes = propTypes;
 
-export default AdminChangeContractedWorkPaymentStatusModal;
+export default AdminReviewContractedWorkPaymentModal;

@@ -49,25 +49,6 @@ const propTypes = {
   closeModal: PropTypes.func.isRequired,
 };
 
-const renderDropdownMenu = (option, onClick, record, currentStatus, isFinalPayment) => (
-  <Menu onClick={(item) => onClick(item.key, record)}>
-    {option
-      .filter(({ value }) => value !== currentStatus)
-      .map(({ label, value, description }) => {
-        // Admins cannot approve the final payment until the interim payment has been approved before.
-        const disabled =
-          isFinalPayment &&
-          value === "APPROVED" &&
-          (!record.contracted_work_payment || !record.contracted_work_payment.interim_paid_amount);
-        return (
-          <Menu.Item title={description} key={value} disabled={disabled}>
-            {label}
-          </Menu.Item>
-        );
-      })}
-  </Menu>
-);
-
 const applySortIndicator = (columns, params) =>
   columns.map((column) => ({
     ...column,
@@ -170,27 +151,13 @@ export class ApprovedContractedWorkPaymentTable extends Component {
     clearFilters();
   };
 
-  openContractedWorkPaymentModal = (record) =>
+  openAdminReviewContractedWorkPaymentModal = (record) =>
     this.props.openModal({
       props: {
-        isAdminView: true,
-        title: `View Applicant's Submissions for Work ID ${record.work_id}`,
-        contractedWorkPayment: record.work,
-        applicationSummary: {},
-        handleSubmitInterimContractedWorkPayment: () => {},
-        handleSubmitFinalContractedWorkPayment: () => {},
-        handleSubmitInterimContractedWorkPaymentProgressReport: () => {},
-      },
-      content: modalConfig.CONTRACTED_WORK_PAYMENT,
-    });
-
-  openAdminContractedWorkPaymentModal = (record) =>
-    this.props.openModal({
-      props: {
-        title: `View Information for Work ID ${record.work_id}`,
+        title: `Review Information for Work ID ${record.work_id}`,
         contractedWork: record,
       },
-      content: modalConfig.ADMIN_CONTRACTED_WORK_PAYMENT,
+      content: modalConfig.ADMIN_REVIEW_CONTRACTED_WORK_PAYMENT,
     });
 
   columnSearchInput = (dataIndex, placeholder) => ({
@@ -441,10 +408,14 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         },
       },
       {
-        key: "operations",
+        title: "Review",
+        key: "review",
         render: (text, record) => (
           <div style={{ float: "right" }}>
-            <Button type="link" onClick={() => this.openAdminContractedWorkPaymentModal(record)}>
+            <Button
+              type="link"
+              onClick={() => this.openAdminReviewContractedWorkPaymentModal(record)}
+            >
               <Icon type="solution" className="icon-lg" />
             </Button>
           </div>
