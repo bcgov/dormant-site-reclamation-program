@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Field } from "redux-form";
-import { Row, Col, Form, Button, Typography, Popconfirm, Alert } from "antd";
+import { Row, Col, Form, Button, Typography, Popconfirm, Alert, Tooltip, Icon } from "antd";
 import { capitalize, isEmpty } from "lodash";
 import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
@@ -14,7 +14,7 @@ import {
   minLength,
   maxLength,
 } from "@/utils/validate";
-import { currencyMask, metersMask } from "@/utils/helpers";
+import { currencyMask, metersMask, formatTitleString } from "@/utils/helpers";
 import { EXCEL, PDF } from "@/constants/fileTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
 import { DATE_FORMAT, HELP_EMAIL } from "@/constants/strings";
@@ -40,9 +40,15 @@ const defaultProps = {
 };
 
 const docSubmittedDropdownOptions = [
-  { value: "COR_P1", label: "Yes - Certificate of Restoration (Part 1)" },
-  { value: "DSAF", label: "Yes - Dormancy Site Assessment Form" },
-  { value: "NONE", label: "No" },
+  { value: "No", label: "No" },
+  {
+    value: "Yes - Certificate of Registration Pt 1",
+    label: "Yes - Certificate of Registration Pt 1",
+  },
+  {
+    value: "Yes - Dormancy Site Assessment Form",
+    label: "Yes - Dormancy Site Assessment Form",
+  },
 ];
 
 const booleanDropdownOptions = [
@@ -96,7 +102,7 @@ const renderReportingFields = (workType, isViewOnly) => {
             <Field
               id="abandonment_cut_and_capped_completed"
               name="abandonment_cut_and_capped_completed"
-              label="Was Well Abandonment completed to Cut and Capped?"
+              label="Well Abandonment was completed to Cut and Capped"
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}
@@ -107,7 +113,7 @@ const renderReportingFields = (workType, isViewOnly) => {
             <Field
               id="abandonment_notice_of_operations_submitted"
               name="abandonment_notice_of_operations_submitted"
-              label="Was a Notice of Operations (NOO) form submission completed using the OGC eSubmission portal?"
+              label="Notice of Operations (NOO) form was submitted through OGC eSubmission portal"
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}
@@ -132,8 +138,7 @@ const renderReportingFields = (workType, isViewOnly) => {
               label={
                 <>
                   <div>
-                    If pipeline was abandoned as part of the Dormant Site Abandonment process,
-                    provide the length (approximate) of pipeline abandoned (metres).
+                    Approximate length of pipeline abandoned as part of this work (if applicable)
                   </div>
                   <div className="font-weight-normal">
                     If you are unsure of the approximate length, please leave this field blank.
@@ -154,7 +159,7 @@ const renderReportingFields = (workType, isViewOnly) => {
             <Field
               id="remediation_identified_contamination_meets_standards"
               name="remediation_identified_contamination_meets_standards"
-              label="Was all identified contamination relating to the Dormant Site remediated to meet Contaminated Sites Regulations remediation standards or risk-based standards relevant to the Site?"
+              label="All identified contamination relating to the Dormant Site was remediated to meet Contaminated Sites Regulations standards or risk-based standards relevant to the site"
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}
@@ -192,7 +197,7 @@ const renderReportingFields = (workType, isViewOnly) => {
             <Field
               id="reclamation_reclaimed_to_meet_cor_p2_requirements"
               name="reclamation_reclaimed_to_meet_cor_p2_requirements"
-              label="Was the Dormant Site reclaimed to meet Certificate of Restoration (Part 2) requirements?"
+              label="Dormant site reclamation meets Certificate of Restoration (Part 1) requirements"
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}
@@ -203,7 +208,7 @@ const renderReportingFields = (workType, isViewOnly) => {
             <Field
               id="reclamation_surface_reclamation_criteria_met"
               name="reclamation_surface_reclamation_criteria_met"
-              label="Has the surface reclamation been completed to match surrounding natural contour and revegetated with ecologically suitable species?"
+              label="Surface reclamation has been completed to match surrounding natural contour and re-vegetated with ecologically suitable species"
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}
@@ -231,7 +236,7 @@ const renderReportingFields = (workType, isViewOnly) => {
             <Field
               id="site_investigation_concerns_identified"
               name="site_investigation_concerns_identified"
-              label="Were any concerns identified through site investigation that are specific to other interested parties (e.g. landowners, municipalities, regional districts or local Indigenous nations)?"
+              label="During site investigation, concerns were identified that are specific to other interested parties (e.g., landowners, municipalities, regional districts or Indigenous nations)"
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}
@@ -245,7 +250,7 @@ const renderReportingFields = (workType, isViewOnly) => {
         <Field
           id="reclamation_was_achieved"
           name="reclamation_was_achieved"
-          label="Level of Reclamation achieved for the Dormant Site"
+          label="Dormant site reclamation meets Certificate of Restoration (Part 1) requirements"
           placeholder="Select an option"
           disabled={isViewOnly}
           component={renderConfig.SELECT}
@@ -261,11 +266,82 @@ const renderReportingFields = (workType, isViewOnly) => {
   );
 };
 
+const label = (text, title) => (
+  <>
+    <span>{text}</span>
+    <Tooltip title={title} placement="right" mouseEnterDelay={0.3}>
+      <Icon type="info-circle" className="icon-sm" style={{ marginLeft: 4 }} />
+    </Tooltip>
+  </>
+);
+
 // eslint-disable-next-line react/prefer-stateless-function
 export class ContractedWorkPaymentForm extends Component {
+  calculateEstimatedFinancialContribution = (paymentType, contractedWork) => {
+    const interimPercent = 60;
+    const finalPercent = 30;
+    const contractedWorkPayment = contractedWork.contracted_work_payment;
+    const getTypeEstSharedCost = (percent, estSharedCost) => estSharedCost * (percent / 100);
+
+    const interimEstSharedCost = parseFloat(
+      getTypeEstSharedCost(interimPercent, contractedWork.estimated_shared_cost)
+    );
+
+    let result = { maxAmount: 0, estimatedFinancialContribution: 0 };
+    if (paymentType === "interim") {
+      // interimEocTotalAmount interimActualCost
+      const interimEocTotalAmount =
+        contractedWorkPayment && contractedWorkPayment.interim_actual_cost
+          ? parseFloat(contractedWorkPayment.interim_actual_cost)
+          : 0;
+
+      const interimMaximumReceivablePayment = interimEstSharedCost;
+      const interimEstimatedFinancialContribution = Math.min(
+        interimEstSharedCost,
+        interimEocTotalAmount / 2
+      );
+
+      result = {
+        maxAmount: interimMaximumReceivablePayment,
+        estimatedFinancialContribution: interimEstimatedFinancialContribution,
+      };
+    } else if (paymentType === "final") {
+      // finalEstSharedCost
+      const finalEstSharedCost = parseFloat(
+        getTypeEstSharedCost(finalPercent, contractedWork.estimated_shared_cost)
+      );
+
+      const finalActualCost = contractedWorkPayment.final_actual_cost
+        ? parseFloat(contractedWorkPayment.final_actual_cost)
+        : 0;
+
+      const finalHalfEocTotal = finalActualCost ? finalActualCost / 2 : 0;
+      const finalMaximumReceivablePayment =
+        finalEstSharedCost + (interimEstSharedCost - contractedWorkPayment.interim_actual_cost);
+      const finalEstimatedFinancialContribution = Math.min(
+        finalMaximumReceivablePayment,
+        finalHalfEocTotal
+      );
+
+      result = {
+        maxAmount: finalMaximumReceivablePayment,
+        estimatedFinancialContribution: finalEstimatedFinancialContribution,
+      };
+    }
+
+    return result;
+  };
+
   render() {
     const { paymentType, contractedWorkPayment } = this.props;
     const paymentInfo = contractedWorkPayment.contracted_work_payment;
+    let estimatedFinancialContribution = null;
+    if (paymentType === "interim" || paymentType === "final") {
+      estimatedFinancialContribution = this.calculateEstimatedFinancialContribution(
+        paymentType,
+        contractedWorkPayment
+      );
+    }
 
     const interimPaymentStatus = paymentInfo
       ? paymentInfo.interim_payment_status_code
@@ -303,41 +379,54 @@ export class ContractedWorkPaymentForm extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <Title level={4}>{capitalize(paymentType)} Payment Form</Title>
-
         {paymentType === "final" && interimPaymentStatus === "INFORMATION_REQUIRED" && (
           <Paragraph>
             <Alert
               showIcon
-              message="You must complete and submit this work item's interim payment information before you can submit its final payment information."
+              message="You must complete and submit an Interim Payment request before you can submit a Final Payment request."
             />
           </Paragraph>
         )}
 
-        <Paragraph>
-          In order for your <Text strong>{paymentType} payment request</Text> to be processed, you
-          must complete this form with your Evidence of Cost.
-        </Paragraph>
-
         {paymentType === "interim" && (
-          <Paragraph>
-            The Interim Progress Report must be submitted within&nbsp;
-            <Text strong>30 days</Text> of requesting an interim payment.
-          </Paragraph>
+          <>
+            <Paragraph>
+              In order for your {formatTitleString(paymentType)} Payment request to be processed,
+              you must complete this form and attach your Evidence of Cost file.
+            </Paragraph>
+            <Paragraph>
+              The Interim Progress Report must be submitted within&nbsp; 30 days of requesting an
+              interim payment.
+            </Paragraph>
+            <Paragraph>
+              Once you submit your request, you cannot edit it. If you have any questions or
+              concerns, contact <a href={`mailto:${HELP_EMAIL}`}>{HELP_EMAIL}</a>.
+            </Paragraph>
+          </>
         )}
 
-        <Paragraph>
-          Once you submit your request, you cannot edit it.
-          <br />
-          If you have any questions, contact&nbsp;
-          <a href={`mailto:${HELP_EMAIL}`}>{HELP_EMAIL}</a>.
-        </Paragraph>
+        {paymentType === "final" && (
+          <>
+            <Paragraph>
+              In order for your Final Payment request to be processed, you must complete this form
+              and attach your Evidence of Cost and Final Report files.
+            </Paragraph>
+            <Paragraph>
+              Once you submit your request, you cannot edit it. If you have any questions, contact{" "}
+              <a href={`mailto:${HELP_EMAIL}`}>{HELP_EMAIL}</a>.
+            </Paragraph>
+          </>
+        )}
 
         <Row gutter={48}>
           <Col>
             <Field
               id={`${paymentType}_total_hours_worked_to_date`}
               name={`${paymentType}_total_hours_worked_to_date`}
-              label="Total Hours Worked"
+              label={label(
+                "Total Hours Worked",
+                "Number of hours that have been attributed to completing this work to date."
+              )}
               placeholder="0"
               disabled={isViewOnly}
               component={renderConfig.FIELD}
@@ -346,7 +435,10 @@ export class ContractedWorkPaymentForm extends Component {
             <Field
               id={`${paymentType}_number_of_workers`}
               name={`${paymentType}_number_of_workers`}
-              label="Total Number of Workers"
+              label={label(
+                "Total Number of Workers",
+                "Number of people who have worked on the Dormant Site completing eligible work activities to date."
+              )}
               placeholder="0"
               disabled={isViewOnly}
               component={renderConfig.FIELD}
@@ -355,7 +447,10 @@ export class ContractedWorkPaymentForm extends Component {
             <Field
               id={`${paymentType}_actual_cost`}
               name={`${paymentType}_actual_cost`}
-              label="Evidence of Cost Total"
+              label={label(
+                "Evidence of Cost Total",
+                "Total of all invoices recorded on the Evidence of Cost form."
+              )}
               placeholder="$0.00"
               disabled={isViewOnly}
               component={renderConfig.FIELD}
@@ -367,6 +462,36 @@ export class ContractedWorkPaymentForm extends Component {
                 }
               }}
             />
+            {(paymentType === "interim" || paymentType === "final") && (
+              <>
+                <Row gutter={16} type="flex" justify="space-around" align="middle">
+                  <Col className="gutter-row" span={12}>
+                    <Text strong>
+                      {`${formatTitleString(paymentType)} Maximum Financial Contribution`}
+                    </Text>
+                    <br />
+                    {estimatedFinancialContribution.maxAmount.toLocaleString("en-CA", {
+                      style: "currency",
+                      currency: "CAD",
+                    })}
+                  </Col>
+                  <Col className="gutter-row" span={12}>
+                    <Text strong>
+                      {`${formatTitleString(paymentType)} Estimated Financial Contribution`}
+                    </Text>
+                    <br />
+                    {estimatedFinancialContribution.estimatedFinancialContribution.toLocaleString(
+                      "en-CA",
+                      {
+                        style: "currency",
+                        currency: "CAD",
+                      }
+                    )}
+                  </Col>
+                </Row>
+                <br />
+              </>
+            )}
 
             {paymentType === "interim" &&
               (!paymentInfo || !paymentInfo.interim_payment_status_code) && (
@@ -375,12 +500,13 @@ export class ContractedWorkPaymentForm extends Component {
                   name="interim_report"
                   label={
                     <>
-                      <div>Interim Progress Report</div>
-                      <div className="font-weight-normal">
-                        Briefly describe the work that was reported in the uploaded interim Evidence
-                        of Cost file. If you do not submit this now, you will have to submit the
-                        Interim Progress Report using the Interim Progress Report tab above. Must be
-                        between 25 and 250 characters.
+                      {label(
+                        "Interim Progress Report (min. 25 - max. 250 characters)",
+                        "If you do not complete this section now, submit your summary report on the Interim Progress Report tab within 30 days."
+                      )}
+                      <div className="font-weight-normal color-default-font">
+                        Briefly describe the work that was reported in the uploaded Interim Evidence
+                        of Cost file.
                       </div>
                     </>
                   }
@@ -407,13 +533,13 @@ export class ContractedWorkPaymentForm extends Component {
               name={`${paymentType}_eoc`}
               label={
                 <>
-                  <div>Evidence of Cost Upload</div>
-                  <div className="font-weight-normal">
+                  <div>Upload Evidence of Cost</div>
+                  <div className="font-weight-normal color-default-font">
                     Fill in the&nbsp;
                     <a href={EOC_TEMPLATE} target="_blank" rel="noopener noreferrer">
-                      Evidence of Cost template
+                      Evidence of Cost form
                     </a>
-                    &nbsp;and upload it here.
+                    &nbsp;and attach it here
                     {existingEvidenceOfCost &&
                       " If your original Evidence of Cost document has not changed, you do not need to re-upload it."}
                   </div>
@@ -436,7 +562,7 @@ export class ContractedWorkPaymentForm extends Component {
                       )
                     }
                   >
-                    Download previously uploaded Evidence of Cost
+                    View attached Evidence of Cost
                   </LinkButton>
                 )) || <></>
               }
@@ -478,7 +604,7 @@ export class ContractedWorkPaymentForm extends Component {
                           )
                         }
                       >
-                        Download previously uploaded Final Report
+                        View attached Final Report
                       </LinkButton>
                     )) || <></>
                   }
@@ -486,10 +612,9 @@ export class ContractedWorkPaymentForm extends Component {
                 <Form.Item
                   label={
                     <>
-                      <div>Final Report - Key Reporting Data</div>
+                      <div>Final Report Summary</div>
                       <div className="font-weight-normal">
-                        Enter in the below form fields as they are provided in the uploaded Final
-                        Report document.
+                        Complete this section using the information provided in the Final Report.
                       </div>
                     </>
                   }
@@ -502,7 +627,7 @@ export class ContractedWorkPaymentForm extends Component {
               </>
             )}
 
-            <Form.Item label="Certification">
+            <Form.Item label="Attestations">
               <Field
                 id={`${paymentType}_submission_confirmation`}
                 name={`${paymentType}_submission_confirmation`}
@@ -534,8 +659,9 @@ export class ContractedWorkPaymentForm extends Component {
               />
               <Field
                 id={`${paymentType}_submitter_name`}
+                label="Submitted by"
                 name={`${paymentType}_submitter_name`}
-                placeholder="Type Your Name"
+                placeholder="Enter your name"
                 disabled={isViewOnly}
                 component={renderConfig.FIELD}
                 validate={[required]}
@@ -543,8 +669,8 @@ export class ContractedWorkPaymentForm extends Component {
             </Form.Item>
 
             <Paragraph>
-              Keep all records of original invoices for this work. If they are requested by the
-              Province, you will be required to provide them within 30 days of the request.
+              Keep all records of original invoices for the work reported. If they are requested by
+              the Province, you will be required to provide them within 30 days.
             </Paragraph>
           </Col>
         </Row>
@@ -573,7 +699,7 @@ export class ContractedWorkPaymentForm extends Component {
                 style={{ marginLeft: 5 }}
                 loading={this.props.submitting}
               >
-                Submit
+                Submit Request
               </Button>
             </>
           )}
