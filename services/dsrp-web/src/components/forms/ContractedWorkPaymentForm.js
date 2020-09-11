@@ -14,7 +14,7 @@ import {
   minLength,
   maxLength,
 } from "@/utils/validate";
-import { currencyMask, metersMask } from "@/utils/helpers";
+import { currencyMask, formatTitleString, metersMask } from "@/utils/helpers";
 import { PDF } from "@/constants/fileTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
 import { DATE_FORMAT, HELP_EMAIL } from "@/constants/strings";
@@ -270,7 +270,11 @@ const label = (text, title) => (
   <>
     <span>{text}</span>
     <Tooltip title={title} placement="right" mouseEnterDelay={0.3}>
-      <Icon type="info-circle" className="icon-sm" style={{ marginLeft: 4 }} />
+      <Icon
+        type="info-circle"
+        className="icon-sm"
+        style={{ marginLeft: 4, verticalAlign: "inherit" }}
+      />
     </Tooltip>
   </>
 );
@@ -466,9 +470,7 @@ export class ContractedWorkPaymentForm extends Component {
               <>
                 <Row gutter={16} type="flex" justify="space-around" align="middle">
                   <Col className="gutter-row" span={12}>
-                    <Text strong>
-                      {`${formatTitleString(paymentType)} Maximum Financial Contribution`}
-                    </Text>
+                    <Text strong>Maximum Financial Contribution</Text>
                     <br />
                     {estimatedFinancialContribution.maxAmount.toLocaleString("en-CA", {
                       style: "currency",
@@ -476,9 +478,7 @@ export class ContractedWorkPaymentForm extends Component {
                     })}
                   </Col>
                   <Col className="gutter-row" span={12}>
-                    <Text strong>
-                      {`${formatTitleString(paymentType)} Estimated Financial Contribution`}
-                    </Text>
+                    <Text strong>Estimated Financial Contribution</Text>
                     <br />
                     {estimatedFinancialContribution.estimatedFinancialContribution.toLocaleString(
                       "en-CA",
