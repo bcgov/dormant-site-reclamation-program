@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import { connect } from "react-redux";
 import { startCase, camelCase, round, isEmpty } from "lodash";
-import { Row, Col, Typography, Table, Icon, Button, Popover, Progress } from "antd";
+import { Row, Col, Typography, Table, Icon, Button, Popover, Progress, Tooltip } from "antd";
 import {
   formatDate,
   formatMoney,
@@ -26,7 +26,6 @@ import { openModal, closeModal } from "@/actions/modalActions";
 
 import CustomPropTypes from "@/customPropTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
-import { toolTip } from "@/components/admin/ApplicationTable";
 
 const propTypes = {
   applicationGuid: PropTypes.string.isRequired,
@@ -51,6 +50,21 @@ const popover = (message, extraClassName) => (
   >
     <Icon type="info-circle" className={`icon-sm ${extraClassName}`} style={{ marginLeft: 4 }} />
   </Popover>
+);
+
+const fieldWithTooltip = (text, title, tooltipTitle, icon, isDisplayTooltip = false) => (
+  <div style={{ position: "relative" }}>
+    <div style={{ position: `${isDisplayTooltip ? "absolute" : ""}` }} title={title}>
+      {text}
+    </div>
+    {isDisplayTooltip && (
+      <div style={{ position: "relative", left: "-18px" }}>
+        <Tooltip title={tooltipTitle} placement="right" mouseEnterDelay={0.3}>
+          <Icon type="info-circle" className={`icon-sm ${icon}`} style={{ marginLeft: 4 }} />
+        </Tooltip>
+      </div>
+    )}
+  </div>
 );
 
 export class ContractedWorkPaymentView extends Component {
@@ -279,20 +293,12 @@ export class ContractedWorkPaymentView extends Component {
                 display = `Due ${formatDate(text)}`;
                 overdue = moment().isAfter(text);
               }
-              return (
-                <div style={{ position: "relative" }}>
-                  <div style={{ position: `${overdue ? "absolute" : ""}` }} title="Progress Report">
-                    {display}
-                  </div>
-                  {overdue && (
-                    <div style={{ position: "relative", left: "-18px" }}>
-                      {toolTip(
-                        "You cannot receive Final payment for this item until the Interim Progress Report is received",
-                        "history"
-                      )}
-                    </div>
-                  )}
-                </div>
+              return fieldWithTooltip(
+                display,
+                "Progress Report",
+                "You cannot receive Final payment for this item until the Interim Progress Report is received",
+                "history",
+                overdue
               );
             },
           },

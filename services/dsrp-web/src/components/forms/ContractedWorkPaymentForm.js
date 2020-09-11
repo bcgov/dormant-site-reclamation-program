@@ -21,6 +21,8 @@ import { DATE_FORMAT, HELP_EMAIL } from "@/constants/strings";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import LinkButton from "@/components/common/LinkButton";
 import CustomPropTypes from "@/customPropTypes";
+import { toolTip } from "@/components/admin/ApplicationTable";
+import { PAYMENT_TYPES } from "@/constants/payments";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -32,11 +34,11 @@ const propTypes = {
   closeModal: PropTypes.func.isRequired,
   submitting: PropTypes.bool.isRequired,
   isAdminView: PropTypes.bool.isRequired,
-  paymentType: PropTypes.oneOf(["interim", "final"]),
+  paymentType: PropTypes.oneOf([PAYMENT_TYPES.INTERIM, PAYMENT_TYPES.FINAL]),
 };
 
 const defaultProps = {
-  paymentType: "interim",
+  paymentType: PAYMENT_TYPES.INTERIM,
 };
 
 const docSubmittedDropdownOptions = [
@@ -273,7 +275,7 @@ const label = (text, title) => (
       <Icon
         type="info-circle"
         className="icon-sm"
-        style={{ marginLeft: 4, verticalAlign: "inherit" }}
+        style={{ marginLeft: 4, verticalAlign: "middle" }}
       />
     </Tooltip>
   </>
@@ -281,7 +283,9 @@ const label = (text, title) => (
 
 // eslint-disable-next-line react/prefer-stateless-function
 export class ContractedWorkPaymentForm extends Component {
-  calculateEstimatedFinancialContribution = (paymentType, contractedWork) => {
+  state = { maxAmount: 0, estimatedFinancialContribution: 0 };
+
+  calculateEstimatedFinancialContribution = (paymentType, contractedWork, actual_cost = null) => {
     const interimPercent = 60;
     const finalPercent = 30;
     const contractedWorkPayment = contractedWork.contracted_work_payment;
@@ -292,12 +296,13 @@ export class ContractedWorkPaymentForm extends Component {
     );
 
     let result = { maxAmount: 0, estimatedFinancialContribution: 0 };
-    if (paymentType === "interim") {
+    if (paymentType === PAYMENT_TYPES.INTERIM) {
       // interimEocTotalAmount interimActualCost
       const interimEocTotalAmount =
-        contractedWorkPayment && contractedWorkPayment.interim_actual_cost
+        actual_cost ??
+        (contractedWorkPayment && contractedWorkPayment.interim_actual_cost
           ? parseFloat(contractedWorkPayment.interim_actual_cost)
-          : 0;
+          : 0);
 
       const interimMaximumReceivablePayment = interimEstSharedCost;
       const interimEstimatedFinancialContribution = Math.min(
@@ -309,19 +314,26 @@ export class ContractedWorkPaymentForm extends Component {
         maxAmount: interimMaximumReceivablePayment,
         estimatedFinancialContribution: interimEstimatedFinancialContribution,
       };
-    } else if (paymentType === "final") {
+    } else if (paymentType === PAYMENT_TYPES.FINAL) {
       // finalEstSharedCost
       const finalEstSharedCost = parseFloat(
         getTypeEstSharedCost(finalPercent, contractedWork.estimated_shared_cost)
       );
 
-      const finalActualCost = contractedWorkPayment.final_actual_cost
-        ? parseFloat(contractedWorkPayment.final_actual_cost)
-        : 0;
+      const finalActualCost =
+        actual_cost ??
+        (contractedWorkPayment && contractedWorkPayment.final_actual_cost
+          ? parseFloat(contractedWorkPayment.final_actual_cost)
+          : 0);
+
+      const interimEstimatedPayment =
+        contractedWorkPayment && contractedWorkPayment.interim_payment_status_code === "APPROVED"
+          ? contractedWorkPayment.interim_paid_amount ?? 0
+          : interimEstSharedCost;
 
       const finalHalfEocTotal = finalActualCost ? finalActualCost / 2 : 0;
       const finalMaximumReceivablePayment =
-        finalEstSharedCost + (interimEstSharedCost - contractedWorkPayment.interim_actual_cost);
+        finalEstSharedCost + (interimEstSharedCost - interimEstimatedPayment);
       const finalEstimatedFinancialContribution = Math.min(
         finalMaximumReceivablePayment,
         finalHalfEocTotal
@@ -333,19 +345,69 @@ export class ContractedWorkPaymentForm extends Component {
       };
     }
 
+    this.setState({
+      ...result,
+    });
+
     return result;
   };
+
+  componentDidMount() {
+    if (
+      this.props.paymentType === PAYMENT_TYPES.INTERIM ||
+      this.props.paymentType === PAYMENT_TYPES.FINAL
+    ) {
+      this.calculateEstimatedFinancialContribution(
+        this.props.paymentType,
+        this.props.contractedWorkPayment
+      );
+    }
+  }
+
+  renderEstimatedFinancialContribution = (paymentType, contractedWorkPayment) =>
+    (paymentType === PAYMENT_TYPES.INTERIM || paymentType === PAYMENT_TYPES.FINAL) && (
+      <>
+        <Row gutter={16} type="flex" justify="space-around" align="middle">
+          <Col className="gutter-row" span={12}>
+            <Text strong>
+              {paymentType === PAYMENT_TYPES.FINAL && "Estimated"} Maximum Financial Contribution
+              {toolTip(
+                paymentType === PAYMENT_TYPES.INTERIM
+                  ? "As per the program rules, the maximum possible interim payment is 60% of this work item's Estimated Shared Cost."
+                  : "As per the program rules, the maximum possible final payment is 30% of this work item's Estimated Shared Cost, plus any unclaimed funds from the Interim Maximum Financial Contribution after the interim payment has been issued.",
+                "history"
+              )}
+            </Text>
+            <br />
+            {this.state.maxAmount.toLocaleString("en-CA", {
+              style: "currency",
+              currency: "CAD",
+            })}
+          </Col>
+          <Col className="gutter-row" span={12}>
+            <Text strong>
+              Estimated Financial Contribution
+              {toolTip(
+                paymentType === PAYMENT_TYPES.INTERIM
+                  ? "As per the program rules, the estimated interim financial contribution is calculated at 50% of the provided interim Evidence of Cost Total, capped at the Interim Maximum Financial Contribution."
+                  : "As per the program rules, the estimated final financial contribution is calculated at 50% of the provided final Evidence of Cost Total, capped at the Final Maximum Financial Contribution.",
+                "history"
+              )}
+            </Text>
+            <br />
+            {this.state.estimatedFinancialContribution.toLocaleString("en-CA", {
+              style: "currency",
+              currency: "CAD",
+            })}
+          </Col>
+        </Row>
+        <br />
+      </>
+    );
 
   render() {
     const { paymentType, contractedWorkPayment } = this.props;
     const paymentInfo = contractedWorkPayment.contracted_work_payment;
-    let estimatedFinancialContribution = null;
-    if (paymentType === "interim" || paymentType === "final") {
-      estimatedFinancialContribution = this.calculateEstimatedFinancialContribution(
-        paymentType,
-        contractedWorkPayment
-      );
-    }
 
     const interimPaymentStatus = paymentInfo
       ? paymentInfo.interim_payment_status_code
@@ -357,17 +419,17 @@ export class ContractedWorkPaymentForm extends Component {
 
     const isViewOnly =
       this.props.isAdminView ||
-      (paymentType === "interim" && interimPaymentStatus !== "INFORMATION_REQUIRED") ||
-      (paymentType === "final" &&
+      (paymentType === PAYMENT_TYPES.INTERIM && interimPaymentStatus !== "INFORMATION_REQUIRED") ||
+      (paymentType === PAYMENT_TYPES.FINAL &&
         (interimPaymentStatus === "INFORMATION_REQUIRED" ||
           finalPaymentStatus !== "INFORMATION_REQUIRED"));
 
     const existingEvidenceOfCost = paymentInfo
-      ? paymentType === "interim"
+      ? paymentType === PAYMENT_TYPES.INTERIM
         ? isEmpty(paymentInfo.interim_eoc_document)
           ? null
           : paymentInfo.interim_eoc_document
-        : paymentType === "final"
+        : paymentType === PAYMENT_TYPES.FINAL
         ? isEmpty(paymentInfo.final_eoc_document)
           ? null
           : paymentInfo.final_eoc_document
@@ -383,7 +445,7 @@ export class ContractedWorkPaymentForm extends Component {
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <Title level={4}>{capitalize(paymentType)} Payment Form</Title>
-        {paymentType === "final" && interimPaymentStatus === "INFORMATION_REQUIRED" && (
+        {paymentType === PAYMENT_TYPES.FINAL && interimPaymentStatus === "INFORMATION_REQUIRED" && (
           <Paragraph>
             <Alert
               showIcon
@@ -392,7 +454,7 @@ export class ContractedWorkPaymentForm extends Component {
           </Paragraph>
         )}
 
-        {paymentType === "interim" && (
+        {paymentType === PAYMENT_TYPES.INTERIM && (
           <>
             <Paragraph>
               In order for your {formatTitleString(paymentType)} Payment request to be processed,
@@ -409,7 +471,7 @@ export class ContractedWorkPaymentForm extends Component {
           </>
         )}
 
-        {paymentType === "final" && (
+        {paymentType === PAYMENT_TYPES.FINAL && (
           <>
             <Paragraph>
               In order for your Final Payment request to be processed, you must complete this form
@@ -464,36 +526,15 @@ export class ContractedWorkPaymentForm extends Component {
                 if (newValue && newValue.toString().split(".")[0].length > 8) {
                   event.preventDefault();
                 }
+                this.calculateEstimatedFinancialContribution(
+                  paymentType,
+                  contractedWorkPayment,
+                  newValue
+                );
               }}
             />
-            {(paymentType === "interim" || paymentType === "final") && (
-              <>
-                <Row gutter={16} type="flex" justify="space-around" align="middle">
-                  <Col className="gutter-row" span={12}>
-                    <Text strong>Maximum Financial Contribution</Text>
-                    <br />
-                    {estimatedFinancialContribution.maxAmount.toLocaleString("en-CA", {
-                      style: "currency",
-                      currency: "CAD",
-                    })}
-                  </Col>
-                  <Col className="gutter-row" span={12}>
-                    <Text strong>Estimated Financial Contribution</Text>
-                    <br />
-                    {estimatedFinancialContribution.estimatedFinancialContribution.toLocaleString(
-                      "en-CA",
-                      {
-                        style: "currency",
-                        currency: "CAD",
-                      }
-                    )}
-                  </Col>
-                </Row>
-                <br />
-              </>
-            )}
-
-            {paymentType === "interim" &&
+            {this.renderEstimatedFinancialContribution(paymentType, contractedWorkPayment)}
+            {paymentType === PAYMENT_TYPES.INTERIM &&
               (!paymentInfo || !paymentInfo.interim_payment_status_code) && (
                 <Field
                   id="interim_report"
@@ -516,7 +557,7 @@ export class ContractedWorkPaymentForm extends Component {
                 />
               )}
 
-            {paymentType === "final" && (
+            {paymentType === PAYMENT_TYPES.FINAL && (
               <Field
                 id="work_completion_date"
                 name="work_completion_date"
@@ -568,7 +609,7 @@ export class ContractedWorkPaymentForm extends Component {
               }
             />
 
-            {paymentType === "final" && (
+            {paymentType === PAYMENT_TYPES.FINAL && (
               <>
                 <Field
                   id="final_report"
@@ -666,8 +707,8 @@ export class ContractedWorkPaymentForm extends Component {
                 component={renderConfig.FIELD}
                 validate={[required]}
               />
+              {this.renderEstimatedFinancialContribution(paymentType, contractedWorkPayment)}
             </Form.Item>
-
             <Paragraph>
               Keep all records of original invoices for the work reported. If they are requested by
               the Province, you will be required to provide them within 30 days.
