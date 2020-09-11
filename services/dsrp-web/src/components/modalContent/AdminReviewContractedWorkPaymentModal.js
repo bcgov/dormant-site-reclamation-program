@@ -62,9 +62,22 @@ export const AdminReviewContractedWorkPaymentModal = (props) => {
     return initialApprovedAmount;
   };
 
+  const interimCurrentApprovedAmount = props.contractedWork.contracted_work_payment
+    ? props.contractedWork.contracted_work_payment.interim_paid_amount
+    : null;
+
+  const finalCurrentApprovedAmount = props.contractedWork.contracted_work_payment
+    ? props.contractedWork.contracted_work_payment.final_paid_amount
+    : null;
+
   const initialValues = {
-    interim_initial_approved_amount: getInitialApprovedAmount("INTERIM"),
-    final_initial_approved_amount: getInitialApprovedAmount("FINAL"),
+    interim_approved_amount: interimCurrentApprovedAmount
+      ? interimCurrentApprovedAmount
+      : getInitialApprovedAmount("INTERIM"),
+    final_approved_amount: finalCurrentApprovedAmount
+      ? finalCurrentApprovedAmount
+      : getInitialApprovedAmount("FINAL"),
+    ...props.contractedWork.contracted_work_payment,
   };
 
   return (

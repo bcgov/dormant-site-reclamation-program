@@ -22,6 +22,7 @@ import { renderConfig } from "@/components/common/config";
 import {
   getContractedWorkTypeOptionsHash,
   getContractedWorkPaymentStatusOptionsHash,
+  getDropdownContractedWorkPaymentStatusOptions,
 } from "@/selectors/staticContentSelectors";
 import * as FORM from "@/constants/forms";
 import * as Strings from "@/constants/strings";
@@ -36,6 +37,7 @@ const propTypes = {
   contractedWork: PropTypes.any.isRequired,
   contractedWorkPaymentStatusOptionsHash: PropTypes.any.isRequired,
   contractedWorkTypeOptionsHash: PropTypes.any.isRequired,
+  dropdownContractedWorkPaymentStatusOptions: PropTypes.any.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
   submitting: PropTypes.bool.isRequired,
@@ -107,16 +109,29 @@ const validateFormApprovedAmount = (
 };
 
 export class AdminChangeContractedWorkPaymentStatusForm extends Component {
-  state = { currentPaymentType: "INTERIM", currentPaymentStatus: "INFORMATION_REQUIRED" };
+  state = {
+    currentPaymentType: "INTERIM",
+    selectedInterimStatus: this.props.contractedWork.contracted_work_payment
+      .interim_payment_status_code,
+    selectedFinalStatus: this.props.contractedWork.contracted_work_payment
+      .final_payment_status_code,
+  };
 
   shouldComponentUpdate = (nextProps) => !isEqual(nextProps.formValues, this.props.formValues);
+
+  componentWillReceiveProps = (nextProps) => {
+    if (nextProps.formValues && !isEqual(nextProps.formValues, this.props.formValues)) {
+      this.setState({
+        selectedInterimStatus: nextProps.formValues.interim_payment_status_code,
+        selectedFinalStatus: nextProps.formValues.final_payment_status_code,
+      });
+    }
+  };
 
   render() {
     const contractedWork = this.props.contractedWork;
     const contractedWorkPayment = contractedWork.contracted_work_payment || {};
     const contractedWorkPaymentExists = !isEmpty(contractedWorkPayment);
-    const contractedWorkTypeFormId = lowerCase(this.state.currentPaymentType);
-    const contractedWorkTypeDescription = startCase(camelCase(this.state.currentPaymentType));
 
     const workType = this.props.contractedWork.contracted_work_type;
     const workTypeName =
@@ -124,77 +139,17 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         ? "Site Investigation"
         : capitalize(workType);
 
-    const renderStatusInformationRequiredFields = () => (
-      <>
-        <Field
-          id="note"
-          name="note"
-          label={
-            <>
-              <div>Note</div>
-              <div className="font-weight-normal">
-                Provide a note indicating the reason for setting this work item's&nbsp;
-                <Text strong>{contractedWorkTypeFormId} payment status</Text> back to Information
-                Required. This note will be sent along in an email to the applicant to notify them.
-              </div>
-            </>
-          }
-          component={renderConfig.AUTO_SIZE_FIELD}
-          validate={[required, maxLength(65536)]}
-        />
-      </>
-    );
-
-    const renderFormStatusReadyForReview = () => <></>;
-
-    const renderFormStatusApproved = () => (
-      <>
-        {this.state.currentPaymentType === "INTERIM" &&
-          currentInterimApprovedAmount &&
-          renderAlreadyApprovedAlert(currentInterimApprovedAmount, contractedWork.has_interim_prfs)}
-        {this.state.currentPaymentType === "FINAL" &&
-          currentFinalApprovedAmount &&
-          renderAlreadyApprovedAlert(currentFinalApprovedAmount, contractedWork.has_final_prfs)}
-
-        <br />
-        <Field
-          id="approved_amount"
-          name="approved_amount"
-          label={
-            <>
-              <div>Approved {contractedWorkTypeDescription} Amount</div>
-              <div className="font-weight-normal">
-                Please enter in the amount to approve for this work item's&nbsp;
-                <Text strong>{contractedWorkTypeFormId} payment</Text>. This is the amount that will
-                be used in generating future&nbsp;
-                <Text strong>{contractedWorkTypeFormId} payment request forms</Text> containing this
-                work item.
-              </div>
-            </>
-          }
-          component={renderConfig.FIELD}
-          validate={[
-            required,
-            validateFormApprovedAmount(
-              this.state.currentPaymentType,
-              interimApprovedAmount,
-              finalApprovedAmount,
-              interimEstSharedCost,
-              finalEstSharedCost,
-              interimHalfEocTotal,
-              finalHalfEocTotal
-            ),
-          ]}
-          inputStyle={{ textAlign: "right" }}
-          placeholder="$0.00"
-          {...currencyMask}
-          onChange={(event, newValue) => {
-            if (newValue && newValue.toString().split(".")[0].length > 8) {
-              event.preventDefault();
-            }
-          }}
-        />
-      </>
+    const renderStatusSelectField = (paymentType) => (
+      <Field
+        id={`${lowerCase(paymentType)}_payment_status_code`}
+        name={`${lowerCase(paymentType)}_payment_status_code`}
+        label={`${capitalize(paymentType)} Status`}
+        component={renderConfig.SELECT}
+        data={this.props.dropdownContractedWorkPaymentStatusOptions}
+        format={null}
+        validate={[required]}
+        doNotPinDropdown
+      />
     );
 
     const formatBooleanField = (value) =>
@@ -402,14 +357,94 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       },
     ];
 
-    const renderAlreadyApprovedAlert = (previousApprovedAmount, hasPrfs) => (
+    const renderStatusInformationRequiredFields = (paymentType) => (
+      <>
+        <Field
+          id="note"
+          name="note"
+          label={
+            <>
+              <div>Note</div>
+              <div className="font-weight-normal">
+                Provide a note indicating the reason for setting this work item's&nbsp;
+                <Text strong>{lowerCase(paymentType)} payment status</Text> back to Information
+                Required. This note will be sent along in an email to the applicant to notify them.
+              </div>
+            </>
+          }
+          component={renderConfig.AUTO_SIZE_FIELD}
+          validate={[required, maxLength(65536)]}
+        />
+      </>
+    );
+
+    const renderStatusReadyForReviewFields = (paymentType) => <></>;
+
+    const renderStatusApprovedFields = (paymentType) => (
+      <>
+        {paymentType === "INTERIM" &&
+          currentInterimApprovedAmount &&
+          renderAlreadyApprovedAlert(
+            currentInterimApprovedAmount,
+            contractedWork.has_interim_prfs,
+            "INTERIM"
+          )}
+        {paymentType === "FINAL" &&
+          currentFinalApprovedAmount &&
+          renderAlreadyApprovedAlert(
+            currentFinalApprovedAmount,
+            contractedWork.has_final_prfs,
+            "FINAL"
+          )}
+
+        <br />
+        <Field
+          id={`${paymentType}_approved_amount`}
+          name="approved_amount"
+          label={
+            <>
+              <div>Approved {capitalize(paymentType)} Amount</div>
+              <div className="font-weight-normal">
+                Please enter in the amount to approve for this work item's&nbsp;
+                <Text strong>{lowerCase(paymentType)} payment</Text>. This is the amount that will
+                be used in generating future&nbsp;
+                <Text strong>{lowerCase(paymentType)} payment request forms</Text> containing this
+                work item.
+              </div>
+            </>
+          }
+          component={renderConfig.FIELD}
+          validate={[
+            required,
+            validateFormApprovedAmount(
+              paymentType,
+              interimApprovedAmount,
+              finalApprovedAmount,
+              interimEstSharedCost,
+              finalEstSharedCost,
+              interimHalfEocTotal,
+              finalHalfEocTotal
+            ),
+          ]}
+          inputStyle={{ textAlign: "right" }}
+          placeholder="$0.00"
+          {...currencyMask}
+          onChange={(event, newValue) => {
+            if (newValue && newValue.toString().split(".")[0].length > 8) {
+              event.preventDefault();
+            }
+          }}
+        />
+      </>
+    );
+
+    const renderAlreadyApprovedAlert = (previousApprovedAmount, hasPrfs, paymentType) => (
       <>
         <Alert
           showIcon
           message={
             <>
-              This work item's {contractedWorkTypeFormId} amount has previously been approved
-              at&nbsp;
+              This work item's {lowerCase(paymentType)} amount has previously been approved at&nbsp;
               <Text strong>{formatMoney(previousApprovedAmount)}</Text>
               {hasPrfs && " and used to generate PRFs"}!
             </>
@@ -422,20 +457,20 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       </>
     );
 
-    let renderStatusFields = null;
-    switch (this.state.currentPaymentStatus) {
-      case "INFORMATION_REQUIRED":
-        renderStatusFields = renderStatusInformationRequiredFields;
-        break;
-      case "READY_FOR_REVIEW":
-        renderStatusFields = renderFormStatusReadyForReview;
-        break;
-      case "APPROVED":
-        renderStatusFields = renderFormStatusApproved;
-        break;
-      default:
-        throw new Error("Unknown contracted work payment status code received!");
-    }
+    const renderStatusFields = (paymentType, paymentStatus) => {
+      switch (paymentStatus) {
+        case "INFORMATION_REQUIRED":
+          return renderStatusInformationRequiredFields(paymentType);
+        case "READY_FOR_REVIEW":
+          return renderStatusReadyForReviewFields(paymentType);
+        case "APPROVED":
+          return renderStatusApprovedFields(paymentType);
+        default:
+          throw new Error("Unknown contracted work payment status code received!");
+      }
+    };
+
+    console.log(this.props);
 
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
@@ -494,6 +529,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                       : Strings.DASH}
                   </Descriptions.Item>
                 </Descriptions>
+                {renderStatusSelectField("INTERIM")}
+                {renderStatusFields("INTERIM", this.state.selectedInterimStatus)}
               </TabPane>
               <TabPane tab="Final" key="final_payment_submission">
                 <Descriptions title="Final Submission Information" column={1}>
@@ -525,6 +562,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                       Strings.DASH}
                   </Descriptions.Item>
                 </Descriptions>
+                {renderStatusSelectField("FINAL")}
+                {renderStatusFields("FINAL", this.state.selectedFinalStatus)}
               </TabPane>
               <TabPane tab="Final Report" key="final_report_submission">
                 <Descriptions
@@ -646,9 +685,6 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
             </Tabs>
           </Col>
         </Row>
-        <Row gutter={48}>
-          <Col>{renderStatusFields()}</Col>
-        </Row>
         <div className="right">
           <Popconfirm
             placement="topRight"
@@ -683,6 +719,7 @@ const mapStateToProps = (state) => ({
   formValues: getFormValues(FORM.ADMIN_REVIEW_CONTRACTED_WORK_PAYMENT_FORM)(state),
   contractedWorkTypeOptionsHash: getContractedWorkTypeOptionsHash(state),
   contractedWorkPaymentStatusOptionsHash: getContractedWorkPaymentStatusOptionsHash(state),
+  dropdownContractedWorkPaymentStatusOptions: getDropdownContractedWorkPaymentStatusOptions(state),
 });
 
 export default compose(
