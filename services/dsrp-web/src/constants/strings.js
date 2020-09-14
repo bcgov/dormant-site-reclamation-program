@@ -5,7 +5,7 @@ export const DATE_FORMAT = "YYYY-MM-DD";
 export const DEFAULT_PAGE_NUMBER = 1;
 export const PAGE_SIZE_OPTIONS = [5, 10, 25, 50, 100, 250];
 export const DEFAULT_PAGE_SIZE = PAGE_SIZE_OPTIONS[2];
-export const HELP_EMAIL = "dormantsite.bc.government@gov.bc.ca";
+export const HELP_EMAIL = "DormantSite.BC.Government@gov.bc.ca";
 
 export const RETURN_PAGE_TYPE = {
   LOGIN: "login",

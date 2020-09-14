@@ -14,7 +14,7 @@ import {
   minLength,
   maxLength,
 } from "@/utils/validate";
-import { currencyMask, formatTitleString, metersMask } from "@/utils/helpers";
+import { currencyMask, formatTitleString, metersMask, formatMoney } from "@/utils/helpers";
 import { PDF } from "@/constants/fileTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
 import { DATE_FORMAT, HELP_EMAIL } from "@/constants/strings";
@@ -297,7 +297,6 @@ export class ContractedWorkPaymentForm extends Component {
 
     let result = { maxAmount: 0, estimatedFinancialContribution: 0 };
     if (paymentType === PAYMENT_TYPES.INTERIM) {
-      // interimEocTotalAmount interimActualCost
       const interimEocTotalAmount =
         actual_cost ??
         (contractedWorkPayment && contractedWorkPayment.interim_actual_cost
@@ -315,7 +314,6 @@ export class ContractedWorkPaymentForm extends Component {
         estimatedFinancialContribution: interimEstimatedFinancialContribution,
       };
     } else if (paymentType === PAYMENT_TYPES.FINAL) {
-      // finalEstSharedCost
       const finalEstSharedCost = parseFloat(
         getTypeEstSharedCost(finalPercent, contractedWork.estimated_shared_cost)
       );
@@ -379,10 +377,7 @@ export class ContractedWorkPaymentForm extends Component {
               )}
             </Text>
             <br />
-            {this.state.maxAmount.toLocaleString("en-CA", {
-              style: "currency",
-              currency: "CAD",
-            })}
+            {formatMoney(this.state.maxAmount)}
           </Col>
           <Col className="gutter-row" span={12}>
             <Text strong>
@@ -395,10 +390,7 @@ export class ContractedWorkPaymentForm extends Component {
               )}
             </Text>
             <br />
-            {this.state.estimatedFinancialContribution.toLocaleString("en-CA", {
-              style: "currency",
-              currency: "CAD",
-            })}
+            {formatMoney(this.state.estimatedFinancialContribution)}
           </Col>
         </Row>
         <br />
