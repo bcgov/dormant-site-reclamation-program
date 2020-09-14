@@ -4,21 +4,26 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import { connect } from "react-redux";
 import { startCase, camelCase, round, isEmpty } from "lodash";
-import { Row, Col, Typography, Table, Icon, Button, Popover, Progress } from "antd";
-import { formatDate, formatMoney, nullableStringOrNumberSorter, dateSorter } from "@/utils/helpers";
+import { Row, Col, Typography, Table, Icon, Button, Popover, Progress, Tooltip } from "antd";
+import {
+  formatDate,
+  formatMoney,
+  nullableStringOrNumberSorter,
+  dateSorter,
+  contractedWorkIdSorter,
+} from "@/utils/helpers";
 import {
   fetchApplicationApprovedContractedWorkById,
   updateContractedWorkPaymentInterim,
   updateContractedWorkPaymentFinal,
   updateContractedWorkPaymentInterimReport,
 } from "@/actionCreators/applicationActionCreator";
-import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import { getApplicationApprovedContractedWork } from "@/selectors/applicationSelectors";
 import { getContractedWorkPaymentStatusOptionsHash } from "@/selectors/staticContentSelectors";
 import * as Strings from "@/constants/strings";
 import { modalConfig } from "@/components/modalContent/config";
 import { openModal, closeModal } from "@/actions/modalActions";
-import { contractedWorkIdSorter } from "@/utils/helpers";
+
 import CustomPropTypes from "@/customPropTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
 
@@ -45,6 +50,21 @@ const popover = (message, extraClassName) => (
   >
     <Icon type="info-circle" className={`icon-sm ${extraClassName}`} style={{ marginLeft: 4 }} />
   </Popover>
+);
+
+const fieldWithTooltip = (text, title, tooltipTitle, icon, isDisplayTooltip = false) => (
+  <div style={{ position: "relative" }}>
+    <div style={{ position: `${isDisplayTooltip ? "absolute" : ""}` }} title={title}>
+      {text}
+    </div>
+    {isDisplayTooltip && (
+      <div style={{ position: "relative", left: "-18px" }}>
+        <Tooltip title={tooltipTitle} placement="right" mouseEnterDelay={0.3}>
+          <Icon type="info-circle" className={`icon-sm ${icon}`} style={{ marginLeft: 4 }} />
+        </Tooltip>
+      </div>
+    )}
+  </div>
 );
 
 export class ContractedWorkPaymentView extends Component {
@@ -127,7 +147,7 @@ export class ContractedWorkPaymentView extends Component {
         title: `Provide Payment Information for Work ID ${record.work_id}`,
         contractedWorkPayment: record.work,
         applicationSummary: this.props.applicationSummary,
-        activeKey: activeKey,
+        activeKey,
         handleSubmitInterimContractedWorkPayment: this.handleSubmitInterimContractedWorkPayment,
         handleSubmitFinalContractedWorkPayment: this.handleSubmitFinalContractedWorkPayment,
         handleSubmitInterimContractedWorkPaymentProgressReport: this
@@ -264,14 +284,22 @@ export class ContractedWorkPaymentView extends Component {
             className: "interim-submission-right",
             render: (text) => {
               let display = null;
+              let overdue = false;
               if (text === -Infinity) {
                 display = "Submitted";
               } else if (text === Infinity) {
                 display = Strings.DASH;
               } else {
                 display = `Due ${formatDate(text)}`;
+                overdue = moment().isAfter(text);
               }
-              return <div title="Progress Report">{display}</div>;
+              return fieldWithTooltip(
+                display,
+                "Progress Report",
+                "You cannot receive Final payment for this item until the Interim Progress Report is received",
+                "history",
+                overdue
+              );
             },
           },
         ],
@@ -402,7 +430,7 @@ export class ContractedWorkPaymentView extends Component {
               <Progress
                 percent={interimTotalPercent}
                 successPercent={interimApprovedPercent}
-                format={(percent) => round(percent, 1) + "%"}
+                format={(percent) => `${round(percent, 1)}%`}
               />
               <Text type="secondary">
                 Interim payment information is required for {interimInfoRequiredCount} contracted
@@ -440,7 +468,7 @@ export class ContractedWorkPaymentView extends Component {
               <Progress
                 percent={finalTotalPercent}
                 successPercent={finalApprovedPercent}
-                format={(percent) => round(percent, 1) + "%"}
+                format={(percent) => `${round(percent, 1)}%`}
               />
               <Text type="secondary">
                 Final payment information is required for {finalInfoRequiredCount} contracted work
@@ -453,22 +481,35 @@ export class ContractedWorkPaymentView extends Component {
           <Row>
             <Col>
               <Title level={1}>Interim and Final Payments</Title>
-              <Paragraph>This table shows all of the approved work for this application.</Paragraph>
               <Paragraph>
-                The template documents required as part of interim and final payment submissions can
-                be downloaded here:
+                This table shows all the work items from your application that qualified for the
+                program. It also shows you the status of your Interim and Final payment requests for
+                those items.
+              </Paragraph>
+              <Paragraph>
+                To submit a payment request, click on a work item’s Request Payment icon and
+                complete the form.
+              </Paragraph>
+              <Paragraph>
+                You must submit these completed forms with your payment requests.
                 <ul>
                   <li>
                     <a href={EOC_TEMPLATE} target="_blank" rel="noopener noreferrer">
-                      Evidence of Cost Template
+                      Evidence of Cost - Interim and Final payments
                     </a>
                   </li>
                   <li>
                     <a href={FINAL_REPORT_TEMPLATE} target="_blank" rel="noopener noreferrer">
-                      Final Report Template
+                      Final Report - Final payment only (must be completed by a Qualified
+                      Professional such as an Engineer, Agrologist or Biologist).
                     </a>
                   </li>
                 </ul>
+              </Paragraph>
+              <Paragraph>Final Reports must be submitted as PDFs</Paragraph>
+              <Paragraph>
+                If you have any questions or concerns, contact{" "}
+                <a href={`mailto:${Strings.HELP_EMAIL}`}>{Strings.HELP_EMAIL}</a>
               </Paragraph>
               <div style={{ float: "right" }}>
                 <Button type="link" onClick={this.handleRefresh}>
