@@ -38,8 +38,7 @@ const propTypes = {
   filterListContractedWorkPaymentStatusOptions: PropTypes.objectOf(PropTypes.any).isRequired,
   filterListContractedWorkTypeOptions: PropTypes.objectOf(PropTypes.any).isRequired,
   onSelectedRowsChanged: PropTypes.func.isRequired,
-  handleContractedWorkPaymentInterimStatusChange: PropTypes.func.isRequired,
-  handleContractedWorkPaymentFinalStatusChange: PropTypes.func.isRequired,
+  handleContractedWorkPaymentStatusChange: PropTypes.func.isRequired,
   contractedWorkPaymentStatusDropdownOptions: PropTypes.any.isRequired,
   contractedWorkPaymentStatusOptionsHash: PropTypes.any.isRequired,
   handleTableChange: PropTypes.func.isRequired,
@@ -156,6 +155,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
       props: {
         title: `Review Information for Work ID ${record.work_id}`,
         contractedWork: record,
+        onSubmit: this.props.handleContractedWorkPaymentStatusChange,
       },
       content: modalConfig.ADMIN_REVIEW_CONTRACTED_WORK_PAYMENT,
     });
@@ -415,6 +415,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
             <Button
               type="link"
               onClick={() => this.openAdminReviewContractedWorkPaymentModal(record)}
+              disabled={!record.contracted_work_payment}
             >
               <Icon type="solution" className="icon-lg" />
             </Button>

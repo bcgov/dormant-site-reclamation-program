@@ -9,12 +9,10 @@ const propTypes = {
 };
 
 export const AdminReviewContractedWorkPaymentModal = (props) => {
-  const handleSubmit = (values) =>
-    props.onSubmit(props.contractedWork, {
-      contracted_work_payment_status_code: props.contractedWorkPaymentStatus,
-      contracted_work_payment_code: props.contractedWorkPaymentType,
-      ...values,
-    });
+  const handleSubmit = (values) => {
+    console.log(values);
+    return props.onSubmit(props.contractedWork, values);
+  };
 
   const getInitialApprovedAmount = (contractedWorkPaymentType) => {
     const getTypeEstSharedCost = (percent, estSharedCost) => estSharedCost * (percent / 100);
@@ -30,12 +28,14 @@ export const AdminReviewContractedWorkPaymentModal = (props) => {
     const interimEstSharedCost = parseFloat(
       getTypeEstSharedCost(interimPercent, contractedWork.estimated_shared_cost)
     );
-    const currentInterimApprovedAmount = contractedWorkPayment.interim_paid_amount
-      ? parseFloat(contractedWorkPayment.interim_paid_amount)
-      : 0;
-    const interimActualCost = contractedWorkPayment.interim_actual_cost
-      ? parseFloat(contractedWorkPayment.interim_actual_cost)
-      : 0;
+    const currentInterimApprovedAmount =
+      contractedWorkPayment && contractedWorkPayment.interim_paid_amount
+        ? parseFloat(contractedWorkPayment.interim_paid_amount)
+        : 0;
+    const interimActualCost =
+      contractedWorkPayment && contractedWorkPayment.interim_actual_cost
+        ? parseFloat(contractedWorkPayment.interim_actual_cost)
+        : 0;
     const interimHalfEocTotal = interimActualCost ? getTypeMaxEligibleAmount(interimActualCost) : 0;
     const interimLostFunds = interimEstSharedCost - currentInterimApprovedAmount;
 
@@ -43,9 +43,10 @@ export const AdminReviewContractedWorkPaymentModal = (props) => {
     const finalEstSharedCost = parseFloat(
       getTypeEstSharedCost(finalPercent, contractedWork.estimated_shared_cost)
     );
-    const finalActualCost = contractedWorkPayment.final_actual_cost
-      ? parseFloat(contractedWorkPayment.final_actual_cost)
-      : 0;
+    const finalActualCost =
+      contractedWorkPayment && contractedWorkPayment.final_actual_cost
+        ? parseFloat(contractedWorkPayment.final_actual_cost)
+        : 0;
     const finalHalfEocTotal = finalActualCost ? getTypeMaxEligibleAmount(finalActualCost) : 0;
     const finalEligibleAmount = finalEstSharedCost + interimLostFunds;
 
@@ -71,12 +72,14 @@ export const AdminReviewContractedWorkPaymentModal = (props) => {
     : null;
 
   const initialValues = {
-    interim_approved_amount: interimCurrentApprovedAmount
-      ? interimCurrentApprovedAmount
-      : getInitialApprovedAmount("INTERIM"),
-    final_approved_amount: finalCurrentApprovedAmount
-      ? finalCurrentApprovedAmount
-      : getInitialApprovedAmount("FINAL"),
+    interim_approved_amount:
+      interimCurrentApprovedAmount !== null
+        ? interimCurrentApprovedAmount
+        : getInitialApprovedAmount("INTERIM"),
+    final_approved_amount:
+      finalCurrentApprovedAmount !== null
+        ? finalCurrentApprovedAmount
+        : getInitialApprovedAmount("FINAL"),
     ...props.contractedWork.contracted_work_payment,
   };
 

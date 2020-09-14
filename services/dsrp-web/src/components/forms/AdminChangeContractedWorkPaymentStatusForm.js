@@ -43,25 +43,6 @@ const propTypes = {
   submitting: PropTypes.bool.isRequired,
 };
 
-const renderDropdownMenu = (option, onClick, record, currentStatus, isFinalPayment) => (
-  <Menu onClick={(item) => onClick(item.key, record)}>
-    {option
-      .filter(({ value }) => value !== currentStatus)
-      .map(({ label, value, description }) => {
-        // Admins cannot approve the final payment until the interim payment has been approved before.
-        const disabled =
-          isFinalPayment &&
-          value === "APPROVED" &&
-          (!record.contracted_work_payment || !record.contracted_work_payment.interim_paid_amount);
-        return (
-          <Menu.Item title={description} key={value} disabled={disabled}>
-            {label}
-          </Menu.Item>
-        );
-      })}
-  </Menu>
-);
-
 const validateFormApprovedAmount = (
   paymentType,
   interimApprovedAmount,
@@ -108,16 +89,31 @@ const validateFormApprovedAmount = (
   return undefined;
 };
 
+const validateStatus = (paymentType, contractedWorkPayment) => (value) => {
+  if (
+    paymentType === "FINAL" &&
+    value === "APPROVED" &&
+    (!contractedWorkPayment || !contractedWorkPayment.interim_paid_amount)
+  ) {
+    return "Cannot update the status to Approved unless the interim payment has been approved before.";
+  }
+
+  return undefined;
+};
+
 export class AdminChangeContractedWorkPaymentStatusForm extends Component {
   state = {
-    currentPaymentType: "INTERIM",
+    currentActiveTab: "INTERIM",
     selectedInterimStatus: this.props.contractedWork.contracted_work_payment
-      .interim_payment_status_code,
+      ? this.props.contractedWork.contracted_work_payment.interim_payment_status_code
+      : "INFORMATION_REQUIRED",
     selectedFinalStatus: this.props.contractedWork.contracted_work_payment
-      .final_payment_status_code,
+      ? this.props.contractedWork.contracted_work_payment.final_payment_status_code
+      : "INFORMATION_REQUIRED",
   };
 
-  shouldComponentUpdate = (nextProps) => !isEqual(nextProps.formValues, this.props.formValues);
+  shouldComponentUpdate = (nextProps, nextState) =>
+    !isEqual(nextProps.formValues, this.props.formValues) || !isEqual(nextState, this.state);
 
   componentWillReceiveProps = (nextProps) => {
     if (nextProps.formValues && !isEqual(nextProps.formValues, this.props.formValues)) {
@@ -127,6 +123,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       });
     }
   };
+
+  handleTabChange = (activeKey) => this.setState({ currentActiveTab: activeKey });
 
   render() {
     const contractedWork = this.props.contractedWork;
@@ -147,7 +145,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         component={renderConfig.SELECT}
         data={this.props.dropdownContractedWorkPaymentStatusOptions}
         format={null}
-        validate={[required]}
+        validate={[required, validateStatus(paymentType, contractedWorkPayment)]}
         doNotPinDropdown
       />
     );
@@ -238,9 +236,13 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       },
     ];
 
-    const formApprovedAmount =
-      this.props.formValues && this.props.formValues.approved_amount
-        ? parseFloat(this.props.formValues.approved_amount)
+    const formInterimApprovedAmount =
+      this.props.formValues && this.props.formValues.interim_approved_amount
+        ? parseFloat(this.props.formValues.interim_approved_amount)
+        : null;
+    const formFinalApprovedAmount =
+      this.props.formValues && this.props.formValues.final_approved_amount
+        ? parseFloat(this.props.formValues.final_approved_amount)
         : null;
 
     const firstPercent = 10;
@@ -269,9 +271,9 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       ? getTypeMaxEligibleAmount(interimActualCost)
       : null;
     const interimApprovedAmount =
-      this.state.currentPaymentType === "INTERIM"
-        ? formApprovedAmount
-          ? formApprovedAmount
+      this.state.currentActiveTab === "INTERIM" && this.state.selectedInterimStatus === "APPROVED"
+        ? formInterimApprovedAmount
+          ? formInterimApprovedAmount
           : null
         : currentInterimApprovedAmount
         ? currentInterimApprovedAmount
@@ -290,9 +292,9 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       : null;
     const finalHalfEocTotal = finalActualCost ? getTypeMaxEligibleAmount(finalActualCost) : null;
     const finalApprovedAmount =
-      this.state.currentPaymentType === "FINAL"
-        ? formApprovedAmount
-          ? formApprovedAmount
+      this.state.currentActiveTab === "FINAL" && this.state.selectedFinalStatus === "APPROVED"
+        ? formFinalApprovedAmount
+          ? formFinalApprovedAmount
           : null
         : currentFinalApprovedAmount
         ? currentFinalApprovedAmount
@@ -316,7 +318,9 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       },
       {
         key: "interim",
-        is_selected_type: this.state.currentPaymentType === "INTERIM",
+        is_selected_type:
+          this.state.currentActiveTab === "INTERIM" &&
+          this.state.selectedInterimStatus === "APPROVED",
         previous_amount: currentInterimApprovedAmount,
         payment_type: "Interim",
         total_estimated_cost: contractedWork.contracted_work_total,
@@ -330,7 +334,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       },
       {
         key: "final",
-        is_selected_type: this.state.currentPaymentType === "FINAL",
+        is_selected_type:
+          this.state.currentActiveTab === "FINAL" && this.state.selectedFinalStatus === "APPROVED",
         previous_amount: currentFinalApprovedAmount,
         payment_type: "Final",
         payment_percent: `${finalPercent}%`,
@@ -360,8 +365,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
     const renderStatusInformationRequiredFields = (paymentType) => (
       <>
         <Field
-          id="note"
-          name="note"
+          id={`${lowerCase(paymentType)}_note`}
+          name={`${lowerCase(paymentType)}_note`}
           label={
             <>
               <div>Note</div>
@@ -378,7 +383,11 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       </>
     );
 
-    const renderStatusReadyForReviewFields = (paymentType) => <></>;
+    const renderStatusReadyForReviewFields = (paymentType) => (
+      <>
+        <br />
+      </>
+    );
 
     const renderStatusApprovedFields = (paymentType) => (
       <>
@@ -399,11 +408,11 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
 
         <br />
         <Field
-          id={`${paymentType}_approved_amount`}
-          name="approved_amount"
+          id={`${lowerCase(paymentType)}_approved_amount`}
+          name={`${lowerCase(paymentType)}_approved_amount`}
           label={
             <>
-              <div>Approved {capitalize(paymentType)} Amount</div>
+              <div>{capitalize(paymentType)} Financial Contribution</div>
               <div className="font-weight-normal">
                 Please enter in the amount to approve for this work item's&nbsp;
                 <Text strong>{lowerCase(paymentType)} payment</Text>. This is the amount that will
@@ -453,7 +462,6 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
           style={{ display: "inline-block" }}
         />
         <br />
-        <br />
       </>
     );
 
@@ -470,10 +478,16 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       }
     };
 
-    console.log(this.props);
-
     return (
-      <Form layout="vertical" onSubmit={this.props.handleSubmit}>
+      <Form
+        layout="vertical"
+        onSubmit={this.props.handleSubmit((values) =>
+          this.props.onSubmit({
+            contracted_work_payment_code: this.state.currentActiveTab,
+            ...values,
+          })
+        )}
+      >
         <Row gutter={48}>
           <Col span={24}>
             <Descriptions title="Contracted Work Information" column={1}>
@@ -509,8 +523,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
           </Col>
           <Col span={24}>
             <Title level={4}>Submission Review</Title>
-            <Tabs type="card" className="ant-tabs-center">
-              <TabPane tab="Interim" key="interim_payment_submission">
+            <Tabs type="card" className="ant-tabs-center" onChange={this.handleTabChange}>
+              <TabPane tab="Interim" key="INTERIM" disabled={this.props.submitting}>
                 <Descriptions title="Interim Submission Information" column={1}>
                   <Descriptions.Item label="Total Hours Worked">
                     {contractedWorkPayment.interim_total_hours_worked_to_date || Strings.DASH}
@@ -529,10 +543,30 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                       : Strings.DASH}
                   </Descriptions.Item>
                 </Descriptions>
+                <Descriptions title="Current Interim Status" column={1}>
+                  <Descriptions.Item label="Status">
+                    {
+                      this.props.contractedWorkPaymentStatusOptionsHash[
+                        contractedWorkPayment.interim_payment_status_code
+                      ]
+                    }
+                  </Descriptions.Item>
+                  {contractedWorkPayment.interim_payment_status_code === "INFORMATION_REQUIRED" && (
+                    <Descriptions.Item label="Admin Note">
+                      {contractedWorkPayment.interim_payment_status.note}
+                    </Descriptions.Item>
+                  )}
+                  {contractedWorkPayment.interim_payment_status_code === "APPROVED" && (
+                    <Descriptions.Item label="Financial Contribution">
+                      {formatMoney(contractedWorkPayment.interim_paid_amount)}
+                    </Descriptions.Item>
+                  )}
+                </Descriptions>
+                <Title level={4}>Update Interim Status</Title>
                 {renderStatusSelectField("INTERIM")}
                 {renderStatusFields("INTERIM", this.state.selectedInterimStatus)}
               </TabPane>
-              <TabPane tab="Final" key="final_payment_submission">
+              <TabPane tab="Final" key="FINAL" disabled={this.props.submitting}>
                 <Descriptions title="Final Submission Information" column={1}>
                   <Descriptions.Item label="Total Hours Worked">
                     {contractedWorkPayment.final_total_hours_worked_to_date || Strings.DASH}
@@ -562,10 +596,44 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                       Strings.DASH}
                   </Descriptions.Item>
                 </Descriptions>
-                {renderStatusSelectField("FINAL")}
-                {renderStatusFields("FINAL", this.state.selectedFinalStatus)}
+                <Descriptions title="Current Final Status" column={1}>
+                  <Descriptions.Item label="Status">
+                    {
+                      this.props.contractedWorkPaymentStatusOptionsHash[
+                        contractedWorkPayment.final_payment_status_code
+                      ]
+                    }
+                  </Descriptions.Item>
+                  {contractedWorkPayment.final_payment_status_code === "INFORMATION_REQUIRED" && (
+                    <Descriptions.Item label="Admin Note">
+                      {contractedWorkPayment.final_payment_status.note || Strings.DASH}
+                    </Descriptions.Item>
+                  )}
+                  {contractedWorkPayment.final_payment_status_code === "APPROVED" && (
+                    <Descriptions.Item label="Financial Contribution">
+                      {formatMoney(contractedWorkPayment.final_paid_amount)}
+                    </Descriptions.Item>
+                  )}
+                </Descriptions>
+                <Title level={4}>Update Final Status</Title>
+                {(contractedWorkPaymentExists &&
+                  isEmpty(contractedWorkPayment.final_payment_status) && (
+                    <>
+                      <Alert
+                        showIcon
+                        message="Cannot update the final payment status until it has been submitted by the applicant."
+                        type="warning"
+                        style={{ display: "inline-block" }}
+                      />
+                      <br />
+                      <br />
+                    </>
+                  )) || [
+                  renderStatusSelectField("FINAL"),
+                  renderStatusFields("FINAL", this.state.selectedFinalStatus),
+                ]}
               </TabPane>
-              <TabPane tab="Final Report" key="final_report_submission">
+              <TabPane tab="Final Report" key="FINAL_REPORT" disabled={this.props.submitting}>
                 <Descriptions
                   title="Final Report - Reporting Information"
                   column={1}
@@ -573,9 +641,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                   colon={false}
                 >
                   <Descriptions.Item label="Surface Landowner">
-                    {contractedWorkPaymentExists
-                      ? contractedWorkPayment.surface_landowner
-                      : Strings.DASH}
+                    {(contractedWorkPaymentExists && contractedWorkPayment.surface_landowner) ||
+                      Strings.DASH}
                   </Descriptions.Item>
                   <Descriptions.Item label="Level of Reclamation achieved for the Dormant Site">
                     {((!contractedWorkPaymentExists ||
@@ -686,27 +753,43 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
           </Col>
         </Row>
         <div className="right">
-          <Popconfirm
-            placement="topRight"
-            title="Are you sure you want cancel?"
-            onConfirm={this.props.closeModal}
-            okText="Yes"
-            cancelText="No"
-            disabled={this.props.submitting}
-          >
-            <Button type="secondary" disabled={this.props.submitting}>
-              Cancel
+          {((this.state.currentActiveTab === "FINAL_REPORT" ||
+            (this.state.currentActiveTab === "FINAL" &&
+              isEmpty(contractedWorkPayment.final_payment_status))) && (
+            <Button type="primary" onClick={this.props.closeModal} disabled={this.props.submitting}>
+              Close
             </Button>
-          </Popconfirm>
-          <Button
-            type="primary"
-            htmlType="submit"
-            style={{ marginLeft: 5 }}
-            loading={this.props.submitting}
-          >
-            Update Status to&nbsp;
-            {this.props.contractedWorkPaymentStatusOptionsHash[this.state.currentPaymentStatus]}
-          </Button>
+          )) || (
+            <>
+              <Popconfirm
+                placement="topRight"
+                title="Are you sure you want cancel?"
+                onConfirm={this.props.closeModal}
+                okText="Yes"
+                cancelText="No"
+                disabled={this.props.submitting}
+              >
+                <Button type="secondary" disabled={this.props.submitting}>
+                  Cancel
+                </Button>
+              </Popconfirm>
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{ marginLeft: 5 }}
+                loading={this.props.submitting}
+              >
+                Update {capitalize(this.state.currentActiveTab)} Status to&nbsp;
+                {
+                  this.props.contractedWorkPaymentStatusOptionsHash[
+                    this.state.currentActiveTab === "INTERIM"
+                      ? this.state.selectedInterimStatus
+                      : this.state.selectedFinalStatus
+                  ]
+                }
+              </Button>
+            </>
+          )}
         </div>
       </Form>
     );
