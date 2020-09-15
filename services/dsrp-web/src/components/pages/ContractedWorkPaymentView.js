@@ -260,9 +260,6 @@ export class ContractedWorkPaymentView extends Component {
             dataIndex: "interim_status_description",
             sorter: nullableStringOrNumberSorter("interim_status_description"),
             render: (text, record) => {
-              const statusCode =
-                record.contracted_work_payment &&
-                record.contracted_work_payment.interim_payment_status_code;
               const note =
                 record.contracted_work_payment &&
                 record.contracted_work_payment.interim_payment_status
@@ -323,9 +320,6 @@ export class ContractedWorkPaymentView extends Component {
             className: "final-submission-right",
             sorter: nullableStringOrNumberSorter("final_status_description"),
             render: (text, record) => {
-              const statusCode =
-                record.contracted_work_payment &&
-                record.contracted_work_payment.final_payment_status_code;
               const note =
                 record.contracted_work_payment &&
                 record.contracted_work_payment.final_payment_status
