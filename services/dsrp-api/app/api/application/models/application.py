@@ -335,7 +335,7 @@ class Application(Base, AuditMixin):
                 You can view the contents of your application below.
                 <br />
                 <br />
-                <a href='{Config.URL}view-application-status/{self.guid}'>Click here to view the status of your application.</a>
+                <a href='{Config.URL}/view-application-status/{self.guid}'>Click here to view the status of your application.</a>
                 <br/>
                 <br/>
                 <br/>

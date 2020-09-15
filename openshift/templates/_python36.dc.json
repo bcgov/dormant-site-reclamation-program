@@ -49,6 +49,11 @@
       "required": true
     },
     {
+      "description": "This is a host url for DSRP, used in generating emails etc.",
+      "name": "URL",
+      "required": true
+    },
+    {
       "name": "BASE_PATH",
       "required": false,
       "value": "/"
@@ -113,10 +118,6 @@
     },
     {
       "name": "API_URL",
-      "required": true
-    },
-    {
-      "name": "URL",
       "required": true
     },
     {
@@ -342,6 +343,10 @@
                   {
                     "name": "BASE_PATH",
                     "value": "${BASE_PATH}"
+                  },
+                  {
+                    "name": "URL",
+                    "value": "${URL}"
                   },
                   {
                     "name": "ENVIRONMENT_NAME",
