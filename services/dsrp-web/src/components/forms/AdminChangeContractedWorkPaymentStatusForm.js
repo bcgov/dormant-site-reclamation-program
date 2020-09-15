@@ -593,7 +593,13 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                 {renderStatusSelectField("INTERIM")}
                 {renderStatusFields("INTERIM", this.state.selectedInterimStatus)}
               </TabPane>
-              <TabPane tab="Final" key="FINAL" disabled={this.props.submitting}>
+              <TabPane
+                tab="Final"
+                key="FINAL"
+                disabled={
+                  this.props.submitting || isEmpty(contractedWorkPayment.final_payment_status)
+                }
+              >
                 <Descriptions title="Final Submission Information" column={3}>
                   <Descriptions.Item label="Total Hours Worked">
                     {contractedWorkPayment.final_total_hours_worked_to_date || Strings.DASH}
@@ -660,7 +666,13 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                   renderStatusFields("FINAL", this.state.selectedFinalStatus),
                 ]}
               </TabPane>
-              <TabPane tab="Final Report" key="FINAL_REPORT" disabled={this.props.submitting}>
+              <TabPane
+                tab="Final Report"
+                key="FINAL_REPORT"
+                disabled={
+                  this.props.submitting || isEmpty(contractedWorkPayment.final_payment_status)
+                }
+              >
                 <Descriptions
                   title="Final Report - Reporting Information"
                   column={1}
@@ -776,6 +788,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                   )}
                 </Descriptions>
               </TabPane>
+              <TabPane tab="General" key="GENERAL" disabled={this.props.submitting}></TabPane>
             </Tabs>
           </Col>
         </Row>

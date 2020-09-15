@@ -409,16 +409,15 @@ export class ApprovedContractedWorkPaymentTable extends Component {
       {
         title: "Review",
         key: "review",
+        className: "table-header-center-align table-column-center-align",
         render: (text, record) => (
-          <div style={{ float: "right" }}>
-            <Button
-              type="link"
-              onClick={() => this.openAdminReviewContractedWorkPaymentModal(record)}
-              disabled={!record.contracted_work_payment}
-            >
-              <Icon type="solution" className="icon-lg" />
-            </Button>
-          </div>
+          <Button
+            type="link"
+            onClick={() => this.openAdminReviewContractedWorkPaymentModal(record)}
+            disabled={!record.contracted_work_payment}
+          >
+            <Icon type="solution" className="icon-lg" />
+          </Button>
         ),
       },
     ];
