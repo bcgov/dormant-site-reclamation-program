@@ -147,7 +147,7 @@ app {
                             'REDIS_CONFIG_NAME': "dsrp-redis${vars.deployment.suffix}",
                             'CACHE_REDIS_HOST': "dsrp-redis${vars.deployment.suffix}",
                             'ENVIRONMENT_NAME':"${app.deployment.env.name}",
-                            'URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/",
+                            'URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}",
                             'API_URL': "https://${vars.modules.'dsrp-nginx'.HOST_DSRP}${vars.modules.'dsrp-nginx'.PATH}/api",
                             'DOCUMENT_GENERATOR_URL': "${vars.modules.'dsrp-docgen-api'.HOST}",
 
