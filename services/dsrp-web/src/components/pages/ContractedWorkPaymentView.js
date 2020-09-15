@@ -346,13 +346,12 @@ export class ContractedWorkPaymentView extends Component {
         children: [
           {
             title: "Request Payment",
-            key: "operations",
+            key: "request_payment",
+            className: "table-header-center-align table-column-center-align",
             render: (text, record) => (
-              <div style={{ float: "right" }}>
-                <Button type="link" onClick={() => this.openContractedWorkPaymentModal(record)}>
-                  <Icon type="form" className="icon-lg" />
-                </Button>
-              </div>
+              <Button type="link" onClick={() => this.openContractedWorkPaymentModal(record)}>
+                <Icon type="form" className="icon-lg" />
+              </Button>
             ),
           },
         ],
@@ -482,12 +481,12 @@ export class ContractedWorkPaymentView extends Component {
             <Col>
               <Title level={1}>Interim and Final Payments</Title>
               <Paragraph>
-                This table shows all the work items from your application that qualified for the
+                This table shows all of the work items from your application that qualified for the
                 program. It also shows you the status of your Interim and Final payment requests for
                 those items.
               </Paragraph>
               <Paragraph>
-                To submit a payment request, click on a work item’s Request Payment icon and
+                To submit a payment request, click on a work item's Request Payment icon and
                 complete the form.
               </Paragraph>
               <Paragraph>
@@ -495,21 +494,25 @@ export class ContractedWorkPaymentView extends Component {
                 <ul>
                   <li>
                     <a href={EOC_TEMPLATE} target="_blank" rel="noopener noreferrer">
-                      Evidence of Cost - Interim and Final payments
+                      Evidence of Cost
                     </a>
+                    &nbsp;- Interim and Final payments
                   </li>
                   <li>
                     <a href={FINAL_REPORT_TEMPLATE} target="_blank" rel="noopener noreferrer">
-                      Final Report - Final payment only (must be completed by a Qualified
-                      Professional such as an Engineer, Agrologist or Biologist).
+                      Final Reports
                     </a>
+                    &nbsp;- Final payment only (must be completed by a Qualified Professional such
+                    as an Engineer, Agrologist or Biologist).
                   </li>
                 </ul>
               </Paragraph>
-              <Paragraph>Final Reports must be submitted as PDFs</Paragraph>
               <Paragraph>
-                If you have any questions or concerns, contact{" "}
-                <a href={`mailto:${Strings.HELP_EMAIL}`}>{Strings.HELP_EMAIL}</a>
+                All Final Report and Evidence of Cost documents must be submitted as PDFs.
+              </Paragraph>
+              <Paragraph>
+                If you have any questions or concerns, contact&nbsp;
+                <a href={`mailto:${Strings.HELP_EMAIL}`}>{Strings.HELP_EMAIL}</a>.
               </Paragraph>
               <div style={{ float: "right" }}>
                 <Button type="link" onClick={this.handleRefresh}>
