@@ -86,7 +86,7 @@ class ContractedWorkPaymentInterim(Resource, UserMixin):
             if payment.interim_eoc_document:
                 payment.interim_eoc_document.active_ind = False
             filename = ApplicationDocument.create_filename(application, payment.work_id,
-                                                           'INTERIM_EOC', 'xlsx')
+                                                           'INTERIM_EOC', 'pdf')
             interim_eoc = ApplicationDocument(
                 document_name=filename,
                 object_store_path=interim_eoc_data['key'],
@@ -220,7 +220,7 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
             if payment.final_eoc_document:
                 payment.final_eoc_document.active_ind = False
             filename = ApplicationDocument.create_filename(application, payment.work_id,
-                                                           'FINAL_EOC', 'xlsx')
+                                                           'FINAL_EOC', 'pdf')
             final_eoc = ApplicationDocument(
                 document_name=filename,
                 object_store_path=final_eoc_data['key'],
