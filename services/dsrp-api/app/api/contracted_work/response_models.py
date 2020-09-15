@@ -42,7 +42,10 @@ CONTRACTED_WORK_PAYMENT = api.model(
         'final_payment_submission_date': fields.DateTime,
         'has_interim_prfs': fields.Boolean,
         'has_final_prfs': fields.Boolean,
-        'review_deadlines': fields.Raw,
+        'review_deadlines': fields.Nested({
+            'interim': fields.DateTime,
+            'final': fields.DateTime
+        }),
         'interim_eoc_document': fields.Nested(APPLICATION_DOCUMENT_SMALL, skip_none=True),
         'final_eoc_document': fields.Nested(APPLICATION_DOCUMENT_SMALL, skip_none=True),
         'final_report_document': fields.Nested(APPLICATION_DOCUMENT_SMALL, skip_none=True),
