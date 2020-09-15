@@ -150,6 +150,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
 
   openAdminReviewContractedWorkPaymentModal = (record) =>
     this.props.openModal({
+      width: 1000,
       props: {
         title: `Review Information for Work ID ${record.work_id}`,
         contractedWork: record,

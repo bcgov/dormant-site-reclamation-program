@@ -28,6 +28,7 @@ import * as FORM from "@/constants/forms";
 import * as Strings from "@/constants/strings";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import LinkButton from "@/components/common/LinkButton";
+import { toolTip } from "@/components/admin/ApplicationTable";
 
 const { Text, Title } = Typography;
 
@@ -139,6 +140,10 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         ? "Site Investigation"
         : capitalize(workType);
 
+    const firstPercent = 10;
+    const interimPercent = 60;
+    const finalPercent = 30;
+
     const renderStatusSelectField = (paymentType) => (
       <Field
         id={`${lowerCase(paymentType)}_payment_status_code`}
@@ -165,23 +170,25 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
 
     const columns = [
       {
-        title: "Payment Type",
+        title: "Request Step",
         dataIndex: "payment_type",
         render: (text) => <div>{<Text strong>{text}</Text>}</div>,
       },
       {
-        title: "Payment Percent",
-        dataIndex: "payment_percent",
-        render: (text) => <div>{text}</div>,
-      },
-      {
-        title: "Est. Shared Cost",
+        title: (
+          <>
+            Estimated Contribution
+            {toolTip(
+              `The estimated contribution based on applicant's original estimates. Breakdown is ${firstPercent}%, ${interimPercent}%, and ${finalPercent}%.`
+            )}
+          </>
+        ),
         dataIndex: "payment_estimated_shared_cost",
         className: "table-column-right-align",
         render: (text) => <div>{formatMoney(text)}</div>,
       },
       {
-        title: "EoC Total Amount",
+        title: "EoC Total",
         dataIndex: "eoc_total_amount",
         className: "table-column-right-align",
         render: (text, record) => (
@@ -206,13 +213,28 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         ),
       },
       {
-        title: "50% of EoC Total Amount",
+        title: "50% of EoC Total",
         dataIndex: "half_eoc_total_amount",
         className: "table-column-right-align",
         render: (text) => <div>{formatMoney(text) || Strings.NA}</div>,
       },
       {
-        title: "Approved Amount",
+        title: (
+          <>
+            Maximum Contribution
+            {toolTip(
+              "The maximum amount that the applicant can receive for the Initial, Interim, or Final payment."
+            )}
+          </>
+        ),
+        dataIndex: "maximum_approved_amount",
+        className: "table-column-right-align",
+        render: (text) => <div>{(text && formatMoney(text)) || Strings.NA}</div>,
+      },
+      {
+        title: (
+          <>Financial Contribution{toolTip("The approved amount to be paid for the work item.")}</>
+        ),
         dataIndex: "approved_amount",
         className: "table-column-right-align",
         render: (text, record) => (
@@ -230,7 +252,14 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         ),
       },
       {
-        title: "Unused Funds",
+        title: (
+          <>
+            Balance
+            {toolTip(
+              "The difference between the Maximum and Financial Contribution. If there is a balance for the Interim payment, this amount is added to the Maximum Contribution for the Final payment."
+            )}
+          </>
+        ),
         dataIndex: "lost_funds",
         className: "table-column-right-align",
         render: (text) => <div>{formatMoney(text || 0)}</div>,
@@ -245,10 +274,6 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       this.props.formValues && this.props.formValues.final_approved_amount
         ? parseFloat(this.props.formValues.final_approved_amount)
         : null;
-
-    const firstPercent = 10;
-    const interimPercent = 60;
-    const finalPercent = 30;
 
     const getTypeEstSharedCost = (percent, estSharedCost) => estSharedCost * (percent / 100);
     const getTypeMaxEligibleAmount = (eocTotalAmount) => eocTotalAmount * 0.5;
@@ -279,7 +304,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         : currentInterimApprovedAmount
         ? currentInterimApprovedAmount
         : null;
-    const interimLostFunds = interimEstSharedCost - interimApprovedAmount;
+    const interimLostFunds = Math.max(interimEstSharedCost - interimApprovedAmount, 0);
+    const interimMaxApprovedAmount = Math.min(interimEstSharedCost, interimHalfEocTotal);
 
     // Final payment calculations
     const finalEstSharedCost = parseFloat(
@@ -301,6 +327,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         ? currentFinalApprovedAmount
         : null;
     const finalLostFunds = finalEstSharedCost - finalApprovedAmount;
+    const finalEligibleAmount = finalEstSharedCost + interimLostFunds;
+    const finalMaxApprovedAmount = Math.min(finalEligibleAmount, finalHalfEocTotal);
 
     const dataSource = [
       {
@@ -314,6 +342,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         eoc_document: null,
         eoc_total_amount: null,
         half_eoc_total_amount: null,
+        maximum_approved_amount: firstEstSharedCost,
         approved_amount: firstEstSharedCost,
         lost_funds: null,
       },
@@ -330,6 +359,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         eoc_document: contractedWork.interim_eoc_document,
         eoc_total_amount: interimActualCost,
         half_eoc_total_amount: interimHalfEocTotal,
+        maximum_approved_amount: interimMaxApprovedAmount,
         approved_amount: interimApprovedAmount,
         lost_funds: interimLostFunds,
       },
@@ -344,6 +374,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         eoc_document: contractedWork.final_eoc_document,
         eoc_total_amount: finalActualCost,
         half_eoc_total_amount: finalHalfEocTotal,
+        maximum_approved_amount: finalMaxApprovedAmount,
         approved_amount: finalApprovedAmount,
         lost_funds: finalLostFunds,
       },
@@ -358,37 +389,33 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         eoc_document: "",
         eoc_total_amount: interimActualCost + finalActualCost,
         half_eoc_total_amount: interimHalfEocTotal + finalHalfEocTotal,
+        maximum_approved_amount:
+          firstEstSharedCost + interimMaxApprovedAmount + finalMaxApprovedAmount,
         approved_amount: firstEstSharedCost + interimApprovedAmount + finalApprovedAmount,
         lost_funds: interimLostFunds + finalLostFunds,
       },
     ];
 
     const renderStatusInformationRequiredFields = (paymentType) => (
-      <>
-        <Field
-          id={`${lowerCase(paymentType)}_note`}
-          name={`${lowerCase(paymentType)}_note`}
-          label={
-            <>
-              <div>Note</div>
-              <div className="font-weight-normal">
-                Provide a note indicating the reason for setting this work item's&nbsp;
-                <Text strong>{lowerCase(paymentType)} payment status</Text> back to Information
-                Required. This note will be sent along in an email to the applicant to notify them.
-              </div>
-            </>
-          }
-          component={renderConfig.AUTO_SIZE_FIELD}
-          validate={[required, maxLength(65536)]}
-        />
-      </>
+      <Field
+        id={`${lowerCase(paymentType)}_note`}
+        name={`${lowerCase(paymentType)}_note`}
+        label={
+          <>
+            <div>Note</div>
+            <div className="font-weight-normal">
+              Provide a note indicating the reason for setting this work item's&nbsp;
+              <Text strong>{lowerCase(paymentType)} payment status</Text> back to Information
+              Required. This note will be sent along in an email to the applicant to notify them.
+            </div>
+          </>
+        }
+        component={renderConfig.AUTO_SIZE_FIELD}
+        validate={[required, maxLength(65536)]}
+      />
     );
 
-    const renderStatusReadyForReviewFields = (paymentType) => (
-      <>
-        <br />
-      </>
-    );
+    const renderStatusReadyForReviewFields = (paymentType) => <br />;
 
     const renderStatusApprovedFields = (paymentType) => (
       <>
@@ -406,8 +433,6 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
             contractedWork.has_final_prfs,
             "FINAL"
           )}
-
-        <br />
         <Field
           id={`${lowerCase(paymentType)}_approved_amount`}
           name={`${lowerCase(paymentType)}_approved_amount`}
@@ -462,6 +487,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
           type="warning"
           style={{ display: "inline-block" }}
         />
+        <br />
         <br />
       </>
     );
@@ -526,7 +552,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
             <Title level={4}>Submission Review</Title>
             <Tabs type="card" className="ant-tabs-center" onChange={this.handleTabChange}>
               <TabPane tab="Interim" key="INTERIM" disabled={this.props.submitting}>
-                <Descriptions title="Interim Submission Information" column={1}>
+                <Descriptions title="Interim Submission Information" column={3}>
                   <Descriptions.Item label="Total Hours Worked">
                     {contractedWorkPayment.interim_total_hours_worked_to_date || Strings.DASH}
                   </Descriptions.Item>
@@ -536,7 +562,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                   <Descriptions.Item label="Submitter Name">
                     {contractedWorkPayment.interim_submitter_name || Strings.DASH}
                   </Descriptions.Item>
-                  <Descriptions.Item label="Interim Report">
+                  <Descriptions.Item label="Interim Report" span={3}>
                     {contractedWorkPaymentExists
                       ? contractedWorkPayment.interim_report
                         ? contractedWorkPayment.interim_report
@@ -544,7 +570,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                       : Strings.DASH}
                   </Descriptions.Item>
                 </Descriptions>
-                <Descriptions title="Current Interim Status" column={1}>
+                <Descriptions title="Current Interim Status" column={2}>
                   <Descriptions.Item label="Status">
                     {
                       this.props.contractedWorkPaymentStatusOptionsHash[
@@ -568,7 +594,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                 {renderStatusFields("INTERIM", this.state.selectedInterimStatus)}
               </TabPane>
               <TabPane tab="Final" key="FINAL" disabled={this.props.submitting}>
-                <Descriptions title="Final Submission Information" column={1}>
+                <Descriptions title="Final Submission Information" column={3}>
                   <Descriptions.Item label="Total Hours Worked">
                     {contractedWorkPayment.final_total_hours_worked_to_date || Strings.DASH}
                   </Descriptions.Item>
@@ -578,7 +604,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                   <Descriptions.Item label="Submitter Name">
                     {contractedWorkPayment.final_submitter_name || Strings.DASH}
                   </Descriptions.Item>
-                  <Descriptions.Item label="Final Report">
+                  <Descriptions.Item label="Final Report" span={3}>
                     {(contractedWorkPaymentExists &&
                       ((!isEmpty(contractedWorkPayment.final_report_document) && (
                         <LinkButton
@@ -597,7 +623,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                       Strings.DASH}
                   </Descriptions.Item>
                 </Descriptions>
-                <Descriptions title="Current Final Status" column={1}>
+                <Descriptions title="Current Final Status" column={2}>
                   <Descriptions.Item label="Status">
                     {
                       this.props.contractedWorkPaymentStatusOptionsHash[
@@ -656,12 +682,12 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
 
                   {workType === "abandonment" && (
                     <>
-                      <Descriptions.Item label="Was Well Abandonment completed to Cut and Capped?">
+                      <Descriptions.Item label="Well Abandonment was completed to Cut and Capped">
                         {formatBooleanField(
                           contractedWorkPayment.abandonment_cut_and_capped_completed
                         )}
                       </Descriptions.Item>
-                      <Descriptions.Item label="Was a Notice of Operations (NOO) form submission completed using the OGC eSubmission portal?">
+                      <Descriptions.Item label="Notice of Operations (NOO) form was submitted through OGC eSubmission portal">
                         {(contractedWorkPaymentExists &&
                           formatBooleanField(
                             contractedWorkPayment.abandonment_notice_of_operations_submitted
@@ -675,7 +701,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                           )) ||
                           Strings.DASH}
                       </Descriptions.Item>
-                      <Descriptions.Item label="If pipeline was abandoned as part of the Dormant Site Abandonment process, provide the length (approximate) of pipeline abandoned (metres).">
+                      <Descriptions.Item label="Approximate length of pipeline abandoned as part of this work (if applicable)">
                         {(contractedWorkPaymentExists &&
                           contractedWorkPayment.abandonment_metres_of_pipeline_abandoned &&
                           `${contractedWorkPayment.abandonment_metres_of_pipeline_abandoned} metres`) ||
@@ -686,7 +712,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
 
                   {workType === "remediation" && (
                     <>
-                      <Descriptions.Item label="Was all identified contamination relating to the Dormant Site remediated to meet Contaminated Sites Regulations remediation standards or risk-based standards relevant to the Site?">
+                      <Descriptions.Item label="All identified contamination relating to the Dormant Site was remediated to meet Contaminated Sites Regulations standards or risk-based standards relevant to the site">
                         {(contractedWorkPaymentExists &&
                           formatBooleanField(
                             contractedWorkPayment.remediation_identified_contamination_meets_standards
@@ -712,14 +738,14 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
 
                   {workType === "reclamation" && (
                     <>
-                      <Descriptions.Item label="Was the Dormant Site reclaimed to meet Certificate of Restoration (Part 2) requirements?">
+                      <Descriptions.Item label="Dormant Site reclamation meets Certificate of Restoration (Part 2) requirements">
                         {(contractedWorkPaymentExists &&
                           formatBooleanField(
                             contractedWorkPayment.reclamation_reclaimed_to_meet_cor_p2_requirements
                           )) ||
                           Strings.DASH}
                       </Descriptions.Item>
-                      <Descriptions.Item label="Has the surface reclamation been completed to match surrounding natural contour and revegetated with ecologically suitable species?">
+                      <Descriptions.Item label="Surface reclamation has been completed to match surrounding natural contour and re-vegetated with ecologically suitable species">
                         {(contractedWorkPaymentExists &&
                           formatBooleanField(
                             contractedWorkPayment.reclamation_surface_reclamation_criteria_met
@@ -732,14 +758,14 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                   {(workType === "preliminary_site_investigation" ||
                     workType === "detailed_site_investigation") && (
                     <>
-                      <Descriptions.Item label="Was the Dormant Site reclaimed to meet Certificate of Restoration (Part 2) requirements?">
+                      <Descriptions.Item label="Has a Certificate of Restoration (Part 1) or a Dormancy Site Assessment Form been submitted to the OGC?">
                         {(contractedWorkPaymentExists &&
                           formatDocSubmitted(
                             contractedWorkPayment.site_investigation_type_of_document_submitted
                           )) ||
                           Strings.DASH}
                       </Descriptions.Item>
-                      <Descriptions.Item label="Were any concerns identified through site investigation that are specific to other interested parties (e.g. landowners, municipalities, regional districts or local Indigenous nations)?">
+                      <Descriptions.Item label="During site investigation, concerns were identified that are specific to other interested parties (e.g., landowners, municipalities, regional districts or Indigenous nations)">
                         {(contractedWorkPaymentExists &&
                           formatBooleanField(
                             contractedWorkPayment.site_investigation_concerns_identified
