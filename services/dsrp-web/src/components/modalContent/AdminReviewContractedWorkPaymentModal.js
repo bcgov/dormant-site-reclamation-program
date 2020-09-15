@@ -9,11 +9,6 @@ const propTypes = {
 };
 
 export const AdminReviewContractedWorkPaymentModal = (props) => {
-  const handleSubmit = (values) => {
-    console.log(values);
-    return props.onSubmit(props.contractedWork, values);
-  };
-
   const getInitialApprovedAmount = (contractedWorkPaymentType) => {
     const getTypeEstSharedCost = (percent, estSharedCost) => estSharedCost * (percent / 100);
     const getTypeMaxEligibleAmount = (eocTotalAmount) => eocTotalAmount * 0.5;
@@ -85,7 +80,7 @@ export const AdminReviewContractedWorkPaymentModal = (props) => {
 
   return (
     <AdminChangeContractedWorkPaymentStatusForm
-      onSubmit={handleSubmit}
+      onSubmit={props.onSubmit}
       contractedWork={props.contractedWork}
       contractedWorkPaymentStatusOptionsHash={props.contractedWorkPaymentStatusOptionsHash}
       initialValues={initialValues}

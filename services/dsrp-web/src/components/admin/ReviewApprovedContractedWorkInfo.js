@@ -108,9 +108,9 @@ export class ReviewApprovedContractedWorkInfo extends Component {
     this.setState({ selectedRows });
   };
 
-  handleContractedWorkPaymentStatusChange = (record, payload) =>
+  handleContractedWorkPaymentStatusChange = (payload) =>
     this.props
-      .createContractedWorkPaymentStatus(record.application_guid, record.work_id, payload)
+      .createContractedWorkPaymentStatus(payload.application_guid, payload.work_id, payload)
       .then(() => {
         this.props.closeModal();
         this.setState({

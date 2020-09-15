@@ -9,8 +9,6 @@ import {
   Table,
   Icon,
   Pagination,
-  Menu,
-  Dropdown,
   Input,
   Button,
   Popover,

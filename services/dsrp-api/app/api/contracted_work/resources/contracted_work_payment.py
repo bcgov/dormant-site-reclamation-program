@@ -287,12 +287,12 @@ class AdminContractedWorkPaymentStatusChange(Resource, UserMixin):
 
         # Validate the contracted work payment code.
         contracted_work_payment_code = payment_status_data['contracted_work_payment_code']
+        prefix = contracted_work_payment_code.lower()
         if not ContractedWorkPaymentType.find_by_code(contracted_work_payment_code):
             raise BadRequest('Unknown contracted work payment code received!')
 
         # Validate the contracted work payment status code.
-        contracted_work_payment_status_code = payment_status_data[
-            'contracted_work_payment_status_code']
+        contracted_work_payment_status_code = payment_status_data[f'{prefix}_payment_status_code']
         if not ContractedWorkPaymentStatus.find_by_code(contracted_work_payment_status_code):
             raise BadRequest('Unknown contracted work payment status code received!')
 
@@ -312,10 +312,9 @@ class AdminContractedWorkPaymentStatusChange(Resource, UserMixin):
             if not payment.interim_report:
                 raise BadRequest('The interim progress report must be provided!')
 
-        note = payment_status_data.get('note', None)
+        note = payment_status_data.get(f'{prefix}_note', None)
         if contracted_work_payment_status_code == 'APPROVED':
-            # TODO: Determine if we want to do any extra backend validation on this number.
-            approved_amount = payment_status_data['approved_amount']
+            approved_amount = payment_status_data[f'{prefix}_approved_amount']
             if not approved_amount:
                 raise BadRequest('The amount to approve must be provided!')
 

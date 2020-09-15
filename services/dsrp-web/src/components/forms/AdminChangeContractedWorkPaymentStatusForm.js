@@ -14,7 +14,7 @@ import {
 } from "antd";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { startCase, camelCase, lowerCase, isEmpty, isEqual, capitalize } from "lodash";
+import { lowerCase, isEmpty, isEqual, capitalize } from "lodash";
 import { formatMoney, currencyMask, formatDate } from "@/utils/helpers";
 import { required, maxLength } from "@/utils/validate";
 import PropTypes from "prop-types";
@@ -113,7 +113,9 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
   };
 
   shouldComponentUpdate = (nextProps, nextState) =>
-    !isEqual(nextProps.formValues, this.props.formValues) || !isEqual(nextState, this.state);
+    !isEqual(nextProps.formValues, this.props.formValues) ||
+    !isEqual(nextState, this.state) ||
+    nextProps.submitting !== this.props.submitting;
 
   componentWillReceiveProps = (nextProps) => {
     if (nextProps.formValues && !isEqual(nextProps.formValues, this.props.formValues)) {
@@ -146,7 +148,6 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         data={this.props.dropdownContractedWorkPaymentStatusOptions}
         format={null}
         validate={[required, validateStatus(paymentType, contractedWorkPayment)]}
-        doNotPinDropdown
       />
     );
 
