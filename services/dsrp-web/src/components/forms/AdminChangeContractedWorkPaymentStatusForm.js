@@ -788,7 +788,6 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                   )}
                 </Descriptions>
               </TabPane>
-              <TabPane tab="General" key="GENERAL" disabled={this.props.submitting}></TabPane>
             </Tabs>
           </Col>
         </Row>
