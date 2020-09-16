@@ -361,7 +361,7 @@ class AdminContractedWorkPaymentAudit(Resource, UserMixin):
         # Update the contracted work payment's audit data.
         audit_data = request.json
         payment.audit_ind = audit_data['audit_ind']
-        payment.audit_user = User().get_user_username
+        payment.audit_user = User().get_user_username()
         payment.audit_timestamp = datetime.utcnow()
         payment.save()
 

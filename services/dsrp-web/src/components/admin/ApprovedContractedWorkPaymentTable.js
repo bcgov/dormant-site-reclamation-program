@@ -36,7 +36,7 @@ const propTypes = {
   filterListContractedWorkPaymentStatusOptions: PropTypes.objectOf(PropTypes.any).isRequired,
   filterListContractedWorkTypeOptions: PropTypes.objectOf(PropTypes.any).isRequired,
   onSelectedRowsChanged: PropTypes.func.isRequired,
-  handleContractedWorkPaymentStatusChange: PropTypes.func.isRequired,
+  handleReviewContractedWorkPaymentModalSubmit: PropTypes.func.isRequired,
   contractedWorkPaymentStatusDropdownOptions: PropTypes.any.isRequired,
   contractedWorkPaymentStatusOptionsHash: PropTypes.any.isRequired,
   handleTableChange: PropTypes.func.isRequired,
@@ -160,7 +160,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
       props: {
         title: `Review Information for Work ID ${record.work_id}`,
         contractedWork: record,
-        onSubmit: this.props.handleContractedWorkPaymentStatusChange,
+        onSubmit: this.props.handleReviewContractedWorkPaymentModalSubmit,
       },
       content: modalConfig.ADMIN_REVIEW_CONTRACTED_WORK_PAYMENT,
     });
