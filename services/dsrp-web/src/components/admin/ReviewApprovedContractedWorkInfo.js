@@ -236,7 +236,7 @@ export class ReviewApprovedContractedWorkInfo extends Component {
             <Dropdown
               overlay={menu}
               style={{ display: "inline" }}
-              disabled={!canCreateInterimPrf && !canCreateFinalPrf}
+              disabled={(!canCreateInterimPrf && !canCreateFinalPrf) || !this.state.isLoaded}
             >
               <Button type="link">
                 <Icon type="file" className="icon-lg" />

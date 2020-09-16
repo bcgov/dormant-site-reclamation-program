@@ -80,7 +80,13 @@ export class ApprovedContractedWorkPaymentTable extends Component {
   state = {
     selectedRowKeys: [],
     selectedApplicationId: null,
-    possibleSelectedRowKeys: [],
+  };
+
+  componentWillReceiveProps = (nextProps) => {
+    const newSelectedRows = this.transformRowData(
+      nextProps.applicationsApprovedContractedWork || []
+    ).filter(({ work_id }) => this.state.selectedRowKeys.includes(work_id));
+    this.props.onSelectedRowsChanged(newSelectedRows);
   };
 
   getParamFilteredValue = (key) => {
@@ -434,10 +440,6 @@ export class ApprovedContractedWorkPaymentTable extends Component {
             record.application_id !== this.state.selectedApplicationId) ||
             (record.interim_payment_status_code !== "APPROVED" &&
               record.final_payment_status_code !== "APPROVED")),
-        className:
-          record && (record.has_interim_prfs || record.has_final_prfs)
-            ? "approved-work-has-prf-checkbox"
-            : "",
       }),
     };
 

@@ -99,6 +99,14 @@ const validateStatus = (paymentType, contractedWorkPayment) => (value) => {
     return "Cannot update the status to Approved unless the interim payment has been approved before.";
   }
 
+  if (
+    paymentType === "FINAL" &&
+    value === "APPROVED" &&
+    (!contractedWorkPayment || !contractedWorkPayment.interim_report)
+  ) {
+    return "Cannot update the status to Approved unless the Interim Report has been submitted.";
+  }
+
   return undefined;
 };
 
