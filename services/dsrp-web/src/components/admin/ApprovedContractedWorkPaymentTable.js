@@ -9,8 +9,6 @@ import {
   Table,
   Icon,
   Pagination,
-  Menu,
-  Dropdown,
   Input,
   Button,
   Popover,
@@ -18,8 +16,9 @@ import {
   Divider,
   Row,
   Col,
+  Typography,
 } from "antd";
-import { formatMoney } from "@/utils/helpers";
+import { formatMoney, formatDate, formatDateTimeFine } from "@/utils/helpers";
 import { openModal, closeModal } from "@/actions/modalActions";
 import {
   getFilterListContractedWorkPaymentStatusOptions,
@@ -30,13 +29,14 @@ import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
 import { modalConfig } from "@/components/modalContent/config";
 
+const { Text } = Typography;
+
 const propTypes = {
   applicationsApprovedContractedWork: PropTypes.any.isRequired,
   filterListContractedWorkPaymentStatusOptions: PropTypes.objectOf(PropTypes.any).isRequired,
   filterListContractedWorkTypeOptions: PropTypes.objectOf(PropTypes.any).isRequired,
   onSelectedRowsChanged: PropTypes.func.isRequired,
-  handleContractedWorkPaymentInterimStatusChange: PropTypes.func.isRequired,
-  handleContractedWorkPaymentFinalStatusChange: PropTypes.func.isRequired,
+  handleContractedWorkPaymentStatusChange: PropTypes.func.isRequired,
   contractedWorkPaymentStatusDropdownOptions: PropTypes.any.isRequired,
   contractedWorkPaymentStatusOptionsHash: PropTypes.any.isRequired,
   handleTableChange: PropTypes.func.isRequired,
@@ -45,25 +45,6 @@ const propTypes = {
   openModal: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
 };
-
-const renderDropdownMenu = (option, onClick, record, currentStatus, isFinalPayment) => (
-  <Menu onClick={(item) => onClick(item.key, record)}>
-    {option
-      .filter(({ value }) => value !== currentStatus)
-      .map(({ label, value, description }) => {
-        // Admins cannot approve the final payment until the interim payment has been approved before.
-        const disabled =
-          isFinalPayment &&
-          value === "APPROVED" &&
-          (!record.contracted_work_payment || !record.contracted_work_payment.interim_paid_amount);
-        return (
-          <Menu.Item title={description} key={value} disabled={disabled}>
-            {label}
-          </Menu.Item>
-        );
-      })}
-  </Menu>
-);
 
 const applySortIndicator = (columns, params) =>
   columns.map((column) => ({
@@ -167,27 +148,15 @@ export class ApprovedContractedWorkPaymentTable extends Component {
     clearFilters();
   };
 
-  openContractedWorkPaymentModal = (record) =>
+  openAdminReviewContractedWorkPaymentModal = (record) =>
     this.props.openModal({
+      width: 1000,
       props: {
-        isAdminView: true,
-        title: `View Applicant's Submissions for Work ID ${record.work_id}`,
-        contractedWorkPayment: record.work,
-        applicationSummary: {},
-        handleSubmitInterimContractedWorkPayment: () => {},
-        handleSubmitFinalContractedWorkPayment: () => {},
-        handleSubmitInterimContractedWorkPaymentProgressReport: () => {},
-      },
-      content: modalConfig.CONTRACTED_WORK_PAYMENT,
-    });
-
-  openAdminContractedWorkPaymentModal = (record) =>
-    this.props.openModal({
-      props: {
-        title: `View Information for Work ID ${record.work_id}`,
+        title: `Review Information for Work ID ${record.work_id}`,
         contractedWork: record,
+        onSubmit: this.props.handleContractedWorkPaymentStatusChange,
       },
-      content: modalConfig.ADMIN_CONTRACTED_WORK_PAYMENT,
+      content: modalConfig.ADMIN_REVIEW_CONTRACTED_WORK_PAYMENT,
     });
 
   columnSearchInput = (dataIndex, placeholder) => ({
@@ -198,7 +167,6 @@ export class ApprovedContractedWorkPaymentTable extends Component {
     return (
       <div style={{ padding: 8 }}>
         <Input
-          ref={(node) => {}}
           placeholder={placeholder}
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
@@ -350,33 +318,13 @@ export class ApprovedContractedWorkPaymentTable extends Component {
               : null;
           return (
             <div title="Interim Status">
-              <span onClick={(e) => e.stopPropagation()}>
-                <Dropdown
-                  disabled={
-                    !record.contracted_work_payment ||
-                    isEmpty(record.contracted_work_payment.interim_payment_status)
-                  }
-                  overlay={renderDropdownMenu(
-                    this.props.contractedWorkPaymentStatusDropdownOptions,
-                    this.props.handleContractedWorkPaymentInterimStatusChange,
-                    record,
-                    text,
-                    false
-                  )}
-                  trigger={["click"]}
-                >
-                  <a>
-                    {record.has_interim_prfs && (
-                      <Tooltip title="This work item has been used to generate Interim PRFs">
-                        <Icon type="dollar" className="table-record-tooltip color-success" />
-                      </Tooltip>
-                    )}
-                    {note && popover(note, "table-record-tooltip color-warning")}
-                    {this.props.contractedWorkPaymentStatusOptionsHash[text]}
-                    <Icon type="down" className="table-status-dropdown-icon" />
-                  </a>
-                </Dropdown>
-              </span>
+              {record.has_interim_prfs && (
+                <Tooltip title="This work item has been used to generate Interim PRFs">
+                  <Icon type="dollar" className="table-record-tooltip color-success" />
+                </Tooltip>
+              )}
+              {note && popover(note, "table-record-tooltip color-warning")}
+              {this.props.contractedWorkPaymentStatusOptionsHash[text]}
             </div>
           );
         },
@@ -403,33 +351,13 @@ export class ApprovedContractedWorkPaymentTable extends Component {
               : null;
           return (
             <div title="Final Status">
-              <span onClick={(e) => e.stopPropagation()}>
-                <Dropdown
-                  disabled={
-                    !record.contracted_work_payment ||
-                    isEmpty(record.contracted_work_payment.final_payment_status)
-                  }
-                  overlay={renderDropdownMenu(
-                    this.props.contractedWorkPaymentStatusDropdownOptions,
-                    this.props.handleContractedWorkPaymentFinalStatusChange,
-                    record,
-                    text,
-                    true
-                  )}
-                  trigger={["click"]}
-                >
-                  <a>
-                    {record.has_final_prfs && (
-                      <Tooltip title="This work item has been used to generate Final PRFs">
-                        <Icon type="dollar" className="table-record-tooltip color-success" />
-                      </Tooltip>
-                    )}
-                    {note && popover(note, "table-record-tooltip color-warning")}
-                    {this.props.contractedWorkPaymentStatusOptionsHash[text]}
-                    <Icon type="down" className="table-status-dropdown-icon" />
-                  </a>
-                </Dropdown>
-              </span>
+              {record.has_final_prfs && (
+                <Tooltip title="This work item has been used to generate Final PRFs">
+                  <Icon type="dollar" className="table-record-tooltip color-success" />
+                </Tooltip>
+              )}
+              {note && popover(note, "table-record-tooltip color-warning")}
+              {this.props.contractedWorkPaymentStatusOptionsHash[text]}
             </div>
           );
         },
@@ -443,18 +371,24 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         render: (text) => {
           let interim = text && text["interim"];
           interim =
-            !interim || interim === Strings.REVIEW_DEADLINE_NOT_APPLICABLE
-              ? "N/A"
-              : interim === Strings.REVIEW_DEADLINE_PAID
-              ? "Paid"
-              : `${interim} days`;
+            !interim || interim === Strings.REVIEW_DEADLINE_NOT_APPLICABLE ? (
+              "N/A"
+            ) : interim === Strings.REVIEW_DEADLINE_PAID ? (
+              "Paid"
+            ) : (
+              <Text title={formatDateTimeFine(interim)}>{formatDate(interim)}</Text>
+            );
+
           let final = text && text["final"];
           final =
-            !final || final === Strings.REVIEW_DEADLINE_NOT_APPLICABLE
-              ? "N/A"
-              : final === Strings.REVIEW_DEADLINE_PAID
-              ? "Paid"
-              : `${final} days`;
+            !final || final === Strings.REVIEW_DEADLINE_NOT_APPLICABLE ? (
+              "N/A"
+            ) : final === Strings.REVIEW_DEADLINE_PAID ? (
+              "Paid"
+            ) : (
+              <Text title={formatDateTimeFine(final)}>{formatDate(final)}</Text>
+            );
+
           return (
             <div title="Review Deadlines">
               <Row>
@@ -473,30 +407,17 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         },
       },
       {
-        key: "operations",
+        title: "Review",
+        key: "review",
+        className: "table-header-center-align table-column-center-align",
         render: (text, record) => (
-          <div style={{ float: "right" }}>
-            <Row type="flex" justify="space-around" align="middle">
-              <Col span={10}>
-                <Button
-                  type="link"
-                  onClick={() => this.openAdminContractedWorkPaymentModal(record)}
-                  style={{ paddingLeft: 12, paddingRight: 12 }}
-                >
-                  <Icon type="solution" className="icon-lg" />
-                </Button>
-              </Col>
-              <Col span={10}>
-                <Button
-                  type="link"
-                  onClick={() => this.openContractedWorkPaymentModal(record)}
-                  style={{ paddingLeft: 12, paddingRight: 12 }}
-                >
-                  <Icon type="eye" className="icon-lg" />
-                </Button>
-              </Col>
-            </Row>
-          </div>
+          <Button
+            type="link"
+            onClick={() => this.openAdminReviewContractedWorkPaymentModal(record)}
+            disabled={!record.contracted_work_payment}
+          >
+            <Icon type="solution" className="icon-lg" />
+          </Button>
         ),
       },
     ];

@@ -194,16 +194,15 @@ class ContractedWorkPayment(Base, AuditMixin):
         if interim_payment_submission_date is None and final_payment_submission_date is None:
             return review_deadlines
 
-        today = datetime.now().date()
         days_to_review = timedelta(days=90)
 
         if interim_payment_submission_date:
             interim_deadline = interim_payment_submission_date + days_to_review
-            review_deadlines['interim'] = (interim_deadline.date() - today).days
+            review_deadlines['interim'] = interim_deadline
 
         if final_payment_submission_date:
             final_deadline = final_payment_submission_date + days_to_review
-            review_deadlines['final'] = (final_deadline.date() - today).days
+            review_deadlines['final'] = final_deadline
 
         return review_deadlines
 

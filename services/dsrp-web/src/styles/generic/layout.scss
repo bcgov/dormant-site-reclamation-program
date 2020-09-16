@@ -45,7 +45,8 @@
   text-align: center;
 }
 
-tr .table-column-right-align:not(th) * {
+tr .table-column-right-align:not(th) *,
+th.table-header-right-align {
   text-align: right !important;
 }
 

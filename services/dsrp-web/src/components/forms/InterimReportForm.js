@@ -58,7 +58,7 @@ class InterimReportForm extends Component {
               name="interim_report"
               label={
                 <>
-                  <div>Interim Progress Report (min 25. - max. 250 characters)</div>
+                  <div>Interim Progress Report (min. 25 - max. 250 characters)</div>
                   <div className="font-weight-normal color-default-font">
                     Briefly describe the work that was reported in the uploaded Interim Evidence of
                     Cost file.

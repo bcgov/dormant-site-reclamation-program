@@ -199,7 +199,7 @@ const renderReportingFields = (workType, isViewOnly) => {
             <Field
               id="reclamation_reclaimed_to_meet_cor_p2_requirements"
               name="reclamation_reclaimed_to_meet_cor_p2_requirements"
-              label="Dormant site reclamation meets Certificate of Restoration (Part 1) requirements"
+              label="Dormant Site reclamation meets Certificate of Restoration (Part 2) requirements"
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}
@@ -252,7 +252,7 @@ const renderReportingFields = (workType, isViewOnly) => {
         <Field
           id="reclamation_was_achieved"
           name="reclamation_was_achieved"
-          label="Dormant site reclamation meets Certificate of Restoration (Part 1) requirements"
+          label="Level of Reclamation achieved for the Dormant Site"
           placeholder="Select an option"
           disabled={isViewOnly}
           component={renderConfig.SELECT}

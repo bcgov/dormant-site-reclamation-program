@@ -4,21 +4,12 @@ import AdminChangeContractedWorkPaymentStatusForm from "@/components/forms/Admin
 
 const propTypes = {
   contractedWork: PropTypes.any.isRequired,
-  contractedWorkPaymentStatus: PropTypes.string.isRequired,
-  contractedWorkPaymentType: PropTypes.string.isRequired,
   contractedWorkPaymentStatusOptionsHash: PropTypes.any.isRequired,
   closeModal: PropTypes.func.isRequired,
 };
 
-export const AdminChangeContractedWorkPaymentStatusModal = (props) => {
-  const handleSubmit = (values) =>
-    props.onSubmit(props.contractedWork, {
-      contracted_work_payment_status_code: props.contractedWorkPaymentStatus,
-      contracted_work_payment_code: props.contractedWorkPaymentType,
-      ...values,
-    });
-
-  const getInitialApprovedAmount = () => {
+export const AdminReviewContractedWorkPaymentModal = (props) => {
+  const getInitialApprovedAmount = (contractedWorkPaymentType) => {
     const getTypeEstSharedCost = (percent, estSharedCost) => estSharedCost * (percent / 100);
     const getTypeMaxEligibleAmount = (eocTotalAmount) => eocTotalAmount * 0.5;
 
@@ -32,12 +23,14 @@ export const AdminChangeContractedWorkPaymentStatusModal = (props) => {
     const interimEstSharedCost = parseFloat(
       getTypeEstSharedCost(interimPercent, contractedWork.estimated_shared_cost)
     );
-    const currentInterimApprovedAmount = contractedWorkPayment.interim_paid_amount
-      ? parseFloat(contractedWorkPayment.interim_paid_amount)
-      : 0;
-    const interimActualCost = contractedWorkPayment.interim_actual_cost
-      ? parseFloat(contractedWorkPayment.interim_actual_cost)
-      : 0;
+    const currentInterimApprovedAmount =
+      contractedWorkPayment && contractedWorkPayment.interim_paid_amount
+        ? parseFloat(contractedWorkPayment.interim_paid_amount)
+        : 0;
+    const interimActualCost =
+      contractedWorkPayment && contractedWorkPayment.interim_actual_cost
+        ? parseFloat(contractedWorkPayment.interim_actual_cost)
+        : 0;
     const interimHalfEocTotal = interimActualCost ? getTypeMaxEligibleAmount(interimActualCost) : 0;
     const interimLostFunds = interimEstSharedCost - currentInterimApprovedAmount;
 
@@ -45,17 +38,18 @@ export const AdminChangeContractedWorkPaymentStatusModal = (props) => {
     const finalEstSharedCost = parseFloat(
       getTypeEstSharedCost(finalPercent, contractedWork.estimated_shared_cost)
     );
-    const finalActualCost = contractedWorkPayment.final_actual_cost
-      ? parseFloat(contractedWorkPayment.final_actual_cost)
-      : 0;
+    const finalActualCost =
+      contractedWorkPayment && contractedWorkPayment.final_actual_cost
+        ? parseFloat(contractedWorkPayment.final_actual_cost)
+        : 0;
     const finalHalfEocTotal = finalActualCost ? getTypeMaxEligibleAmount(finalActualCost) : 0;
     const finalEligibleAmount = finalEstSharedCost + interimLostFunds;
 
     // Determine the appropriate initial approved amount
     let initialApprovedAmount = null;
-    if (props.contractedWorkPaymentType === "INTERIM") {
+    if (contractedWorkPaymentType === "INTERIM") {
       initialApprovedAmount = Math.min(interimEstSharedCost, interimHalfEocTotal);
-    } else if (props.contractedWorkPaymentType === "FINAL") {
+    } else if (contractedWorkPaymentType === "FINAL") {
       initialApprovedAmount = Math.min(finalEligibleAmount, finalHalfEocTotal);
     } else {
       throw new Error("Unknown contracted work payment code received!");
@@ -64,14 +58,30 @@ export const AdminChangeContractedWorkPaymentStatusModal = (props) => {
     return initialApprovedAmount;
   };
 
-  const initialValues = { approved_amount: getInitialApprovedAmount() };
+  const interimCurrentApprovedAmount = props.contractedWork.contracted_work_payment
+    ? props.contractedWork.contracted_work_payment.interim_paid_amount
+    : null;
+
+  const finalCurrentApprovedAmount = props.contractedWork.contracted_work_payment
+    ? props.contractedWork.contracted_work_payment.final_paid_amount
+    : null;
+
+  const initialValues = {
+    interim_approved_amount:
+      interimCurrentApprovedAmount !== null
+        ? interimCurrentApprovedAmount
+        : getInitialApprovedAmount("INTERIM"),
+    final_approved_amount:
+      finalCurrentApprovedAmount !== null
+        ? finalCurrentApprovedAmount
+        : getInitialApprovedAmount("FINAL"),
+    ...props.contractedWork.contracted_work_payment,
+  };
 
   return (
     <AdminChangeContractedWorkPaymentStatusForm
-      onSubmit={handleSubmit}
+      onSubmit={props.onSubmit}
       contractedWork={props.contractedWork}
-      contractedWorkPaymentStatus={props.contractedWorkPaymentStatus}
-      contractedWorkPaymentType={props.contractedWorkPaymentType}
       contractedWorkPaymentStatusOptionsHash={props.contractedWorkPaymentStatusOptionsHash}
       initialValues={initialValues}
       closeModal={props.closeModal}
@@ -79,6 +89,6 @@ export const AdminChangeContractedWorkPaymentStatusModal = (props) => {
   );
 };
 
-AdminChangeContractedWorkPaymentStatusModal.propTypes = propTypes;
+AdminReviewContractedWorkPaymentModal.propTypes = propTypes;
 
-export default AdminChangeContractedWorkPaymentStatusModal;
+export default AdminReviewContractedWorkPaymentModal;
