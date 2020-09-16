@@ -336,7 +336,6 @@ export class ContractedWorkPaymentView extends Component {
         ],
       },
       {
-        title: "",
         children: [
           {
             title: "Request Payment",
@@ -519,6 +518,7 @@ export class ContractedWorkPaymentView extends Component {
           <Row>
             <Col>
               <Table
+                className="table-no-second-header-top-border"
                 columns={columns}
                 pagination={false}
                 locale={{
