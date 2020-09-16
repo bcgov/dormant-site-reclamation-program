@@ -32,6 +32,8 @@ export const UPDATE_CONTRACTED_WORK_PAYMENT_INTERIM_REPORT = (applicationGuid, w
   `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/interim-report`;
 export const CREATE_CONTRACTED_WORK_PAYMENT_STATUS = (applicationGuid, workId) =>
   `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/status`;
+export const UPDATE_CONTRACTED_WORK_PAYMENT_AUDIT_STATUS = (applicationGuid, workId) =>
+  `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/audit`;
 
 // Documents
 export const GET_TOKEN_FOR_DOC = (app_guid, doc_guid) =>

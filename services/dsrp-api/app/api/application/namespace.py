@@ -7,7 +7,7 @@ from app.api.application.resources.application_summary import ApplicationSummary
 from app.api.application.resources.gen_application_docs import GenerateApplicationDocumentResource
 from app.api.application.resources.payment_document import PaymentDocumentResource, PaymentDocumentListResource
 from app.api.application.resources.application_approved_contracted_work import ApplicationApprovedContractedWorkResource, ApplicationApprovedContractedWorkListResource
-from app.api.contracted_work.resources.contracted_work_payment import ContractedWorkPaymentInterim, ContractedWorkPaymentFinal, ContractedWorkPaymentInterimReport, AdminContractedWorkPaymentStatusChange
+from app.api.contracted_work.resources.contracted_work_payment import ContractedWorkPaymentInterim, ContractedWorkPaymentFinal, ContractedWorkPaymentInterimReport, AdminContractedWorkPaymentStatusChange, AdminContractedWorkPaymentAudit
 
 api = Namespace('application', description='Application endpoints')
 
@@ -41,3 +41,5 @@ api.add_resource(
     '/<string:application_guid>/contracted-work-payment/<string:work_id>/interim-report')
 api.add_resource(AdminContractedWorkPaymentStatusChange,
                  '/<string:application_guid>/contracted-work-payment/<string:work_id>/status')
+api.add_resource(AdminContractedWorkPaymentAudit,
+                 '/<string:application_guid>/contracted-work-payment/<string:work_id>/audit')

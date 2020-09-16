@@ -53,6 +53,7 @@ CONTRACTED_WORK_PAYMENT = api.model(
             CONTRACTED_WORK_PAYMENT_STATUS_CHANGE, skip_none=True),
         'final_payment_status': fields.Nested(
             CONTRACTED_WORK_PAYMENT_STATUS_CHANGE, skip_none=True),
+        'audit_ind': fields.Boolean,
         'surface_landowner': fields.String,
         'reclamation_was_achieved': fields.Boolean,
         'abandonment_cut_and_capped_completed': fields.Boolean,

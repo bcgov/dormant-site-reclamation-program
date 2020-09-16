@@ -336,7 +336,6 @@ export class ContractedWorkPaymentView extends Component {
         ],
       },
       {
-        title: "",
         children: [
           {
             title: "Request Payment",
@@ -494,7 +493,7 @@ export class ContractedWorkPaymentView extends Component {
                   </li>
                   <li>
                     <a href={FINAL_REPORT_TEMPLATE} target="_blank" rel="noopener noreferrer">
-                      Final Reports
+                      Final Report
                     </a>
                     &nbsp;- Final payment only (must be completed by a Qualified Professional such
                     as an Engineer, Agrologist or Biologist).
@@ -519,6 +518,7 @@ export class ContractedWorkPaymentView extends Component {
           <Row>
             <Col>
               <Table
+                className="table-no-second-header-top-border"
                 columns={columns}
                 pagination={false}
                 locale={{
