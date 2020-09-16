@@ -13,6 +13,7 @@ from app.api.contracted_work.models.contracted_work_payment_type import Contract
 from app.api.contracted_work.models.contracted_work_payment_status_change import ContractedWorkPaymentStatusChange
 from app.api.utils.access_decorators import ADMIN
 from app.api.utils.access_decorators import requires_otp_or_admin
+from app.api.utils.include.user_info import User
 
 
 def validate_application_contracted_work(application, work_id):
@@ -341,3 +342,27 @@ class AdminContractedWorkPaymentStatusChange(Resource, UserMixin):
 
         payment.save()
         return '', 201
+
+
+class AdminContractedWorkPaymentAudit(Resource, UserMixin):
+    @requires_role_admin
+    def put(self, application_guid, work_id):
+        # Validate this contracted work item.
+        application = Application.find_by_guid(application_guid)
+        validate_application_contracted_work(application, work_id)
+
+        # Get the contracted work payment.
+        payment = ContractedWorkPayment.find_by_work_id(work_id)
+        if not payment:
+            raise BadRequest(
+                'The applicant must submit payment information for this work item before its audit status can be changed'
+            )
+
+        # Update the contracted work payment's audit data.
+        audit_data = request.json
+        payment.audit_ind = audit_data['audit_ind']
+        payment.audit_user = User().get_user_username
+        payment.audit_timestamp = datetime.utcnow()
+        payment.save()
+
+        return '', 200
