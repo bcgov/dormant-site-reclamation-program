@@ -23,6 +23,7 @@ import LinkButton from "@/components/common/LinkButton";
 import CustomPropTypes from "@/customPropTypes";
 import { toolTip } from "@/components/admin/ApplicationTable";
 import { PAYMENT_TYPES } from "@/constants/payments";
+import * as Payment from "@/utils/paymentHelper";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -286,62 +287,11 @@ export class ContractedWorkPaymentForm extends Component {
   state = { maxAmount: 0, estimatedFinancialContribution: 0 };
 
   calculateEstimatedFinancialContribution = (paymentType, contractedWork, actual_cost = null) => {
-    const interimPercent = 60;
-    const finalPercent = 30;
-    const contractedWorkPayment = contractedWork.contracted_work_payment;
-    const getTypeEstSharedCost = (percent, estSharedCost) => estSharedCost * (percent / 100);
-
-    const interimEstSharedCost = parseFloat(
-      getTypeEstSharedCost(interimPercent, contractedWork.estimated_shared_cost)
+    const result = Payment.calculateEstimatedFinancialContribution(
+      paymentType,
+      contractedWork,
+      actual_cost
     );
-
-    let result = { maxAmount: 0, estimatedFinancialContribution: 0 };
-    if (paymentType === PAYMENT_TYPES.INTERIM) {
-      const interimEocTotalAmount =
-        actual_cost ??
-        (contractedWorkPayment && contractedWorkPayment.interim_actual_cost
-          ? parseFloat(contractedWorkPayment.interim_actual_cost)
-          : 0);
-
-      const interimMaximumReceivablePayment = interimEstSharedCost;
-      const interimEstimatedFinancialContribution = Math.min(
-        interimEstSharedCost,
-        interimEocTotalAmount / 2
-      );
-
-      result = {
-        maxAmount: interimMaximumReceivablePayment,
-        estimatedFinancialContribution: interimEstimatedFinancialContribution,
-      };
-    } else if (paymentType === PAYMENT_TYPES.FINAL) {
-      const finalEstSharedCost = parseFloat(
-        getTypeEstSharedCost(finalPercent, contractedWork.estimated_shared_cost)
-      );
-
-      const finalActualCost =
-        actual_cost ??
-        (contractedWorkPayment && contractedWorkPayment.final_actual_cost
-          ? parseFloat(contractedWorkPayment.final_actual_cost)
-          : 0);
-
-      const interimEstimatedPayment =
-        contractedWorkPayment && contractedWorkPayment.interim_payment_status_code === "APPROVED"
-          ? contractedWorkPayment.interim_paid_amount ?? 0
-          : interimEstSharedCost;
-
-      const finalHalfEocTotal = finalActualCost ? finalActualCost / 2 : 0;
-      const finalMaximumReceivablePayment =
-        finalEstSharedCost + (interimEstSharedCost - interimEstimatedPayment);
-      const finalEstimatedFinancialContribution = Math.min(
-        finalMaximumReceivablePayment,
-        finalHalfEocTotal
-      );
-
-      result = {
-        maxAmount: finalMaximumReceivablePayment,
-        estimatedFinancialContribution: finalEstimatedFinancialContribution,
-      };
-    }
 
     this.setState({
       ...result,

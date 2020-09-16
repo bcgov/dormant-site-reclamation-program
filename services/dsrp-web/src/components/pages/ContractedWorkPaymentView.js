@@ -23,10 +23,10 @@ import { getContractedWorkPaymentStatusOptionsHash } from "@/selectors/staticCon
 import * as Strings from "@/constants/strings";
 import { modalConfig } from "@/components/modalContent/config";
 import { openModal, closeModal } from "@/actions/modalActions";
-import { PAYMENT_TYPES } from "@/constants/payments";
-
+import { CONTRACTED_WORK_PAYMENT_STATUS, PAYMENT_TYPES } from "@/constants/payments";
 import CustomPropTypes from "@/customPropTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
+import * as Payment from "@/utils/paymentHelper";
 
 const propTypes = {
   applicationGuid: PropTypes.string.isRequired,
@@ -128,87 +128,31 @@ const paymentsProgressReports = (
   );
 };
 
-const calculateEstimatedFinancialContribution = (paymentType, contractedWork) => {
-  const contractedWorkPayment = contractedWork.contracted_work_payment;
-
-  const interimEstSharedCost = parseFloat(
-    getTypeEstSharedCost(interimPercent, contractedWork.estimated_shared_cost)
-  );
-
-  let result = { maxAmount: 0, estimatedFinancialContribution: 0 };
-  if (paymentType === PAYMENT_TYPES.INTERIM) {
-    const interimEocTotalAmount =
-      contractedWorkPayment && contractedWorkPayment.interim_actual_cost
-        ? parseFloat(contractedWorkPayment.interim_actual_cost)
-        : 0;
-
-    const interimMaximumReceivablePayment = interimEstSharedCost;
-    const interimEstimatedFinancialContribution = Math.min(
-      interimEstSharedCost,
-      interimEocTotalAmount / 2
-    );
-
-    result = {
-      maxAmount: interimMaximumReceivablePayment,
-      estimatedFinancialContribution: interimEstimatedFinancialContribution,
-    };
-  } else if (paymentType === PAYMENT_TYPES.FINAL) {
-    const finalEstSharedCost = parseFloat(
-      getTypeEstSharedCost(finalPercent, contractedWork.estimated_shared_cost)
-    );
-
-    const finalActualCost =
-      contractedWorkPayment && contractedWorkPayment.final_actual_cost
-        ? parseFloat(contractedWorkPayment.final_actual_cost)
-        : 0;
-
-    const interimEstimatedPayment =
-      contractedWorkPayment && contractedWorkPayment.interim_payment_status_code === "APPROVED"
-        ? contractedWorkPayment.interim_paid_amount ?? 0
-        : interimEstSharedCost;
-
-    const finalHalfEocTotal = finalActualCost ? finalActualCost / 2 : 0;
-    const finalMaximumReceivablePayment =
-      finalEstSharedCost + (interimEstSharedCost - interimEstimatedPayment);
-    const finalEstimatedFinancialContribution = Math.min(
-      finalMaximumReceivablePayment,
-      finalHalfEocTotal
-    );
-
-    result = {
-      maxAmount: finalMaximumReceivablePayment,
-      estimatedFinancialContribution: finalEstimatedFinancialContribution,
-    };
-  }
-
-  return result;
-};
-
-const interimPercent = 60;
-const finalPercent = 30;
-const getTypeEstSharedCost = (percent, estSharedCost) => estSharedCost * (percent / 100);
-
 const calculatePaymentSummary = (workItems, paymentType, percent) => {
   let informationRequiredTotal = 0;
   let readyForReviewTotal = 0;
   let approvedTotal = 0;
   workItems.forEach((item) => {
-    debugger;
-    let amounts = calculateEstimatedFinancialContribution(paymentType, item);
+    const amounts = Payment.calculateEstimatedFinancialContribution(paymentType, item);
     if (item.contracted_work_payment === null) {
-      informationRequiredTotal += getTypeEstSharedCost(percent, item.estimated_shared_cost ?? 0);
+      informationRequiredTotal += Payment.getTypeEstSharedCost(
+        percent,
+        item.estimated_shared_cost ?? 0
+      );
     } else if (
       item.contracted_work_payment &&
-      item.contracted_work_payment[`${paymentType}_payment_status_code`] === "READY_FOR_REVIEW"
+      item.contracted_work_payment[`${paymentType}_payment_status_code`] ===
+        CONTRACTED_WORK_PAYMENT_STATUS.READY_FOR_REVIEW
     ) {
       readyForReviewTotal += amounts.maxAmount;
     } else if (
       item.contracted_work_payment &&
-      item.contracted_work_payment[`${paymentType}_payment_status_code`] === "APPROVED"
+      item.contracted_work_payment[`${paymentType}_payment_status_code`] ===
+        CONTRACTED_WORK_PAYMENT_STATUS.APPROVED
     ) {
       approvedTotal += item.contracted_work_payment[`${paymentType}_paid_amount`] ?? 0;
     }
-    return;
+    
   });
 
   return {
@@ -286,7 +230,8 @@ export class ContractedWorkPaymentView extends Component {
     const contractedWorkPayment = record.contracted_work_payment;
     if (
       !contractedWorkPayment ||
-      contractedWorkPayment.interim_payment_status_code === "INFORMATION_REQUIRED"
+      contractedWorkPayment.interim_payment_status_code ===
+        CONTRACTED_WORK_PAYMENT_STATUS.INFORMATION_REQUIRED
     ) {
       activeKey = "interim_payment";
     } else if (isEmpty(contractedWorkPayment.interim_report)) {
@@ -512,30 +457,43 @@ export class ContractedWorkPaymentView extends Component {
     const interimApprovedCount = dataSource.filter(
       ({ contracted_work_payment }) =>
         contracted_work_payment &&
-        contracted_work_payment.interim_payment_status_code === "APPROVED"
+        contracted_work_payment.interim_payment_status_code ===
+          CONTRACTED_WORK_PAYMENT_STATUS.APPROVED
     ).length;
 
     const finalApprovedCount = dataSource.filter(
       ({ contracted_work_payment }) =>
-        contracted_work_payment && contracted_work_payment.final_payment_status_code === "APPROVED"
+        contracted_work_payment &&
+        contracted_work_payment.final_payment_status_code ===
+          CONTRACTED_WORK_PAYMENT_STATUS.APPROVED
     ).length;
 
     // Determine how many contracted work items still require information to be submitted.
     const interimInfoRequiredCount = dataSource.filter(
       ({ contracted_work_payment }) =>
         !contracted_work_payment ||
-        contracted_work_payment.interim_payment_status_code === "INFORMATION_REQUIRED" // ||
+        contracted_work_payment.interim_payment_status_code ===
+          CONTRACTED_WORK_PAYMENT_STATUS.INFORMATION_REQUIRED // ||
       //! contracted_work_payment.interim_report
     ).length;
     const finalInfoRequiredCount = dataSource.filter(
       ({ contracted_work_payment }) =>
         !contracted_work_payment ||
-        contracted_work_payment.final_payment_status_code === "INFORMATION_REQUIRED"
+        contracted_work_payment.final_payment_status_code ===
+          CONTRACTED_WORK_PAYMENT_STATUS.INFORMATION_REQUIRED
     ).length;
 
     // Payments summary calculation
-    let interimSummary = calculatePaymentSummary(dataSource, PAYMENT_TYPES.INTERIM, interimPercent);
-    let finalSummary = calculatePaymentSummary(dataSource, PAYMENT_TYPES.FINAL, finalPercent);
+    const interimSummary = calculatePaymentSummary(
+      dataSource,
+      PAYMENT_TYPES.INTERIM,
+      Payment.interimPercent
+    );
+    const finalSummary = calculatePaymentSummary(
+      dataSource,
+      PAYMENT_TYPES.FINAL,
+      Payment.finalPercent
+    );
 
     return (
       <Row>
@@ -545,7 +503,7 @@ export class ContractedWorkPaymentView extends Component {
               <Title level={1}>Interim and Final Payments</Title>
               <Row align="middle">
                 <br />
-                <Col xl={{ span: 12 }} className={"border-right-primary"} align="middle">
+                <Col xl={{ span: 12 }} className="border-right-primary" align="middle">
                   <Title level={3}>Interim Summary</Title>
                   {paymentsProgressReports(
                     interimInfoRequiredCount,
