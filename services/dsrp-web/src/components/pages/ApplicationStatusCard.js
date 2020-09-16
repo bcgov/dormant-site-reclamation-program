@@ -61,19 +61,31 @@ export const ApplicationStatusCard = (props) => (
   <Row type="flex" align="top">
     <Title level={1}>Application Progress</Title>
     <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-      <Title level={4}>Company</Title>
-      <Paragraph>
-        <Text strong>{props.application.company_name}</Text>
-      </Paragraph>
-      <Title level={4}>Received On</Title>
-      <Paragraph>
-        <Text strong>{formatDateTime(props.application.submission_date)}</Text>
-      </Paragraph>
-      <Title level={4}>Application Status</Title>
-      <Paragraph>
-        <Text strong>{props.applicationStatusHash[props.application.application_status_code]}</Text>
-      </Paragraph>
-      <Paragraph>{description(props.application.application_status_code)}</Paragraph>
+      <Row>
+        <Col xl={{ span: 8 }}>
+          <Title level={4}>Company</Title>
+          <Paragraph>
+            <Text strong>{props.application.company_name}</Text>
+          </Paragraph>
+        </Col>
+        <Col xl={{ span: 8 }}>
+          <Title level={4}>Received On</Title>
+          <Paragraph>
+            <Text strong>{formatDateTime(props.application.submission_date)}</Text>
+          </Paragraph>
+        </Col>
+        <Col xl={{ span: 8 }}>
+          <Title level={4}>Application Status</Title>
+          <Paragraph>
+            <Text strong>
+              {props.applicationStatusHash[props.application.application_status_code]}
+            </Text>
+          </Paragraph>
+        </Col>
+      </Row>
+      <Row>
+        <Paragraph>{description(props.application.application_status_code)}</Paragraph>
+      </Row>
     </Col>
   </Row>
 );

@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import { connect } from "react-redux";
 import { startCase, camelCase, round, isEmpty } from "lodash";
-import { Row, Col, Typography, Table, Icon, Button, Popover, Progress, Tooltip } from "antd";
+import { Row, Col, Typography, Table, Icon, Button, Popover, Tooltip } from "antd";
 import {
   formatDate,
   formatMoney,
@@ -23,6 +23,7 @@ import { getContractedWorkPaymentStatusOptionsHash } from "@/selectors/staticCon
 import * as Strings from "@/constants/strings";
 import { modalConfig } from "@/components/modalContent/config";
 import { openModal, closeModal } from "@/actions/modalActions";
+import { PAYMENT_TYPES } from "@/constants/payments";
 
 import CustomPropTypes from "@/customPropTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
@@ -66,6 +67,156 @@ const fieldWithTooltip = (text, title, tooltipTitle, icon, isDisplayTooltip = fa
     )}
   </div>
 );
+
+const toolTip = (title, iconType) => {
+  return (
+    <Tooltip title={title} placement="right" mouseEnterDelay={0.3}>
+      <Icon type={iconType} style={{ marginLeft: 4 }} />
+    </Tooltip>
+  );
+};
+
+const paymentProgressReportCard = (tooltipTitle, iconType, amount, count, description) => {
+  return (
+    <Col xl={{ span: 8 }} className="payment-summary-card">
+      <Tooltip title={tooltipTitle} placement="top" mouseEnterDelay={0.3}>
+        <Row>
+          <Title level={4}>{formatMoney(amount)} </Title>
+          <Paragraph>({count} items)</Paragraph>
+          <Paragraph>
+            <Icon type={iconType} style={{ marginRight: 4 }} />
+            {description}
+          </Paragraph>
+        </Row>
+      </Tooltip>
+    </Col>
+  );
+};
+
+const paymentsProgressReports = (
+  infoRequiredCount,
+  inReviewCount,
+  approvedCount,
+  infoRequiredAmount = 0,
+  inReviewAmount = 0,
+  approvedAmount = 0
+) => {
+  return (
+    <Row>
+      {paymentProgressReportCard(
+        "Estimated financial contribution  for all work items for which you have not submitted a payment request.",
+        "info-circle",
+        infoRequiredAmount,
+        infoRequiredCount,
+        "Information Required"
+      )}
+      {paymentProgressReportCard(
+        "Maximum  financial contribution for all work items with the status Ready for Review.",
+        "clock-circle",
+        inReviewAmount,
+        inReviewCount,
+        "In Review"
+      )}
+      {paymentProgressReportCard(
+        "Total of approved financial contributions for work items in this application.",
+        "check-circle",
+        approvedAmount,
+        approvedCount,
+        "Approved"
+      )}
+    </Row>
+  );
+};
+
+const calculateEstimatedFinancialContribution = (paymentType, contractedWork) => {
+  const contractedWorkPayment = contractedWork.contracted_work_payment;
+
+  const interimEstSharedCost = parseFloat(
+    getTypeEstSharedCost(interimPercent, contractedWork.estimated_shared_cost)
+  );
+
+  let result = { maxAmount: 0, estimatedFinancialContribution: 0 };
+  if (paymentType === PAYMENT_TYPES.INTERIM) {
+    const interimEocTotalAmount =
+      contractedWorkPayment && contractedWorkPayment.interim_actual_cost
+        ? parseFloat(contractedWorkPayment.interim_actual_cost)
+        : 0;
+
+    const interimMaximumReceivablePayment = interimEstSharedCost;
+    const interimEstimatedFinancialContribution = Math.min(
+      interimEstSharedCost,
+      interimEocTotalAmount / 2
+    );
+
+    result = {
+      maxAmount: interimMaximumReceivablePayment,
+      estimatedFinancialContribution: interimEstimatedFinancialContribution,
+    };
+  } else if (paymentType === PAYMENT_TYPES.FINAL) {
+    const finalEstSharedCost = parseFloat(
+      getTypeEstSharedCost(finalPercent, contractedWork.estimated_shared_cost)
+    );
+
+    const finalActualCost =
+      contractedWorkPayment && contractedWorkPayment.final_actual_cost
+        ? parseFloat(contractedWorkPayment.final_actual_cost)
+        : 0;
+
+    const interimEstimatedPayment =
+      contractedWorkPayment && contractedWorkPayment.interim_payment_status_code === "APPROVED"
+        ? contractedWorkPayment.interim_paid_amount ?? 0
+        : interimEstSharedCost;
+
+    const finalHalfEocTotal = finalActualCost ? finalActualCost / 2 : 0;
+    const finalMaximumReceivablePayment =
+      finalEstSharedCost + (interimEstSharedCost - interimEstimatedPayment);
+    const finalEstimatedFinancialContribution = Math.min(
+      finalMaximumReceivablePayment,
+      finalHalfEocTotal
+    );
+
+    result = {
+      maxAmount: finalMaximumReceivablePayment,
+      estimatedFinancialContribution: finalEstimatedFinancialContribution,
+    };
+  }
+
+  return result;
+};
+
+const interimPercent = 60;
+const finalPercent = 30;
+const getTypeEstSharedCost = (percent, estSharedCost) => estSharedCost * (percent / 100);
+
+const calculatePaymentSummary = (workItems, paymentType, percent) => {
+  let informationRequiredTotal = 0;
+  let readyForReviewTotal = 0;
+  let approvedTotal = 0;
+  workItems.forEach((item) => {
+    debugger;
+    let amounts = calculateEstimatedFinancialContribution(paymentType, item);
+    if (item.contracted_work_payment === null) {
+      informationRequiredTotal += getTypeEstSharedCost(percent, item.estimated_shared_cost ?? 0);
+    } else if (
+      item.contracted_work_payment &&
+      item.contracted_work_payment[`${paymentType}_payment_status_code`] === "READY_FOR_REVIEW"
+    ) {
+      readyForReviewTotal += amounts.maxAmount;
+    } else if (
+      item.contracted_work_payment &&
+      item.contracted_work_payment[`${paymentType}_payment_status_code`] === "APPROVED"
+    ) {
+      approvedTotal += item.contracted_work_payment[`${paymentType}_paid_amount`] ?? 0;
+    }
+    return;
+  });
+
+  return {
+    informationRequiredTotal,
+    readyForReviewTotal,
+    approvedTotal,
+  };
+};
 
 export class ContractedWorkPaymentView extends Component {
   state = { isLoaded: false };
@@ -370,6 +521,7 @@ export class ContractedWorkPaymentView extends Component {
         contracted_work_payment &&
         contracted_work_payment.interim_payment_status_code === "APPROVED"
     ).length;
+
     const finalApprovedCount = dataSource.filter(
       ({ contracted_work_payment }) =>
         contracted_work_payment && contracted_work_payment.final_payment_status_code === "APPROVED"
@@ -388,99 +540,43 @@ export class ContractedWorkPaymentView extends Component {
         contracted_work_payment.final_payment_status_code === "INFORMATION_REQUIRED"
     ).length;
 
-    const interimApprovedPercent = (interimApprovedCount / countOfApprovedWork) * 100;
-    const finalApprovedPercent = (finalApprovedCount / countOfApprovedWork) * 100;
-    const interimTotalPercent =
-      ((countOfApprovedWork - interimInfoRequiredCount) / countOfApprovedWork) * 100;
-    const finalTotalPercent =
-      ((countOfApprovedWork - finalInfoRequiredCount) / countOfApprovedWork) * 100;
+    // Payments summary calculation
+    let interimSummary = calculatePaymentSummary(dataSource, PAYMENT_TYPES.INTERIM, interimPercent);
+    let finalSummary = calculatePaymentSummary(dataSource, PAYMENT_TYPES.FINAL, finalPercent);
 
     return (
       <Row>
         <Col>
-          <Row gutter={64} type="flex" justify="center" align="middle">
-            <Col md={24} lg={12}>
-              <Title level={4}>Interim Payment Submission Progress</Title>
-              <Row gutter={16} type="flex" justify="space-around" align="middle">
-                <Col style={{ textAlign: "center" }}>
-                  <Text strong>
-                    <Icon type="check-circle" style={{ marginRight: 5 }} />
-                    Approved
-                  </Text>
-                  <br />
-                  {interimApprovedCount}
-                </Col>
-                <Col style={{ textAlign: "center" }}>
-                  <Text strong>
-                    <Icon type="clock-circle" style={{ marginRight: 5 }} />
-                    Ready for Review
-                  </Text>
-                  <br />
-                  {countOfApprovedWork - (interimInfoRequiredCount + interimApprovedCount)}
-                </Col>
-                <Col style={{ textAlign: "center" }}>
-                  <Text strong>
-                    <Icon type="info-circle" style={{ marginRight: 5 }} />
-                    Information Required
-                  </Text>
-                  <br />
-                  {interimInfoRequiredCount}
-                </Col>
-              </Row>
-              <Progress
-                percent={interimTotalPercent}
-                successPercent={interimApprovedPercent}
-                format={(percent) => `${round(percent, 1)}%`}
-              />
-              <Text type="secondary">
-                Interim payment information is required for {interimInfoRequiredCount} contracted
-                work items.
-              </Text>
-            </Col>
-            <Col md={24} lg={12}>
-              <Title level={4}>Final Payment Submission Progress</Title>
-              <Row gutter={16} type="flex" justify="space-around" align="middle">
-                <Col style={{ textAlign: "center" }}>
-                  <Text strong>
-                    <Icon type="check-circle" style={{ marginRight: 5 }} />
-                    Approved
-                  </Text>
-                  <br />
-                  {finalApprovedCount}
-                </Col>
-                <Col style={{ textAlign: "center" }}>
-                  <Text strong>
-                    <Icon type="clock-circle" style={{ marginRight: 5 }} />
-                    Ready for Review
-                  </Text>
-                  <br />
-                  {countOfApprovedWork - (finalInfoRequiredCount + finalApprovedCount)}
-                </Col>
-                <Col style={{ textAlign: "center" }}>
-                  <Text strong>
-                    <Icon type="info-circle" style={{ marginRight: 5 }} />
-                    Information Required
-                  </Text>
-                  <br />
-                  {finalInfoRequiredCount}
-                </Col>
-              </Row>
-              <Progress
-                percent={finalTotalPercent}
-                successPercent={finalApprovedPercent}
-                format={(percent) => `${round(percent, 1)}%`}
-              />
-              <Text type="secondary">
-                Final payment information is required for {finalInfoRequiredCount} contracted work
-                items.
-              </Text>
-            </Col>
-          </Row>
-          <br />
-          <br />
           <Row>
             <Col>
               <Title level={1}>Interim and Final Payments</Title>
+              <Row align="middle">
+                <br />
+                <Col xl={{ span: 12 }} className={"border-right-primary"} align="middle">
+                  <Title level={3}>Interim Summary</Title>
+                  {paymentsProgressReports(
+                    interimInfoRequiredCount,
+                    countOfApprovedWork - (interimInfoRequiredCount + interimApprovedCount),
+                    interimApprovedCount,
+                    interimSummary.informationRequiredTotal,
+                    interimSummary.readyForReviewTotal,
+                    interimSummary.approvedTotal
+                  )}
+                </Col>
+                <Col xl={{ span: 12 }} align="middle">
+                  <Title level={3}>Final Summary</Title>
+                  {paymentsProgressReports(
+                    finalInfoRequiredCount,
+                    countOfApprovedWork - (finalInfoRequiredCount + finalApprovedCount),
+                    finalApprovedCount,
+                    finalSummary.informationRequiredTotal,
+                    finalSummary.readyForReviewTotal,
+                    finalSummary.approvedTotal
+                  )}
+                </Col>
+              </Row>
+              <br />
+              <br />
               <Paragraph>
                 This table shows all the work items from your application that qualified for the
                 program. It also shows you the status of your Interim and Final payment requests for
