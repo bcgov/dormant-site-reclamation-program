@@ -538,7 +538,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
               <Descriptions.Item label="Total Estimated Cost">
                 {formatMoney(contractedWork.contracted_work_total)}
               </Descriptions.Item>
-              <Descriptions.Item label="Audited">
+              <Descriptions.Item label="Selected for Audit">
                 {(contractedWorkPayment.audit_ind && "Yes") || "No"}
               </Descriptions.Item>
             </Descriptions>
@@ -801,7 +801,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                 <Field
                   id="audit_ind"
                   name="audit_ind"
-                  label="This work item has been audited"
+                  label="This work item has been selected for audit"
                   component={renderConfig.CHECKBOX}
                 />
               </TabPane>
