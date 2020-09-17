@@ -111,7 +111,7 @@ const paymentsProgressReports = (
         "Information Required"
       )}
       {paymentProgressReportCard(
-        "Maximum financial contribution for all work items with the status Ready for Review.",
+        "Maximum financial contribution for all work items for which you have submitted a payment request.",
         "clock-circle",
         inReviewAmount,
         inReviewCount,
