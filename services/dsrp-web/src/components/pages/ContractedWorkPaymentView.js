@@ -134,7 +134,11 @@ const calculatePaymentSummary = (workItems, paymentType, percent) => {
   let approvedTotal = 0;
   workItems.forEach((item) => {
     const amounts = Payment.calculateEstimatedFinancialContribution(paymentType, item);
-    if (item.contracted_work_payment === null) {
+    if (
+      item.contracted_work_payment === null ||
+      item.contracted_work_payment[`${paymentType}_payment_status_code`] ===
+        CONTRACTED_WORK_PAYMENT_STATUS.INFORMATION_REQUIRED
+    ) {
       informationRequiredTotal += Payment.getTypeEstSharedCost(
         percent,
         parseFloat(item.estimated_shared_cost ?? 0)
