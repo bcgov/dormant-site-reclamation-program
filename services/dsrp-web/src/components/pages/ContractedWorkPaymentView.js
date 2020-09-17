@@ -104,14 +104,14 @@ const paymentsProgressReports = (
   return (
     <Row>
       {paymentProgressReportCard(
-        "Estimated financial contribution  for all work items for which you have not submitted a payment request.",
+        "Estimated financial contribution for all work items for which you have not submitted a payment request.",
         "info-circle",
         infoRequiredAmount,
         infoRequiredCount,
         "Information Required"
       )}
       {paymentProgressReportCard(
-        "Maximum  financial contribution for all work items with the status Ready for Review.",
+        "Maximum financial contribution for all work items with the status Ready for Review.",
         "clock-circle",
         inReviewAmount,
         inReviewCount,
@@ -152,7 +152,6 @@ const calculatePaymentSummary = (workItems, paymentType, percent) => {
     ) {
       approvedTotal += item.contracted_work_payment[`${paymentType}_paid_amount`] ?? 0;
     }
-    
   });
 
   return {
