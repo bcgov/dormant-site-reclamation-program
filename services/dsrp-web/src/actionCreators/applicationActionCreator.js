@@ -296,3 +296,27 @@ export const createContractedWorkPaymentStatus = (applicationGuid, workId, paylo
       throw new Error(err);
     });
 };
+
+export const updateContractedWorkPaymentAuditStatus = (applicationGuid, workId, payload) => (
+  dispatch
+) => {
+  dispatch(request(reducerTypes.UPDATE_CONTRACTED_WORK_PAYMENT_AUDIT_STATUS));
+  return CustomAxios()
+    .put(
+      ENVIRONMENT.apiUrl + API.UPDATE_CONTRACTED_WORK_PAYMENT_AUDIT_STATUS(applicationGuid, workId),
+      payload,
+      createRequestHeader()
+    )
+    .then((response) => {
+      notification.success({
+        message: "Contracted work audit status updated successfully",
+        duration: 10,
+      });
+      dispatch(success(reducerTypes.UPDATE_CONTRACTED_WORK_PAYMENT_AUDIT_STATUS));
+      return response;
+    })
+    .catch((err) => {
+      dispatch(error(reducerTypes.UPDATE_CONTRACTED_WORK_PAYMENT_AUDIT_STATUS));
+      throw new Error(err);
+    });
+};
