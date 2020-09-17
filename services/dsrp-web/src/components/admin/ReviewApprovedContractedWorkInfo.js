@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Button, Icon, Row, Col, Dropdown, Menu } from "antd";
 import { withRouter } from "react-router-dom";
-import { isEmpty, startCase, camelCase } from "lodash";
+import { isEmpty } from "lodash";
 import { bindActionCreators, compose } from "redux";
 import queryString from "query-string";
 import { openModal, closeModal } from "@/actions/modalActions";
@@ -17,6 +17,7 @@ import {
   fetchApplicationApprovedContractedWork,
   createContractedWorkPaymentStatus,
   createApplicationPaymentDocument,
+  updateContractedWorkPaymentAuditStatus,
 } from "@/actionCreators/applicationActionCreator";
 import {
   getDropdownContractedWorkPaymentStatusOptions,
@@ -108,18 +109,31 @@ export class ReviewApprovedContractedWorkInfo extends Component {
     this.setState({ selectedRows });
   };
 
-  handleContractedWorkPaymentStatusChange = (payload) =>
-    this.props
-      .createContractedWorkPaymentStatus(payload.application_guid, payload.work_id, payload)
-      .then(() => {
-        this.props.closeModal();
-        this.setState({
-          isLoaded: false,
-        });
-        this.props
-          .fetchApplicationApprovedContractedWork(this.state.params)
-          .then(() => this.setState({ isLoaded: true }));
+  handleReviewContractedWorkPaymentModalSubmit = (currentActiveTab, payload) => {
+    let submitAction;
+    if (currentActiveTab === "ADMIN") {
+      submitAction = this.props.updateContractedWorkPaymentAuditStatus(
+        payload.application_guid,
+        payload.work_id,
+        payload
+      );
+    } else {
+      submitAction = this.props.createContractedWorkPaymentStatus(
+        payload.application_guid,
+        payload.work_id,
+        payload
+      );
+    }
+    return submitAction.then(() => {
+      this.props.closeModal();
+      this.setState({
+        isLoaded: false,
       });
+      this.props
+        .fetchApplicationApprovedContractedWork(this.state.params)
+        .then(() => this.setState({ isLoaded: true }));
+    });
+  };
 
   handleCreatePaymentRequestForm = (paymentDocumentCode) => (values) => {
     const contractedWork = values;
@@ -236,7 +250,7 @@ export class ReviewApprovedContractedWorkInfo extends Component {
             <Dropdown
               overlay={menu}
               style={{ display: "inline" }}
-              disabled={!canCreateInterimPrf && !canCreateFinalPrf}
+              disabled={(!canCreateInterimPrf && !canCreateFinalPrf) || !this.state.isLoaded}
             >
               <Button type="link">
                 <Icon type="file" className="icon-lg" />
@@ -271,7 +285,9 @@ export class ReviewApprovedContractedWorkInfo extends Component {
               contractedWorkPaymentStatusOptionsHash={
                 this.props.contractedWorkPaymentStatusOptionsHash
               }
-              handleContractedWorkPaymentStatusChange={this.handleContractedWorkPaymentStatusChange}
+              handleReviewContractedWorkPaymentModalSubmit={
+                this.handleReviewContractedWorkPaymentModalSubmit
+              }
             />
           </Col>
         </Row>
@@ -293,6 +309,7 @@ const mapDispatchToProps = (dispatch) =>
       fetchApplicationApprovedContractedWork,
       createContractedWorkPaymentStatus,
       createApplicationPaymentDocument,
+      updateContractedWorkPaymentAuditStatus,
       openModal,
       closeModal,
     },

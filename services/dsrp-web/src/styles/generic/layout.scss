@@ -50,6 +50,10 @@ th.table-header-right-align {
   text-align: right !important;
 }
 
+.table-no-second-header-top-border thead tr:nth-child(2) th {
+  border-top: none !important;
+}
+
 .table-header-center-align,
 .table-column-center-align {
   text-align: center !important;
@@ -107,10 +111,6 @@ td {
     border-bottom: none;
   }
 }
-
-// .approved-work-has-prf-checkbox .ant-checkbox-inner {
-//   border-color: $warning-color;
-// }
 
 .hidden {
   display: none;

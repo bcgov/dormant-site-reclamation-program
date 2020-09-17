@@ -83,6 +83,11 @@ class ContractedWorkPayment(Base, AuditMixin):
         lazy='selectin',
         secondary='payment_document_contracted_work_payment_xref')
 
+    # Auditing
+    audit_ind = db.Column(db.Boolean)
+    audit_user = db.Column(db.String)
+    audit_timestamp = db.Column(db.DateTime)
+
     # General Reporting
     surface_landowner = db.Column(db.String)
     reclamation_was_achieved = db.Column(db.Boolean)

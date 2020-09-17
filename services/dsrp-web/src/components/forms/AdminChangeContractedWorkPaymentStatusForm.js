@@ -101,6 +101,14 @@ const validateStatus = (paymentType, contractedWorkPayment) => (value) => {
     return "Cannot update the status to Approved unless the interim payment has been approved before.";
   }
 
+  if (
+    paymentType === "FINAL" &&
+    value === "APPROVED" &&
+    (!contractedWorkPayment || !contractedWorkPayment.interim_report)
+  ) {
+    return "Cannot update the status to Approved unless the Interim Report has been submitted.";
+  }
+
   return undefined;
 };
 
@@ -499,16 +507,15 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       }
     };
 
+    const handleSubmit = this.props.handleSubmit((values) =>
+      this.props.onSubmit(this.state.currentActiveTab, {
+        contracted_work_payment_code: this.state.currentActiveTab,
+        ...values,
+      })
+    );
+
     return (
-      <Form
-        layout="vertical"
-        onSubmit={this.props.handleSubmit((values) =>
-          this.props.onSubmit({
-            contracted_work_payment_code: this.state.currentActiveTab,
-            ...values,
-          })
-        )}
-      >
+      <Form layout="vertical" onSubmit={handleSubmit}>
         <Row gutter={48}>
           <Col span={24}>
             <Descriptions title="Contracted Work Information" column={1}>
@@ -530,6 +537,9 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
               </Descriptions.Item>
               <Descriptions.Item label="Total Estimated Cost">
                 {formatMoney(contractedWork.contracted_work_total)}
+              </Descriptions.Item>
+              <Descriptions.Item label="Audited">
+                {(contractedWorkPayment.audit_ind && "Yes") || "No"}
               </Descriptions.Item>
             </Descriptions>
           </Col>
@@ -786,6 +796,15 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                   )}
                 </Descriptions>
               </TabPane>
+              <TabPane tab="Administrative" key="ADMIN" disabled={this.props.submitting}>
+                <Title level={4}>Submission Review - Administrative Information</Title>
+                <Field
+                  id="audit_ind"
+                  name="audit_ind"
+                  label="This work item has been audited"
+                  component={renderConfig.CHECKBOX}
+                />
+              </TabPane>
             </Tabs>
           </Col>
         </Row>
@@ -815,15 +834,24 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                 htmlType="submit"
                 style={{ marginLeft: 5 }}
                 loading={this.props.submitting}
-              >
-                Update {capitalize(this.state.currentActiveTab)} Status to&nbsp;
-                {
-                  this.props.contractedWorkPaymentStatusOptionsHash[
-                    this.state.currentActiveTab === "INTERIM"
-                      ? this.state.selectedInterimStatus
-                      : this.state.selectedFinalStatus
-                  ]
+                disabled={
+                  this.state.currentActiveTab === "ADMIN" &&
+                  this.props.formValues.audit_ind === contractedWorkPayment.audit_ind
                 }
+              >
+                {(this.state.currentActiveTab !== "ADMIN" && (
+                  <>
+                    Update {capitalize(this.state.currentActiveTab)} Status to&nbsp;
+                    {
+                      this.props.contractedWorkPaymentStatusOptionsHash[
+                        this.state.currentActiveTab === "INTERIM"
+                          ? this.state.selectedInterimStatus
+                          : this.state.selectedFinalStatus
+                      ]
+                    }
+                  </>
+                )) ||
+                  "Update Administrative Information"}
               </Button>
             </>
           )}
