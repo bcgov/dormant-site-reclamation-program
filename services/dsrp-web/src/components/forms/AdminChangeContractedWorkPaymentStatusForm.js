@@ -538,9 +538,6 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
               <Descriptions.Item label="Total Estimated Cost">
                 {formatMoney(contractedWork.contracted_work_total)}
               </Descriptions.Item>
-              <Descriptions.Item label="Selected for Audit">
-                {(contractedWorkPayment.audit_ind && "Yes") || "No"}
-              </Descriptions.Item>
             </Descriptions>
           </Col>
           <Col span={24}>
