@@ -31,8 +31,8 @@ export const calculateInterimFinancialContribution = (contractedWork, actualCost
   );
 
   return {
-    maxAmount: interimMaximumReceivablePayment,
-    estimatedFinancialContribution: interimEstimatedFinancialContribution ?? 0,
+    maxAmount: parseFloat(interimMaximumReceivablePayment),
+    estimatedFinancialContribution: parseFloat(interimEstimatedFinancialContribution) ?? 0,
   };
 };
 
@@ -62,8 +62,8 @@ export const calculateFinalFinancialContribution = (contractedWork, actualCost =
   );
 
   return {
-    maxAmount: finalMaximumReceivablePayment ?? 0,
-    estimatedFinancialContribution: finalEstimatedFinancialContribution ?? 0,
+    maxAmount: parseFloat(finalMaximumReceivablePayment) ?? 0,
+    estimatedFinancialContribution: parseFloat(finalEstimatedFinancialContribution) ?? 0,
   };
 };
 

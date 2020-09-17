@@ -104,18 +104,18 @@ const paymentsProgressReports = (
   return (
     <Row>
       {paymentProgressReportCard(
-        "Estimated financial contribution  for all work items for which you have not submitted a payment request.",
+        "Estimated financial contribution for all work items for which you have not submitted a payment request.",
         "info-circle",
         infoRequiredAmount,
         infoRequiredCount,
         "Information Required"
       )}
       {paymentProgressReportCard(
-        "Maximum  financial contribution for all work items with the status Ready for Review.",
+        "Maximum financial contribution for all work items with the status Ready for Review.",
         "clock-circle",
         inReviewAmount,
         inReviewCount,
-        "In Review"
+        "Ready for Review"
       )}
       {paymentProgressReportCard(
         "Total of approved financial contributions for work items in this application.",
@@ -137,22 +137,21 @@ const calculatePaymentSummary = (workItems, paymentType, percent) => {
     if (item.contracted_work_payment === null) {
       informationRequiredTotal += Payment.getTypeEstSharedCost(
         percent,
-        item.estimated_shared_cost ?? 0
+        parseFloat(item.estimated_shared_cost ?? 0)
       );
     } else if (
       item.contracted_work_payment &&
       item.contracted_work_payment[`${paymentType}_payment_status_code`] ===
         CONTRACTED_WORK_PAYMENT_STATUS.READY_FOR_REVIEW
     ) {
-      readyForReviewTotal += amounts.maxAmount;
+      readyForReviewTotal += parseFloat(amounts.maxAmount ?? 0);
     } else if (
       item.contracted_work_payment &&
       item.contracted_work_payment[`${paymentType}_payment_status_code`] ===
         CONTRACTED_WORK_PAYMENT_STATUS.APPROVED
     ) {
-      approvedTotal += item.contracted_work_payment[`${paymentType}_paid_amount`] ?? 0;
+      approvedTotal += parseFloat(item.contracted_work_payment[`${paymentType}_paid_amount`] ?? 0);
     }
-    
   });
 
   return {
