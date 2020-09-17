@@ -42,17 +42,16 @@ const defaultProps = {
 };
 
 const docSubmittedDropdownOptions = [
-  { value: "No", label: "No" },
+  { value: "NONE", label: "No" },
   {
-    value: "Yes - Certificate of Registration Pt 1",
+    value: "COR_P1",
     label: "Yes - Certificate of Registration Pt 1",
   },
   {
-    value: "Yes - Dormancy Site Assessment Form",
+    value: "DSAF",
     label: "Yes - Dormancy Site Assessment Form",
   },
 ];
-
 const booleanDropdownOptions = [
   { value: "true", label: "Yes" },
   { value: "false", label: "No" },
