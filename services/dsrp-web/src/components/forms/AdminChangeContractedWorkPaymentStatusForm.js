@@ -29,6 +29,8 @@ import * as Strings from "@/constants/strings";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import LinkButton from "@/components/common/LinkButton";
 import { toolTip } from "@/components/admin/ApplicationTable";
+import { CONTRACTED_WORK_PAYMENT_STATUS } from "@/constants/payments";
+import * as Payment from "@/utils/paymentHelper";
 
 const { Text, Title } = Typography;
 
@@ -115,10 +117,10 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
     currentActiveTab: "INTERIM",
     selectedInterimStatus: this.props.contractedWork.contracted_work_payment
       ? this.props.contractedWork.contracted_work_payment.interim_payment_status_code
-      : "INFORMATION_REQUIRED",
+      : CONTRACTED_WORK_PAYMENT_STATUS.INFORMATION_REQUIRED,
     selectedFinalStatus: this.props.contractedWork.contracted_work_payment
       ? this.props.contractedWork.contracted_work_payment.final_payment_status_code
-      : "INFORMATION_REQUIRED",
+      : CONTRACTED_WORK_PAYMENT_STATUS.INFORMATION_REQUIRED,
   };
 
   shouldComponentUpdate = (nextProps, nextState) =>
@@ -147,10 +149,6 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       workType === "preliminary_site_investigation" || workType === "detailed_site_investigation"
         ? "Site Investigation"
         : capitalize(workType);
-
-    const firstPercent = 10;
-    const interimPercent = 60;
-    const finalPercent = 30;
 
     const renderStatusSelectField = (paymentType) => (
       <Field
@@ -187,7 +185,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
           <>
             Estimated Contribution
             {toolTip(
-              `The estimated contribution based on applicant's original estimates. Breakdown is ${firstPercent}%, ${interimPercent}%, and ${finalPercent}%.`
+              `The estimated contribution based on applicant's original estimates. Breakdown is ${Payment.firstPercent}%, ${Payment.interimPercent}%, and ${Payment.finalPercent}%.`
             )}
           </>
         ),
@@ -287,14 +285,11 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
     const getTypeMaxEligibleAmount = (eocTotalAmount) => eocTotalAmount * 0.5;
 
     // Initial payment calculations
-    const firstEstSharedCost = parseFloat(
-      getTypeEstSharedCost(firstPercent, contractedWork.estimated_shared_cost)
-    );
+    const firstEstSharedCost = Payment.getFirstSharedCost(contractedWork.estimated_shared_cost);
 
     // Interim payment calculations
-    const interimEstSharedCost = parseFloat(
-      getTypeEstSharedCost(interimPercent, contractedWork.estimated_shared_cost)
-    );
+    const interimEstSharedCost = Payment.getInterimSharedCost(contractedWork.estimated_shared_cost);
+
     const currentInterimApprovedAmount = contractedWorkPayment.interim_paid_amount
       ? parseFloat(contractedWorkPayment.interim_paid_amount)
       : null;
@@ -316,9 +311,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
     const interimMaxApprovedAmount = Math.min(interimEstSharedCost, interimHalfEocTotal);
 
     // Final payment calculations
-    const finalEstSharedCost = parseFloat(
-      getTypeEstSharedCost(finalPercent, contractedWork.estimated_shared_cost)
-    );
+    const finalEstSharedCost = Payment.getFinalSharedCost(contractedWork.estimated_shared_cost);
+
     const currentFinalApprovedAmount = contractedWorkPayment.final_paid_amount
       ? parseFloat(contractedWorkPayment.final_paid_amount)
       : null;
@@ -344,7 +338,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         is_selected_type: null,
         previous_amount: null,
         payment_type: "Initial",
-        payment_percent: `${firstPercent}%`,
+        payment_percent: `${Payment.firstPercent}%`,
         estimated_shared_cost: contractedWork.estimated_shared_cost,
         payment_estimated_shared_cost: firstEstSharedCost,
         eoc_document: null,
@@ -362,7 +356,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         previous_amount: currentInterimApprovedAmount,
         payment_type: "Interim",
         total_estimated_cost: contractedWork.contracted_work_total,
-        payment_percent: `${interimPercent}%`,
+        payment_percent: `${Payment.interimPercent}%`,
         payment_estimated_shared_cost: interimEstSharedCost,
         eoc_document: contractedWork.interim_eoc_document,
         eoc_total_amount: interimActualCost,
@@ -377,7 +371,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
           this.state.currentActiveTab === "FINAL" && this.state.selectedFinalStatus === "APPROVED",
         previous_amount: currentFinalApprovedAmount,
         payment_type: "Final",
-        payment_percent: `${finalPercent}%`,
+        payment_percent: `${Payment.finalPercent}%`,
         payment_estimated_shared_cost: finalEstSharedCost,
         eoc_document: contractedWork.final_eoc_document,
         eoc_total_amount: finalActualCost,
@@ -391,7 +385,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         is_selected_type: null,
         previous_amount: null,
         payment_type: null,
-        payment_percent: `${firstPercent + interimPercent + finalPercent}%`,
+        payment_percent: `${Payment.firstPercent + Payment.interimPercent + Payment.finalPercent}%`,
         payment_estimated_shared_cost:
           firstEstSharedCost + interimEstSharedCost + finalEstSharedCost,
         eoc_document: "",
@@ -502,11 +496,11 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
 
     const renderStatusFields = (paymentType, paymentStatus) => {
       switch (paymentStatus) {
-        case "INFORMATION_REQUIRED":
+        case CONTRACTED_WORK_PAYMENT_STATUS.INFORMATION_REQUIRED:
           return renderStatusInformationRequiredFields(paymentType);
-        case "READY_FOR_REVIEW":
+        case CONTRACTED_WORK_PAYMENT_STATUS.READY_FOR_REVIEW:
           return renderStatusReadyForReviewFields(paymentType);
-        case "APPROVED":
+        case CONTRACTED_WORK_PAYMENT_STATUS.APPROVED:
           return renderStatusApprovedFields(paymentType);
         default:
           throw new Error("Unknown contracted work payment status code received!");
@@ -543,9 +537,6 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
               </Descriptions.Item>
               <Descriptions.Item label="Total Estimated Cost">
                 {formatMoney(contractedWork.contracted_work_total)}
-              </Descriptions.Item>
-              <Descriptions.Item label="Audited">
-                {(contractedWorkPayment.audit_ind && "Yes") || "No"}
               </Descriptions.Item>
             </Descriptions>
           </Col>
@@ -588,12 +579,14 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                       ]
                     }
                   </Descriptions.Item>
-                  {contractedWorkPayment.interim_payment_status_code === "INFORMATION_REQUIRED" && (
+                  {contractedWorkPayment.interim_payment_status_code ===
+                    CONTRACTED_WORK_PAYMENT_STATUS.INFORMATION_REQUIRED && (
                     <Descriptions.Item label="Admin Note">
                       {contractedWorkPayment.interim_payment_status.note}
                     </Descriptions.Item>
                   )}
-                  {contractedWorkPayment.interim_payment_status_code === "APPROVED" && (
+                  {contractedWorkPayment.interim_payment_status_code ===
+                    CONTRACTED_WORK_PAYMENT_STATUS.APPROVED && (
                     <Descriptions.Item label="Financial Contribution">
                       {formatMoney(contractedWorkPayment.interim_paid_amount)}
                     </Descriptions.Item>
@@ -647,12 +640,14 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                       ]
                     }
                   </Descriptions.Item>
-                  {contractedWorkPayment.final_payment_status_code === "INFORMATION_REQUIRED" && (
+                  {contractedWorkPayment.final_payment_status_code ===
+                    CONTRACTED_WORK_PAYMENT_STATUS.INFORMATION_REQUIRED && (
                     <Descriptions.Item label="Admin Note">
                       {contractedWorkPayment.final_payment_status.note || Strings.DASH}
                     </Descriptions.Item>
                   )}
-                  {contractedWorkPayment.final_payment_status_code === "APPROVED" && (
+                  {contractedWorkPayment.final_payment_status_code ===
+                    CONTRACTED_WORK_PAYMENT_STATUS.APPROVED && (
                     <Descriptions.Item label="Financial Contribution">
                       {formatMoney(contractedWorkPayment.final_paid_amount)}
                     </Descriptions.Item>
@@ -803,7 +798,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                 <Field
                   id="audit_ind"
                   name="audit_ind"
-                  label="This work item has been audited"
+                  label="This work item has been selected for audit"
                   component={renderConfig.CHECKBOX}
                 />
               </TabPane>

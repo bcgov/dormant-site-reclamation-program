@@ -141,3 +141,16 @@ td {
   top: -43px;
   left: 25px;
 }
+
+.border-right-primary {
+  border-right: solid 2px $primary-color;
+}
+
+.payment-summary-card {
+  padding: 25px;
+}
+
+.payment-summary-card:hover {
+  background-color: $table-highlight;
+  border-radius: 5px;
+}
