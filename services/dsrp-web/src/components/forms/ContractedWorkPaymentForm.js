@@ -276,7 +276,7 @@ const label = (text, title) => (
         <Icon
           type="info-circle"
           className="icon-sm"
-          style={{ marginLeft: 4, verticalAlign: "middle" }}
+          style={{ marginLeft: 4, verticalAlign: "baseline" }}
         />
       </Tooltip>
     )}
