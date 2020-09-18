@@ -271,13 +271,15 @@ const renderReportingFields = (workType, isViewOnly) => {
 const label = (text, title) => (
   <>
     <span>{text}</span>
-    <Tooltip title={title} placement="right" mouseEnterDelay={0.3}>
-      <Icon
-        type="info-circle"
-        className="icon-sm"
-        style={{ marginLeft: 4, verticalAlign: "middle" }}
-      />
-    </Tooltip>
+    {title && (
+      <Tooltip title={title} placement="right" mouseEnterDelay={0.3}>
+        <Icon
+          type="info-circle"
+          className="icon-sm"
+          style={{ marginLeft: 4, verticalAlign: "middle" }}
+        />
+      </Tooltip>
+    )}
   </>
 );
 
@@ -474,9 +476,15 @@ export class ContractedWorkPaymentForm extends Component {
                 );
               }}
             />
+
             {this.renderEstimatedFinancialContribution(paymentType, contractedWorkPayment)}
+
             {paymentType === PAYMENT_TYPES.INTERIM &&
-              (!paymentInfo || !paymentInfo.interim_payment_status_code) && (
+              (!paymentInfo ||
+                !paymentInfo.interim_payment_status_code ||
+                (paymentInfo.interim_payment_status &&
+                  paymentInfo.interim_payment_status.contracted_work_payment_status_code ===
+                    "INFORMATION_REQUIRED")) && (
                 <Field
                   id="interim_report"
                   name="interim_report"
@@ -484,7 +492,9 @@ export class ContractedWorkPaymentForm extends Component {
                     <>
                       {label(
                         "Interim Progress Report (min. 25 - max. 250 characters)",
-                        "If you do not complete this section now, submit your summary report on the Interim Progress Report tab within 30 days."
+                        !paymentInfo || !paymentInfo.interim_payment_status_code
+                          ? "If you do not complete this section now, submit your summary report on the Interim Progress Report tab within 30 days."
+                          : null
                       )}
                       <div className="font-weight-normal color-default-font">
                         Briefly describe the work that was reported in the uploaded Interim Evidence
