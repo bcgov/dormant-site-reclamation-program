@@ -44,8 +44,8 @@ function AuthorizationTimer(props) {
   }, [counter]);
 
   return (
-    <span title="You will be logged out after session times out" className={props.className}>
-      <Icon type="clock-circle" style={{ marginRight: "7px" }} />
+    <span title="You will be logged out once the session expires." className={props.className}>
+      <Icon type="clock-circle" style={{ marginRight: 7 }} />
       {prettyTimer(counter)}
     </span>
   );
