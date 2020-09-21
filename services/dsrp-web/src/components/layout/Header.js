@@ -64,9 +64,9 @@ export const Header = (props) => {
                 <MediaQuery minWidth={smallestDesktopWidth}>
                   Dormant Sites Reclamation Program
                 </MediaQuery>
-                <MediaQuery maxWidth={smallestDesktopWidth - 1}>DSRP</MediaQuery>{" "}
+                <MediaQuery maxWidth={smallestDesktopWidth - 1}>DSRP</MediaQuery>
                 {notProd() && (
-                  <Tag color="red" style={{ marginLeft: 5 }}>
+                  <Tag color="red" style={{ marginLeft: 10 }}>
                     Test Site
                   </Tag>
                 )}

@@ -99,16 +99,19 @@ export class ApprovedContractedWorkPaymentTable extends Component {
       const contracted_work_payment = work.contracted_work_payment || {};
       const { interim_payment_submission_date } = contracted_work_payment;
       let interim_report_days_until_deadline = Infinity;
+      let interim_report_deadline = null;
       if (interim_payment_submission_date) {
         if (contracted_work_payment.interim_report) {
           interim_report_days_until_deadline = -Infinity;
         } else {
           const daysToSubmit = 30;
-          const daysLeftCount =
-            daysToSubmit - moment().diff(moment(interim_payment_submission_date), "days");
+          const interimSubmissionDate = moment(interim_payment_submission_date).startOf("day");
+          const daysLeftCount = daysToSubmit - moment().diff(interimSubmissionDate, "days");
           interim_report_days_until_deadline = daysLeftCount;
+          interim_report_deadline = interimSubmissionDate.add(daysToSubmit, "days");
         }
       }
+
       return {
         ...work,
         key: work.work_id,
@@ -130,6 +133,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
           ? null
           : contracted_work_payment.final_report_document,
         interim_report_days_until_deadline,
+        interim_report_deadline,
         review_deadlines: contracted_work_payment ? contracted_work_payment.review_deadlines : null,
         work,
       };

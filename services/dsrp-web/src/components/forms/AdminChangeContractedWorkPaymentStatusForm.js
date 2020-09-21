@@ -567,7 +567,9 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                     {contractedWorkPaymentExists
                       ? contractedWorkPayment.interim_report
                         ? contractedWorkPayment.interim_report
-                        : `Due in ${contractedWork.interim_report_days_until_deadline} days`
+                        : `Due on ${formatDate(contractedWork.interim_report_deadline)} (in ${
+                            contractedWork.interim_report_days_until_deadline
+                          } days)`
                       : Strings.DASH}
                   </Descriptions.Item>
                 </Descriptions>

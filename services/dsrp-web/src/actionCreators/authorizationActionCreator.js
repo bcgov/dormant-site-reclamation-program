@@ -19,7 +19,7 @@ export const createOTL = (application_guid) => (dispatch) => {
     .then((response) => {
       dispatch(success(reducerTypes.GET_OTL));
       notification.success({
-        message: "One time password has been sent to your email. Please check",
+        message: "A One-Time Link has been sent to your email",
         duration: 10,
       });
       return response;
