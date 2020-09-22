@@ -1,0 +1,1 @@
+UPDATE company_payment_info SET company_address = 'PO BOX 3201, SMITHERS, V0J2N0' WHERE company_name = 'ROYAL CAMP SERVICES LTD.';
