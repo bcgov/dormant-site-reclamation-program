@@ -151,6 +151,8 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
         contracted_work_type = application.find_contracted_work_type_by_work_id(payment.work_id)
 
         def parseBool(value):
+            if isinstance(value, bool):
+                return value
             if value not in ('true', 'false'):
                 raise BadRequest(f'{value} is not a valid boolean value')
             return value == 'true'
