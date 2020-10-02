@@ -147,12 +147,6 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
             raise BadRequest('Unknown "surface landowner" value received!')
         payment.surface_landowner = surface_landowner
 
-        # Update the general reporting data point "reclamation was achieved".
-        reclamation_was_achieved = final_payment_data['reclamation_was_achieved']
-        if reclamation_was_achieved not in ('true', 'false'):
-            raise BadRequest('Unknown "reclamation was achieved" value received!')
-        payment.reclamation_was_achieved = bool(reclamation_was_achieved)
-
         # Update the work-type specific reporting data points.
         contracted_work_type = application.find_contracted_work_type_by_work_id(payment.work_id)
 
@@ -160,6 +154,9 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
             if value not in ('true', 'false'):
                 raise BadRequest(f'{value} is not a valid boolean value')
             return value == 'true'
+
+        # Update the general reporting data point "reclamation was achieved".
+        payment.reclamation_was_achieved = parseBool(final_payment_data['reclamation_was_achieved'])
 
         # Abandonment reporting
         if contracted_work_type == 'abandonment':
