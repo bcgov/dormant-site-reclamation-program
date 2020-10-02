@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
 import {
   required,
+  requiredBoolean,
   number,
   notZero,
   requiredList,
@@ -108,7 +109,7 @@ const renderReportingFields = (workType, isViewOnly) => {
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}
-              validate={[required]}
+              validate={[requiredBoolean]}
               format={booleanFormat}
               data={booleanDropdownOptions}
             />
@@ -119,7 +120,7 @@ const renderReportingFields = (workType, isViewOnly) => {
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}
-              validate={[required]}
+              validate={[requiredBoolean]}
               format={booleanFormat}
               data={booleanDropdownOptions}
             />
@@ -130,7 +131,7 @@ const renderReportingFields = (workType, isViewOnly) => {
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}
-              validate={[required]}
+              validate={[requiredBoolean]}
               format={booleanFormat}
               data={booleanDropdownOptions}
             />
@@ -165,7 +166,7 @@ const renderReportingFields = (workType, isViewOnly) => {
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}
-              validate={[required]}
+              validate={[requiredBoolean]}
               format={booleanFormat}
               data={booleanDropdownOptions}
             />
@@ -187,7 +188,7 @@ const renderReportingFields = (workType, isViewOnly) => {
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}
-              validate={[required]}
+              validate={[requiredBoolean]}
               format={booleanFormat}
               data={booleanDropdownOptions}
             />
@@ -203,7 +204,7 @@ const renderReportingFields = (workType, isViewOnly) => {
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}
-              validate={[required]}
+              validate={[requiredBoolean]}
               format={booleanFormat}
               data={booleanDropdownOptions}
             />
@@ -214,7 +215,7 @@ const renderReportingFields = (workType, isViewOnly) => {
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}
-              validate={[required]}
+              validate={[requiredBoolean]}
               format={booleanFormat}
               data={booleanDropdownOptions}
             />
@@ -242,7 +243,7 @@ const renderReportingFields = (workType, isViewOnly) => {
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}
-              validate={[required]}
+              validate={[requiredBoolean]}
               format={booleanFormat}
               data={booleanDropdownOptions}
             />
@@ -256,7 +257,7 @@ const renderReportingFields = (workType, isViewOnly) => {
           placeholder="Select an option"
           disabled={isViewOnly}
           component={renderConfig.SELECT}
-          validate={[required]}
+          validate={[requiredBoolean]}
           format={booleanFormat}
           data={[
             { value: "true", label: `${workTypeName} Complete` },
