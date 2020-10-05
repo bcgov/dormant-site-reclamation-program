@@ -158,7 +158,11 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         component={renderConfig.SELECT}
         data={this.props.dropdownContractedWorkPaymentStatusOptions}
         format={null}
-        validate={[required, validateStatus(paymentType, contractedWorkPayment)]}
+        validate={
+          paymentType === this.state.currentActiveTab
+            ? [required, validateStatus(paymentType, contractedWorkPayment)]
+            : null
+        }
       />
     );
 
@@ -413,7 +417,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
           </>
         }
         component={renderConfig.AUTO_SIZE_FIELD}
-        validate={[required, maxLength(65536)]}
+        validate={paymentType === this.state.currentActiveTab ? [required, maxLength(65536)] : null}
       />
     );
 
@@ -451,18 +455,22 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
             </>
           }
           component={renderConfig.FIELD}
-          validate={[
-            required,
-            validateFormApprovedAmount(
-              paymentType,
-              interimApprovedAmount,
-              finalApprovedAmount,
-              interimEstSharedCost,
-              finalEstSharedCost,
-              interimHalfEocTotal,
-              finalHalfEocTotal
-            ),
-          ]}
+          validate={
+            paymentType === this.state.currentActiveTab
+              ? [
+                  required,
+                  validateFormApprovedAmount(
+                    paymentType,
+                    interimApprovedAmount,
+                    finalApprovedAmount,
+                    interimEstSharedCost,
+                    finalEstSharedCost,
+                    interimHalfEocTotal,
+                    finalHalfEocTotal
+                  ),
+                ]
+              : null
+          }
           inputStyle={{ textAlign: "right" }}
           placeholder="$0.00"
           {...currencyMask}
