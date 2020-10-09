@@ -1,0 +1,1 @@
+UPDATE company_payment_info SET company_address = 'SS2 SITE 12 COMP 245, FORT ST. JOHN, V1J4M7' WHERE company_name = 'NUWAVE INDUSTRIES INC.';
