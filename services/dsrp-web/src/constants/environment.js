@@ -8,7 +8,7 @@ export const DEFAULT_ENVIRONMENT = {
   keycloak_resource: "dormant-application-local",
   keycloak_clientId: "dormant-application-local",
   keycloak_idpHint: "test",
-  keycloak_url: "https://oidc-test.gov.bc.ca/auth",
+  keycloak_url: "https://test.oidc.gov.bc.ca/auth",
   siteminder_url: "https://logontest7.gov.bc.ca",
 };
 

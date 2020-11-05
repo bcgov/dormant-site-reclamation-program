@@ -1694,20 +1694,20 @@
       "linkOnly": false,
       "firstBrokerLoginFlowAlias": "first broker login",
       "config": {
-        "userInfoUrl": "https://oidc-test.gov.bc.ca/auth/realms/idir/protocol/openid-connect/userinfo",
+        "userInfoUrl": "https://test.oidc.gov.bc.ca/auth/realms/idir/protocol/openid-connect/userinfo",
         "validateSignature": "true",
         "hideOnLoginPage": "",
-        "tokenUrl": "https://oidc-test.gov.bc.ca/auth/realms/idir/protocol/openid-connect/token",
-        "clientId": "https://oidc-test.gov.bc.ca/auth/realms/hud2v882",
+        "tokenUrl": "https://test.oidc.gov.bc.ca/auth/realms/idir/protocol/openid-connect/token",
+        "clientId": "https://test.oidc.gov.bc.ca/auth/realms/hud2v882",
         "uiLocales": "",
-        "jwksUrl": "https://oidc-test.gov.bc.ca/auth/realms/idir/protocol/openid-connect/certs",
+        "jwksUrl": "https://test.oidc.gov.bc.ca/auth/realms/idir/protocol/openid-connect/certs",
         "backchannelSupported": "true",
-        "issuer": "https://oidc-test.gov.bc.ca/auth/realms/idir",
+        "issuer": "https://test.oidc.gov.bc.ca/auth/realms/idir",
         "useJwksUrl": "true",
         "loginHint": "",
-        "authorizationUrl": "https://oidc-test.gov.bc.ca/auth/realms/idir/protocol/openid-connect/auth",
+        "authorizationUrl": "https://test.oidc.gov.bc.ca/auth/realms/idir/protocol/openid-connect/auth",
         "disableUserInfo": "",
-        "logoutUrl": "https://oidc-test.gov.bc.ca/auth/realms/idir/protocol/openid-connect/logout",
+        "logoutUrl": "https://test.oidc.gov.bc.ca/auth/realms/idir/protocol/openid-connect/logout",
         "clientSecret": "**********"
       }
     }
