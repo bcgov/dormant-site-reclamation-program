@@ -334,8 +334,8 @@ environments {
                 clientId_dsrp = "dormant-application-prod"
                 resource = "dormant-application-prod"
                 idpHint_dsrp = "idir"
-                url = "https://sso.pathfinder.gov.bc.ca/auth"
-                known_config_url = "https://sso.pathfinder.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration"
+                url = "https://oidc.gov.bc.ca/auth"
+                known_config_url = "https://oidc.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration"
                 siteminder_url = "https://logon.gov.bc.ca"
             }
             deployment {
