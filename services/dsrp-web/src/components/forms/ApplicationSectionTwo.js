@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { compose } from "redux";
 import moment from "moment";
 import { Row, Col, Typography, Form, Button, Collapse, Icon, Popconfirm, notification } from "antd";
-import { sum, get, set, isEqual, isArrayLike, isEmpty, isObjectLike, debounce } from "lodash";
+import { sum, get, set, isArrayLike, isEmpty, isObjectLike, debounce } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
@@ -34,12 +34,12 @@ import WellField from "@/components/forms/WellField";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
 import { validateWell } from "@/actionCreators/OGCActionCreator";
 import { getSelectedWells } from "@/selectors/OGCSelectors";
-import { getApplication } from "@/selectors/applicationSelectors";
 
 const { Text, Paragraph, Title } = Typography;
 const { Panel } = Collapse;
 
 const propTypes = {
+  application: PropTypes.objectOf(PropTypes.any).isRequired,
   handleSubmit: PropTypes.func.isRequired,
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
@@ -48,7 +48,6 @@ const propTypes = {
   isViewingSubmission: PropTypes.bool,
   isAdminEditMode: PropTypes.bool,
   isEditable: PropTypes.bool,
-  application: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 const defaultProps = {
@@ -994,7 +993,6 @@ class ApplicationSectionTwo extends Component {
 const mapStateToProps = (state) => ({
   formValues: getFormValues(FORM.APPLICATION_FORM)(state),
   selectedWells: getSelectedWells(state),
-  application: getApplication(state),
 });
 
 const mapDispatchToProps = () => ({});

@@ -39,7 +39,7 @@ const propTypes = {
   closeModal: PropTypes.func.isRequired,
   /* eslint-disable */
   history: PropTypes.any.isRequired,
-  application: PropTypes.any,
+  application: PropTypes.objectOf(PropTypes.any),
   editedApplication: PropTypes.any,
   /* eslint-enable */
 };
@@ -160,6 +160,7 @@ export class ViewApplicationPage extends Component {
                     {this.renderAdminEditButton()}
                     <ViewOnlyApplicationForm
                       isViewingSubmission
+                      application={this.props.application}
                       initialValues={this.props.application.json}
                       isAdminEditMode={this.state.editApplication}
                     />

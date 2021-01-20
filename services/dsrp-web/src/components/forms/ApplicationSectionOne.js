@@ -11,12 +11,15 @@ import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
+import { APPLICATION_PHASE_CODES } from "@/constants/strings";
 import { ORGBOOK_URL } from "@/constants/routes";
 import { PROGRAM_TAC } from "@/constants/assets";
+import { getApplication } from "@/selectors/applicationSelectors";
 
 const { Title, Paragraph } = Typography;
 
 const propTypes = {
+  application: PropTypes.objectOf(PropTypes.any).isRequired,
   handleSubmit: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   indigenousParticipationCheckbox: PropTypes.bool.isRequired,
@@ -117,22 +120,27 @@ class ApplicationSectionOne extends Component {
                 validate={[required, exactLength(9)]}
                 {...businessNumberMask}
               />
-              <Field
-                id="indigenous_participation_ind"
-                name="indigenous_participation_ind"
-                label="My proposal, as outlined in this application, includes Indigenous participation in completing the work."
-                disabled={!this.props.isEditable}
-                component={renderConfig.CHECKBOX}
-              />
-              {this.props.indigenousParticipationCheckbox && (
-                <Field
-                  id="indigenous_participation_description"
-                  name="indigenous_participation_description"
-                  label="Please describe (Do not include any personal information):"
-                  component={renderConfig.AUTO_SIZE_FIELD}
-                  validate={[required, maxLength(65536)]}
-                  disabled={!this.props.isEditable}
-                />
+              {this.props.application.application_phase_code ===
+                APPLICATION_PHASE_CODES.INITIAL && (
+                <>
+                  <Field
+                    id="indigenous_participation_ind"
+                    name="indigenous_participation_ind"
+                    label="My proposal, as outlined in this application, includes Indigenous participation in completing the work."
+                    disabled={!this.props.isEditable}
+                    component={renderConfig.CHECKBOX}
+                  />
+                  {this.props.indigenousParticipationCheckbox && (
+                    <Field
+                      id="indigenous_participation_description"
+                      name="indigenous_participation_description"
+                      label="Please describe (Do not include any personal information):"
+                      component={renderConfig.AUTO_SIZE_FIELD}
+                      validate={[required, maxLength(65536)]}
+                      disabled={!this.props.isEditable}
+                    />
+                  )}
+                </>
               )}
               <Field
                 id="address_line_1"
@@ -367,6 +375,7 @@ class ApplicationSectionOne extends Component {
 const selector = formValueSelector(FORM.APPLICATION_FORM);
 
 const mapStateToProps = (state) => ({
+  application: getApplication(state),
   indigenousParticipationCheckbox: selector(state, "company_details.indigenous_participation_ind"),
 });
 
