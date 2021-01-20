@@ -457,7 +457,10 @@ const validateWellSites = (wellSites, formValues, props) => {
     const siteConditions = get(wellSite, "site_conditions", null);
     const isAtleastOneSelected =
       !isEmpty(siteConditions) && !Object.values(siteConditions).every((condition) => !condition);
-    if (!isAtleastOneSelected) {
+    if (
+      !isAtleastOneSelected &&
+      props.application?.application_phase_code === APPLICATION_PHASE_CODES.INITIAL
+    ) {
       set(
         errors,
         `well_sites[${index}].site_conditions.error`,
