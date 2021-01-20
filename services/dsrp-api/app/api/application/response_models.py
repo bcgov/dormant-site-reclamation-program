@@ -36,6 +36,11 @@ APPLICATION_DOCUMENT_TYPE = api.model(
         'long_description': fields.String
     })
 
+APPLICATION_PHASE_TYPE = api.model('ApplicationPhaseType', {
+    'application_phase_code': fields.String,
+    'description': fields.String
+})
+
 PAYMENT_DOCUMENT_TYPE = api.model(
     'PaymentDocumentType', {
         'payment_document_code': fields.String,
@@ -66,7 +71,8 @@ APPLICATION = api.model(
         'review_json': fields.Raw,
         'documents': fields.List(fields.Nested(APPLICATION_DOCUMENT, skip_none=True)),
         'payment_documents': fields.List(fields.Nested(PAYMENT_DOCUMENT, skip_none=True)),
-        'edit_note': fields.String
+        'edit_note': fields.String,
+        'application_phase_code': fields.String
     })
 
 APPLICATION_LIST = api.inherit('ApplicationList', PAGINATED_LIST,

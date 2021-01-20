@@ -10,6 +10,7 @@ import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 
 const propTypes = {
+  application: PropTypes.objectOf(PropTypes.any),
   handleSubmit: PropTypes.func.isRequired,
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
@@ -19,6 +20,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+  application: {},
   isViewingSubmission: false,
   isEditable: true,
 };

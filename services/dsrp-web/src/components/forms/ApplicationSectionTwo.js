@@ -5,11 +5,17 @@ import PropTypes from "prop-types";
 import { compose } from "redux";
 import moment from "moment";
 import { Row, Col, Typography, Form, Button, Collapse, Icon, Popconfirm, notification } from "antd";
-import { sum, get, set, isEqual, isArrayLike, isEmpty, isObjectLike, debounce } from "lodash";
+import { sum, get, set, isArrayLike, isEmpty, isObjectLike, debounce } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
-import { PROGRAM_START_DATE, PROGRAM_END_DATE, DATE_FORMAT, HELP_EMAIL } from "@/constants/strings";
+import {
+  PROGRAM_START_DATE,
+  PROGRAM_END_DATE,
+  DATE_FORMAT,
+  HELP_EMAIL,
+  APPLICATION_PHASE_CODES,
+} from "@/constants/strings";
 import {
   currencyMask,
   formatMoney,
@@ -37,6 +43,7 @@ const propTypes = {
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   formValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  application: PropTypes.objectOf(PropTypes.any),
   selectedWells: PropTypes.objectOf(PropTypes.any),
   isViewingSubmission: PropTypes.bool,
   isAdminEditMode: PropTypes.bool,
@@ -44,6 +51,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+  application: {},
   selectedWells: [],
   isViewingSubmission: false,
   isAdminEditMode: false,
@@ -449,7 +457,10 @@ const validateWellSites = (wellSites, formValues, props) => {
     const siteConditions = get(wellSite, "site_conditions", null);
     const isAtleastOneSelected =
       !isEmpty(siteConditions) && !Object.values(siteConditions).every((condition) => !condition);
-    if (!isAtleastOneSelected) {
+    if (
+      !isAtleastOneSelected &&
+      props.application?.application_phase_code === APPLICATION_PHASE_CODES.INITIAL
+    ) {
       set(
         errors,
         `well_sites[${index}].site_conditions.error`,
@@ -635,36 +646,38 @@ const renderWells = (props) => {
                 </Row>
               </FormSection>
 
-              <FormSection name={createMemberName(member, "site_conditions")}>
-                <Title level={4} className="application-subsection">
-                  Eligibility Criteria
-                </Title>
-                <Paragraph>Select all criteria that apply to this site:</Paragraph>
-                <Row gutter={48}>
-                  <Col className="application-checkbox-section">
-                    {SITE_CONDITIONS.map((condition) => (
-                      <Field
-                        key={condition.fieldName}
-                        name={condition.fieldName}
-                        label={condition.fieldLabel}
-                        disabled={!props.isEditable}
-                        component={renderConfig.CHECKBOX}
-                      />
-                    ))}
-                    {props.parentSubmitFailed &&
-                      wellSiteErrors &&
-                      wellSiteErrors.site_conditions &&
-                      wellSiteErrors.site_conditions.error && (
-                        <span
-                          id={`well_sites[${index}].site_conditions.error`}
-                          className="color-error"
-                        >
-                          {wellSiteErrors.site_conditions.error}
-                        </span>
-                      )}
-                  </Col>
-                </Row>
-              </FormSection>
+              {props.application.application_phase_code === APPLICATION_PHASE_CODES.INITIAL && (
+                <FormSection name={createMemberName(member, "site_conditions")}>
+                  <Title level={4} className="application-subsection">
+                    Eligibility Criteria
+                  </Title>
+                  <Paragraph>Select all criteria that apply to this site:</Paragraph>
+                  <Row gutter={48}>
+                    <Col className="application-checkbox-section">
+                      {SITE_CONDITIONS.map((condition) => (
+                        <Field
+                          key={condition.fieldName}
+                          name={condition.fieldName}
+                          label={condition.fieldLabel}
+                          disabled={!props.isEditable}
+                          component={renderConfig.CHECKBOX}
+                        />
+                      ))}
+                      {props.parentSubmitFailed &&
+                        wellSiteErrors &&
+                        wellSiteErrors.site_conditions &&
+                        wellSiteErrors.site_conditions.error && (
+                          <span
+                            id={`well_sites[${index}].site_conditions.error`}
+                            className="color-error"
+                          >
+                            {wellSiteErrors.site_conditions.error}
+                          </span>
+                        )}
+                    </Col>
+                  </Row>
+                </FormSection>
+              )}
 
               <FormSection name={createMemberName(member, "contracted_work")}>
                 <Title level={4} className="application-subsection">
@@ -891,6 +904,7 @@ class ApplicationSectionTwo extends Component {
               parentSubmitFailed={this.props.submitFailed}
               selectedWells={this.props.selectedWells}
               contractedWorkTotals={this.state.contractedWorkTotals}
+              application={this.props.application}
             />
           </Col>
         </Row>
