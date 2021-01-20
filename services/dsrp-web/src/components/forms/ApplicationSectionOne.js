@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { reduxForm, Field, FormSection, formValueSelector } from "redux-form";
 import { Row, Col, Typography, Form, Button } from "antd";
 import PropTypes from "prop-types";
+import { isEmpty } from "lodash";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { renderConfig } from "@/components/common/config";
@@ -21,7 +22,7 @@ const { Title, Paragraph } = Typography;
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
-  indigenousParticipationCheckbox: PropTypes.bool.isRequired,
+  indigenousParticipation: PropTypes.bool.isRequired,
   application: PropTypes.objectOf(PropTypes.any),
   isViewingSubmission: PropTypes.bool,
   isAdminEditMode: PropTypes.bool,
@@ -41,6 +42,109 @@ const validate = (values) => {
     errors.company_contact = { email2: "Email does not match" };
   }
   return errors;
+};
+
+const CompanyIndigenousAffiliation = (props) => {
+  console.log("renderSubcontractorComponent props", props);
+  return (
+    <>
+      <Field
+        id="indigeneous_affiliation"
+        name="indigeneous_affiliation"
+        label="Indigenous Affiliation"
+        placeholder="Select an option"
+        component={renderConfig.SELECT}
+        disabled={!props.isEditable}
+        validate={[required]}
+        format={null}
+        data={[
+          {
+            value: "PARTNERSHIP_REVENUE_SHARING",
+            label:
+              "Applicant has a partnership (revenue sharing) that is endorsed by an indigenous community",
+          },
+          {
+            value: "COMMUNITY_OWNED_GREATER_THAN_51",
+            label: "Applicant is Indigenous community-owned (at least 51%)",
+          },
+          {
+            value: "PERSON_OWNED_GREATER_THAN_51",
+            label: "Applicant is Indigenous person-owned (at least 51%)",
+          },
+          {
+            value: "COMMUNITY_OWNED_LESS_THAN_51",
+            label: "Applicant is Indigenous community-owned (less than 51%)",
+          },
+          {
+            value: "PERSON_OWNED_LESS_THAN_51",
+            label: "Applicant is Indigenous person-owned (less than 51%)",
+          },
+          {
+            value: "PARTNERSHIP_NON_REVENUE_SHARING",
+            label:
+              "Applicant has a partnership (non-revenue sharing) that is endorsed by an indigenous community",
+          },
+          {
+            value: "NONE",
+            label: "Applicant has no Indigenous affiliation",
+          },
+        ]}
+      />
+      <Field
+        id="indigeneous_band"
+        name="indigeneous_band"
+        label="Indigenous Band"
+        placeholder="Select an option"
+        mode="tags"
+        component={renderConfig.MULTI_SELECT}
+        disabled={!props.isEditable}
+        validate={[required]}
+        format={null}
+        data={[
+          {
+            value: "BLUEBERRY_RIVER",
+            label: "Blueberry River First Nations",
+          },
+          {
+            value: "DOIG_RIVER",
+            label: "Doig River First Nation",
+          },
+          {
+            value: "FORT_NELSON",
+            label: "Fort Nelson First Nation",
+          },
+          {
+            value: "HALFWAY_RIVER",
+            label: "Halfway River First Nation",
+          },
+          {
+            value: "MACLEOD_LAKE",
+            label: "MacLeod Lake Indian Band",
+          },
+          {
+            value: "PROPHET_RIVER",
+            label: "Prophet River First Nation",
+          },
+          {
+            value: "SAULTEAU",
+            label: "Saulteau First Nations",
+          },
+          {
+            value: "WEST_MOBERLY",
+            label: "West Moberly First Nations",
+          },
+          {
+            value: "OTHER_BC",
+            label: "Other BC Indigenous People",
+          },
+          {
+            value: "OUTSIDE_BC",
+            label: "Outside BC First Nation/Band",
+          },
+        ]}
+      />
+    </>
+  );
 };
 
 class ApplicationSectionOne extends Component {
@@ -131,7 +235,7 @@ class ApplicationSectionOne extends Component {
                     disabled={!this.props.isEditable}
                     component={renderConfig.CHECKBOX}
                   />
-                  {this.props.indigenousParticipationCheckbox && (
+                  {this.props.indigenousParticipation && (
                     <Field
                       id="indigenous_participation_description"
                       name="indigenous_participation_description"
@@ -142,6 +246,11 @@ class ApplicationSectionOne extends Component {
                     />
                   )}
                 </>
+              )}
+              {(isEmpty(this.props.application) ||
+                this.props.application.application_phase_code ===
+                  APPLICATION_PHASE_CODES.NOMINATION) && (
+                <CompanyIndigenousAffiliation {...this.props} />
               )}
               <Field
                 id="address_line_1"
@@ -377,7 +486,8 @@ const selector = formValueSelector(FORM.APPLICATION_FORM);
 
 const mapStateToProps = (state) => ({
   application: getApplication(state),
-  indigenousParticipationCheckbox: selector(state, "company_details.indigenous_participation_ind"),
+  indigenousParticipation: selector(state, "company_details.indigenous_participation_ind"),
+  indigeneousAffiliation: selector(state, "company_details.indigenous_affiliation"),
 });
 
 const mapDispatchToProps = () => ({});
