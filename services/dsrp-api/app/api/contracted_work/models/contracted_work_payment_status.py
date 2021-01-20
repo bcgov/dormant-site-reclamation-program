@@ -22,4 +22,4 @@ class ContractedWorkPaymentStatus(Base, AuditMixin):
     @classmethod
     def find_by_code(cls, contracted_work_payment_status_code):
         return cls.query.filter_by(
-            contracted_work_payment_status_code=contracted_work_payment_status_code).one()
+            contracted_work_payment_status_code=contracted_work_payment_status_code).one_or_none()
