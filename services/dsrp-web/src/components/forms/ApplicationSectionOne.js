@@ -17,7 +17,6 @@ import { PROGRAM_TAC } from "@/constants/assets";
 const { Title, Paragraph } = Typography;
 
 const propTypes = {
-  applicationPhaseCode: PropTypes.string.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   indigenousParticipationCheckbox: PropTypes.bool.isRequired,
@@ -53,7 +52,6 @@ class ApplicationSectionOne extends Component {
   }
 
   render() {
-    console.log("ApplicationSectionOne this.props", this.props);
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="company_details">
@@ -119,26 +117,22 @@ class ApplicationSectionOne extends Component {
                 validate={[required, exactLength(9)]}
                 {...businessNumberMask}
               />
-              {this.props.applicationPhaseCode === "INITIAL" && (
-                <>
-                  <Field
-                    id="indigenous_participation_ind"
-                    name="indigenous_participation_ind"
-                    label="My proposal, as outlined in this application, includes Indigenous participation in completing the work."
-                    disabled={!this.props.isEditable}
-                    component={renderConfig.CHECKBOX}
-                  />
-                  {this.props.indigenousParticipationCheckbox && (
-                    <Field
-                      id="indigenous_participation_description"
-                      name="indigenous_participation_description"
-                      label="Please describe (Do not include any personal information):"
-                      component={renderConfig.AUTO_SIZE_FIELD}
-                      validate={[required, maxLength(65536)]}
-                      disabled={!this.props.isEditable}
-                    />
-                  )}
-                </>
+              <Field
+                id="indigenous_participation_ind"
+                name="indigenous_participation_ind"
+                label="My proposal, as outlined in this application, includes Indigenous participation in completing the work."
+                disabled={!this.props.isEditable}
+                component={renderConfig.CHECKBOX}
+              />
+              {this.props.indigenousParticipationCheckbox && (
+                <Field
+                  id="indigenous_participation_description"
+                  name="indigenous_participation_description"
+                  label="Please describe (Do not include any personal information):"
+                  component={renderConfig.AUTO_SIZE_FIELD}
+                  validate={[required, maxLength(65536)]}
+                  disabled={!this.props.isEditable}
+                />
               )}
               <Field
                 id="address_line_1"

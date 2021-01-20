@@ -10,7 +10,6 @@ import { required } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 
 const propTypes = {
-  applicationPhaseCode: PropTypes.string.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,

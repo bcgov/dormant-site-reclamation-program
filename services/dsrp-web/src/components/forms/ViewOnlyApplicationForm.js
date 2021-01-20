@@ -6,7 +6,6 @@ import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
 import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree";
 
 const propTypes = {
-  applicationPhaseCode: PropTypes.string.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any),
   noRenderStep3: PropTypes.bool,
   isViewingSubmission: PropTypes.bool,
@@ -23,14 +22,12 @@ const defaultProps = {
 const ViewOnlyApplicationForm = (props) => (
   <React.Fragment>
     <ApplicationSectionOne
-      applicationPhaseCode={props.applicationPhaseCode}
       isViewingSubmission={props.isViewingSubmission}
       isEditable={false}
       isAdminEditMode={props.isAdminEditMode}
       initialValues={props.initialValues}
     />
     <ApplicationSectionTwo
-      applicationPhaseCode={props.applicationPhaseCode}
       isViewingSubmission={props.isViewingSubmission}
       isEditable={false}
       isAdminEditMode={props.isAdminEditMode}
@@ -38,7 +35,6 @@ const ViewOnlyApplicationForm = (props) => (
     />
     {!props.noRenderStep3 && (
       <ApplicationSectionThree
-        applicationPhaseCode={props.applicationPhaseCode}
         isViewingSubmission={props.isViewingSubmission}
         isEditable={false}
         initialValues={props.initialValues}
