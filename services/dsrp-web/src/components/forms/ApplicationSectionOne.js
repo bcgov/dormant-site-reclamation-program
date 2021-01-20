@@ -285,9 +285,7 @@ class ApplicationSectionOne extends Component {
                   <>
                     Email
                     {this.props.isEditable && (
-                      <>
-                        <ApplicationFormTooltip content="This email address will be used for all ongoing communication regarding the application." />
-                      </>
+                      <ApplicationFormTooltip content="This email address will be used for all ongoing communication regarding the application." />
                     )}
                   </>
                 }
