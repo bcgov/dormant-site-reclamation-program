@@ -39,11 +39,11 @@ const { Text, Paragraph, Title } = Typography;
 const { Panel } = Collapse;
 
 const propTypes = {
-  application: PropTypes.objectOf(PropTypes.any).isRequired,
   handleSubmit: PropTypes.func.isRequired,
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   formValues: PropTypes.objectOf(PropTypes.any).isRequired,
+  application: PropTypes.objectOf(PropTypes.any),
   selectedWells: PropTypes.objectOf(PropTypes.any),
   isViewingSubmission: PropTypes.bool,
   isAdminEditMode: PropTypes.bool,
@@ -51,6 +51,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+  application: {},
   selectedWells: [],
   isViewingSubmission: false,
   isAdminEditMode: false,

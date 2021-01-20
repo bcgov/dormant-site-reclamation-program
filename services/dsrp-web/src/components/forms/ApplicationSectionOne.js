@@ -19,16 +19,17 @@ import { getApplication } from "@/selectors/applicationSelectors";
 const { Title, Paragraph } = Typography;
 
 const propTypes = {
-  application: PropTypes.objectOf(PropTypes.any).isRequired,
   handleSubmit: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
   indigenousParticipationCheckbox: PropTypes.bool.isRequired,
+  application: PropTypes.objectOf(PropTypes.any),
   isViewingSubmission: PropTypes.bool,
   isAdminEditMode: PropTypes.bool,
   isEditable: PropTypes.bool,
 };
 
 const defaultProps = {
+  application: {},
   isViewingSubmission: false,
   isAdminEditMode: false,
   isEditable: true,
