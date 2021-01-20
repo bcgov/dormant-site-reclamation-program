@@ -33,6 +33,7 @@ const { Text, Paragraph, Title } = Typography;
 const { Panel } = Collapse;
 
 const propTypes = {
+  applicationPhaseCode: PropTypes.string.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   previousStep: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,

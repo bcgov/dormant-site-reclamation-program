@@ -160,6 +160,7 @@ export class ViewApplicationPage extends Component {
                     {this.renderAdminEditButton()}
                     <ViewOnlyApplicationForm
                       isViewingSubmission
+                      applicationPhaseCode={this.props.application.application_phase_code}
                       initialValues={this.props.application.json}
                       isAdminEditMode={this.state.editApplication}
                     />
