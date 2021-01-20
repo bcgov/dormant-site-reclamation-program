@@ -6,6 +6,7 @@ import ApplicationSectionTwo from "@/components/forms/ApplicationSectionTwo";
 import ApplicationSectionThree from "@/components/forms/ApplicationSectionThree";
 
 const propTypes = {
+  application: PropTypes.objectOf(PropTypes.any),
   initialValues: PropTypes.objectOf(PropTypes.any),
   noRenderStep3: PropTypes.bool,
   isViewingSubmission: PropTypes.bool,
@@ -13,6 +14,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+  application: {},
   initialValues: undefined,
   noRenderStep3: false,
   isViewingSubmission: false,
@@ -22,12 +24,14 @@ const defaultProps = {
 const ViewOnlyApplicationForm = (props) => (
   <React.Fragment>
     <ApplicationSectionOne
+      application={props.application}
       isViewingSubmission={props.isViewingSubmission}
       isEditable={false}
       isAdminEditMode={props.isAdminEditMode}
       initialValues={props.initialValues}
     />
     <ApplicationSectionTwo
+      application={props.application}
       isViewingSubmission={props.isViewingSubmission}
       isEditable={false}
       isAdminEditMode={props.isAdminEditMode}
@@ -35,6 +39,7 @@ const ViewOnlyApplicationForm = (props) => (
     />
     {!props.noRenderStep3 && (
       <ApplicationSectionThree
+        application={props.application}
         isViewingSubmission={props.isViewingSubmission}
         isEditable={false}
         initialValues={props.initialValues}
