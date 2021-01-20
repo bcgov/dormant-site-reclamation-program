@@ -52,6 +52,7 @@ class ApplicationSectionOne extends Component {
   }
 
   render() {
+    console.log(this.props.businessNumber);
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="company_details">
@@ -361,6 +362,7 @@ const selector = formValueSelector(FORM.APPLICATION_FORM);
 
 const mapStateToProps = (state) => ({
   indigenousParticipationCheckbox: selector(state, "company_details.indigenous_participation_ind"),
+  businessNumber: selector(state, "company_details.business_number"),
 });
 
 const mapDispatchToProps = () => ({});

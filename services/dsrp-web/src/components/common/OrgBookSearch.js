@@ -79,6 +79,7 @@ export class OrgBookSearch extends Component {
   }
 
   render() {
+    console.log(this.props.orgBookCredential);
     const hasOrgBookCredential =
       !isEmpty(this.props.orgBookCredential) && !isEmpty(this.props.input.value);
     const isInputDisabled = this.props.disabled;
