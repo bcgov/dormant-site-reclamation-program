@@ -281,7 +281,14 @@ class ApplicationSectionOne extends Component {
               <Field
                 id="email"
                 name="email"
-                label="Email"
+                label={
+                  <>
+                    Email
+                    {this.props.isEditable && (
+                      <ApplicationFormTooltip content="This email address will be used for all ongoing communication regarding the application." />
+                    )}
+                  </>
+                }
                 placeholder="Email"
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable && !this.props.isAdminEditMode}

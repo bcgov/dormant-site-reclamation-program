@@ -41,6 +41,8 @@ class Application(Base, AuditMixin):
     review_json = db.Column(JSONB)
     submitter_ip = db.Column(db.String)
     edit_note = db.Column(db.String)
+    application_phase_code = db.Column(
+        db.String, db.ForeignKey('application_phase_type.application_phase_code'), nullable=False)
 
     documents = db.relationship('ApplicationDocument', lazy='select')
     payment_documents = db.relationship(

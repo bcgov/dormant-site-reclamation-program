@@ -17,6 +17,8 @@ from app.api.application.models.application_status_change import ApplicationStat
 from app.api.constants import DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, DISABLE_APP_SUBMIT_SETTING
 from app.api.dsrp_settings.models.dsrp_settings import DSRPSettings
 
+CURRENT_APPLICATION_PHASE_CODE = 'NOMINATION'
+
 
 class ApplicationListResource(Resource, UserMixin):
     @api.doc(description='Get all applications. Default order: submission_date asc')
@@ -94,8 +96,9 @@ class ApplicationListResource(Resource, UserMixin):
             raise BadRequest("Application Submissions are disabled at this time.")
 
         try:
-            application = Application._schema().load(request.json['application'])
-            #get ip from NGINX (or direct for local devs)
+            application_json = request.json['application']
+            application_json['application_phase_code'] = CURRENT_APPLICATION_PHASE_CODE
+            application = Application._schema().load(application_json)
             application.submitter_ip = request.headers.getlist(
                 'X-Forwarded-For')[0] if request.headers.getlist(
                     'X-Forwarded-For') else request.remote_addr

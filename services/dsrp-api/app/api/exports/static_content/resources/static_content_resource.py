@@ -13,11 +13,12 @@ from app.api.application.models.application_status import ApplicationStatus
 from app.api.contracted_work.models.contracted_work_status import ContractedWorkStatus
 from app.api.contracted_work.models.contracted_work_payment_status import ContractedWorkPaymentStatus
 from app.api.application.models.application_document_type import ApplicationDocumentType
+from app.api.application.models.application_phase_type import ApplicationPhaseType
 from app.api.application.models.payment_document_type import PaymentDocumentType
 
 MODELS_GET_ACTIVE = [
-    ApplicationStatus, ContractedWorkStatus, ApplicationDocumentType, PaymentDocumentType,
-    ContractedWorkPaymentStatus
+    ApplicationStatus, ContractedWorkStatus, ApplicationPhaseType, ApplicationDocumentType,
+    PaymentDocumentType, ContractedWorkPaymentStatus
 ]
 
 

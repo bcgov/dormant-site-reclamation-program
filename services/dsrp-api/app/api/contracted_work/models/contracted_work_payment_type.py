@@ -13,4 +13,5 @@ class ContractedWorkPaymentType(Base, AuditMixin):
 
     @classmethod
     def find_by_code(cls, contracted_work_payment_code):
-        return cls.query.filter_by(contracted_work_payment_code=contracted_work_payment_code).one()
+        return cls.query.filter_by(
+            contracted_work_payment_code=contracted_work_payment_code).one_or_none()

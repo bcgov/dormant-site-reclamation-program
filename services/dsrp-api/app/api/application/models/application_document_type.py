@@ -21,4 +21,5 @@ class ApplicationDocumentType(Base, AuditMixin):
 
     @classmethod
     def find_by_application_document_code(cls, application_document_code):
-        return cls.query.filter_by(application_document_code=application_document_code).one()
+        return cls.query.filter_by(
+            application_document_code=application_document_code).one_or_none()
