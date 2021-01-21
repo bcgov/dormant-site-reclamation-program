@@ -44,4 +44,16 @@ class CredentialResource(Resource):
             raise BadGateway(message)
 
         credential = json.loads(resp.text)
+        topic_id = credential['topic']['id']
+
+        bn_resp = OrgBookService.get_business_number(topic_id)
+        bn_response = json.loads(bn_resp.text)
+        results = bn_response["results"]
+
+        if bn_resp is not None:
+            for result in results:
+                for attribute in result["attributes"]:
+                    if attribute["type"] == "business_number":
+                        credential['business_number'] = attribute["value"]
+
         return credential

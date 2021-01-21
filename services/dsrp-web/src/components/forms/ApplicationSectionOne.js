@@ -1,15 +1,17 @@
 import React, { Component } from "react";
-import { reduxForm, Field, FormSection, formValueSelector } from "redux-form";
+import { reduxForm, Field, FormSection, formValueSelector, change } from "redux-form";
 import { Row, Col, Typography, Form, Button } from "antd";
 import PropTypes from "prop-types";
-import { compose } from "redux";
+import { compose, bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { renderConfig } from "@/components/common/config";
+import { isEmpty } from "lodash";
 import { required, email, maxLength, postalCode, exactLength } from "@/utils/validate";
 import { phoneMask, postalCodeMask, scrollToFirstError, businessNumberMask } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
+import { getOrgBookCredential } from "@/selectors/orgbookSelectors";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import { APPLICATION_PHASE_CODES } from "@/constants/strings";
 import { ORGBOOK_URL } from "@/constants/routes";
@@ -55,8 +57,17 @@ class ApplicationSectionOne extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    const companyChanged = this.props.companyName !== nextProps.company;
+    if (companyChanged && !isEmpty(nextProps.orgBookCredential)) {
+      return this.props.change(
+        "company_details.business_number",
+        nextProps.orgBookCredential.business_number
+      );
+    }
+  }
+
   render() {
-    console.log(this.props.businessNumber);
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="company_details">
@@ -118,9 +129,13 @@ class ApplicationSectionOne extends Component {
                 label="Business Number"
                 placeholder="Business Number"
                 component={renderConfig.FIELD}
-                disabled={!this.props.isEditable}
+                disabled={
+                  !this.props.isEditable ||
+                  this.props.application.application_phase_code ===
+                    APPLICATION_PHASE_CODES.NOMINATION
+                }
                 validate={[required, exactLength(9)]}
-                {...businessNumberMask}
+                // {...businessNumberMask}
               />
               {this.props.application.application_phase_code ===
                 APPLICATION_PHASE_CODES.INITIAL && (
@@ -380,9 +395,11 @@ const mapStateToProps = (state) => ({
   application: getApplication(state),
   indigenousParticipationCheckbox: selector(state, "company_details.indigenous_participation_ind"),
   businessNumber: selector(state, "company_details.business_number"),
+  companyName: selector(state, "company_details.company_name"),
+  orgBookCredential: getOrgBookCredential(state),
 });
 
-const mapDispatchToProps = () => ({});
+const mapDispatchToProps = (dispatch) => bindActionCreators({ change }, dispatch);
 
 ApplicationSectionOne.propTypes = propTypes;
 ApplicationSectionOne.defaultProps = defaultProps;
