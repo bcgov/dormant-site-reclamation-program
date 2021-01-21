@@ -60,7 +60,7 @@ export const INDIGENOUS_APPLICANT_AFFILIATION_SELECT_OPTIONS = [
   },
 ];
 
-export const DEFAULT_INDIGENOUS_BANDS_SELECT_OPTIONS = [
+export const DEFAULT_INDIGENOUS_COMMUNITIES_SELECT_OPTIONS = [
   {
     value: "Blueberry River First Nations",
     label: "Blueberry River First Nations",

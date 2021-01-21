@@ -15,7 +15,7 @@ import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import {
   APPLICATION_PHASE_CODES,
   INDIGENOUS_APPLICANT_AFFILIATION_SELECT_OPTIONS,
-  DEFAULT_INDIGENOUS_BANDS_SELECT_OPTIONS,
+  DEFAULT_INDIGENOUS_COMMUNITIES_SELECT_OPTIONS,
 } from "@/constants/strings";
 import { ORGBOOK_URL } from "@/constants/routes";
 import { PROGRAM_TAC } from "@/constants/assets";
@@ -172,15 +172,16 @@ class ApplicationSectionOne extends Component {
                   />
                   {this.props.indigeneousAffiliation !== "NONE" && (
                     <Field
-                      id="indigenous_bands"
-                      name="indigenous_bands"
+                      id="indigenous_communities"
+                      name="indigenous_communities"
                       label={
                         <>
-                          <div>Indigenous Bands</div>
+                          <div>Indigenous Peoples</div>
                           {this.props.isEditable && (
                             <div className="font-weight-normal">
-                              If your band is not in the list, you can type it in and select it as a
-                              custom option.
+                              Select the Indigenous community(s) your business is affiliated with.
+                              If your Indigenous community is not in the list, you can type it in
+                              and select it as an option.
                             </div>
                           )}
                         </>
@@ -191,7 +192,7 @@ class ApplicationSectionOne extends Component {
                       disabled={!this.props.isEditable}
                       validate={[required]}
                       format={null}
-                      data={DEFAULT_INDIGENOUS_BANDS_SELECT_OPTIONS}
+                      data={DEFAULT_INDIGENOUS_COMMUNITIES_SELECT_OPTIONS}
                     />
                   )}
                 </>

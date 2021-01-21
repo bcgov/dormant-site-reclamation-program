@@ -178,6 +178,7 @@ SITE_CONDITIONS = [
         "Specified work that was included in a permit holder's Dormant Sites 2020 Annual Work Plan"
     )
 ]
+
 INDIGENOUS_APPLICANT_AFFILIATION = {
     "PARTNERSHIP_REVENUE_SHARING":
     "Applicant has a partnership (revenue sharing) that is endorsed by an Indigenous community",

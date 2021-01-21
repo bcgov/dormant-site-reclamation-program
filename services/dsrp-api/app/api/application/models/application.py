@@ -362,8 +362,8 @@ class Application(Base, AuditMixin):
                 """
             elif self.application_phase_code == 'NOMINATION':
                 indigenous_affiliation = company_details.get('indigenous_affiliation')
-                indigenous_bands = company_details.get('indigenous_bands', [])
-                has_indigenous_affiliation = indigenous_affiliation and indigenous_bands and indigenous_affiliation != 'NONE' and indigenous_affiliation in INDIGENOUS_APPLICANT_AFFILIATION
+                indigenous_communities = company_details.get('indigenous_communities', [])
+                has_indigenous_affiliation = indigenous_affiliation and indigenous_communities and indigenous_affiliation != 'NONE' and indigenous_affiliation in INDIGENOUS_APPLICANT_AFFILIATION
                 indigenous_affiliation_label = INDIGENOUS_APPLICANT_AFFILIATION[
                     indigenous_affiliation] if has_indigenous_affiliation else INDIGENOUS_APPLICANT_AFFILIATION[
                         "NONE"]
@@ -375,13 +375,13 @@ class Application(Base, AuditMixin):
 
                 if has_indigenous_affiliation:
 
-                    def create_indigenous_band(band):
-                        return f'<li>{band}</li>'
+                    def create_indigenous_community(community):
+                        return f'<li>{community}</li>'
 
                     indigenous_content += f"""
-                    <h3>Indigenous Bands</h3>
+                    <h3>Indigenous Peoples</h3>
                     <ul>
-                    {''.join([create_indigenous_band(band) for band in indigenous_bands])}
+                    {''.join([create_indigenous_community(community) for community in indigenous_communities])}
                     </ul>
                     """
 
