@@ -102,44 +102,36 @@ const CompanyIndigenousAffiliation = (props) => {
         format={null}
         data={[
           {
-            value: "BLUEBERRY_RIVER",
+            value: "Blueberry River First Nations",
             label: "Blueberry River First Nations",
           },
           {
-            value: "DOIG_RIVER",
+            value: "Doig River First Nation",
             label: "Doig River First Nation",
           },
           {
-            value: "FORT_NELSON",
+            value: "Fort Nelson First Nation",
             label: "Fort Nelson First Nation",
           },
           {
-            value: "HALFWAY_RIVER",
+            value: "Halfway River First Nation",
             label: "Halfway River First Nation",
           },
           {
-            value: "MACLEOD_LAKE",
+            value: "MacLeod Lake Indian Band",
             label: "MacLeod Lake Indian Band",
           },
           {
-            value: "PROPHET_RIVER",
+            value: "Prophet River First Nation",
             label: "Prophet River First Nation",
           },
           {
-            value: "SAULTEAU",
+            value: "Saulteau First Nations",
             label: "Saulteau First Nations",
           },
           {
-            value: "WEST_MOBERLY",
+            value: "West Moberly First Nations",
             label: "West Moberly First Nations",
-          },
-          {
-            value: "OTHER_BC",
-            label: "Other BC Indigenous People",
-          },
-          {
-            value: "OUTSIDE_BC",
-            label: "Outside BC First Nation/Band",
           },
         ]}
       />
