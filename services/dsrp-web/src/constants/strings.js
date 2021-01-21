@@ -29,20 +29,20 @@ export const APPLICATION_PHASE_CODES = {
 
 export const INDIGENOUS_APPLICANT_AFFILIATION_SELECT_OPTIONS = [
   {
-    value: "COMMUNITY_OWNED_GREATER_THAN_51",
-    label: "Owned by an Indigenous community (at least 51%)",
-  },
-  {
     value: "COMMUNITY_OWNED_LESS_THAN_51",
     label: "Owned by an Indigenous community (less than 51%)",
   },
   {
-    value: "PERSON_OWNED_GREATER_THAN_51",
-    label: "Owned by an Indigenous person (at least 51%)",
+    value: "COMMUNITY_OWNED_GREATER_THAN_51",
+    label: "Owned by an Indigenous community (at least 51%)",
   },
   {
     value: "PERSON_OWNED_LESS_THAN_51",
     label: "Owned by an Indigenous person (less than 51%)",
+  },
+  {
+    value: "PERSON_OWNED_GREATER_THAN_51",
+    label: "Owned by an Indigenous person (at least 51%)",
   },
   {
     value: "PARTNERSHIP_REVENUE_SHARING",
@@ -95,19 +95,19 @@ export const DEFAULT_INDIGENOUS_COMMUNITIES_SELECT_OPTIONS = [
 
 export const INDIGENOUS_SUBCONTRACTOR_AFFILIATION_SELECT_OPTIONS = [
   {
-    value: "COMMUNITY_OWNED_GREATER_THAN_51",
-    label: "Owned by an Indigenous community (at least 51%)",
-  },
-  {
-    value: "PERSON_OWNED_GREATER_THAN_51",
-    label: "Owned by an Indigenous person (at least 51%)",
-  },
-  {
     value: "COMMUNITY_OWNED_LESS_THAN_51",
     label: "Owned by an Indigenous community (less than 51%)",
   },
   {
+    value: "COMMUNITY_OWNED_GREATER_THAN_51",
+    label: "Owned by an Indigenous community (at least 51%)",
+  },
+  {
     value: "PERSON_OWNED_LESS_THAN_51",
     label: "Owned by an Indigenous person (less than 51%)",
+  },
+  {
+    value: "PERSON_OWNED_GREATER_THAN_51",
+    label: "Owned by an Indigenous person (at least 51%)",
   },
 ];

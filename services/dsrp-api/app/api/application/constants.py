@@ -182,8 +182,8 @@ SITE_CONDITIONS = [
 INDIGENOUS_APPLICANT_AFFILIATION = {
     "COMMUNITY_OWNED_LESS_THAN_51": "Owned by an Indigenous community (less than 51%)",
     "COMMUNITY_OWNED_GREATER_THAN_51": "Owned by an Indigenous community (at least 51%)",
-    "PERSON_OWNED_GREATER_THAN_51": "Owned by an Indigenous person (at least 51%)",
     "PERSON_OWNED_LESS_THAN_51": "Owned by an Indigenous person (less than 51%)",
+    "PERSON_OWNED_GREATER_THAN_51": "Owned by an Indigenous person (at least 51%)",
     "PARTNERSHIP_REVENUE_SHARING":
     "Partnership (revenue sharing) that is endorsed by an Indigenous community",
     "PARTNERSHIP_NON_REVENUE_SHARING":
