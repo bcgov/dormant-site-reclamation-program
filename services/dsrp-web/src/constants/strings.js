@@ -26,3 +26,98 @@ export const APPLICATION_PHASE_CODES = {
   INITIAL: "INITIAL",
   NOMINATION: "NOMINATION",
 };
+
+export const INDIGENOUS_APPLICANT_AFFILIATION_SELECT_OPTIONS = [
+  {
+    value: "PARTNERSHIP_REVENUE_SHARING",
+    label:
+      "Applicant has a partnership (revenue sharing) that is endorsed by an Indigenous community",
+  },
+  {
+    value: "COMMUNITY_OWNED_GREATER_THAN_51",
+    label: "Applicant is Indigenous community-owned (at least 51%)",
+  },
+  {
+    value: "PERSON_OWNED_GREATER_THAN_51",
+    label: "Applicant is Indigenous person-owned (at least 51%)",
+  },
+  {
+    value: "COMMUNITY_OWNED_LESS_THAN_51",
+    label: "Applicant is Indigenous community-owned (less than 51%)",
+  },
+  {
+    value: "PERSON_OWNED_LESS_THAN_51",
+    label: "Applicant is Indigenous person-owned (less than 51%)",
+  },
+  {
+    value: "PARTNERSHIP_NON_REVENUE_SHARING",
+    label:
+      "Applicant has a partnership (non-revenue sharing) that is endorsed by an Indigenous community",
+  },
+  {
+    value: "NONE",
+    label: "Applicant has no Indigenous affiliation",
+  },
+];
+
+export const DEFAULT_INDIGENOUS_BANDS_SELECT_OPTIONS = [
+  {
+    value: "Blueberry River First Nations",
+    label: "Blueberry River First Nations",
+  },
+  {
+    value: "Doig River First Nation",
+    label: "Doig River First Nation",
+  },
+  {
+    value: "Fort Nelson First Nation",
+    label: "Fort Nelson First Nation",
+  },
+  {
+    value: "Halfway River First Nation",
+    label: "Halfway River First Nation",
+  },
+  {
+    value: "MacLeod Lake Indian Band",
+    label: "MacLeod Lake Indian Band",
+  },
+  {
+    value: "Prophet River First Nation",
+    label: "Prophet River First Nation",
+  },
+  {
+    value: "Saulteau First Nations",
+    label: "Saulteau First Nations",
+  },
+  {
+    value: "West Moberly First Nations",
+    label: "West Moberly First Nations",
+  },
+];
+
+export const INDIGENOUS_SUBCONTRACTOR_AFFILIATION_SELECT_OPTIONS = [
+  {
+    value: "PARTNERSHIP_REVENUE_SHARING",
+    label: "Partnership (revenue sharing) that is endorsed by an Indigenous community",
+  },
+  {
+    value: "COMMUNITY_OWNED_GREATER_THAN_51",
+    label: "Owned by an Indigenous community (at least 51%)",
+  },
+  {
+    value: "PERSON_OWNED_GREATER_THAN_51",
+    label: "Owned by an Indigenous person (at least 51%)",
+  },
+  {
+    value: "COMMUNITY_OWNED_LESS_THAN_51",
+    label: "Owned by an Indigenous community (less than 51%)",
+  },
+  {
+    value: "PERSON_OWNED_LESS_THAN_51",
+    label: "Owned by an Indigenous person (less than 51%)",
+  },
+  {
+    value: "PARTNERSHIP_NON_REVENUE_SHARING",
+    label: "Partnership (non-revenue sharing) that is endorsed by an Indigenous community",
+  },
+];
