@@ -14,7 +14,7 @@ from app.api.utils.models_mixins import Base, AuditMixin
 from app.api.constants import WELL_SITE_CONTRACTED_WORK, APPLICATION_JSON, COMPANY_NAME_JSON_KEYS
 from .application_status import ApplicationStatus
 from .application_status_change import ApplicationStatusChange
-from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK
+from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK, INDIGENOUS_APPLICANT_AFFILIATION
 from app.api.permit_holder.resources.permit_holder import PermitHolderResource
 from app.api.application.response_models import APPLICATION
 from app.api.contracted_work.response_models import CONTRACTED_WORK_PAYMENT
@@ -351,8 +351,40 @@ class Application(Base, AuditMixin):
 
     def get_application_html(self):
         def create_company_details(company_details):
-            indigenous_participation_ind = company_details.get("indigenous_participation_ind",
-                                                               False) == True
+            indigenous_content = ''
+            if self.application_phase_code == 'INITIAL':
+                indigenous_participation_ind = company_details.get('indigenous_participation_ind',
+                                                                   False) == True
+                indigenous_content = f"""
+                <h2>Indigenous Participation</h2>
+                <p>{"Yes" if indigenous_participation_ind else "No"}</p>
+                {f'<p>{company_details["indigenous_participation_description"]}</p>' if indigenous_participation_ind else ""}
+                """
+            elif self.application_phase_code == 'NOMINATION':
+                indigenous_affiliation = company_details.get('indigenous_affiliation')
+                indigenous_bands = company_details.get('indigenous_bands', [])
+                has_indigenous_affiliation = indigenous_affiliation and indigenous_bands and indigenous_affiliation != 'NONE' and indigenous_affiliation in INDIGENOUS_APPLICANT_AFFILIATION
+                indigenous_affiliation_label = INDIGENOUS_APPLICANT_AFFILIATION[
+                    indigenous_affiliation] if has_indigenous_affiliation else INDIGENOUS_APPLICANT_AFFILIATION[
+                        "NONE"]
+
+                indigenous_content = f"""
+                <h2>Indigenous Affiliation</h2>
+                <p>{indigenous_affiliation_label}</p>
+                """
+
+                if has_indigenous_affiliation:
+
+                    def create_indigenous_band(band):
+                        return f'<li>{band}</li>'
+
+                    indigenous_content += f"""
+                    <h3>Indigenous Bands</h3>
+                    <ul>
+                    {''.join([create_indigenous_band(band) for band in indigenous_bands])}
+                    </ul>
+                    """
+
             return f"""
             <h1>Company Details</h1>
 
@@ -372,9 +404,7 @@ class Application(Base, AuditMixin):
             <h2>Business Number</h2>
             <p>{company_details["business_number"]}</p>
 
-            <h2>Indigenous Participation</h2>
-            <p>{"Yes" if indigenous_participation_ind else "No"}</p>
-            {f'<p>{company_details["indigenous_participation_description"]}</p>' if indigenous_participation_ind else ""}
+            {indigenous_content}
             """
 
         def create_company_contact(company_contact):
