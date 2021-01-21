@@ -62,7 +62,7 @@ class ApplicationSectionOne extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const companyChanged = this.props.companyName !== nextProps.company;
+    const companyChanged = this.props.companyName !== nextProps.companyName;
     if (companyChanged && !isEmpty(nextProps.orgBookCredential)) {
       return this.props.change(
         "company_details.business_number",
@@ -139,7 +139,7 @@ class ApplicationSectionOne extends Component {
                     APPLICATION_PHASE_CODES.NOMINATION
                 }
                 validate={[required, exactLength(9)]}
-                // {...businessNumberMask}
+                {...businessNumberMask}
               />
               {this.props.application.application_phase_code ===
                 APPLICATION_PHASE_CODES.INITIAL && (
@@ -446,7 +446,6 @@ const selector = formValueSelector(FORM.APPLICATION_FORM);
 
 const mapStateToProps = (state) => ({
   application: getApplication(state),
-  indigenousParticipationCheckbox: selector(state, "company_details.indigenous_participation_ind"),
   businessNumber: selector(state, "company_details.business_number"),
   companyName: selector(state, "company_details.company_name"),
   orgBookCredential: getOrgBookCredential(state),
