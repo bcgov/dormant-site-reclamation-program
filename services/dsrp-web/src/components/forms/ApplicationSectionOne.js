@@ -12,7 +12,11 @@ import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
-import { APPLICATION_PHASE_CODES } from "@/constants/strings";
+import {
+  APPLICATION_PHASE_CODES,
+  INDIGENOUS_APPLICANT_AFFILIATION_SELECT_OPTIONS,
+  DEFAULT_INDIGENOUS_BANDS_SELECT_OPTIONS,
+} from "@/constants/strings";
 import { ORGBOOK_URL } from "@/constants/routes";
 import { PROGRAM_TAC } from "@/constants/assets";
 import { getApplication } from "@/selectors/applicationSelectors";
@@ -42,101 +46,6 @@ const validate = (values) => {
     errors.company_contact = { email2: "Email does not match" };
   }
   return errors;
-};
-
-const CompanyIndigenousAffiliation = (props) => {
-  console.log("renderSubcontractorComponent props", props);
-  return (
-    <>
-      <Field
-        id="indigeneous_affiliation"
-        name="indigeneous_affiliation"
-        label="Indigenous Affiliation"
-        placeholder="Select an option"
-        component={renderConfig.SELECT}
-        disabled={!props.isEditable}
-        validate={[required]}
-        format={null}
-        data={[
-          {
-            value: "PARTNERSHIP_REVENUE_SHARING",
-            label:
-              "Applicant has a partnership (revenue sharing) that is endorsed by an indigenous community",
-          },
-          {
-            value: "COMMUNITY_OWNED_GREATER_THAN_51",
-            label: "Applicant is Indigenous community-owned (at least 51%)",
-          },
-          {
-            value: "PERSON_OWNED_GREATER_THAN_51",
-            label: "Applicant is Indigenous person-owned (at least 51%)",
-          },
-          {
-            value: "COMMUNITY_OWNED_LESS_THAN_51",
-            label: "Applicant is Indigenous community-owned (less than 51%)",
-          },
-          {
-            value: "PERSON_OWNED_LESS_THAN_51",
-            label: "Applicant is Indigenous person-owned (less than 51%)",
-          },
-          {
-            value: "PARTNERSHIP_NON_REVENUE_SHARING",
-            label:
-              "Applicant has a partnership (non-revenue sharing) that is endorsed by an indigenous community",
-          },
-          {
-            value: "NONE",
-            label: "Applicant has no Indigenous affiliation",
-          },
-        ]}
-      />
-      <Field
-        id="indigeneous_band"
-        name="indigeneous_band"
-        label="Indigenous Band"
-        placeholder="Select an option"
-        mode="tags"
-        component={renderConfig.MULTI_SELECT}
-        disabled={!props.isEditable}
-        validate={[required]}
-        format={null}
-        data={[
-          {
-            value: "Blueberry River First Nations",
-            label: "Blueberry River First Nations",
-          },
-          {
-            value: "Doig River First Nation",
-            label: "Doig River First Nation",
-          },
-          {
-            value: "Fort Nelson First Nation",
-            label: "Fort Nelson First Nation",
-          },
-          {
-            value: "Halfway River First Nation",
-            label: "Halfway River First Nation",
-          },
-          {
-            value: "MacLeod Lake Indian Band",
-            label: "MacLeod Lake Indian Band",
-          },
-          {
-            value: "Prophet River First Nation",
-            label: "Prophet River First Nation",
-          },
-          {
-            value: "Saulteau First Nations",
-            label: "Saulteau First Nations",
-          },
-          {
-            value: "West Moberly First Nations",
-            label: "West Moberly First Nations",
-          },
-        ]}
-      />
-    </>
-  );
 };
 
 class ApplicationSectionOne extends Component {
@@ -242,7 +151,50 @@ class ApplicationSectionOne extends Component {
               {(isEmpty(this.props.application) ||
                 this.props.application.application_phase_code ===
                   APPLICATION_PHASE_CODES.NOMINATION) && (
-                <CompanyIndigenousAffiliation {...this.props} />
+                <>
+                  <Field
+                    id="indigenous_affiliation"
+                    name="indigenous_affiliation"
+                    label={
+                      <>
+                        Indigenous Affiliation
+                        {this.props.isEditable && (
+                          <ApplicationFormTooltip content="If you select the revenue-sharing partnership option, you will be required to provide a copy of the agreement as part of your application's review process." />
+                        )}
+                      </>
+                    }
+                    placeholder="Select an option"
+                    component={renderConfig.SELECT}
+                    disabled={!this.props.isEditable}
+                    validate={[required]}
+                    format={null}
+                    data={INDIGENOUS_APPLICANT_AFFILIATION_SELECT_OPTIONS}
+                  />
+                  {this.props.indigeneousAffiliation !== "NONE" && (
+                    <Field
+                      id="indigenous_bands"
+                      name="indigenous_bands"
+                      label={
+                        <>
+                          <div>Indigenous Bands</div>
+                          {this.props.isEditable && (
+                            <div className="font-weight-normal">
+                              If your band is not in the list, you can type it in and select it as a
+                              custom option.
+                            </div>
+                          )}
+                        </>
+                      }
+                      placeholder="Select an option"
+                      mode="tags"
+                      component={renderConfig.MULTI_SELECT}
+                      disabled={!this.props.isEditable}
+                      validate={[required]}
+                      format={null}
+                      data={DEFAULT_INDIGENOUS_BANDS_SELECT_OPTIONS}
+                    />
+                  )}
+                </>
               )}
               <Field
                 id="address_line_1"
