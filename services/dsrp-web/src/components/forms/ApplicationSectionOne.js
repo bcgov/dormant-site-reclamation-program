@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { reduxForm, Field, FormSection, formValueSelector } from "redux-form";
 import { Row, Col, Typography, Form, Button } from "antd";
 import PropTypes from "prop-types";
+import { isEmpty } from "lodash";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { renderConfig } from "@/components/common/config";
@@ -11,7 +12,11 @@ import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
-import { APPLICATION_PHASE_CODES } from "@/constants/strings";
+import {
+  APPLICATION_PHASE_CODES,
+  INDIGENOUS_APPLICANT_AFFILIATION_SELECT_OPTIONS,
+  DEFAULT_INDIGENOUS_COMMUNITIES_SELECT_OPTIONS,
+} from "@/constants/strings";
 import { ORGBOOK_URL } from "@/constants/routes";
 import { PROGRAM_TAC } from "@/constants/assets";
 import { getApplication } from "@/selectors/applicationSelectors";
@@ -21,7 +26,7 @@ const { Title, Paragraph } = Typography;
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   initialValues: PropTypes.objectOf(PropTypes.any).isRequired,
-  indigenousParticipationCheckbox: PropTypes.bool.isRequired,
+  indigenousParticipation: PropTypes.bool.isRequired,
   application: PropTypes.objectOf(PropTypes.any),
   isViewingSubmission: PropTypes.bool,
   isAdminEditMode: PropTypes.bool,
@@ -131,7 +136,7 @@ class ApplicationSectionOne extends Component {
                     disabled={!this.props.isEditable}
                     component={renderConfig.CHECKBOX}
                   />
-                  {this.props.indigenousParticipationCheckbox && (
+                  {this.props.indigenousParticipation && (
                     <Field
                       id="indigenous_participation_description"
                       name="indigenous_participation_description"
@@ -139,6 +144,55 @@ class ApplicationSectionOne extends Component {
                       component={renderConfig.AUTO_SIZE_FIELD}
                       validate={[required, maxLength(65536)]}
                       disabled={!this.props.isEditable}
+                    />
+                  )}
+                </>
+              )}
+              {(isEmpty(this.props.application) ||
+                this.props.application.application_phase_code ===
+                  APPLICATION_PHASE_CODES.NOMINATION) && (
+                <>
+                  <Field
+                    id="indigenous_affiliation"
+                    name="indigenous_affiliation"
+                    label={
+                      <>
+                        Indigenous Affiliation
+                        {this.props.isEditable && (
+                          <ApplicationFormTooltip content="If you select the revenue-sharing partnership option, you will be required to provide a copy of the agreement as part of your application's review process." />
+                        )}
+                      </>
+                    }
+                    placeholder="Select an option"
+                    component={renderConfig.SELECT}
+                    disabled={!this.props.isEditable}
+                    validate={[required]}
+                    format={null}
+                    data={INDIGENOUS_APPLICANT_AFFILIATION_SELECT_OPTIONS}
+                  />
+                  {this.props.indigeneousAffiliation !== "NONE" && (
+                    <Field
+                      id="indigenous_communities"
+                      name="indigenous_communities"
+                      label={
+                        <>
+                          <div>Indigenous Peoples</div>
+                          {this.props.isEditable && (
+                            <div className="font-weight-normal">
+                              Select the Indigenous community(s) your business is affiliated with.
+                              If your Indigenous community is not in the list, you can type it in
+                              and select it as an option.
+                            </div>
+                          )}
+                        </>
+                      }
+                      placeholder="Select an option"
+                      mode="tags"
+                      component={renderConfig.MULTI_SELECT}
+                      disabled={!this.props.isEditable}
+                      validate={[required]}
+                      format={null}
+                      data={DEFAULT_INDIGENOUS_COMMUNITIES_SELECT_OPTIONS}
                     />
                   )}
                 </>
@@ -377,7 +431,8 @@ const selector = formValueSelector(FORM.APPLICATION_FORM);
 
 const mapStateToProps = (state) => ({
   application: getApplication(state),
-  indigenousParticipationCheckbox: selector(state, "company_details.indigenous_participation_ind"),
+  indigenousParticipation: selector(state, "company_details.indigenous_participation_ind"),
+  indigeneousAffiliation: selector(state, "company_details.indigenous_affiliation"),
 });
 
 const mapDispatchToProps = () => ({});
