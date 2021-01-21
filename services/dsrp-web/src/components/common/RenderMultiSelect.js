@@ -12,6 +12,7 @@ const propTypes = {
   input: PropTypes.objectOf(PropTypes.any).isRequired,
   placeholder: PropTypes.string,
   label: PropTypes.string,
+  mode: PropTypes.string,
   meta: CustomPropTypes.formMeta,
   data: CustomPropTypes.options,
   filterOption: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
@@ -22,6 +23,7 @@ const propTypes = {
 const defaultProps = {
   placeholder: "",
   label: "",
+  mode: "multiple",
   data: [],
   disabled: false,
   meta: {},
@@ -44,7 +46,7 @@ export const RenderMultiSelect = (props) => (
     >
       <Select
         disabled={!props.data || props.disabled}
-        mode="multiple"
+        mode={props.mode}
         getPopupContainer={() => document.getElementById(props.id)}
         placeholder={props.placeholder}
         id={props.id}

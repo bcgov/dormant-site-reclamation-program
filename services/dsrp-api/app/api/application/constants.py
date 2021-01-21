@@ -178,3 +178,30 @@ SITE_CONDITIONS = [
         "Specified work that was included in a permit holder's Dormant Sites 2020 Annual Work Plan"
     )
 ]
+
+INDIGENOUS_APPLICANT_AFFILIATION = {
+    "PARTNERSHIP_REVENUE_SHARING":
+    "Applicant has a partnership (revenue sharing) that is endorsed by an Indigenous community",
+    "COMMUNITY_OWNED_GREATER_THAN_51": "Applicant is Indigenous community-owned (at least 51%)",
+    "PERSON_OWNED_GREATER_THAN_51": "Applicant is Indigenous person-owned (at least 51%)",
+    "COMMUNITY_OWNED_LESS_THAN_51": "Applicant is Indigenous community-owned (less than 51%)",
+    "PERSON_OWNED_LESS_THAN_51": "Applicant is Indigenous person-owned (less than 51%)",
+    "PARTNERSHIP_NON_REVENUE_SHARING":
+    "Applicant has a partnership (non-revenue sharing) that is endorsed by an Indigenous community",
+    "NONE": "Applicant has no Indigenous affiliation",
+}
+
+INDIGENOUS_SUBCONTRACTOR_AFFILIATION = {
+    "PARTNERSHIP_REVENUE_SHARING":
+    "Partnership (revenue sharing) that is endorsed by an Indigenous community",
+    "COMMUNITY_OWNED_GREATER_THAN_51":
+    "Owned by an Indigenous community (at least 51%)",
+    "PERSON_OWNED_GREATER_THAN_51":
+    "Owned by an Indigenous person (at least 51%)",
+    "COMMUNITY_OWNED_LESS_THAN_51":
+    "Owned by an Indigenous community (less than 51%)",
+    "PERSON_OWNED_LESS_THAN_51":
+    "Owned by an Indigenous person (less than 51%)",
+    "PARTNERSHIP_NON_REVENUE_SHARING":
+    "Partnership (non-revenue sharing) that is endorsed by an Indigenous community",
+}

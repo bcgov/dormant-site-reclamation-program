@@ -646,38 +646,36 @@ const renderWells = (props) => {
                 </Row>
               </FormSection>
 
-              {props.application.application_phase_code === APPLICATION_PHASE_CODES.INITIAL && (
-                <FormSection name={createMemberName(member, "site_conditions")}>
-                  <Title level={4} className="application-subsection">
-                    Eligibility Criteria
-                  </Title>
-                  <Paragraph>Select all criteria that apply to this site:</Paragraph>
-                  <Row gutter={48}>
-                    <Col className="application-checkbox-section">
-                      {SITE_CONDITIONS.map((condition) => (
-                        <Field
-                          key={condition.fieldName}
-                          name={condition.fieldName}
-                          label={condition.fieldLabel}
-                          disabled={!props.isEditable}
-                          component={renderConfig.CHECKBOX}
-                        />
-                      ))}
-                      {props.parentSubmitFailed &&
-                        wellSiteErrors &&
-                        wellSiteErrors.site_conditions &&
-                        wellSiteErrors.site_conditions.error && (
-                          <span
-                            id={`well_sites[${index}].site_conditions.error`}
-                            className="color-error"
-                          >
-                            {wellSiteErrors.site_conditions.error}
-                          </span>
-                        )}
-                    </Col>
-                  </Row>
-                </FormSection>
-              )}
+              <FormSection name={createMemberName(member, "site_conditions")}>
+                <Title level={4} className="application-subsection">
+                  Eligibility Criteria
+                </Title>
+                <Paragraph>Select all criteria that apply to this site:</Paragraph>
+                <Row gutter={48}>
+                  <Col className="application-checkbox-section">
+                    {SITE_CONDITIONS.map((condition) => (
+                      <Field
+                        key={condition.fieldName}
+                        name={condition.fieldName}
+                        label={condition.fieldLabel}
+                        disabled={!props.isEditable}
+                        component={renderConfig.CHECKBOX}
+                      />
+                    ))}
+                    {props.parentSubmitFailed &&
+                      wellSiteErrors &&
+                      wellSiteErrors.site_conditions &&
+                      wellSiteErrors.site_conditions.error && (
+                        <span
+                          id={`well_sites[${index}].site_conditions.error`}
+                          className="color-error"
+                        >
+                          {wellSiteErrors.site_conditions.error}
+                        </span>
+                      )}
+                  </Col>
+                </Row>
+              </FormSection>
 
               <FormSection name={createMemberName(member, "contracted_work")}>
                 <Title level={4} className="application-subsection">
