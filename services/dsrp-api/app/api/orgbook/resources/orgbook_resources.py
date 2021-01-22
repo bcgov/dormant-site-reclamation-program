@@ -53,21 +53,23 @@ class CredentialResource(Resource):
         resp = OrgBookService.get_business_number(topic_id)
         if resp.status_code != requests.codes.ok:
             message = f'OrgBook API (get_business_number) responded with {resp.status_code}: {resp.reason}'
-            current_app.logger.error(
+            current_app.logger.warning(
                 f'CredentialResource get_business_number: {message}\nresp.text:\n{resp.text}')
-            raise BadGateway(message)
 
         # Get the business number from the business number data
         business_number = None
-        business_number_data = json.loads(resp.text)
-        results = business_number_data['results']
-        for result in results:
-            for attribute in result['attributes']:
-                if attribute['type'] == 'business_number':
-                    business_number = attribute['value']
+        try:
+            business_number_data = json.loads(resp.text)
+            results = business_number_data['results']
+            for result in results:
+                for attribute in result['attributes']:
+                    if attribute['type'] == 'business_number':
+                        business_number = attribute['value']
+                        break
+                if business_number:
                     break
-            if business_number:
-                break
+        except:
+            pass
 
         # Set the business number (if it was found) in the credential data
         if business_number is None:
