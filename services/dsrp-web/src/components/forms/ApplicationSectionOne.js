@@ -453,7 +453,6 @@ const selector = formValueSelector(FORM.APPLICATION_FORM);
 
 const mapStateToProps = (state) => ({
   orgBookCredential: getOrgBookCredential(state),
-  businessNumber: selector(state, "company_details.business_number"),
   indigenousParticipation: selector(state, "company_details.indigenous_participation_ind"),
   indigeneousAffiliation: selector(state, "company_details.indigenous_affiliation"),
 });
