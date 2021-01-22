@@ -475,7 +475,6 @@ const validateWellSites = (wellSites, formValues, props) => {
   }
 
   wellSites.map((wellSite, index) => {
-    console.log("wellSite", wellSite);
     // Check that the well authorization number is valid.
     const validateRequired = required(get(wellSite, "details.well_authorization_number", null));
     if (validateRequired) {
@@ -496,8 +495,6 @@ const validateWellSites = (wellSites, formValues, props) => {
         "Sites must meet at least one of the Eligibility Criteria to qualify for the program."
       );
     }
-
-    console.log("FOO");
 
     // Check that at least one contracted work section is valid.
     let emptySectionsCount = 0;
@@ -557,11 +554,14 @@ const validateWellSites = (wellSites, formValues, props) => {
       }
 
       // Validate that there are no empty subcontractors (if there are any).
-      console.log(subcontractors);
       if (!isEmpty(subcontractors)) {
         for (const subcontractor in subcontractors) {
           if (isEmpty(subcontractor)) {
-            set(errors, `${path}.indigenous_subcontractors`, endDateError);
+            set(
+              errors,
+              `${path}.indigenous_subcontractors`,
+              "You must provide information for this subcontractor."
+            );
             sectionErrorCount++;
             break;
           }
@@ -657,36 +657,32 @@ const IndigenousSubcontractor = (props) => (
   </Col>
 );
 
-const renderIndigenousSubcontractor = (props) => {
-  console.log("renderIndigenousSubcontractor props", props);
-  return (
-    <>
-      <Title level={4} style={{ margin: 0 }}>
-        Indigenous Subcontractors
-      </Title>
-      <Paragraph>
-        List all subcontractors with an Indigenous affiliation that will be involved in completing
-        this work.
-      </Paragraph>
-      <Row gutter={48} type="flex" justify="start">
-        {props.fields.map((member, index) => (
-          // TODO: Set ID used by error maker?
-          <IndigenousSubcontractor member={member} index={index} {...props} />
-        ))}
-      </Row>
-      {props.isEditable && (
-        <>
-          <br />
-          <Button type="primary" onClick={() => props.fields.push({})}>
-            Add Indigenous Subcontractor
-          </Button>
-          <br />
-          <br />
-        </>
-      )}
-    </>
-  );
-};
+const renderIndigenousSubcontractor = (props) => (
+  <>
+    <Title level={4} style={{ margin: 0 }}>
+      Indigenous Subcontractors
+    </Title>
+    <Paragraph>
+      List all subcontractors with an Indigenous affiliation that will be involved in completing
+      this work.
+    </Paragraph>
+    <Row gutter={48} type="flex" justify="start">
+      {props.fields.map((member, index) => (
+        <IndigenousSubcontractor member={member} index={index} {...props} />
+      ))}
+    </Row>
+    {props.isEditable && (
+      <>
+        <br />
+        <Button type="primary" onClick={() => props.fields.push({})}>
+          Add Indigenous Subcontractor
+        </Button>
+        <br />
+        <br />
+      </>
+    )}
+  </>
+);
 
 const renderWells = (props) => {
   // Ensure that there is always at least one well site.
@@ -993,7 +989,6 @@ class ApplicationSectionTwo extends Component {
   };
 
   render() {
-    console.log("all props", this.props);
     const wellTotalsValues = Object.values(this.state.contractedWorkTotals.wellTotals);
 
     return (
