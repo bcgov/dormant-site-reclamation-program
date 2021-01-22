@@ -655,32 +655,38 @@ const IndigenousSubcontractor = (props) => (
   </Col>
 );
 
-const renderIndigenousSubcontractor = (props) => (
-  <>
-    <Title level={4} style={{ margin: 0 }}>
-      Indigenous Subcontractors
-    </Title>
-    <Paragraph>
-      List all subcontractors with an Indigenous affiliation that will be involved in completing
-      this work.
-    </Paragraph>
-    <Row gutter={48} type="flex" justify="start">
-      {props.fields.map((member, index) => (
-        <IndigenousSubcontractor member={member} index={index} {...props} />
-      ))}
-    </Row>
-    {props.isEditable && (
-      <>
-        <br />
-        <Button type="primary" onClick={() => props.fields.push({})}>
-          Add Indigenous Subcontractor
-        </Button>
-        <br />
-        <br />
-      </>
-    )}
-  </>
-);
+const renderIndigenousSubcontractor = (props) => {
+  if ((!props.isEditable || props.isViewingSubmission) && isEmpty(props.fields)) {
+    return <></>;
+  }
+
+  return (
+    <>
+      <Title level={4} style={{ margin: 0 }}>
+        Indigenous Subcontractors
+      </Title>
+      <Paragraph>
+        List all subcontractors with an Indigenous affiliation that will be involved in completing
+        this work.
+      </Paragraph>
+      <Row gutter={48} type="flex" justify="start">
+        {props.fields.map((member, index) => (
+          <IndigenousSubcontractor member={member} index={index} {...props} />
+        ))}
+      </Row>
+      {props.isEditable && (
+        <>
+          <br />
+          <Button type="primary" onClick={() => props.fields.push({})}>
+            Add Indigenous Subcontractor
+          </Button>
+          <br />
+          <br />
+        </>
+      )}
+    </>
+  );
+};
 
 const renderWells = (props) => {
   // Ensure that there is always at least one well site.
