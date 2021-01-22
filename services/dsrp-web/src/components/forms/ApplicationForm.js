@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-import { isPristine, getFormValues, reset, initialize } from "redux-form";
-import { Col, Row, Steps, Typography, Result, Icon } from "antd";
+import { isPristine, getFormValues, initialize } from "redux-form";
+import { Col, Row, Steps, Typography, Icon } from "antd";
 import PropTypes from "prop-types";
-import { isEqual } from "lodash";
+import { isEmpty } from "lodash";
 import { formatDateTimeFine } from "@/utils/helpers";
 import { createApplication } from "@/actionCreators/applicationActionCreator";
 import ApplicationSectionOne from "@/components/forms/ApplicationSectionOne";
@@ -79,7 +79,6 @@ export class ApplicationForm extends Component {
     ) {
       delete json.company_details.indigenous_communities;
     }
-
     json.well_sites.forEach((site) => {
       Object.keys(site.contracted_work).forEach((type) => {
         const empty = Object.keys(site.contracted_work[type]).every(
@@ -88,9 +87,16 @@ export class ApplicationForm extends Component {
         if (empty) {
           delete site.contracted_work[type];
         } else {
-          Object.keys(site.contracted_work[type]).forEach(
-            (k) => !site.contracted_work[type][k] && delete site.contracted_work[type][k]
-          );
+          Object.keys(site.contracted_work[type]).forEach((k) => {
+            if (k === "indigenous_subcontractors") {
+              site.contracted_work[type][k] = site.contracted_work[type][k].filter(
+                (subcontractor) => !isEmpty(subcontractor)
+              );
+            }
+            if (!site.contracted_work[type][k]) {
+              delete site.contracted_work[type][k];
+            }
+          });
         }
       });
       if (site.site_conditions) {

@@ -14,7 +14,7 @@ from app.api.utils.models_mixins import Base, AuditMixin
 from app.api.constants import WELL_SITE_CONTRACTED_WORK, APPLICATION_JSON, COMPANY_NAME_JSON_KEYS
 from .application_status import ApplicationStatus
 from .application_status_change import ApplicationStatusChange
-from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK, INDIGENOUS_APPLICANT_AFFILIATION
+from app.api.application.constants import SITE_CONDITIONS, CONTRACTED_WORK, INDIGENOUS_APPLICANT_AFFILIATION, INDIGENOUS_SUBCONTRACTOR_AFFILIATION
 from app.api.permit_holder.resources.permit_holder import PermitHolderResource
 from app.api.application.response_models import APPLICATION
 from app.api.contracted_work.response_models import CONTRACTED_WORK_PAYMENT
@@ -443,6 +443,35 @@ class Application(Base, AuditMixin):
                     return f"<li><b>{condition['label']}</b>: {'Yes' if condition['name'] in site_conditions and site_conditions[condition['name']] == True else 'No'}</li>"
 
                 def create_contracted_work_section(section, contracted_work):
+                    def create_indigenous_subcontractors(section, contracted_work):
+                        if self.application_phase_code == 'INITIAL':
+                            return ''
+
+                        def create_indigenous_subcontractor(number, subcontractor):
+                            return f"""
+                            Subcontractor {number}:<br />
+                            <p>
+                            Subcontractor Name: {subcontractor['indigenous_subcontractor_name']}<br />
+                            Indigenous Affiliation: {INDIGENOUS_SUBCONTRACTOR_AFFILIATION[subcontractor['indigenous_affiliation']]}<br />
+                            Indigenous Peoples:<br />
+                            <ul>
+                            {''.join([f'<li>{community}</li>' for community in subcontractor['indigenous_communities']])}
+                            </ul>
+                            </p>
+                            """
+
+                        indigenous_subcontractors = contracted_work.get(
+                            section['section_name'], {}).get('indigenous_subcontractors', [])
+                        indigenous_subcontractors_content = 'N/A' if not indigenous_subcontractors else ''.join(
+                            [
+                                create_indigenous_subcontractor(i + 1, subcontractor)
+                                for i, subcontractor in enumerate(indigenous_subcontractors)
+                            ])
+                        return f"""
+                        <p><u>Indigenous Subcontractors</u></p>
+                        {indigenous_subcontractors_content}
+                        """
+
                     def create_sub_section(sub_section, section, contracted_work):
                         def create_amount_field(amount_field, section, contracted_work):
                             return f"""
@@ -464,6 +493,8 @@ class Application(Base, AuditMixin):
                     <p>Planned Start Date: {contracted_work[section["section_name"]]["planned_start_date"] if contracted_work.get(section["section_name"]) and contracted_work.get(section["section_name"]).get("planned_start_date") else "N/A"}</p>
                     <p>Planned End Date: {contracted_work[section["section_name"]]["planned_end_date"] if contracted_work.get(section["section_name"]) and contracted_work.get(section["section_name"]).get("planned_end_date") else "N/A"}</p>
                     {''.join([create_sub_section(sub_section, section, contracted_work) for sub_section in section["sub_sections"]])}
+                    <br />
+                    {create_indigenous_subcontractors(section, contracted_work)}
                     """
 
                 def create_site_condition(site_conditions):
