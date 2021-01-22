@@ -137,28 +137,20 @@ SITE_CONDITIONS = [
 ]
 
 INDIGENOUS_APPLICANT_AFFILIATION = {
+    "COMMUNITY_OWNED_LESS_THAN_51": "Owned by an Indigenous community (less than 51%)",
+    "COMMUNITY_OWNED_GREATER_THAN_51": "Owned by an Indigenous community (at least 51%)",
+    "PERSON_OWNED_LESS_THAN_51": "Owned by an Indigenous person (less than 51%)",
+    "PERSON_OWNED_GREATER_THAN_51": "Owned by an Indigenous person (at least 51%)",
     "PARTNERSHIP_REVENUE_SHARING":
-    "Applicant has a partnership (revenue sharing) that is endorsed by an Indigenous community",
-    "COMMUNITY_OWNED_GREATER_THAN_51": "Applicant is Indigenous community-owned (at least 51%)",
-    "PERSON_OWNED_GREATER_THAN_51": "Applicant is Indigenous person-owned (at least 51%)",
-    "COMMUNITY_OWNED_LESS_THAN_51": "Applicant is Indigenous community-owned (less than 51%)",
-    "PERSON_OWNED_LESS_THAN_51": "Applicant is Indigenous person-owned (less than 51%)",
+    "Partnership (revenue sharing) that is endorsed by an Indigenous community",
     "PARTNERSHIP_NON_REVENUE_SHARING":
-    "Applicant has a partnership (non-revenue sharing) that is endorsed by an Indigenous community",
-    "NONE": "Applicant has no Indigenous affiliation",
+    "Partnership (non-revenue sharing) that is endorsed by an Indigenous community",
+    "NONE": "No Indigenous affiliation",
 }
 
 INDIGENOUS_SUBCONTRACTOR_AFFILIATION = {
-    "PARTNERSHIP_REVENUE_SHARING":
-    "Partnership (revenue sharing) that is endorsed by an Indigenous community",
-    "COMMUNITY_OWNED_GREATER_THAN_51":
-    "Owned by an Indigenous community (at least 51%)",
-    "PERSON_OWNED_GREATER_THAN_51":
-    "Owned by an Indigenous person (at least 51%)",
-    "COMMUNITY_OWNED_LESS_THAN_51":
-    "Owned by an Indigenous community (less than 51%)",
-    "PERSON_OWNED_LESS_THAN_51":
-    "Owned by an Indigenous person (less than 51%)",
-    "PARTNERSHIP_NON_REVENUE_SHARING":
-    "Partnership (non-revenue sharing) that is endorsed by an Indigenous community",
+    "COMMUNITY_OWNED_LESS_THAN_51": "Owned by an Indigenous community (less than 51%)",
+    "COMMUNITY_OWNED_GREATER_THAN_51": "Owned by an Indigenous community (at least 51%)",
+    "PERSON_OWNED_LESS_THAN_51": "Owned by an Indigenous person (less than 51%)",
+    "PERSON_OWNED_GREATER_THAN_51": "Owned by an Indigenous person (at least 51%)",
 }

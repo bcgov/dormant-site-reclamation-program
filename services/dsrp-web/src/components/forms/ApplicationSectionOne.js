@@ -6,7 +6,14 @@ import { compose, bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { isEmpty, isEqual } from "lodash";
 import { renderConfig } from "@/components/common/config";
-import { required, email, maxLength, postalCode, exactLength } from "@/utils/validate";
+import {
+  required,
+  requiredList,
+  email,
+  maxLength,
+  postalCode,
+  exactLength,
+} from "@/utils/validate";
 import { phoneMask, postalCodeMask, scrollToFirstError, businessNumberMask } from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
@@ -205,7 +212,7 @@ class ApplicationSectionOne extends Component {
                       mode="tags"
                       component={renderConfig.MULTI_SELECT}
                       disabled={!this.props.isEditable}
-                      validate={[required]}
+                      validate={[requiredList]}
                       format={null}
                       data={DEFAULT_INDIGENOUS_COMMUNITIES_SELECT_OPTIONS}
                     />
