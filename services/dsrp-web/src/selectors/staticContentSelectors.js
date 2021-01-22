@@ -15,6 +15,7 @@ export const {
   getContractedWorkStatusOptions,
   getContractedWorkPaymentStatusOptions,
   getContractedWorkTypeOptions,
+  getApplicationPhaseOptions,
 } = staticContentReducer;
 
 export const getDropdownApplicationStatusOptions = createSelector(
@@ -35,6 +36,16 @@ export const getFilterListApplicationStatusOptions = createSelector(
 
 export const getApplicationStatusOptionsHash = createSelector(
   [getDropdownApplicationStatusOptions],
+  createLabelHash
+);
+
+export const getDropdownApplicationPhaseOptions = createSelector(
+  [getApplicationPhaseOptions],
+  (options) => createDropDownList(options, "description", "application_phase_code")
+);
+
+export const getApplicationPhaseOptionsHash = createSelector(
+  [getDropdownApplicationPhaseOptions],
   createLabelHash
 );
 

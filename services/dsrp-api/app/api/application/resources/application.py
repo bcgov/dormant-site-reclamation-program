@@ -33,7 +33,8 @@ class ApplicationListResource(Resource, UserMixin):
             application_status_code=request.args.getlist('application_status_code', type=str),
             id=request.args.get('id', type=int),
             guid=request.args.get('guid', type=str),
-            company_name=request.args.get('company_name', type=str))
+            company_name=request.args.get('company_name', type=str),
+            application_phase_code=request.args.getlist('application_phase_code', type=str))
 
         data = records.all()
 
@@ -53,7 +54,8 @@ class ApplicationListResource(Resource, UserMixin):
                                       id=None,
                                       guid=None,
                                       company_name=None,
-                                      application_status_code=[]):
+                                      application_status_code=[],
+                                      application_phase_code=[]):
 
         base_query = Application.query
 
@@ -68,6 +70,10 @@ class ApplicationListResource(Resource, UserMixin):
         if application_status_code:
             base_query = base_query.filter(
                 Application.application_status_code.in_(application_status_code))
+
+        if application_phase_code:
+            base_query = base_query.filter(
+                Application.application_phase_code.in_(application_phase_code))
 
         if company_name:
             filters.append(

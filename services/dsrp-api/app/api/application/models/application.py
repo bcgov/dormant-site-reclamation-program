@@ -466,16 +466,22 @@ class Application(Base, AuditMixin):
                     {''.join([create_sub_section(sub_section, section, contracted_work) for sub_section in section["sub_sections"]])}
                     """
 
+                def create_site_condition(site_conditions):
+                    site_conditions_section = "" if self.application_phase_code == 'NOMINATION' else f"""
+                    h3>Site Conditions</h3>
+                    {''.join()}
+                    <ul>
+                    {''.join([create_site_condition(condition, well_site["site_conditions"]) for condition in SITE_CONDITIONS])}
+                    </ul>
+                    """
+
                 return f"""
                 <h2>Well Site {index + 1}</h2>
 
                 <h3>Well Authorization Number</h3>
                 <p>{well_site["details"]["well_authorization_number"]}</p>
 
-                <h3>Site Conditions</h3>
-                <ul>
-                {''.join([create_site_condition(condition, well_site["site_conditions"]) for condition in SITE_CONDITIONS])}
-                </ul>
+                {create_site_condition(well_site)}
 
                 <h3>Contracted Work</h3>
                 {''.join([create_contracted_work_section(section, well_site["contracted_work"]) for section in CONTRACTED_WORK])}

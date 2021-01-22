@@ -13,6 +13,8 @@ import * as route from "@/constants/routes";
 const propTypes = {
   applications: PropTypes.any.isRequired,
   filterListApplicationStatusOptions: PropTypes.objectOf(PropTypes.any).isRequired,
+  applicationPhaseDropdownOptions: PropTypes.objectOf(PropTypes.any).isRequired,
+  applicationPhaseOptionsHash: PropTypes.objectOf(PropTypes.any).isRequired,
   handleTableChange: PropTypes.func.isRequired,
   isLoaded: PropTypes.bool.isRequired,
   params: PropTypes.objectOf(PropTypes.any).isRequired,
@@ -193,6 +195,10 @@ export class ApplicationTable extends Component {
   };
 
   render() {
+    const phaseOptionsFilter = this.props.applicationPhaseDropdownOptions.map((p) => {
+      return { value: p.value, text: p.label };
+    });
+
     const columns = [
       {
         title: "Application ID",
@@ -308,6 +314,22 @@ export class ApplicationTable extends Component {
               </Dropdown>
             </span>
           </div>
+        ),
+      },
+      {
+        title: "Phase",
+        key: "application_phase_code",
+        dataIndex: "application_phase_code",
+        sortField: "application_phase_code",
+        sorter: true,
+        filters: phaseOptionsFilter,
+        filteredValue: isArray(this.props.params.application_phase_code)
+          ? this.props.params.application_phase_code
+          : this.props.params.application_phase_code
+          ? [this.props.params.application_phase_code]
+          : [],
+        render: (text, record) => (
+          <span> {this.props.applicationPhaseOptionsHash[text] || Strings.ERROR}</span>
         ),
       },
       {
