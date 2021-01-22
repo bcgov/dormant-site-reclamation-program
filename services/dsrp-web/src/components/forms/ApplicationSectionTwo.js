@@ -300,7 +300,9 @@ const renderContractWorkPanel = (
             isAdminEditMode={isAdminEditMode}
             isViewingSubmission={isViewingSubmission}
             parentSubmitFailed={submitFailed}
+            wellSectionErrors={wellSectionErrors}
             application={application}
+            errorSpanId={`well_sites[${wellNumber}].contracted_work.${contractWorkSection.formSectionName}.indigenous_subcontractors.error`}
           />
         )}
         {submitFailed && wellSectionErrors && wellSectionErrors.error && (
@@ -465,13 +467,13 @@ const openRequiredPanels = async (errors) => {
   return Promise.resolve(wellSitePanelHeaderElement.firstChild);
 };
 
-const validateWellSites = (wellSites, formValues, props) => {
-  const errors = {};
-
+const validateWellSites = (value, allValues, props) => {
+  const wellSites = value;
   if (!isArrayLike(wellSites) || isEmpty(wellSites)) {
     return undefined;
   }
 
+  const errors = {};
   wellSites.map((wellSite, index) => {
     // Check that the well authorization number is valid.
     const validateRequired = required(get(wellSite, "details.well_authorization_number", null));
@@ -552,18 +554,20 @@ const validateWellSites = (wellSites, formValues, props) => {
       }
 
       // Validate that there are no empty subcontractors (if there are any).
+      console.log("subcontractors", subcontractors);
       if (!isEmpty(subcontractors)) {
-        for (const subcontractor in subcontractors) {
+        subcontractors.forEach((subcontractor) => {
           if (isEmpty(subcontractor)) {
             set(
               errors,
-              `${path}.indigenous_subcontractors`,
-              "You must provide information for this subcontractor."
+              `${path}.indigenous_subcontractors.error`,
+              "You cannot have any empty Indigenous subcontractors."
             );
+            console.log("SETTING EMPTY!");
             sectionErrorCount++;
-            break;
+            return;
           }
-        }
+        });
       }
 
       if (sectionErrorCount === 0) {
@@ -674,6 +678,12 @@ const renderIndigenousSubcontractor = (props) => {
           <IndigenousSubcontractor member={member} index={index} {...props} />
         ))}
       </Row>
+      {props.parentSubmitFailed && props.wellSectionErrors?.indigenous_subcontractors?.error && (
+        <span id={props.errorSpanId} className="color-error">
+          {props.wellSectionErrors.indigenous_subcontractors.error}
+          <br />
+        </span>
+      )}
       {props.isEditable && (
         <>
           <br />
