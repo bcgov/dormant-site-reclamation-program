@@ -63,8 +63,8 @@ class ApplicationSectionOne extends Component {
 
   componentWillReceiveProps(nextProps) {
     const companyChanged = this.props.companyName !== nextProps.companyName;
-    if (companyChanged && !isEmpty(nextProps.orgBookCredential)) {
-      return this.props.change(
+    if (companyChanged && isEmpty(application) && !isEmpty(nextProps.orgBookCredential)) {
+      this.props.change(
         "company_details.business_number",
         nextProps.orgBookCredential.business_number
       );
