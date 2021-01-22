@@ -143,7 +143,7 @@ class ApplicationSectionOne extends Component {
                 component={renderConfig.FIELD}
                 disabled={
                   !this.props.isEditable ||
-                  (isEmpty(this.props.application) && this.props.businessNumber)
+                  (isEmpty(this.props.application) && this.props.orgBookCredential?.business_number)
                 }
                 validate={[required, exactLength(9)]}
                 {...businessNumberMask}
