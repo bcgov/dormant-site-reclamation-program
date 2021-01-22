@@ -79,7 +79,6 @@ export class ApplicationForm extends Component {
     ) {
       delete json.company_details.indigenous_communities;
     }
-
     json.well_sites.forEach((site) => {
       Object.keys(site.contracted_work).forEach((type) => {
         const empty = Object.keys(site.contracted_work[type]).every(
@@ -88,9 +87,16 @@ export class ApplicationForm extends Component {
         if (empty) {
           delete site.contracted_work[type];
         } else {
-          Object.keys(site.contracted_work[type]).forEach(
-            (k) => !site.contracted_work[type][k] && delete site.contracted_work[type][k]
-          );
+          Object.keys(site.contracted_work[type]).forEach((k) => {
+            if (k === "indigenous_subcontractors") {
+              site.contracted_work[type][k] = site.contracted_work[type][k].filter(
+                (subcontractor) => !isEmpty(subcontractor)
+              );
+            }
+            if (!site.contracted_work[type][k]) {
+              delete site.contracted_work[type][k];
+            }
+          });
         }
       });
       if (site.site_conditions) {
