@@ -80,7 +80,6 @@ export class ApplicationForm extends Component {
       delete json.company_details.indigenous_communities;
     }
 
-    console.log(json);
     json.well_sites.forEach((site) => {
       Object.keys(site.contracted_work).forEach((type) => {
         const empty = Object.keys(site.contracted_work[type]).every(
