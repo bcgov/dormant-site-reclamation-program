@@ -69,6 +69,8 @@ class ApplicationSectionOne extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (
+      !nextProps.isViewingSubmission &&
+      nextProps.isEditable &&
       isEmpty(nextProps.application) &&
       !isEqual(this.props.orgBookCredential, nextProps.orgBookCredential)
     ) {
