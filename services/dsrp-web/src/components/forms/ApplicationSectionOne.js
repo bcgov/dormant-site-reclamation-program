@@ -20,7 +20,6 @@ import {
 } from "@/constants/strings";
 import { ORGBOOK_URL } from "@/constants/routes";
 import { PROGRAM_TAC } from "@/constants/assets";
-import { getApplication } from "@/selectors/applicationSelectors";
 
 const { Title, Paragraph } = Typography;
 
@@ -446,7 +445,6 @@ class ApplicationSectionOne extends Component {
 const selector = formValueSelector(FORM.APPLICATION_FORM);
 
 const mapStateToProps = (state) => ({
-  application: getApplication(state),
   orgBookCredential: getOrgBookCredential(state),
   businessNumber: selector(state, "company_details.business_number"),
   indigenousParticipation: selector(state, "company_details.indigenous_participation_ind"),
