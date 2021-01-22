@@ -4,7 +4,7 @@ import { Row, Col, Typography, Form, Button } from "antd";
 import PropTypes from "prop-types";
 import { compose, bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { isEmpty } from "lodash";
+import { isEmpty, isEqual } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import { required, email, maxLength, postalCode, exactLength } from "@/utils/validate";
 import { phoneMask, postalCodeMask, scrollToFirstError, businessNumberMask } from "@/utils/helpers";
@@ -62,8 +62,10 @@ class ApplicationSectionOne extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const companyChanged = this.props.companyName !== nextProps.companyName;
-    if (companyChanged && isEmpty(nextProps.application) && !isEmpty(nextProps.orgBookCredential)) {
+    if (
+      isEmpty(nextProps.application) &&
+      !isEqual(this.props.orgBookCredential, nextProps.orgBookCredential)
+    ) {
       this.props.change(
         "company_details.business_number",
         nextProps.orgBookCredential.business_number
@@ -135,8 +137,7 @@ class ApplicationSectionOne extends Component {
                 component={renderConfig.FIELD}
                 disabled={
                   !this.props.isEditable ||
-                  this.props.application.application_phase_code ===
-                    APPLICATION_PHASE_CODES.NOMINATION
+                  (isEmpty(this.props.application) && this.props.businessNumber)
                 }
                 validate={[required, exactLength(9)]}
                 {...businessNumberMask}
@@ -446,9 +447,8 @@ const selector = formValueSelector(FORM.APPLICATION_FORM);
 
 const mapStateToProps = (state) => ({
   application: getApplication(state),
-  businessNumber: selector(state, "company_details.business_number"),
-  companyName: selector(state, "company_details.company_name"),
   orgBookCredential: getOrgBookCredential(state),
+  businessNumber: selector(state, "company_details.business_number"),
   indigenousParticipation: selector(state, "company_details.indigenous_participation_ind"),
   indigeneousAffiliation: selector(state, "company_details.indigenous_affiliation"),
 });

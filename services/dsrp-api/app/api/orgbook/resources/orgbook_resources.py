@@ -62,18 +62,17 @@ class CredentialResource(Resource):
         business_number_data = json.loads(resp.text)
         results = business_number_data['results']
         for result in results:
-            if business_number:
-                break
             for attribute in result['attributes']:
                 if attribute['type'] == 'business_number':
                     business_number = attribute['value']
                     break
+            if business_number:
+                break
 
-        # Ensure that the business number was found
+        # Set the business number (if it was found) in the credential data
         if business_number is None:
             message = f'OrgBook API (get_business_number) did not contain the business number'
-            current_app.logger.error(f'CredentialResource get_business_number: {message}')
-            raise BadGateway(message)
-
+            current_app.logger.warning(f'CredentialResource get_business_number: {message}')
         credential_data['business_number'] = business_number
+
         return credential_data
