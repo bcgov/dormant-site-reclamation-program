@@ -293,17 +293,15 @@ const renderContractWorkPanel = (
         {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, { marginRight: 24 })}
         {(isEmpty(application) ||
           application.application_phase_code === APPLICATION_PHASE_CODES.NOMINATION) && (
-          <>
-            <FieldArray
-              name="indigenous_subcontractors"
-              component={renderIndigenousSubcontractor}
-              isEditable={isEditable}
-              isAdminEditMode={isAdminEditMode}
-              isViewingSubmission={isViewingSubmission}
-              parentSubmitFailed={submitFailed}
-              application={application}
-            />
-          </>
+          <FieldArray
+            name="indigenous_subcontractors"
+            component={renderIndigenousSubcontractor}
+            isEditable={isEditable}
+            isAdminEditMode={isAdminEditMode}
+            isViewingSubmission={isViewingSubmission}
+            parentSubmitFailed={submitFailed}
+            application={application}
+          />
         )}
         {submitFailed && wellSectionErrors && wellSectionErrors.error && (
           <span
