@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { reduxForm, Field, FormSection, formValueSelector } from "redux-form";
+import { reduxForm, Field, FormSection, formValueSelector, change } from "redux-form";
 import { Row, Col, Typography, Form, Button } from "antd";
 import PropTypes from "prop-types";
-import { isEmpty } from "lodash";
-import { compose } from "redux";
+import { compose, bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import { isEmpty, isEqual } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import {
   required,
@@ -18,6 +18,7 @@ import { phoneMask, postalCodeMask, scrollToFirstError, businessNumberMask } fro
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
+import { getOrgBookCredential } from "@/selectors/orgbookSelectors";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import {
   APPLICATION_PHASE_CODES,
@@ -26,7 +27,6 @@ import {
 } from "@/constants/strings";
 import { ORGBOOK_URL } from "@/constants/routes";
 import { PROGRAM_TAC } from "@/constants/assets";
-import { getApplication } from "@/selectors/applicationSelectors";
 
 const { Title, Paragraph } = Typography;
 
@@ -64,6 +64,20 @@ class ApplicationSectionOne extends Component {
   componentWillUnmount() {
     if (this.props.isViewingSubmission) {
       this.props.reset();
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (
+      !nextProps.isViewingSubmission &&
+      nextProps.isEditable &&
+      isEmpty(nextProps.application) &&
+      !isEqual(this.props.orgBookCredential, nextProps.orgBookCredential)
+    ) {
+      this.props.change(
+        "company_details.business_number",
+        nextProps.orgBookCredential.business_number
+      );
     }
   }
 
@@ -129,7 +143,10 @@ class ApplicationSectionOne extends Component {
                 label="Business Number"
                 placeholder="Business Number"
                 component={renderConfig.FIELD}
-                disabled={!this.props.isEditable}
+                disabled={
+                  !this.props.isEditable ||
+                  (isEmpty(this.props.application) && this.props.orgBookCredential?.business_number)
+                }
                 validate={[required, exactLength(9)]}
                 {...businessNumberMask}
               />
@@ -437,12 +454,12 @@ class ApplicationSectionOne extends Component {
 const selector = formValueSelector(FORM.APPLICATION_FORM);
 
 const mapStateToProps = (state) => ({
-  application: getApplication(state),
+  orgBookCredential: getOrgBookCredential(state),
   indigenousParticipation: selector(state, "company_details.indigenous_participation_ind"),
   indigeneousAffiliation: selector(state, "company_details.indigenous_affiliation"),
 });
 
-const mapDispatchToProps = () => ({});
+const mapDispatchToProps = (dispatch) => bindActionCreators({ change }, dispatch);
 
 ApplicationSectionOne.propTypes = propTypes;
 ApplicationSectionOne.defaultProps = defaultProps;

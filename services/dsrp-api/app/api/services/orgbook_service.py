@@ -12,3 +12,7 @@ class OrgBookService():
     def get_credential(credential_id):
         url = f'{Config.ORGBOOK_API_URL}credential/{credential_id}/formatted'
         return requests.get(url=url)
+
+    def get_business_number(topic_id):
+        url = f'{Config.ORGBOOK_API_URL}search/credential?topic_id={topic_id}'
+        return requests.get(url=url)

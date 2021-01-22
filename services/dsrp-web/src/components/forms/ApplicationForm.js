@@ -73,6 +73,13 @@ export class ApplicationForm extends Component {
   }
 
   validateJSONData = (json) => {
+    if (
+      json.company_details.indigenous_affiliation === "NONE" &&
+      json.company_details.indigenous_communities
+    ) {
+      delete json.company_details.indigenous_communities;
+    }
+
     json.well_sites.forEach((site) => {
       Object.keys(site.contracted_work).forEach((type) => {
         const empty = Object.keys(site.contracted_work[type]).every(
