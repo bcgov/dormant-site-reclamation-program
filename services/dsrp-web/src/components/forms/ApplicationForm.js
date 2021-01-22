@@ -86,11 +86,13 @@ export class ApplicationForm extends Component {
           );
         }
       });
-      Object.keys(site.site_conditions).forEach((cond) => {
-        if (!site.site_conditions[cond]) {
-          delete site.site_conditions[cond];
-        }
-      });
+      if (site.site_conditions) {
+        Object.keys(site.site_conditions).forEach((cond) => {
+          if (!site.site_conditions[cond]) {
+            delete site.site_conditions[cond];
+          }
+        });
+      }
     });
     return json;
   };

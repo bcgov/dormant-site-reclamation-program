@@ -13,6 +13,7 @@ const initialState = {
   contractedWorkStatusOptions: [],
   contractedWorkPaymentStatusOptions: [],
   contractedWorkTypeOptions: CONTRACT_WORK_TYPE_OPTIONS,
+  applicationPhaseTypeOptions: [],
 };
 
 export const staticContentReducer = (state = initialState, action) => {
@@ -38,6 +39,8 @@ export const getContractedWorkPaymentStatusOptions = (state) =>
   state[STATIC_CONTENT].contractedWorkPaymentStatusOptions;
 export const getContractedWorkTypeOptions = (state) =>
   state[STATIC_CONTENT].contractedWorkTypeOptions;
+export const getApplicationPhaseOptions = (state) =>
+  state[STATIC_CONTENT].applicationPhaseTypeOptions;
 
 const isStaticContentLoaded = (state) =>
   Object.keys(state)

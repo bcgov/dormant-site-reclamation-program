@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { Button, Icon } from "antd";
+import { Button, Icon, Col, Row } from "antd";
 import { withRouter } from "react-router-dom";
 import { bindActionCreators, compose } from "redux";
 import { set, isEmpty } from "lodash";
@@ -24,6 +24,8 @@ import {
   getApplicationStatusOptionsHash,
   getDropdownContractedWorkStatusOptions,
   getContractedWorkStatusOptionsHash,
+  getDropdownApplicationPhaseOptions,
+  getApplicationPhaseOptionsHash,
 } from "@/selectors/staticContentSelectors";
 import { getPermitHoldersHash } from "@/selectors/OGCSelectors";
 import {
@@ -58,10 +60,15 @@ const defaultParams = {
   guid: undefined,
   company_name: undefined,
   application_status_code: [],
+  application_phase_code: [],
 };
 
 export class ReviewApplicationInfo extends Component {
-  state = { isLoaded: false, params: defaultParams };
+  state = {
+    isLoaded: false,
+    params: defaultParams,
+    activeTab: Strings.APPLICATION_PHASE_CODES.INITIAL,
+  };
 
   renderDataFromURL = (params) => {
     const parsedParams = queryString.parse(params);
@@ -214,24 +221,30 @@ export class ReviewApplicationInfo extends Component {
           initialValues={{ guid: this.state.params.guid }}
           onSubmit={this.search}
         />
-        <ApplicationTable
-          applications={this.props.applications}
-          applicationsWellSitesContractedWork={this.props.applicationsWellSitesContractedWork}
-          pageData={this.props.pageData}
-          params={this.state.params}
-          handleTableChange={this.handleApplicationsSearch}
-          onPageChange={this.onPageChange}
-          isLoaded={this.state.isLoaded}
-          applicationStatusDropdownOptions={this.props.applicationStatusDropdownOptions}
-          applicationStatusOptionsHash={this.props.applicationStatusOptionsHash}
-          contractedWorkStatusDropdownOptions={this.props.contractedWorkStatusDropdownOptions}
-          contractedWorkStatusOptionsHash={this.props.contractedWorkStatusOptionsHash}
-          handleApplicationStatusChange={this.openUpdateStatusModal}
-          handleContractedWorkStatusChange={this.handleContractedWorkStatusChange}
-          permitHoldersHash={this.props.permitHoldersHash}
-          fetchLiabilities={this.props.fetchLiabilities}
-          fetchWells={this.props.fetchWells}
-        />
+        <Row>
+          <Col xl={{ span: 24 }} xxl={{ span: 24 }}>
+            <ApplicationTable
+              applications={this.props.applications}
+              applicationsWellSitesContractedWork={this.props.applicationsWellSitesContractedWork}
+              pageData={this.props.pageData}
+              params={this.state.params}
+              handleTableChange={this.handleApplicationsSearch}
+              onPageChange={this.onPageChange}
+              isLoaded={this.state.isLoaded}
+              applicationStatusDropdownOptions={this.props.applicationStatusDropdownOptions}
+              applicationStatusOptionsHash={this.props.applicationStatusOptionsHash}
+              applicationPhaseDropdownOptions={this.props.applicationPhaseDropdownOptions}
+              applicationPhaseOptionsHash={this.props.applicationPhaseOptionsHash}
+              contractedWorkStatusDropdownOptions={this.props.contractedWorkStatusDropdownOptions}
+              contractedWorkStatusOptionsHash={this.props.contractedWorkStatusOptionsHash}
+              handleApplicationStatusChange={this.openUpdateStatusModal}
+              handleContractedWorkStatusChange={this.handleContractedWorkStatusChange}
+              permitHoldersHash={this.props.permitHoldersHash}
+              fetchLiabilities={this.props.fetchLiabilities}
+              fetchWells={this.props.fetchWells}
+            />
+          </Col>
+        </Row>
       </>
     );
   }
@@ -246,6 +259,8 @@ const mapStateToProps = (state) => ({
   contractedWorkStatusDropdownOptions: getDropdownContractedWorkStatusOptions(state),
   contractedWorkStatusOptionsHash: getContractedWorkStatusOptionsHash(state),
   permitHoldersHash: getPermitHoldersHash(state),
+  applicationPhaseDropdownOptions: getDropdownApplicationPhaseOptions(state),
+  applicationPhaseOptionsHash: getApplicationPhaseOptionsHash(state),
 });
 
 const mapDispatchToProps = (dispatch) =>
