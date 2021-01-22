@@ -4,10 +4,21 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { compose } from "redux";
 import moment from "moment";
-import { Row, Col, Typography, Form, Button, Collapse, Icon, Popconfirm, notification } from "antd";
+import {
+  Row,
+  Col,
+  Card,
+  Typography,
+  Form,
+  Button,
+  Collapse,
+  Icon,
+  Popconfirm,
+  notification,
+} from "antd";
 import { sum, get, set, isArrayLike, isEmpty, isObjectLike, debounce } from "lodash";
 import { renderConfig } from "@/components/common/config";
-import { required } from "@/utils/validate";
+import { required, requiredList, maxLength } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 import {
   PROGRAM_START_DATE,
@@ -15,6 +26,8 @@ import {
   DATE_FORMAT,
   HELP_EMAIL,
   APPLICATION_PHASE_CODES,
+  INDIGENOUS_SUBCONTRACTOR_AFFILIATION_SELECT_OPTIONS,
+  DEFAULT_INDIGENOUS_COMMUNITIES_SELECT_OPTIONS,
 } from "@/constants/strings";
 import {
   currencyMask,
@@ -161,7 +174,8 @@ const renderContractWorkPanel = (
   wellSiteFormValues,
   submitFailed,
   wellNumber,
-  wellSectionErrors
+  wellSectionErrors,
+  application
 ) => {
   // Calculate the end date's default picker date to be the start date if the start date exists and is valid.
   const contractWorkValues = wellSiteFormValues ? wellSiteFormValues.contracted_work : null;
@@ -277,6 +291,18 @@ const renderContractWorkPanel = (
           </Form.Item>
         ))}
         {renderMoneyTotal(contractWorkSection.sectionHeader, wellSectionTotal, { marginRight: 24 })}
+        {(isEmpty(application) ||
+          application.application_phase_code === APPLICATION_PHASE_CODES.NOMINATION) && (
+          <FieldArray
+            name="indigenous_subcontractors"
+            component={renderIndigenousSubcontractor}
+            isEditable={isEditable}
+            isAdminEditMode={isAdminEditMode}
+            isViewingSubmission={isViewingSubmission}
+            parentSubmitFailed={submitFailed}
+            application={application}
+          />
+        )}
         {submitFailed && wellSectionErrors && wellSectionErrors.error && (
           <span
             id={`well_sites[${wellNumber}].contracted_work.${contractWorkSection.formSectionName}.error`}
@@ -483,9 +509,10 @@ const validateWellSites = (wellSites, formValues, props) => {
       const costSum = sum(Object.values(sectionValues).filter((value) => !isNaN(value)));
       const startDate = sectionValues.planned_start_date;
       const endDate = sectionValues.planned_end_date;
+      const subcontractors = sectionValues.indigenous_subcontractors;
 
       // If this is a blank section.
-      if (!costSum && !startDate && !endDate) {
+      if (!costSum && !startDate && !endDate && isEmpty(subcontractors)) {
         emptySectionsCount++;
         return;
       }
@@ -510,18 +537,33 @@ const validateWellSites = (wellSites, formValues, props) => {
         sectionErrorCount++;
       }
 
-      // Validate start date
+      // Validate start date.
       const startDateError = validateStartDate(startDate, sectionValues);
       if (startDateError) {
         set(errors, `${path}.planned_start_date`, startDateError);
         sectionErrorCount++;
       }
 
-      // Validate end date
+      // Validate end date.
       const endDateError = validateEndDate(endDate, sectionValues);
       if (endDateError) {
         set(errors, `${path}.planned_end_date`, endDateError);
         sectionErrorCount++;
+      }
+
+      // Validate that there are no empty subcontractors (if there are any).
+      if (!isEmpty(subcontractors)) {
+        for (const subcontractor in subcontractors) {
+          if (isEmpty(subcontractor)) {
+            set(
+              errors,
+              `${path}.indigenous_subcontractors`,
+              "You must provide information for this subcontractor."
+            );
+            sectionErrorCount++;
+            break;
+          }
+        }
       }
 
       if (sectionErrorCount === 0) {
@@ -543,6 +585,102 @@ const validateWellSites = (wellSites, formValues, props) => {
 
   return isEmpty(errors) ? undefined : errors;
 };
+
+const IndigenousSubcontractor = (props) => (
+  <Col key={props.index} xl={{ span: 12 }} lg={{ span: 24 }}>
+    <Card
+      className="subcontractor-card"
+      title={`Subcontractor ${props.index + 1}`}
+      extra={
+        props.isEditable && (
+          <Popconfirm
+            title="Are you sure you want to remove this subcontractor?"
+            onConfirm={(e) => props.fields.remove(props.index)}
+            okText="Yes"
+            cancelText="No"
+            placement="topRight"
+            arrowPointAtCenter
+          >
+            <Button type="link" className="color-white" style={{ float: "right" }}>
+              <Icon type="delete" theme="filled" className="icon-lg" />
+            </Button>
+          </Popconfirm>
+        )
+      }
+    >
+      <Field
+        id="indigenous_subcontractor_name"
+        name={`${props.member}.indigenous_subcontractor_name`}
+        label="Subcontractor Name"
+        placeholder="Subcontractor Name"
+        component={renderConfig.FIELD}
+        disabled={!props.isEditable}
+        validate={[required, maxLength(1024)]}
+      />
+      <Field
+        id="indigenous_affiliation"
+        name={`${props.member}.indigenous_affiliation`}
+        label="Indigenous Affiliation"
+        placeholder="Select an option"
+        component={renderConfig.SELECT}
+        disabled={!props.isEditable}
+        validate={[required]}
+        format={null}
+        data={INDIGENOUS_SUBCONTRACTOR_AFFILIATION_SELECT_OPTIONS}
+      />
+      <Field
+        id="indigenous_communities"
+        name={`${props.member}.indigenous_communities`}
+        label={
+          <>
+            <div>Indigenous Peoples</div>
+            {props.isEditable && (
+              <div className="font-weight-normal">
+                Select the Indigenous community(s) this subcontractor is affiliated with. If your
+                Indigenous community is not in the list, you can type it in and select it as an
+                option.
+              </div>
+            )}
+          </>
+        }
+        placeholder="Select an option"
+        mode="tags"
+        component={renderConfig.MULTI_SELECT}
+        disabled={!props.isEditable}
+        validate={[requiredList]}
+        format={null}
+        data={DEFAULT_INDIGENOUS_COMMUNITIES_SELECT_OPTIONS}
+      />
+    </Card>
+  </Col>
+);
+
+const renderIndigenousSubcontractor = (props) => (
+  <>
+    <Title level={4} style={{ margin: 0 }}>
+      Indigenous Subcontractors
+    </Title>
+    <Paragraph>
+      List all subcontractors with an Indigenous affiliation that will be involved in completing
+      this work.
+    </Paragraph>
+    <Row gutter={48} type="flex" justify="start">
+      {props.fields.map((member, index) => (
+        <IndigenousSubcontractor member={member} index={index} {...props} />
+      ))}
+    </Row>
+    {props.isEditable && (
+      <>
+        <br />
+        <Button type="primary" onClick={() => props.fields.push({})}>
+          Add Indigenous Subcontractor
+        </Button>
+        <br />
+        <br />
+      </>
+    )}
+  </>
+);
 
 const renderWells = (props) => {
   // Ensure that there is always at least one well site.
@@ -721,7 +859,8 @@ const renderWells = (props) => {
                             wellSiteErrors,
                             `contracted_work.${contractWorkSection.formSectionName}`,
                             null
-                          )
+                          ),
+                          props.application
                         )
                       )}
                     </Collapse>
