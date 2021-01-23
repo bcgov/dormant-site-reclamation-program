@@ -89,12 +89,12 @@ export class OrgBookSearch extends Component {
           <Form.Item
             label={this.props.label}
             validateStatus={
-              this.props.meta.touched
+              this.props.meta.touched || this.props.meta.submitFailed
                 ? (this.props.meta.error && "error") || (this.props.meta.warning && "warning")
                 : ""
             }
             help={
-              this.props.meta.touched &&
+              (this.props.meta.touched || this.props.meta.submitFailed) &&
               ((this.props.meta.error && <span>{this.props.meta.error}</span>) ||
                 (this.props.meta.warning && <span>{this.props.meta.warning}</span>))
             }
