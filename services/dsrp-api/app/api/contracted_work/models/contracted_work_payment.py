@@ -35,8 +35,8 @@ class ContractedWorkPayment(Base, AuditMixin):
     interim_paid_amount = db.Column(db.Numeric(14, 2))
     final_paid_amount = db.Column(db.Numeric(14, 2))
 
-    interim_total_hours_worked_to_date = db.Column(db.Integer)
-    final_total_hours_worked_to_date = db.Column(db.Integer)
+    interim_total_hours_worked_to_date = db.Column(db.Numeric)
+    final_total_hours_worked_to_date = db.Column(db.Numeric)
 
     interim_number_of_workers = db.Column(db.Integer)
     final_number_of_workers = db.Column(db.Integer)
