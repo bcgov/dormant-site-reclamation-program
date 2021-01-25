@@ -302,7 +302,6 @@ const renderContractWorkPanel = (
             parentSubmitFailed={submitFailed}
             wellSectionErrors={wellSectionErrors}
             application={application}
-            errorSpanId={`well_sites[${wellNumber}].contracted_work.${contractWorkSection.formSectionName}.indigenous_subcontractors.error`}
           />
         )}
         {submitFailed && wellSectionErrors && wellSectionErrors.error && (
@@ -554,18 +553,26 @@ const validateWellSites = (value, allValues, props) => {
       }
 
       // Validate that there are no empty subcontractors (if there are any).
-      console.log("subcontractors", subcontractors);
       if (!isEmpty(subcontractors)) {
-        subcontractors.forEach((subcontractor) => {
-          if (isEmpty(subcontractor)) {
-            set(
-              errors,
-              `${path}.indigenous_subcontractors.error`,
-              "You cannot have any empty Indigenous subcontractors."
-            );
-            console.log("SETTING EMPTY!");
+        subcontractors.forEach((subcontractor, i) => {
+          const subPath = `${path}.indigenous_subcontractors[${i}]`;
+
+          const indigenousSubcontractorName = subcontractor.indigenous_subcontractor_name;
+          if (isEmpty(indigenousSubcontractorName)) {
+            set(errors, `${subPath}.indigenous_subcontractor_name`, requiredMessage);
             sectionErrorCount++;
-            return;
+          }
+
+          const indigenousAffiliation = subcontractor.indigenous_affiliation;
+          if (isEmpty(indigenousAffiliation)) {
+            set(errors, `${subPath}.indigenous_affiliation`, requiredMessage);
+            sectionErrorCount++;
+          }
+
+          const indigenousCommunities = subcontractor.indigenous_communities;
+          if (isEmpty(indigenousCommunities)) {
+            set(errors, `${subPath}.indigenous_communities`, requiredMessage);
+            sectionErrorCount++;
           }
         });
       }
@@ -617,6 +624,11 @@ const IndigenousSubcontractor = (props) => (
         name={`${props.member}.indigenous_subcontractor_name`}
         label="Subcontractor Name"
         placeholder="Subcontractor Name"
+        error={get(
+          props.wellSectionErrors,
+          `indigenous_subcontractors[${props.index}].indigenous_subcontractor_name`,
+          null
+        )}
         component={renderConfig.FIELD}
         disabled={!props.isEditable}
         validate={[required, maxLength(1024)]}
@@ -626,6 +638,11 @@ const IndigenousSubcontractor = (props) => (
         name={`${props.member}.indigenous_affiliation`}
         label="Indigenous Affiliation"
         placeholder="Select an option"
+        error={get(
+          props.wellSectionErrors,
+          `indigenous_subcontractors[${props.index}].indigenous_affiliation`,
+          null
+        )}
         component={renderConfig.SELECT}
         disabled={!props.isEditable}
         validate={[required]}
@@ -648,6 +665,11 @@ const IndigenousSubcontractor = (props) => (
           </>
         }
         placeholder="Select an option"
+        error={get(
+          props.wellSectionErrors,
+          `indigenous_subcontractors[${props.index}].indigenous_communities`,
+          null
+        )}
         mode="tags"
         component={renderConfig.MULTI_SELECT}
         disabled={!props.isEditable}
@@ -678,12 +700,6 @@ const renderIndigenousSubcontractor = (props) => {
           <IndigenousSubcontractor member={member} index={index} {...props} />
         ))}
       </Row>
-      {props.parentSubmitFailed && props.wellSectionErrors?.indigenous_subcontractors?.error && (
-        <span id={props.errorSpanId} className="color-error">
-          {props.wellSectionErrors.indigenous_subcontractors.error}
-          <br />
-        </span>
-      )}
       {props.isEditable && (
         <>
           <br />

@@ -194,31 +194,32 @@ class ApplicationSectionOne extends Component {
                     format={null}
                     data={INDIGENOUS_APPLICANT_AFFILIATION_SELECT_OPTIONS}
                   />
-                  {this.props.indigeneousAffiliation !== "NONE" && (
-                    <Field
-                      id="indigenous_communities"
-                      name="indigenous_communities"
-                      label={
-                        <>
-                          <div>Indigenous Peoples</div>
-                          {this.props.isEditable && (
-                            <div className="font-weight-normal">
-                              Select the Indigenous community(s) your business is affiliated with.
-                              If your Indigenous community is not in the list, you can type it in
-                              and select it as an option.
-                            </div>
-                          )}
-                        </>
-                      }
-                      placeholder="Select an option"
-                      mode="tags"
-                      component={renderConfig.MULTI_SELECT}
-                      disabled={!this.props.isEditable}
-                      validate={[requiredList]}
-                      format={null}
-                      data={DEFAULT_INDIGENOUS_COMMUNITIES_SELECT_OPTIONS}
-                    />
-                  )}
+                  {this.props.indigeneousAffiliation &&
+                    this.props.indigeneousAffiliation !== "NONE" && (
+                      <Field
+                        id="indigenous_communities"
+                        name="indigenous_communities"
+                        label={
+                          <>
+                            <div>Indigenous Peoples</div>
+                            {this.props.isEditable && (
+                              <div className="font-weight-normal">
+                                Select the Indigenous community(s) your business is affiliated with.
+                                If your Indigenous community is not in the list, you can type it in
+                                and select it as an option.
+                              </div>
+                            )}
+                          </>
+                        }
+                        placeholder="Select an option"
+                        mode="tags"
+                        component={renderConfig.MULTI_SELECT}
+                        disabled={!this.props.isEditable}
+                        validate={[requiredList]}
+                        format={null}
+                        data={DEFAULT_INDIGENOUS_COMMUNITIES_SELECT_OPTIONS}
+                      />
+                    )}
                 </>
               )}
               <Field

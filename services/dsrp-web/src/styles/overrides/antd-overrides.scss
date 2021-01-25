@@ -283,6 +283,10 @@ tr.ant-table-expanded-row {
 
 .subcontractor-card {
   margin-top: 25px !important;
+  box-shadow: $box-shadow-base;
+  margin-left: 25px;
+  margin-right: 25px;
+
   & .ant-card-head {
     background-color: $primary-color;
     border: 3px solid $primary-color;
@@ -311,6 +315,7 @@ tr.ant-table-expanded-row {
 // Unfortuntalely, there's not a more general method of applying this style to disabled data entry components.
 .ant-input[disabled],
 .ant-select-disabled .ant-select-selection,
+.ant-select-disabled .ant-select-selection--multiple .ant-select-selection__choice,
 .ant-input-number-disabled,
 .ant-radio-disabled .ant-radio-inner,
 .ant-checkbox-disabled .ant-checkbox-inner {
