@@ -15,13 +15,7 @@ import {
   minLength,
   maxLength,
 } from "@/utils/validate";
-import {
-  currencyMask,
-  smallDecimalNumberMask,
-  formatTitleString,
-  metersMask,
-  formatMoney,
-} from "@/utils/helpers";
+import { currencyMask, formatTitleString, metersMask, formatMoney } from "@/utils/helpers";
 import { PDF } from "@/constants/fileTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
 import { DATE_FORMAT, HELP_EMAIL } from "@/constants/strings";
@@ -447,7 +441,6 @@ export class ContractedWorkPaymentForm extends Component {
               disabled={isViewOnly}
               component={renderConfig.FIELD}
               validate={[required, number]}
-              {...smallDecimalNumberMask}
             />
             <Field
               id={`${paymentType}_number_of_workers`}
