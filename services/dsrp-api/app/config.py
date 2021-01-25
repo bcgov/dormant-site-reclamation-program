@@ -43,8 +43,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = DB_URL
     JWT_OIDC_WELL_KNOWN_CONFIG = os.environ.get(
         'JWT_OIDC_WELL_KNOWN_CONFIG',
-        'https://test.oidc.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration'
-    )
+        'https://test.oidc.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration')
     JWT_OIDC_AUDIENCE = os.environ.get('JWT_OIDC_AUDIENCE', 'dsrp')
     JWT_OIDC_ALGORITHMS = os.environ.get('JWT_OIDC_ALGORITHMS', 'RS256')
     # OTP
@@ -105,7 +104,7 @@ class Config(object):
     PRF_FROM_EMAIL = os.environ.get('PRF_FROM_EMAIL', None)
     PRF_TO_EMAIL = os.environ.get('PRF_TO_EMAIL', None)
 
-    URL = os.environ.get('URL', 'http://dormant-site-reclamation.gov.bc.ca/')
+    URL = os.environ.get('URL', 'http://dormant-site-reclamation.gov.bc.ca')
 
 
 class TestConfig(Config):
