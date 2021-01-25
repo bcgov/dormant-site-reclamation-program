@@ -85,6 +85,14 @@ export const currencyMask = createNumberMask({
   stringValue: false,
 });
 
+export const currencyMask = smallDecimalNumberMask({
+  prefix: "",
+  suffix: "",
+  decimalPlaces: 2,
+  allowEmpty: true,
+  stringValue: false,
+});
+
 export const metersMask = createNumberMask({
   prefix: "",
   suffix: " metres",
