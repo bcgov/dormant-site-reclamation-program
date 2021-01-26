@@ -732,7 +732,7 @@ const renderIndigenousSubcontractor = (props) => {
       <Field
         id="has_confirmed_indigenous_subcontractors"
         name="has_confirmed_indigenous_subcontractors"
-        label="I have provided information for all Indigenous subcontractor(s) involved in completing this work."
+        label="If applicable, I have provided information for all Indigenous subcontractor(s) involved in completing this work."
         error={
           props.wellSectionErrors && props.wellSectionErrors.has_confirmed_indigenous_subcontractors
         }
