@@ -516,6 +516,7 @@ const validateWellSites = (value, allValues, props) => {
       const startDate = sectionValues.planned_start_date;
       const endDate = sectionValues.planned_end_date;
       const subcontractors = sectionValues.indigenous_subcontractors;
+      const hasConfirmedSubcontractors = sectionValues.has_confirmed_indigenous_subcontractors;
       const hasSubcontractors = isArrayLike(subcontractors) && !isEmpty(subcontractors);
 
       // If this is a blank section.
@@ -525,6 +526,12 @@ const validateWellSites = (value, allValues, props) => {
       }
 
       let sectionErrorCount = 0;
+
+      // The confirmation checkbox for providing subcontractor information is always required.
+      if (!hasConfirmedSubcontractors) {
+        set(errors, `${path}.has_confirmed_indigenous_subcontractors`, requiredMessage);
+        sectionErrorCount++;
+      }
 
       // Start date is required if end date is provided, the cost sum is valid, or there are subcontractors.
       if (!startDate && (endDate || costSum || hasSubcontractors)) {
@@ -719,6 +726,16 @@ const renderIndigenousSubcontractor = (props) => {
           <br />
         </>
       )}
+      <Field
+        id="has_confirmed_indigenous_subcontractors"
+        name="has_confirmed_indigenous_subcontractors"
+        label="I have provided information for all Indigenous subcontractor(s) involved in completing this work."
+        error={
+          props.wellSectionErrors && props.wellSectionErrors.has_confirmed_indigenous_subcontractors
+        }
+        disabled={!props.isEditable}
+        component={renderConfig.CHECKBOX}
+      />
     </>
   );
 };
