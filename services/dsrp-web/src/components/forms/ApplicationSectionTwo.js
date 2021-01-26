@@ -508,10 +508,13 @@ const validateWellSites = (value, allValues, props) => {
 
       const requiredMessage = "This is a required field";
       const path = `well_sites[${index}].contracted_work.${section.formSectionName}`;
-      let costSum = sum(Object.values(sectionValues).filter((value) => !isNaN(value)));
-      if (Array.isArray(costSum) && costSum.length === 0) {
-        costSum = null;
-      }
+
+      let costSum = 0;
+      section.subSections.map((subSection) =>
+        subSection.amountFields.map(
+          (amountField) => (costSum += sectionValues[amountField.fieldName] || 0)
+        )
+      );
 
       const startDate = sectionValues.planned_start_date;
       const endDate = sectionValues.planned_end_date;
@@ -1029,10 +1032,14 @@ class ApplicationSectionTwo extends Component {
 
       let wellTotal = 0;
       sectionValues.map((section, sectionIndex) => {
-        const sectionTotal = sum(
-          Object.values(section).filter((value) => !isNaN(value) && !(typeof value === "string"))
+        const sectionName = sectionNames[sectionIndex];
+
+        let sectionTotal = 0;
+        CONTRACT_WORK_SECTIONS.find((x) => x.formSectionName === sectionName).subSections.map((x) =>
+          x.amountFields.map((x) => (sectionTotal += section[x.fieldName] || 0))
         );
-        wellTotals[wellIndex].sections[sectionNames[sectionIndex]] = sectionTotal;
+
+        wellTotals[wellIndex].sections[sectionName] = sectionTotal;
         wellTotal += sectionTotal;
       });
       wellTotals[wellIndex].wellTotal = wellTotal;
