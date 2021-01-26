@@ -709,9 +709,17 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
 
                   {workType === "abandonment" && (
                     <>
-                      <Descriptions.Item label="Well Abandonment was completed to Cut and Capped">
+                      <Descriptions.Item label="Downhole abandonment was completed (plugging of completion zones and/or remedial cementing)">
+                        {formatBooleanField(contractedWorkPayment.abandonment_downhole_completed)}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="Well Abandonment was completed to Cut and Capped (surface well abandonment is completed, and the activity did not result in significant liability or emissions reduction)">
                         {formatBooleanField(
                           contractedWorkPayment.abandonment_cut_and_capped_completed
+                        )}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="Equipment was decommissioned (dismantling and removal of surface processing, storage, and/or transmission infrastructure)">
+                        {formatBooleanField(
+                          contractedWorkPayment.abandonment_equipment_decommissioning_completed
                         )}
                       </Descriptions.Item>
                       <Descriptions.Item label="Notice of Operations (NOO) form was submitted through OGC eSubmission portal">

@@ -103,9 +103,31 @@ const renderReportingFields = (workType, isViewOnly) => {
         {workType === "abandonment" && (
           <>
             <Field
+              id="abandonment_downhole_completed"
+              name="abandonment_downhole_completed"
+              label="Downhole abandonment was completed (plugging of completion zones and/or remedial cementing)"
+              placeholder="Select an option"
+              disabled={isViewOnly}
+              component={renderConfig.SELECT}
+              validate={[requiredBoolean]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
+            />
+            <Field
               id="abandonment_cut_and_capped_completed"
               name="abandonment_cut_and_capped_completed"
-              label="Well Abandonment was completed to Cut and Capped"
+              label="Well Abandonment was completed to Cut and Capped (surface well abandonment is completed, and the activity did not result in significant liability or emissions reduction)"
+              placeholder="Select an option"
+              disabled={isViewOnly}
+              component={renderConfig.SELECT}
+              validate={[requiredBoolean]}
+              format={booleanFormat}
+              data={booleanDropdownOptions}
+            />
+            <Field
+              id="abandonment_equipment_decommissioning_completed"
+              name="abandonment_equipment_decommissioning_completed"
+              label="Equipment was decommissioned (dismantling and removal of surface processing, storage, and/or transmission infrastructure)"
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}
