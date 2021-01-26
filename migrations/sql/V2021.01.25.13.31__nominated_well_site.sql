@@ -1,0 +1,25 @@
+CREATE TABLE IF NOT EXISTS nominated_well_site
+(
+    "operator" varchar(1024) NULL,
+    ba_id int4 NULL,
+    wa_number int4 NOT NULL,
+    well_name varchar(1024) NULL,
+    well_dormant_status varchar(1024) NULL,
+    current_status varchar(1024) NULL,
+    well_dormancy_date timestamp(0) NULL,
+    site_dormancy_date timestamp(0) NULL,
+    site_dormancy_type varchar(1024) NULL,
+    site_dormant_status varchar(1024) NULL,
+    surface_location varchar(1024) NULL,
+    field varchar(1024) NULL,
+    abandonment_date timestamp(0) NULL,
+    last_spud_date timestamp(0) NULL,
+    last_rig_rels_date timestamp(0) NULL,
+    last_compltn_date timestamp(0) NULL,
+    last_active_production_yr timestamp(0) NULL,
+    last_active_inj_disp_yr timestamp(0) NULL,
+    wellsite_dormancy_declaration_date timestamp(0) NULL,
+    is_multi_well bool NULL,
+    is_dormant_well_site varchar(1024) NULL,
+    CONSTRAINT nominated_well_sites_pkey PRIMARY KEY (wa_number)
+);

@@ -50,7 +50,11 @@ export const ORGBOOK_CREDENTIAL = (credentialId) => `/orgbook/credential/${crede
 
 // OGC
 export const PERMIT_HOLDER = () => "/permit_holder";
-export const WELL = (params) => `/well?${queryString.stringify(params)}`;
+// '/well' calls wells api directly on OGC side
+// export const WELL = (params) => `/well?${queryString.stringify(params)}`;
+
+// '/nominatedwell' DSRP api with prepopulated list of wells
+export const WELL = (params) => `/nominatedwell?${queryString.stringify(params)}`;
 export const LIABILITY = (guid) => (guid ? `/liability?application_guid=${guid}` : "/liability");
 
 // appSettings
