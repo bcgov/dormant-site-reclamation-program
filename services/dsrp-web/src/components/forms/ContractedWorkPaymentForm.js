@@ -116,7 +116,7 @@ const renderReportingFields = (workType, isViewOnly) => {
             <Field
               id="abandonment_cut_and_capped_completed"
               name="abandonment_cut_and_capped_completed"
-              label="Was Well Abandonment completed to Cut and Capped (surface well abandonment is completed, and the activity did not result in significant liability or emissions reduction)?"
+              label="Was Well Abandonment completed to Cut and Capped?"
               placeholder="Select an option"
               disabled={isViewOnly}
               component={renderConfig.SELECT}

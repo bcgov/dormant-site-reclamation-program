@@ -712,7 +712,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                       <Descriptions.Item label="Was downhole abandonment completed (plugging of completion zones and/or remedial cementing)?">
                         {formatBooleanField(contractedWorkPayment.abandonment_downhole_completed)}
                       </Descriptions.Item>
-                      <Descriptions.Item label="Was Well Abandonment completed to Cut and Capped (surface well abandonment is completed, and the activity did not result in significant liability or emissions reduction)?">
+                      <Descriptions.Item label="Was Well Abandonment completed to Cut and Capped?">
                         {formatBooleanField(
                           contractedWorkPayment.abandonment_cut_and_capped_completed
                         )}
