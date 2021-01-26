@@ -16,7 +16,7 @@ import {
   Popconfirm,
   notification,
 } from "antd";
-import { sum, get, set, isArrayLike, isEmpty, isObjectLike, debounce } from "lodash";
+import { sum, get, set, uniq, isArrayLike, isEmpty, isObjectLike, debounce } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import { required, requiredList, maxLength } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
@@ -498,6 +498,7 @@ const validateWellSites = (value, allValues, props) => {
     // Check that at least one contracted work section is valid.
     let emptySectionsCount = 0;
     let validSectionsCount = 0;
+    let invalidSectionsCount = 0;
     CONTRACT_WORK_SECTIONS.map((section) => {
       const sectionValues = get(wellSite, `contracted_work.${section.formSectionName}`, null);
       if (!isObjectLike(sectionValues) || isEmpty(sectionValues)) {
@@ -507,33 +508,38 @@ const validateWellSites = (value, allValues, props) => {
 
       const requiredMessage = "This is a required field";
       const path = `well_sites[${index}].contracted_work.${section.formSectionName}`;
-      const costSum = sum(Object.values(sectionValues).filter((value) => !isNaN(value)));
+      let costSum = sum(Object.values(sectionValues).filter((value) => !isNaN(value)));
+      if (Array.isArray(costSum) && costSum.length === 0) {
+        costSum = null;
+      }
+
       const startDate = sectionValues.planned_start_date;
       const endDate = sectionValues.planned_end_date;
       const subcontractors = sectionValues.indigenous_subcontractors;
+      const hasSubcontractors = isArrayLike(subcontractors) && !isEmpty(subcontractors);
 
       // If this is a blank section.
-      if (!costSum && !startDate && !endDate && isEmpty(subcontractors)) {
+      if (!costSum && !startDate && !endDate && !hasSubcontractors) {
         emptySectionsCount++;
         return;
       }
 
       let sectionErrorCount = 0;
 
-      // Start date is required if end date is provided or the cost sum is valid.
-      if (!startDate && (endDate || costSum)) {
+      // Start date is required if end date is provided, the cost sum is valid, or there are subcontractors.
+      if (!startDate && (endDate || costSum || hasSubcontractors)) {
         set(errors, `${path}.planned_start_date`, requiredMessage);
         sectionErrorCount++;
       }
 
-      // End date is required if start date is provided or the cost sum is valid.
-      if (!endDate && (startDate || costSum)) {
+      // End date is required if start date is provided, the cost sum is valid, or there are subcontractors.
+      if (!endDate && (startDate || costSum || hasSubcontractors)) {
         set(errors, `${path}.planned_end_date`, requiredMessage);
         sectionErrorCount++;
       }
 
-      // The sum of the estimated work can't be 0/invalid if either of the dates are provided.
-      if (!costSum && (startDate || endDate)) {
+      // The sum of the estimated work can't be 0/invalid if either of the dates are provided or there are subcontractors.
+      if (!costSum && (startDate || endDate || hasSubcontractors)) {
         set(errors, `${path}.error`, "Total estimated cost cannot be $0.");
         sectionErrorCount++;
       }
@@ -579,6 +585,8 @@ const validateWellSites = (value, allValues, props) => {
 
       if (sectionErrorCount === 0) {
         validSectionsCount++;
+      } else {
+        invalidSectionsCount++;
       }
     });
 
@@ -589,11 +597,11 @@ const validateWellSites = (value, allValues, props) => {
         "Sites must contain at least one valid contracted work section."
       );
     }
+
     // TODO: Use this for something? E.g., "3/5 entered sections are valid in the header of the well site".
     if (validSectionsCount === 0) {
     }
   });
-
   return isEmpty(errors) ? undefined : errors;
 };
 
@@ -675,6 +683,7 @@ const IndigenousSubcontractor = (props) => (
         disabled={!props.isEditable}
         validate={[requiredList]}
         format={null}
+        normalize={(value) => uniq(value.map((x) => x.trim())).filter((x) => !isEmpty(x))}
         data={DEFAULT_INDIGENOUS_COMMUNITIES_SELECT_OPTIONS}
       />
     </Card>

@@ -4,7 +4,7 @@ import { Row, Col, Typography, Form, Button } from "antd";
 import PropTypes from "prop-types";
 import { compose, bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { isEmpty, isEqual } from "lodash";
+import { isEmpty, isEqual, uniq } from "lodash";
 import { renderConfig } from "@/components/common/config";
 import {
   required,
@@ -217,6 +217,9 @@ class ApplicationSectionOne extends Component {
                         disabled={!this.props.isEditable}
                         validate={[requiredList]}
                         format={null}
+                        normalize={(value) =>
+                          uniq(value.map((x) => x.trim())).filter((x) => !isEmpty(x))
+                        }
                         data={DEFAULT_INDIGENOUS_COMMUNITIES_SELECT_OPTIONS}
                       />
                     )}
