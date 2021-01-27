@@ -63,11 +63,13 @@ export const toolTip = (title, extraClassName) => (
 export class ApplicationTable extends Component {
   state = { expandedRowKeys: [] };
 
-  onExpand = (expanded, record) =>
-    Promise.all([
-      this.props.fetchLiabilities(record.key),
-      this.props.fetchWells({ application_guid: record.key }),
-    ]).then(() =>
+  onExpand = (expanded, record) => {
+    const fetchWells =
+      record.application_phase_code === Strings.APPLICATION_PHASE_CODES.INITIAL
+        ? this.props.fetchWells({ application_guid: record.key })
+        : this.props.fetchNominatedWells({ application_guid: record.key });
+
+    return Promise.all([this.props.fetchLiabilities(record.key), fetchWells]).then(() =>
       this.setState((prevState) => {
         const expandedRowKeys = expanded
           ? prevState.expandedRowKeys.concat(record.key)
@@ -75,6 +77,7 @@ export class ApplicationTable extends Component {
         return { expandedRowKeys };
       })
     );
+  };
 
   getSum = (guid, field) =>
     this.props.applicationsWellSitesContractedWork
