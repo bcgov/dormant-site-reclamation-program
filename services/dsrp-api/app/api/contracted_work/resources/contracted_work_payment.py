@@ -162,8 +162,14 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
 
         # Abandonment reporting
         if contracted_work_type == 'abandonment':
+            payment.abandonment_downhole_completed = parseBool(
+                final_payment_data['abandonment_downhole_completed'])
+
             payment.abandonment_cut_and_capped_completed = parseBool(
                 final_payment_data['abandonment_cut_and_capped_completed'])
+
+            payment.abandonment_equipment_decommissioning_completed = parseBool(
+                final_payment_data['abandonment_equipment_decommissioning_completed'])
 
             payment.abandonment_notice_of_operations_submitted = parseBool(
                 final_payment_data['abandonment_notice_of_operations_submitted'])

@@ -37,12 +37,13 @@ export const RenderMultiSelect = (props) => (
       label={props.label}
       validateStatus={
         props.meta.touched || props.meta.submitFailed
-          ? (props.meta.error && "error") || (props.meta.warning && "warning")
+          ? ((props.meta.error || props.error) && "error") || (props.meta.warning && "warning")
           : ""
       }
       help={
         (props.meta.touched || props.meta.submitFailed) &&
         ((props.meta.error && <span>{props.meta.error}</span>) ||
+          (props.error && <span>{props.error}</span>) ||
           (props.meta.warning && <span>{props.meta.warning}</span>))
       }
     >

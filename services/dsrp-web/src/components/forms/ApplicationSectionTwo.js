@@ -508,14 +508,18 @@ const validateWellSites = (value, allValues, props) => {
 
       const requiredMessage = "This is a required field";
       const path = `well_sites[${index}].contracted_work.${section.formSectionName}`;
-      let costSum = sum(Object.values(sectionValues).filter((value) => !isNaN(value)));
-      if (Array.isArray(costSum) && costSum.length === 0) {
-        costSum = null;
-      }
+
+      let costSum = 0;
+      section.subSections.map((subSection) =>
+        subSection.amountFields.map(
+          (amountField) => (costSum += sectionValues[amountField.fieldName] || 0)
+        )
+      );
 
       const startDate = sectionValues.planned_start_date;
       const endDate = sectionValues.planned_end_date;
       const subcontractors = sectionValues.indigenous_subcontractors;
+      const hasConfirmedSubcontractors = sectionValues.has_confirmed_indigenous_subcontractors;
       const hasSubcontractors = isArrayLike(subcontractors) && !isEmpty(subcontractors);
 
       // If this is a blank section.
@@ -525,6 +529,12 @@ const validateWellSites = (value, allValues, props) => {
       }
 
       let sectionErrorCount = 0;
+
+      // The confirmation checkbox for providing subcontractor information is always required.
+      if (!hasConfirmedSubcontractors) {
+        set(errors, `${path}.has_confirmed_indigenous_subcontractors`, requiredMessage);
+        sectionErrorCount++;
+      }
 
       // Start date is required if end date is provided, the cost sum is valid, or there are subcontractors.
       if (!startDate && (endDate || costSum || hasSubcontractors)) {
@@ -719,6 +729,16 @@ const renderIndigenousSubcontractor = (props) => {
           <br />
         </>
       )}
+      <Field
+        id="has_confirmed_indigenous_subcontractors"
+        name="has_confirmed_indigenous_subcontractors"
+        label="If applicable, I have provided information for all Indigenous subcontractor(s) involved in completing this work."
+        error={
+          props.wellSectionErrors && props.wellSectionErrors.has_confirmed_indigenous_subcontractors
+        }
+        disabled={!props.isEditable}
+        component={renderConfig.CHECKBOX}
+      />
     </>
   );
 };
@@ -1012,10 +1032,14 @@ class ApplicationSectionTwo extends Component {
 
       let wellTotal = 0;
       sectionValues.map((section, sectionIndex) => {
-        const sectionTotal = sum(
-          Object.values(section).filter((value) => !isNaN(value) && !(typeof value === "string"))
+        const sectionName = sectionNames[sectionIndex];
+
+        let sectionTotal = 0;
+        CONTRACT_WORK_SECTIONS.find((x) => x.formSectionName === sectionName).subSections.map((x) =>
+          x.amountFields.map((x) => (sectionTotal += section[x.fieldName] || 0))
         );
-        wellTotals[wellIndex].sections[sectionNames[sectionIndex]] = sectionTotal;
+
+        wellTotals[wellIndex].sections[sectionName] = sectionTotal;
         wellTotal += sectionTotal;
       });
       wellTotals[wellIndex].wellTotal = wellTotal;
