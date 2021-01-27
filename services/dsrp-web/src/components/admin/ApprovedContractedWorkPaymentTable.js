@@ -24,6 +24,8 @@ import {
   getFilterListContractedWorkPaymentStatusOptions,
   getFilterListContractedWorkTypeOptions,
   getDropdownContractedWorkPaymentStatusOptions,
+  getDropdownApplicationPhaseOptions,
+  getApplicationPhaseOptionsHash,
 } from "@/selectors/staticContentSelectors";
 import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
@@ -51,6 +53,8 @@ const propTypes = {
   selectedWells: PropTypes.arrayOf(PropTypes.any).isRequired,
   fetchNominatedSelectedWell: PropTypes.func.isRequired,
   nominatedSelectedWells: PropTypes.arrayOf(PropTypes.any).isRequired,
+  applicationPhaseDropdownOptions: PropTypes.objectOf(PropTypes.any).isRequired,
+  applicationPhaseOptionsHash: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 const applySortIndicator = (columns, params) =>
@@ -279,6 +283,10 @@ export class ApprovedContractedWorkPaymentTable extends Component {
   };
 
   render() {
+    const phaseOptionsFilter = this.props.applicationPhaseDropdownOptions.map((p) => {
+      return { value: p.value, text: p.label };
+    });
+
     const columns = [
       {
         title: "Application ID",
@@ -401,6 +409,18 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         },
       },
       {
+        title: "Phase",
+        key: "application_phase_code",
+        dataIndex: "application_phase_code",
+        sortField: "application_phase_code",
+        sorter: true,
+        filters: phaseOptionsFilter,
+        filteredValue: this.getParamFilteredValue("application_phase_code"),
+        render: (text, record) => (
+          <span> {this.props.applicationPhaseOptionsHash[text] || Strings.ERROR}</span>
+        ),
+      },
+      {
         title: "Review Deadlines",
         key: "review_deadlines",
         dataIndex: "review_deadlines",
@@ -521,6 +541,8 @@ const mapStateToProps = (state) => ({
   contractedWorkPaymentStatusDropdownOptions: getDropdownContractedWorkPaymentStatusOptions(state),
   selectedWells: getSelectedWells(state),
   nominatedSelectedWells: getNominatedSelectedWells(state),
+  applicationPhaseDropdownOptions: getDropdownApplicationPhaseOptions(state),
+  applicationPhaseOptionsHash: getApplicationPhaseOptionsHash(state),
 });
 
 const mapDispatchToProps = (dispatch) =>

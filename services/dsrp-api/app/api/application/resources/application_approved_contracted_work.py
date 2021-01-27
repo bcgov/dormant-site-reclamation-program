@@ -50,11 +50,13 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
         contracted_work_type = request.args.getlist('contracted_work_type', type=str)
         interim_payment_status_code = request.args.getlist('interim_payment_status_code', type=str)
         final_payment_status_code = request.args.getlist('final_payment_status_code', type=str)
+        application_phase_code = request.args.getlist('application_phase_code', type=str)
 
         # Apply filtering
         records = all_approved_contracted_work
         if (work_id or well_authorization_number or contracted_work_type
-                or interim_payment_status_code or final_payment_status_code):
+                or interim_payment_status_code or final_payment_status_code
+                or application_phase_code):
             records = []
             for approved_work in all_approved_contracted_work:
 
@@ -88,6 +90,10 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
                     if final_payment_status_code and final_status not in final_payment_status_code:
                         continue
 
+                if application_phase_code and approved_work[
+                        'application_phase_code'] not in application_phase_code:
+                    continue
+
                 records.append(approved_work)
 
         # Apply sorting
@@ -98,7 +104,8 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
             records.sort(
                 key=lambda x: (x['application_id'], int(x[sort_field].split('.')[1])),
                 reverse=reverse)
-        elif sort_field in ('application_id', 'work_id', 'contracted_work_type', 'company_name'):
+        elif sort_field in ('application_id', 'work_id', 'contracted_work_type', 'company_name',
+                            'application_phase_code'):
             records.sort(key=lambda x: x[sort_field], reverse=reverse)
         elif sort_field in ('review_deadlines'):
             records.sort(
