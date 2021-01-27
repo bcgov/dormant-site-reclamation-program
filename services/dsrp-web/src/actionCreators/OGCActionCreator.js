@@ -40,6 +40,29 @@ export const fetchSelectedWell = (params = {}) => (dispatch) => {
     .catch(() => dispatch(error(reducerTypes.FETCH_SELECTED_WELL)));
 };
 
+export const fetchNominatedWells = (params = {}) => (dispatch) => {
+  dispatch(request(reducerTypes.FETCH_NOMINATED_WELLS));
+  return CustomAxios()
+    .get(ENVIRONMENT.apiUrl + API.NOMINATED_WELL(params), createRequestHeader())
+    .then((response) => {
+      dispatch(success(reducerTypes.FETCH_NOMINATED_WELLS));
+      dispatch(OGCActions.storeNominatedWells(response.data));
+    })
+    .catch(() => dispatch(error(reducerTypes.FETCH_NOMINATED_WELLS)));
+};
+
+export const fetchNominatedSelectedWell = (params = {}) => (dispatch) => {
+  dispatch(request(reducerTypes.FETCH_NOMINATED_SELECTED_WELL));
+  return CustomAxios()
+    .get(ENVIRONMENT.apiUrl + API.NOMINATED_WELL(params), createRequestHeader())
+    .then((response) => {
+      dispatch(success(reducerTypes.FETCH_NOMINATED_SELECTED_WELL));
+      if (response.data.records.length > 0)
+        dispatch(OGCActions.storeNominatedSelectedWell(response.data.records[0]));
+    })
+    .catch(() => dispatch(error(reducerTypes.FETCH_NOMINATED_SELECTED_WELL)));
+};
+
 export const fetchLiabilities = (guid = "") => (dispatch) => {
   dispatch(request(reducerTypes.FETCH_LIABILITIES));
   return CustomAxios()
@@ -53,3 +76,6 @@ export const fetchLiabilities = (guid = "") => (dispatch) => {
 
 export const validateWell = (params = {}) =>
   CustomAxios().get(ENVIRONMENT.apiUrl + API.WELL(params), createRequestHeader());
+
+export const validateNominatedWell = (params = {}) =>
+  CustomAxios().get(ENVIRONMENT.apiUrl + API.NOMINATED_WELL(params), createRequestHeader());

@@ -210,8 +210,8 @@ class Application(Base, AuditMixin):
             for approved_work in application.contracted_work('APPROVED', False):
                 approved_work['contracted_work_payment'] = contracted_work_payments_lookup.get(
                     approved_work['work_id'], None)
+                approved_work['application_phase_code'] = application.application_phase_code
                 approved_applications_approved_contracted_work.append(approved_work)
-
         return approved_applications_approved_contracted_work
 
     def find_contracted_work_by_id(self, work_id):
