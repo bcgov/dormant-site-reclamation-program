@@ -79,11 +79,12 @@ export class ApplicationForm extends Component {
     ) {
       delete json.company_details.indigenous_communities;
     }
+
     json.well_sites.forEach((site) => {
       Object.keys(site.contracted_work).forEach((type) => {
-        const empty = Object.keys(site.contracted_work[type]).every(
-          (x) => !site.contracted_work[type][x]
-        );
+        const empty =
+          isEmpty(site.contracted_work[type]) ||
+          Object.keys(site.contracted_work[type]).every((x) => !site.contracted_work[type][x]);
         if (empty) {
           delete site.contracted_work[type];
         } else {
@@ -92,6 +93,9 @@ export class ApplicationForm extends Component {
               site.contracted_work[type][k] = site.contracted_work[type][k].filter(
                 (subcontractor) => !isEmpty(subcontractor)
               );
+              if (isEmpty(site.contracted_work[type][k])) {
+                delete site.contracted_work[type][k];
+              }
             }
             if (!site.contracted_work[type][k]) {
               delete site.contracted_work[type][k];
@@ -107,6 +111,7 @@ export class ApplicationForm extends Component {
         });
       }
     });
+
     return json;
   };
 
@@ -120,7 +125,7 @@ export class ApplicationForm extends Component {
   }
 
   handleSubmit = (values, dispatch) => {
-    const application = { json: this.validateJSONData(values), documents: this.state.uploadedDocs };
+    const application = { json: this.validateJSONData(values) };
     return this.props.createApplication(application).then((response) => {
       this.setState(resetFormState);
       dispatch(initialize(APPLICATION_FORM));

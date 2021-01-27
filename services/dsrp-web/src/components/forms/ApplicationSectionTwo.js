@@ -510,23 +510,43 @@ const validateWellSites = (value, allValues, props) => {
 
       const requiredMessage = "This is a required field";
       const path = `well_sites[${index}].contracted_work.${section.formSectionName}`;
-      let costSum = sum(Object.values(sectionValues).filter((value) => !isNaN(value)));
-      if (Array.isArray(costSum) && costSum.length === 0) {
-        costSum = null;
-      }
+
+      let costSum = 0;
+      section.subSections.map((subSection) =>
+        subSection.amountFields.map(
+          (amountField) => (costSum += sectionValues[amountField.fieldName] || 0)
+        )
+      );
 
       const startDate = sectionValues.planned_start_date;
       const endDate = sectionValues.planned_end_date;
       const subcontractors = sectionValues.indigenous_subcontractors;
+      const hasConfirmedSubcontractors = sectionValues.has_confirmed_indigenous_subcontractors;
       const hasSubcontractors = isArrayLike(subcontractors) && !isEmpty(subcontractors);
 
       // If this is a blank section.
       if (!costSum && !startDate && !endDate && !hasSubcontractors) {
         emptySectionsCount++;
+
+        // Cannot confirm subcontractors if this is an empty section.
+        if (hasConfirmedSubcontractors) {
+          set(
+            errors,
+            `${path}.has_confirmed_indigenous_subcontractors`,
+            "You must provide other work activity information in order to check this field."
+          );
+          sectionErrorCount++;
+        }
         return;
       }
 
       let sectionErrorCount = 0;
+
+      // The confirmation checkbox for providing subcontractor information is always required.
+      if (!hasConfirmedSubcontractors) {
+        set(errors, `${path}.has_confirmed_indigenous_subcontractors`, requiredMessage);
+        sectionErrorCount++;
+      }
 
       // Start date is required if end date is provided, the cost sum is valid, or there are subcontractors.
       if (!startDate && (endDate || costSum || hasSubcontractors)) {
@@ -692,38 +712,46 @@ const IndigenousSubcontractor = (props) => (
   </Col>
 );
 
-const renderIndigenousSubcontractor = (props) => {
-  if ((!props.isEditable || props.isViewingSubmission) && isEmpty(props.fields)) {
-    return <></>;
-  }
-
-  return (
-    <>
-      <Title level={4} style={{ margin: 0 }}>
-        Indigenous Subcontractors
-      </Title>
+const renderIndigenousSubcontractor = (props) => (
+  <>
+    <Title level={4} style={{ margin: 0 }}>
+      Indigenous Subcontractors
+    </Title>
+    {props.isEditable && (
       <Paragraph>
         List all subcontractors with an Indigenous affiliation that will be involved in completing
         this work.
       </Paragraph>
+    )}
+    {!isEmpty(props.fields) && (
       <Row gutter={48} type="flex" justify="start">
         {props.fields.map((member, index) => (
           <IndigenousSubcontractor member={member} index={index} {...props} />
         ))}
       </Row>
-      {props.isEditable && (
-        <>
-          <br />
-          <Button type="primary" onClick={() => props.fields.push({})}>
-            Add Indigenous Subcontractor
-          </Button>
-          <br />
-          <br />
-        </>
-      )}
-    </>
-  );
-};
+    )}
+    {props.isEditable && (
+      <>
+        <br />
+        <Button type="primary" onClick={() => props.fields.push({})}>
+          Add Indigenous Subcontractor
+        </Button>
+        <br />
+        <br />
+      </>
+    )}
+    <Field
+      id="has_confirmed_indigenous_subcontractors"
+      name="has_confirmed_indigenous_subcontractors"
+      label="If applicable, I have provided information for all Indigenous subcontractor(s) involved in completing this work."
+      error={
+        props.wellSectionErrors && props.wellSectionErrors.has_confirmed_indigenous_subcontractors
+      }
+      disabled={!props.isEditable}
+      component={renderConfig.CHECKBOX}
+    />
+  </>
+);
 
 const renderWells = (props) => {
   // Ensure that there is always at least one well site.
@@ -1015,10 +1043,14 @@ class ApplicationSectionTwo extends Component {
 
       let wellTotal = 0;
       sectionValues.map((section, sectionIndex) => {
-        const sectionTotal = sum(
-          Object.values(section).filter((value) => !isNaN(value) && !(typeof value === "string"))
+        const sectionName = sectionNames[sectionIndex];
+
+        let sectionTotal = 0;
+        CONTRACT_WORK_SECTIONS.find((x) => x.formSectionName === sectionName).subSections.map((x) =>
+          x.amountFields.map((x) => (sectionTotal += section[x.fieldName] || 0))
         );
-        wellTotals[wellIndex].sections[sectionNames[sectionIndex]] = sectionTotal;
+
+        wellTotals[wellIndex].sections[sectionName] = sectionTotal;
         wellTotal += sectionTotal;
       });
       wellTotals[wellIndex].wellTotal = wellTotal;
