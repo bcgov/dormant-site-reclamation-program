@@ -15,9 +15,9 @@ import {
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { lowerCase, isEmpty, isEqual, capitalize } from "lodash";
+import PropTypes from "prop-types";
 import { formatMoney, currencyMask, formatDate } from "@/utils/helpers";
 import { required, maxLength } from "@/utils/validate";
-import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
 import {
   getContractedWorkTypeOptionsHash,
@@ -141,7 +141,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
   handleTabChange = (activeKey) => this.setState({ currentActiveTab: activeKey });
 
   render() {
-    const contractedWork = this.props.contractedWork;
+    const {contractedWork} = this.props;
     const contractedWorkPayment = contractedWork.contracted_work_payment || {};
     const contractedWorkPaymentExists = !isEmpty(contractedWorkPayment);
 
@@ -183,7 +183,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       {
         title: "Request Step",
         dataIndex: "payment_type",
-        render: (text) => <div>{<Text strong>{text}</Text>}</div>,
+        render: (text) => <div><Text strong>{text}</Text></div>,
       },
       {
         title: (
@@ -306,12 +306,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       : null;
     const interimApprovedAmount =
       this.state.currentActiveTab === "INTERIM" && this.state.selectedInterimStatus === "APPROVED"
-        ? formInterimApprovedAmount
-          ? formInterimApprovedAmount
-          : null
-        : currentInterimApprovedAmount
-        ? currentInterimApprovedAmount
-        : null;
+        ? formInterimApprovedAmount || null
+        : currentInterimApprovedAmount || null;
     const interimLostFunds = Math.max(interimEstSharedCost - interimApprovedAmount, 0);
     const interimMaxApprovedAmount = Math.min(interimEstSharedCost, interimHalfEocTotal);
 
@@ -327,12 +323,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
     const finalHalfEocTotal = finalActualCost ? getTypeMaxEligibleAmount(finalActualCost) : null;
     const finalApprovedAmount =
       this.state.currentActiveTab === "FINAL" && this.state.selectedFinalStatus === "APPROVED"
-        ? formFinalApprovedAmount
-          ? formFinalApprovedAmount
-          : null
-        : currentFinalApprovedAmount
-        ? currentFinalApprovedAmount
-        : null;
+        ? formFinalApprovedAmount || null
+        : currentFinalApprovedAmount || null;
     const finalLostFunds = finalEstSharedCost - finalApprovedAmount;
     const finalEligibleAmount = finalEstSharedCost + interimLostFunds;
     const finalMaxApprovedAmount = Math.min(finalEligibleAmount, finalHalfEocTotal);
