@@ -45,8 +45,8 @@ import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import WellField from "@/components/forms/WellField";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
-import { validateWell } from "@/actionCreators/OGCActionCreator";
-import { getSelectedWells } from "@/selectors/OGCSelectors";
+import { validateNominatedWell } from "@/actionCreators/OGCActionCreator";
+import { getNominatedSelectedWells } from "@/selectors/OGCSelectors";
 
 const { Text, Paragraph, Title } = Typography;
 const { Panel } = Collapse;
@@ -330,30 +330,32 @@ const asyncValidateWell = async (values, field) => {
   if (parseInt(get(values, field)) <= 0) {
     return;
   }
-  return validateWell({ well_auth_number: parseInt(get(values, field)) }).then((response) => {
-    if (response.data.records.length === 0)
-      asyncValidateError(
-        field,
-        "No match found. Enter another number or use the Look up well link to find the correct Authorization Number."
-      );
-    if (response.data.records.length === 1) {
-      if (!values.contract_details.operator_id)
+  return validateNominatedWell({ well_auth_number: parseInt(get(values, field)) }).then(
+    (response) => {
+      if (response.data.records.length === 0)
         asyncValidateError(
           field,
-          "Please select the valid Permit Holder above for this Authorization Number."
+          "No match found. Enter another number or use the Look up well link to find the correct Authorization Number."
         );
-      if (response.data.records[0].operator_id !== values.contract_details.operator_id)
+      if (response.data.records.length === 1) {
+        if (!values.contract_details.operator_id)
+          asyncValidateError(
+            field,
+            "Please select the valid Permit Holder above for this Authorization Number."
+          );
+        if (response.data.records[0].operator_id !== values.contract_details.operator_id)
+          asyncValidateError(
+            field,
+            "This Authorization Number does not belong to the selected Permit Holder. Enter another number or use the Look up well link to find the correct Authorization Number."
+          );
+      }
+      if (response.data.records.length > 1)
         asyncValidateError(
           field,
-          "This Authorization Number does not belong to the selected Permit Holder. Enter another number or use the Look up well link to find the correct Authorization Number."
+          `Multiple results for this Authorization Number. Please contact us for further assistance at ${HELP_EMAIL}`
         );
     }
-    if (response.data.records.length > 1)
-      asyncValidateError(
-        field,
-        `Multiple results for this Authorization Number. Please contact us for further assistance at ${HELP_EMAIL}`
-      );
-  });
+  );
 };
 
 const asyncValidate = debounce(
@@ -953,8 +955,9 @@ const getWellName = (wellNumber, formValues, selectedWells) => {
     formValues.well_sites[wellNumber].details
       ? formValues.well_sites[wellNumber].details.well_authorization_number
       : null;
-  return wellAuthNumber && selectedWells && selectedWells[wellAuthNumber]
-    ? selectedWells[wellAuthNumber].well_name
+  const parsedWellAuthNumber = parseInt(wellAuthNumber);
+  return parsedWellAuthNumber && selectedWells && selectedWells[parsedWellAuthNumber]
+    ? selectedWells[parsedWellAuthNumber].well_name
     : null;
 };
 
@@ -1174,7 +1177,7 @@ class ApplicationSectionTwo extends Component {
 
 const mapStateToProps = (state) => ({
   formValues: getFormValues(FORM.APPLICATION_FORM)(state),
-  selectedWells: getSelectedWells(state),
+  selectedWells: getNominatedSelectedWells(state),
 });
 
 const mapDispatchToProps = () => ({});

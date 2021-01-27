@@ -1,0 +1,1 @@
+ALTER TABLE nominated_well_site OWNER TO dsrp;

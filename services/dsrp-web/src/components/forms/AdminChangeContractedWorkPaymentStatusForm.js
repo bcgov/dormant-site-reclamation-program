@@ -44,6 +44,7 @@ const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
   submitting: PropTypes.bool.isRequired,
+  wells: PropTypes.arrayOf(PropTypes.any).isRequired,
 };
 
 const validateFormApprovedAmount = (
@@ -535,6 +536,12 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
               </Descriptions.Item>
               <Descriptions.Item label="Well Authorization Number">
                 {contractedWork.well_authorization_number}
+              </Descriptions.Item>
+              <Descriptions.Item label="Well Location">
+                {
+                  this.props.wells[parseInt(contractedWork.well_authorization_number)]
+                    ?.surface_location
+                }
               </Descriptions.Item>
               <Descriptions.Item label="Work ID">{contractedWork.work_id}</Descriptions.Item>
               <Descriptions.Item label="Work Type">

@@ -5,11 +5,11 @@ import { connect } from "react-redux";
 import { Row, Col, Form, Select, Spin, Icon, Button, Descriptions } from "antd";
 import { debounce } from "lodash";
 import RenderField from "@/components/common/RenderField";
-import { fetchSelectedWell } from "@/actionCreators/OGCActionCreator";
-import { getSelectedWells } from "@/selectors/OGCSelectors";
+import { fetchNominatedSelectedWell } from "@/actionCreators/OGCActionCreator";
+import { getNominatedSelectedWells } from "@/selectors/OGCSelectors";
 
 const propTypes = {
-  fetchSelectedWell: PropTypes.func.isRequired,
+  fetchNominatedSelectedWell: PropTypes.func.isRequired,
   selectedWells: PropTypes.arrayOf(PropTypes.any).isRequired,
 };
 
@@ -18,7 +18,7 @@ const defaultProps = {};
 export class WellField extends Component {
   constructor(props) {
     super(props);
-    this.fetchSelectedWellThrottled = debounce(this.props.fetchSelectedWell, 2000, {
+    this.fetchSelectedWellThrottled = debounce(this.props.fetchNominatedSelectedWell, 2000, {
       leading: true,
       trailing: true,
     });
@@ -68,13 +68,13 @@ export class WellField extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  selectedWells: getSelectedWells(state),
+  selectedWells: getNominatedSelectedWells(state),
 });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      fetchSelectedWell,
+      fetchNominatedSelectedWell,
     },
     dispatch
   );
