@@ -525,6 +525,16 @@ const validateWellSites = (value, allValues, props) => {
       // If this is a blank section.
       if (!costSum && !startDate && !endDate && !hasSubcontractors) {
         emptySectionsCount++;
+
+        // Cannot confirm subcontractors if this is an empty section.
+        if (hasConfirmedSubcontractors) {
+          set(
+            errors,
+            `${path}.has_confirmed_indigenous_subcontractors`,
+            "You must provide other work activity information in order to check this field."
+          );
+          sectionErrorCount++;
+        }
         return;
       }
 
@@ -700,48 +710,46 @@ const IndigenousSubcontractor = (props) => (
   </Col>
 );
 
-const renderIndigenousSubcontractor = (props) => {
-  if ((!props.isEditable || props.isViewingSubmission) && isEmpty(props.fields)) {
-    return <></>;
-  }
-
-  return (
-    <>
-      <Title level={4} style={{ margin: 0 }}>
-        Indigenous Subcontractors
-      </Title>
+const renderIndigenousSubcontractor = (props) => (
+  <>
+    <Title level={4} style={{ margin: 0 }}>
+      Indigenous Subcontractors
+    </Title>
+    {props.isEditable && (
       <Paragraph>
         List all subcontractors with an Indigenous affiliation that will be involved in completing
         this work.
       </Paragraph>
+    )}
+    {!isEmpty(props.fields) && (
       <Row gutter={48} type="flex" justify="start">
         {props.fields.map((member, index) => (
           <IndigenousSubcontractor member={member} index={index} {...props} />
         ))}
       </Row>
-      {props.isEditable && (
-        <>
-          <br />
-          <Button type="primary" onClick={() => props.fields.push({})}>
-            Add Indigenous Subcontractor
-          </Button>
-          <br />
-          <br />
-        </>
-      )}
-      <Field
-        id="has_confirmed_indigenous_subcontractors"
-        name="has_confirmed_indigenous_subcontractors"
-        label="If applicable, I have provided information for all Indigenous subcontractor(s) involved in completing this work."
-        error={
-          props.wellSectionErrors && props.wellSectionErrors.has_confirmed_indigenous_subcontractors
-        }
-        disabled={!props.isEditable}
-        component={renderConfig.CHECKBOX}
-      />
-    </>
-  );
-};
+    )}
+    {props.isEditable && (
+      <>
+        <br />
+        <Button type="primary" onClick={() => props.fields.push({})}>
+          Add Indigenous Subcontractor
+        </Button>
+        <br />
+        <br />
+      </>
+    )}
+    <Field
+      id="has_confirmed_indigenous_subcontractors"
+      name="has_confirmed_indigenous_subcontractors"
+      label="If applicable, I have provided information for all Indigenous subcontractor(s) involved in completing this work."
+      error={
+        props.wellSectionErrors && props.wellSectionErrors.has_confirmed_indigenous_subcontractors
+      }
+      disabled={!props.isEditable}
+      component={renderConfig.CHECKBOX}
+    />
+  </>
+);
 
 const renderWells = (props) => {
   // Ensure that there is always at least one well site.
