@@ -11,8 +11,9 @@ import {
 } from "lodash";
 import { createSelector } from "reselect";
 import * as applicationReducer from "../reducers/applicationReducer";
-import { getWells, getLiabilities } from "@/selectors/OGCSelectors";
+import { getWells, getLiabilities, getNominatedWells } from "@/selectors/OGCSelectors";
 import { contractedWorkIdSorter } from "@/utils/helpers";
+import { APPLICATION_PHASE_CODES } from "@/constants/strings";
 
 export const {
   getApplications,
@@ -41,8 +42,8 @@ const getLMR = (workType, liability) => {
 };
 // return an array of contracted_work on well sites
 export const getApplicationsWellSitesContractedWork = createSelector(
-  [getApplications, getWells, getLiabilities],
-  (applications, wells, liabilities) => {
+  [getApplications, getWells, getLiabilities, getNominatedWells],
+  (applications, wells, liabilities, nominatedWells) => {
     if (isEmpty(applications) || !isArrayLike(applications)) {
       return [];
     }
@@ -52,6 +53,11 @@ export const getApplicationsWellSitesContractedWork = createSelector(
       if (isEmpty(application) || isEmpty(application.json)) {
         return;
       }
+
+      const filteredWells =
+        application.application_phase_code === APPLICATION_PHASE_CODES.INITIAL
+          ? wells
+          : nominatedWells;
 
       const wellSites = application.json.well_sites;
       if (isEmpty(wellSites) || !isArrayLike(wellSites)) {
@@ -95,11 +101,11 @@ export const getApplicationsWellSitesContractedWork = createSelector(
             calculatedSharedCost > maxSharedCost ? maxSharedCost : calculatedSharedCost;
           const shouldSharedCostBeZero = !(contractedWorkStatusCode === "APPROVED");
           const sharedCostByStatus = shouldSharedCostBeZero ? 0 : sharedCost;
-          const OGCStatus = !isEmpty(wells[wellAuthorizationNumber])
-            ? wells[wellAuthorizationNumber].current_status
+          const OGCStatus = !isEmpty(filteredWells[wellAuthorizationNumber])
+            ? filteredWells[wellAuthorizationNumber].current_status
             : null;
-          const location = !isEmpty(wells[wellAuthorizationNumber])
-            ? wells[wellAuthorizationNumber].surface_location
+          const location = !isEmpty(filteredWells[wellAuthorizationNumber])
+            ? filteredWells[wellAuthorizationNumber].surface_location
             : null;
           const liability = !isEmpty(liabilities[wellAuthorizationNumber])
             ? liabilities[wellAuthorizationNumber]

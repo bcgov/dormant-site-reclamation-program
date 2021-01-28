@@ -32,3 +32,7 @@ class NominatedWellSite(Base):
     @classmethod
     def find_by_wa_number(cls, wa_number):
         return cls.query.filter_by(wa_number=wa_number).one_or_none()
+
+    @classmethod
+    def find_by_operator_id(cls, operator_id):
+        return cls.query.filter_by(ba_id=operator_id).all()

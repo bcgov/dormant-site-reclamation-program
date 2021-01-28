@@ -32,6 +32,7 @@ import {
   fetchLiabilities,
   fetchWells,
   fetchPermitHolders,
+  fetchNominatedWells,
 } from "@/actionCreators/OGCActionCreator";
 import ApplicationTable from "@/components/admin/ApplicationTable";
 import JumpToApplicationForm from "@/components/forms/JumpToApplicationForm";
@@ -242,6 +243,7 @@ export class ReviewApplicationInfo extends Component {
               permitHoldersHash={this.props.permitHoldersHash}
               fetchLiabilities={this.props.fetchLiabilities}
               fetchWells={this.props.fetchWells}
+              fetchNominatedWells={this.props.fetchNominatedWells}
             />
           </Col>
         </Row>
@@ -271,6 +273,7 @@ const mapDispatchToProps = (dispatch) =>
       fetchLiabilities,
       fetchWells,
       fetchPermitHolders,
+      fetchNominatedWells,
       createApplicationStatus,
       openModal,
       closeModal,
