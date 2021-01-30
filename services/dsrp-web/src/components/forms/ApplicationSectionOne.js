@@ -26,7 +26,7 @@ import {
   DEFAULT_INDIGENOUS_COMMUNITIES_SELECT_OPTIONS,
 } from "@/constants/strings";
 import { ORGBOOK_URL } from "@/constants/routes";
-import { PROGRAM_TAC } from "@/constants/assets";
+import { PROGRAM_TAC, PROGRAM_TAC_2 } from "@/constants/assets";
 
 const { Title, Paragraph } = Typography;
 
@@ -82,6 +82,10 @@ class ApplicationSectionOne extends Component {
   }
 
   render() {
+    const termsAndConditionsFile =
+      this.props.application?.application_phase_code === APPLICATION_PHASE_CODES.INITIAL
+        ? PROGRAM_TAC
+        : PROGRAM_TAC_2;
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit} onReset={this.handleReset}>
         <FormSection name="company_details">
@@ -420,7 +424,7 @@ class ApplicationSectionOne extends Component {
                 <Col>
                   <Paragraph>
                     <title level={3}>TODO: ADD REAL PDF</title>
-                    <a href={PROGRAM_TAC} target="_blank" rel="noopener noreferrer">
+                    <a href={termsAndConditionsFile} target="_blank" rel="noopener noreferrer">
                       Review program details and requirements
                     </a>
                   </Paragraph>
