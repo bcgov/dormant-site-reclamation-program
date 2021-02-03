@@ -24,10 +24,15 @@ import {
   getFilterListContractedWorkPaymentStatusOptions,
   getFilterListContractedWorkTypeOptions,
   getDropdownContractedWorkPaymentStatusOptions,
+  getDropdownApplicationPhaseOptions,
+  getApplicationPhaseOptionsHash,
 } from "@/selectors/staticContentSelectors";
 import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
 import { modalConfig } from "@/components/modalContent/config";
+
+import { fetchSelectedWell, fetchNominatedSelectedWell } from "@/actionCreators/OGCActionCreator";
+import { getSelectedWells, getNominatedSelectedWells } from "@/selectors/OGCSelectors";
 
 const { Text } = Typography;
 
@@ -44,6 +49,12 @@ const propTypes = {
   params: PropTypes.objectOf(PropTypes.any).isRequired,
   openModal: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
+  fetchSelectedWell: PropTypes.func.isRequired,
+  selectedWells: PropTypes.arrayOf(PropTypes.any).isRequired,
+  fetchNominatedSelectedWell: PropTypes.func.isRequired,
+  nominatedSelectedWells: PropTypes.arrayOf(PropTypes.any).isRequired,
+  applicationPhaseDropdownOptions: PropTypes.objectOf(PropTypes.any).isRequired,
+  applicationPhaseOptionsHash: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 const applySortIndicator = (columns, params) =>
@@ -158,13 +169,34 @@ export class ApprovedContractedWorkPaymentTable extends Component {
     clearFilters();
   };
 
-  openAdminReviewContractedWorkPaymentModal = (record) =>
+  handleViewApplication = (record) => {
+    if (record.application_phase_code === Strings.APPLICATION_PHASE_CODES.INITIAL) {
+      return this.props
+        .fetchSelectedWell({
+          well_auth_number: parseInt(record.well_authorization_number),
+        })
+        .then(() =>
+          this.openAdminReviewContractedWorkPaymentModal(record, this.props.selectedWells)
+        );
+    } else {
+      return this.props
+        .fetchNominatedSelectedWell({
+          well_auth_number: parseInt(record.well_authorization_number),
+        })
+        .then(() =>
+          this.openAdminReviewContractedWorkPaymentModal(record, this.props.nominatedSelectedWells)
+        );
+    }
+  };
+
+  openAdminReviewContractedWorkPaymentModal = (record, wells) =>
     this.props.openModal({
       width: 1000,
       props: {
         title: `Review Information for Work ID ${record.work_id}`,
         contractedWork: record,
         onSubmit: this.props.handleReviewContractedWorkPaymentModalSubmit,
+        wells: wells,
       },
       content: modalConfig.ADMIN_REVIEW_CONTRACTED_WORK_PAYMENT,
     });
@@ -251,6 +283,10 @@ export class ApprovedContractedWorkPaymentTable extends Component {
   };
 
   render() {
+    const phaseOptionsFilter = this.props.applicationPhaseDropdownOptions.map((p) => {
+      return { value: p.value, text: p.label };
+    });
+
     const columns = [
       {
         title: "Application ID",
@@ -373,6 +409,18 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         },
       },
       {
+        title: "Phase",
+        key: "application_phase_code",
+        dataIndex: "application_phase_code",
+        sortField: "application_phase_code",
+        sorter: true,
+        filters: phaseOptionsFilter,
+        filteredValue: this.getParamFilteredValue("application_phase_code"),
+        render: (text, record) => (
+          <span> {this.props.applicationPhaseOptionsHash[text] || Strings.ERROR}</span>
+        ),
+      },
+      {
         title: "Review Deadlines",
         key: "review_deadlines",
         dataIndex: "review_deadlines",
@@ -423,7 +471,7 @@ export class ApprovedContractedWorkPaymentTable extends Component {
         render: (text, record) => (
           <Button
             type="link"
-            onClick={() => this.openAdminReviewContractedWorkPaymentModal(record)}
+            onClick={() => this.handleViewApplication(record)}
             disabled={!record.contracted_work_payment}
           >
             <Icon type="solution" className="icon-lg" />
@@ -491,6 +539,10 @@ const mapStateToProps = (state) => ({
   ),
   filterListContractedWorkTypeOptions: getFilterListContractedWorkTypeOptions(state),
   contractedWorkPaymentStatusDropdownOptions: getDropdownContractedWorkPaymentStatusOptions(state),
+  selectedWells: getSelectedWells(state),
+  nominatedSelectedWells: getNominatedSelectedWells(state),
+  applicationPhaseDropdownOptions: getDropdownApplicationPhaseOptions(state),
+  applicationPhaseOptionsHash: getApplicationPhaseOptionsHash(state),
 });
 
 const mapDispatchToProps = (dispatch) =>
@@ -498,6 +550,8 @@ const mapDispatchToProps = (dispatch) =>
     {
       openModal,
       closeModal,
+      fetchSelectedWell,
+      fetchNominatedSelectedWell,
     },
     dispatch
   );

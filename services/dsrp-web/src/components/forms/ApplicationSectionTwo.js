@@ -45,8 +45,8 @@ import PermitHolderSelect from "@/components/forms/PermitHolderSelect";
 import ApplicationFormReset from "@/components/forms/ApplicationFormReset";
 import WellField from "@/components/forms/WellField";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
-import { validateWell } from "@/actionCreators/OGCActionCreator";
-import { getSelectedWells } from "@/selectors/OGCSelectors";
+import { validateNominatedWell } from "@/actionCreators/OGCActionCreator";
+import { getNominatedSelectedWells } from "@/selectors/OGCSelectors";
 
 const { Text, Paragraph, Title } = Typography;
 const { Panel } = Collapse;
@@ -330,30 +330,32 @@ const asyncValidateWell = async (values, field) => {
   if (parseInt(get(values, field)) <= 0) {
     return;
   }
-  return validateWell({ well_auth_number: parseInt(get(values, field)) }).then((response) => {
-    if (response.data.records.length === 0)
-      asyncValidateError(
-        field,
-        "No match found. Enter another number or use the Look up well link to find the correct Authorization Number."
-      );
-    if (response.data.records.length === 1) {
-      if (!values.contract_details.operator_id)
+  return validateNominatedWell({ well_auth_number: parseInt(get(values, field)) }).then(
+    (response) => {
+      if (response.data.records.length === 0)
         asyncValidateError(
           field,
-          "Please select the valid Permit Holder above for this Authorization Number."
+          "No match found. Enter another number or use the Look up well link to find the correct Authorization Number."
         );
-      if (response.data.records[0].operator_id !== values.contract_details.operator_id)
+      if (response.data.records.length === 1) {
+        if (!values.contract_details.operator_id)
+          asyncValidateError(
+            field,
+            "Please select the valid Permit Holder above for this Authorization Number."
+          );
+        if (response.data.records[0].operator_id !== values.contract_details.operator_id)
+          asyncValidateError(
+            field,
+            "This Authorization Number does not belong to the selected Permit Holder. Enter another number or use the Look up well link to find the correct Authorization Number."
+          );
+      }
+      if (response.data.records.length > 1)
         asyncValidateError(
           field,
-          "This Authorization Number does not belong to the selected Permit Holder. Enter another number or use the Look up well link to find the correct Authorization Number."
+          `Multiple results for this Authorization Number. Please contact us for further assistance at ${HELP_EMAIL}`
         );
     }
-    if (response.data.records.length > 1)
-      asyncValidateError(
-        field,
-        `Multiple results for this Authorization Number. Please contact us for further assistance at ${HELP_EMAIL}`
-      );
-  });
+  );
 };
 
 const asyncValidate = debounce(
@@ -508,23 +510,43 @@ const validateWellSites = (value, allValues, props) => {
 
       const requiredMessage = "This is a required field";
       const path = `well_sites[${index}].contracted_work.${section.formSectionName}`;
-      let costSum = sum(Object.values(sectionValues).filter((value) => !isNaN(value)));
-      if (Array.isArray(costSum) && costSum.length === 0) {
-        costSum = null;
-      }
+
+      let costSum = 0;
+      section.subSections.map((subSection) =>
+        subSection.amountFields.map(
+          (amountField) => (costSum += sectionValues[amountField.fieldName] || 0)
+        )
+      );
 
       const startDate = sectionValues.planned_start_date;
       const endDate = sectionValues.planned_end_date;
       const subcontractors = sectionValues.indigenous_subcontractors;
+      const hasConfirmedSubcontractors = sectionValues.has_confirmed_indigenous_subcontractors;
       const hasSubcontractors = isArrayLike(subcontractors) && !isEmpty(subcontractors);
 
       // If this is a blank section.
       if (!costSum && !startDate && !endDate && !hasSubcontractors) {
         emptySectionsCount++;
+
+        // Cannot confirm subcontractors if this is an empty section.
+        if (hasConfirmedSubcontractors) {
+          set(
+            errors,
+            `${path}.has_confirmed_indigenous_subcontractors`,
+            "You must provide other work activity information in order to check this field."
+          );
+          sectionErrorCount++;
+        }
         return;
       }
 
       let sectionErrorCount = 0;
+
+      // The confirmation checkbox for providing subcontractor information is always required.
+      if (!hasConfirmedSubcontractors) {
+        set(errors, `${path}.has_confirmed_indigenous_subcontractors`, requiredMessage);
+        sectionErrorCount++;
+      }
 
       // Start date is required if end date is provided, the cost sum is valid, or there are subcontractors.
       if (!startDate && (endDate || costSum || hasSubcontractors)) {
@@ -690,38 +712,46 @@ const IndigenousSubcontractor = (props) => (
   </Col>
 );
 
-const renderIndigenousSubcontractor = (props) => {
-  if ((!props.isEditable || props.isViewingSubmission) && isEmpty(props.fields)) {
-    return <></>;
-  }
-
-  return (
-    <>
-      <Title level={4} style={{ margin: 0 }}>
-        Indigenous Subcontractors
-      </Title>
+const renderIndigenousSubcontractor = (props) => (
+  <>
+    <Title level={4} style={{ margin: 0 }}>
+      Indigenous Subcontractors
+    </Title>
+    {props.isEditable && (
       <Paragraph>
         List all subcontractors with an Indigenous affiliation that will be involved in completing
         this work.
       </Paragraph>
+    )}
+    {!isEmpty(props.fields) && (
       <Row gutter={48} type="flex" justify="start">
         {props.fields.map((member, index) => (
           <IndigenousSubcontractor member={member} index={index} {...props} />
         ))}
       </Row>
-      {props.isEditable && (
-        <>
-          <br />
-          <Button type="primary" onClick={() => props.fields.push({})}>
-            Add Indigenous Subcontractor
-          </Button>
-          <br />
-          <br />
-        </>
-      )}
-    </>
-  );
-};
+    )}
+    {props.isEditable && (
+      <>
+        <br />
+        <Button type="primary" onClick={() => props.fields.push({})}>
+          Add Indigenous Subcontractor
+        </Button>
+        <br />
+        <br />
+      </>
+    )}
+    <Field
+      id="has_confirmed_indigenous_subcontractors"
+      name="has_confirmed_indigenous_subcontractors"
+      label="If applicable, I have provided information for all Indigenous subcontractor(s) involved in completing this work."
+      error={
+        props.wellSectionErrors && props.wellSectionErrors.has_confirmed_indigenous_subcontractors
+      }
+      disabled={!props.isEditable}
+      component={renderConfig.CHECKBOX}
+    />
+  </>
+);
 
 const renderWells = (props) => {
   // Ensure that there is always at least one well site.
@@ -953,8 +983,9 @@ const getWellName = (wellNumber, formValues, selectedWells) => {
     formValues.well_sites[wellNumber].details
       ? formValues.well_sites[wellNumber].details.well_authorization_number
       : null;
-  return wellAuthNumber && selectedWells && selectedWells[wellAuthNumber]
-    ? selectedWells[wellAuthNumber].well_name
+  const parsedWellAuthNumber = parseInt(wellAuthNumber);
+  return parsedWellAuthNumber && selectedWells && selectedWells[parsedWellAuthNumber]
+    ? selectedWells[parsedWellAuthNumber].well_name
     : null;
 };
 
@@ -1012,10 +1043,14 @@ class ApplicationSectionTwo extends Component {
 
       let wellTotal = 0;
       sectionValues.map((section, sectionIndex) => {
-        const sectionTotal = sum(
-          Object.values(section).filter((value) => !isNaN(value) && !(typeof value === "string"))
+        const sectionName = sectionNames[sectionIndex];
+
+        let sectionTotal = 0;
+        CONTRACT_WORK_SECTIONS.find((x) => x.formSectionName === sectionName).subSections.map((x) =>
+          x.amountFields.map((x) => (sectionTotal += section[x.fieldName] || 0))
         );
-        wellTotals[wellIndex].sections[sectionNames[sectionIndex]] = sectionTotal;
+
+        wellTotals[wellIndex].sections[sectionName] = sectionTotal;
         wellTotal += sectionTotal;
       });
       wellTotals[wellIndex].wellTotal = wellTotal;
@@ -1174,7 +1209,7 @@ class ApplicationSectionTwo extends Component {
 
 const mapStateToProps = (state) => ({
   formValues: getFormValues(FORM.APPLICATION_FORM)(state),
-  selectedWells: getSelectedWells(state),
+  selectedWells: getNominatedSelectedWells(state),
 });
 
 const mapDispatchToProps = () => ({});

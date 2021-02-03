@@ -15,6 +15,16 @@ export const storeSelectedWell = (payload) => ({
   payload,
 });
 
+export const storeNominatedWells = (payload) => ({
+  type: ActionTypes.STORE_NOMINATED_WELLS,
+  payload,
+});
+
+export const storeNominatedSelectedWell = (payload) => ({
+  type: ActionTypes.STORE_NOMINATED_SELECTED_WELL,
+  payload,
+});
+
 export const storeLiabilities = (payload) => ({
   type: ActionTypes.STORE_LIABILITIES,
   payload,

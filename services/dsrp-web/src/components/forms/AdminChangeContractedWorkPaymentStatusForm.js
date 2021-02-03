@@ -15,9 +15,9 @@ import {
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { lowerCase, isEmpty, isEqual, capitalize } from "lodash";
+import PropTypes from "prop-types";
 import { formatMoney, currencyMask, formatDate } from "@/utils/helpers";
 import { required, maxLength } from "@/utils/validate";
-import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
 import {
   getContractedWorkTypeOptionsHash,
@@ -44,6 +44,7 @@ const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
   submitting: PropTypes.bool.isRequired,
+  wells: PropTypes.arrayOf(PropTypes.any).isRequired,
 };
 
 const validateFormApprovedAmount = (
@@ -140,7 +141,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
   handleTabChange = (activeKey) => this.setState({ currentActiveTab: activeKey });
 
   render() {
-    const contractedWork = this.props.contractedWork;
+    const {contractedWork} = this.props;
     const contractedWorkPayment = contractedWork.contracted_work_payment || {};
     const contractedWorkPaymentExists = !isEmpty(contractedWorkPayment);
 
@@ -182,7 +183,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       {
         title: "Request Step",
         dataIndex: "payment_type",
-        render: (text) => <div>{<Text strong>{text}</Text>}</div>,
+        render: (text) => <div><Text strong>{text}</Text></div>,
       },
       {
         title: (
@@ -305,12 +306,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       : null;
     const interimApprovedAmount =
       this.state.currentActiveTab === "INTERIM" && this.state.selectedInterimStatus === "APPROVED"
-        ? formInterimApprovedAmount
-          ? formInterimApprovedAmount
-          : null
-        : currentInterimApprovedAmount
-        ? currentInterimApprovedAmount
-        : null;
+        ? formInterimApprovedAmount || null
+        : currentInterimApprovedAmount || null;
     const interimLostFunds = Math.max(interimEstSharedCost - interimApprovedAmount, 0);
     const interimMaxApprovedAmount = Math.min(interimEstSharedCost, interimHalfEocTotal);
 
@@ -326,12 +323,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
     const finalHalfEocTotal = finalActualCost ? getTypeMaxEligibleAmount(finalActualCost) : null;
     const finalApprovedAmount =
       this.state.currentActiveTab === "FINAL" && this.state.selectedFinalStatus === "APPROVED"
-        ? formFinalApprovedAmount
-          ? formFinalApprovedAmount
-          : null
-        : currentFinalApprovedAmount
-        ? currentFinalApprovedAmount
-        : null;
+        ? formFinalApprovedAmount || null
+        : currentFinalApprovedAmount || null;
     const finalLostFunds = finalEstSharedCost - finalApprovedAmount;
     const finalEligibleAmount = finalEstSharedCost + interimLostFunds;
     const finalMaxApprovedAmount = Math.min(finalEligibleAmount, finalHalfEocTotal);
@@ -536,6 +529,12 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
               <Descriptions.Item label="Well Authorization Number">
                 {contractedWork.well_authorization_number}
               </Descriptions.Item>
+              <Descriptions.Item label="Well Location">
+                {
+                  this.props.wells[parseInt(contractedWork.well_authorization_number)]
+                    ?.surface_location
+                }
+              </Descriptions.Item>
               <Descriptions.Item label="Work ID">{contractedWork.work_id}</Descriptions.Item>
               <Descriptions.Item label="Work Type">
                 {this.props.contractedWorkTypeOptionsHash[contractedWork.contracted_work_type]}
@@ -709,9 +708,17 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
 
                   {workType === "abandonment" && (
                     <>
-                      <Descriptions.Item label="Well Abandonment was completed to Cut and Capped">
+                      <Descriptions.Item label="Was downhole abandonment completed (plugging of completion zones and/or remedial cementing)?">
+                        {formatBooleanField(contractedWorkPayment.abandonment_downhole_completed)}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="Was Well Abandonment completed to Cut and Capped?">
                         {formatBooleanField(
                           contractedWorkPayment.abandonment_cut_and_capped_completed
+                        )}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="Was equipment decommissioned (dismantling and removal of surface processing, storage, and/or transmission infrastructure)?">
+                        {formatBooleanField(
+                          contractedWorkPayment.abandonment_equipment_decommissioning_completed
                         )}
                       </Descriptions.Item>
                       <Descriptions.Item label="Notice of Operations (NOO) form was submitted through OGC eSubmission portal">

@@ -93,7 +93,9 @@ class ContractedWorkPayment(Base, AuditMixin):
     reclamation_was_achieved = db.Column(db.Boolean)
 
     # Abandonment Reporting
+    abandonment_downhole_completed = db.Column(db.Boolean)
     abandonment_cut_and_capped_completed = db.Column(db.Boolean)
+    abandonment_equipment_decommissioning_completed = db.Column(db.Boolean)
     abandonment_notice_of_operations_submitted = db.Column(db.Boolean)
     abandonment_was_pipeline_abandoned = db.Column(db.Boolean)
     abandonment_metres_of_pipeline_abandoned = db.Column(db.Integer)

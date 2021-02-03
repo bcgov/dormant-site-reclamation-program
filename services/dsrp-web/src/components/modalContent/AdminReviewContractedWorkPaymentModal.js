@@ -6,6 +6,7 @@ const propTypes = {
   contractedWork: PropTypes.any.isRequired,
   contractedWorkPaymentStatusOptionsHash: PropTypes.any.isRequired,
   closeModal: PropTypes.func.isRequired,
+  wells: PropTypes.arrayOf(PropTypes.any).isRequired,
 };
 
 export const AdminReviewContractedWorkPaymentModal = (props) => {
@@ -82,6 +83,7 @@ export const AdminReviewContractedWorkPaymentModal = (props) => {
     <AdminChangeContractedWorkPaymentStatusForm
       onSubmit={props.onSubmit}
       contractedWork={props.contractedWork}
+      wells={props.wells}
       contractedWorkPaymentStatusOptionsHash={props.contractedWorkPaymentStatusOptionsHash}
       initialValues={initialValues}
       closeModal={props.closeModal}
