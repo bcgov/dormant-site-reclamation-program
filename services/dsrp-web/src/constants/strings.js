@@ -111,4 +111,12 @@ export const INDIGENOUS_SUBCONTRACTOR_AFFILIATION_SELECT_OPTIONS = [
     value: "PERSON_OWNED_GREATER_THAN_51",
     label: "Owned by an Indigenous person (at least 51%)",
   },
+  {
+    value: "PARTNERSHIP_REVENUE_SHARING",
+    label: "Partnership (revenue sharing) that is endorsed by an Indigenous community",
+  },
+  {
+    value: "PARTNERSHIP_NON_REVENUE_SHARING",
+    label: "Partnership (non-revenue sharing) that is endorsed by an Indigenous community",
+  },
 ];
