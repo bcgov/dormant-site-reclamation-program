@@ -63,6 +63,10 @@ export class SubmitApplicationPage extends Component {
                 contract holder. Any work in an application that is not in the contract, cannot
                 qualify for the program.
               </Paragraph>
+              <Paragraph>
+                Applications will be accepted for work on dormant oil or natural gas sites that have
+                been nominated under the Site Nomination process.
+              </Paragraph>
             </Col>
           </Row>
           <Row type="flex" justify="center" align="top" className="landing-section">

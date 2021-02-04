@@ -18,6 +18,7 @@ export const DISABLE_APPLICATIONS = "disable_applications";
 
 export const PROGRAM_START_DATE = "2020-05-25";
 export const PROGRAM_END_DATE = "2022-12-31";
+export const NOMINATION_PHASE_EARLIEST_START_DATE = "2020-11-01";
 
 export const REVIEW_DEADLINE_NOT_APPLICABLE = "9999-12-30T23:59:59.999999";
 export const REVIEW_DEADLINE_PAID = "9999-12-31T23:59:59.999999";
@@ -109,5 +110,13 @@ export const INDIGENOUS_SUBCONTRACTOR_AFFILIATION_SELECT_OPTIONS = [
   {
     value: "PERSON_OWNED_GREATER_THAN_51",
     label: "Owned by an Indigenous person (at least 51%)",
+  },
+  {
+    value: "PARTNERSHIP_REVENUE_SHARING",
+    label: "Partnership (revenue sharing) that is endorsed by an Indigenous community",
+  },
+  {
+    value: "PARTNERSHIP_NON_REVENUE_SHARING",
+    label: "Partnership (non-revenue sharing) that is endorsed by an Indigenous community",
   },
 ];

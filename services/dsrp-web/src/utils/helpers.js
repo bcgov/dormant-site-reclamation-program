@@ -105,20 +105,21 @@ export const phoneMask = createTextMask({
   // onCompletePattern: value => {},
 });
 
-export const postalCodeMask = createTextMask({
-  pattern: "XXX XXX",
+export const postalCodeBritishColumbiaMask = createTextMask({
+  pattern: "VXX XXX",
   // placeholder: '_',
   maskDefinitions: {
     X: {
       regExp: /[A-Za-z0-9]/,
       transform: (char) => char.toUpperCase(),
     },
+    V: {
+      regExp: /[vV]/,
+      transform: (char) => char.toUpperCase(),
+    },
   },
   guide: false,
-  // stripMask: true,
   allowEmpty: true,
-  // onChange: value => {},
-  // onCompletePattern: value => {},
 });
 
 export const guidMask = createTextMask({

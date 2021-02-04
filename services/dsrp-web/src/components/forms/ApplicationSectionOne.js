@@ -14,7 +14,12 @@ import {
   postalCode,
   exactLength,
 } from "@/utils/validate";
-import { phoneMask, postalCodeMask, scrollToFirstError, businessNumberMask } from "@/utils/helpers";
+import {
+  phoneMask,
+  postalCodeBritishColumbiaMask,
+  scrollToFirstError,
+  businessNumberMask,
+} from "@/utils/helpers";
 import * as FORM from "@/constants/forms";
 import OrgBookSearch from "@/components/common/OrgBookSearch";
 import ApplicationFormTooltip from "@/components/common/ApplicationFormTooltip";
@@ -187,7 +192,7 @@ class ApplicationSectionOne extends Component {
                       <>
                         Indigenous Affiliation
                         {this.props.isEditable && (
-                          <ApplicationFormTooltip content="If you select the revenue-sharing partnership option, you will be required to provide a copy of the agreement as part of your application's review process." />
+                          <ApplicationFormTooltip content="If you select a partnership option, you will be required to provide a letter from the Indigenous partner confirming this relationship as part of your application's review process." />
                         )}
                       </>
                     }
@@ -281,7 +286,7 @@ class ApplicationSectionOne extends Component {
                 component={renderConfig.FIELD}
                 disabled={!this.props.isEditable}
                 validate={[required, postalCode]}
-                {...postalCodeMask}
+                {...postalCodeBritishColumbiaMask}
               />
             </Col>
           </Row>
