@@ -233,6 +233,14 @@ export class ApplicationForm extends Component {
                     </li>
                     <li>A certificate of Insurance</li>
                   </ul>
+                  In some cases, your application may also need to provide the following:
+                  <ul>
+                    <li>
+                      Evidence of relationship with Indigenous participants (letter of support or
+                      agreement)
+                    </li>
+                    <li>Evidence of paid municipal taxes for the 2020/2021 tax year</li>
+                  </ul>
                 </Paragraph>
 
                 <Paragraph>

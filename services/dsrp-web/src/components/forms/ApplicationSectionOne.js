@@ -192,7 +192,7 @@ class ApplicationSectionOne extends Component {
                       <>
                         Indigenous Affiliation
                         {this.props.isEditable && (
-                          <ApplicationFormTooltip content="If you select a partnership option, you will be required to provide evidence of this relationship as part of your application's review process." />
+                          <ApplicationFormTooltip content="If you select a partnership option, you will be required to provide a letter from the Indigenous partner confirming this relationship as part of your application's review process." />
                         )}
                       </>
                     }
