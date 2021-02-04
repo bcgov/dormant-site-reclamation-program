@@ -624,7 +624,7 @@ const validateWellSites = (value, allValues, props) => {
 };
 
 const IndigenousSubcontractor = (props) => (
-  <Col key={props.index} xxl={{ span: 12 }} xl={{ span: 24 }}>
+  <Col key={props.index} xxl={{ span: 18 }} xl={{ span: 24 }}>
     <Card
       className="subcontractor-card"
       title={`Subcontractor ${props.index + 1}`}
@@ -720,7 +720,7 @@ const renderIndigenousSubcontractor = (props) => (
       </Paragraph>
     )}
     {!isEmpty(props.fields) && (
-      <Row gutter={48} type="flex" justify="start">
+      <Row gutter={48} type="flex" justify="center">
         {props.fields.map((member, index) => (
           <IndigenousSubcontractor member={member} index={index} {...props} />
         ))}
