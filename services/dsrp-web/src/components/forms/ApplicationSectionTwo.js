@@ -21,8 +21,8 @@ import { renderConfig } from "@/components/common/config";
 import { required, requiredList, maxLength } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 import {
-  PROGRAM_START_DATE,
   PROGRAM_END_DATE,
+  NOMINATION_PHASE_EARLIEST_START_DATE,
   DATE_FORMAT,
   HELP_EMAIL,
   APPLICATION_PHASE_CODES,
@@ -96,7 +96,7 @@ const disabledStartDate = (date, wellSiteFormValues, contractWorkSection) => {
     sectionValues && sectionValues.planned_end_date ? moment(sectionValues.planned_end_date) : null;
   return (
     selectedDate &&
-    (selectedDate < moment(PROGRAM_START_DATE, DATE_FORMAT) ||
+    (selectedDate < moment(NOMINATION_PHASE_EARLIEST_START_DATE, DATE_FORMAT) ||
       selectedDate > moment(PROGRAM_END_DATE, DATE_FORMAT) ||
       (endDate && selectedDate > endDate))
   );
@@ -111,8 +111,8 @@ const validateStartDate = (date, sectionValues) => {
     sectionValues && sectionValues.planned_end_date ? moment(sectionValues.planned_end_date) : null;
 
   if (selectedDate) {
-    if (selectedDate < moment(PROGRAM_START_DATE, DATE_FORMAT)) {
-      return `Date cannot be before the program's start date: ${PROGRAM_START_DATE}`;
+    if (selectedDate < moment(NOMINATION_PHASE_EARLIEST_START_DATE, DATE_FORMAT)) {
+      return `Date cannot be before the date: ${NOMINATION_PHASE_EARLIEST_START_DATE}`;
     }
     if (selectedDate > moment(PROGRAM_END_DATE, DATE_FORMAT)) {
       return `Date cannot be after the program's end date: ${PROGRAM_END_DATE}`;
@@ -136,7 +136,7 @@ const disabledEndDate = (date, wellSiteFormValues, contractWorkSection) => {
       : null;
   return (
     selectedDate &&
-    (selectedDate < moment(PROGRAM_START_DATE, DATE_FORMAT) ||
+    (selectedDate < moment(NOMINATION_PHASE_EARLIEST_START_DATE, DATE_FORMAT) ||
       selectedDate > moment(PROGRAM_END_DATE, DATE_FORMAT) ||
       (startDate && selectedDate < startDate))
   );
@@ -152,8 +152,8 @@ const validateEndDate = (date, sectionValues) => {
       ? moment(sectionValues.planned_start_date)
       : null;
   if (selectedDate) {
-    if (selectedDate < moment(PROGRAM_START_DATE, DATE_FORMAT)) {
-      return `Date cannot be before the program's start date: ${PROGRAM_START_DATE}`;
+    if (selectedDate < moment(NOMINATION_PHASE_EARLIEST_START_DATE, DATE_FORMAT)) {
+      return `Date cannot be before the date: ${NOMINATION_PHASE_EARLIEST_START_DATE}`;
     }
     if (selectedDate > moment(PROGRAM_END_DATE, DATE_FORMAT)) {
       return `Date cannot be after the program's end date: ${PROGRAM_END_DATE}`;
