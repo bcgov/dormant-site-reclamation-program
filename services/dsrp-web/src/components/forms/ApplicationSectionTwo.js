@@ -342,7 +342,7 @@ const asyncValidateWell = async (values, field) => {
         if (response.data.records[0].operator_id !== values.contract_details.operator_id)
           asyncValidateError(
             field,
-            "This well site is not eligible for funding. It is not a nominated well site for this permit holder. If you do not have the Well Authorization Number, contact the permit holder."
+            "This is not a nominated well site for this permit holder. If you do not have the Well Authorization Number, contact the permit holder."
           );
       }
       if (response.data.records.length > 1)
