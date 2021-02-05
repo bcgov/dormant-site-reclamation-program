@@ -51,7 +51,6 @@ const RenderSelect = (props) => {
     >
       <Select
         disabled={props.disabled}
-        getPopupContainer={() => document.getElementById(props.id)}
         showSearch
         showArrow
         placeholder={props.placeholder}
