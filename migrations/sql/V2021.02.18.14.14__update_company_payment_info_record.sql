@@ -1,0 +1,1 @@
+UPDATE company_payment_info SET company_address = '10216 94 AVE, FORT ST JOHN, V1J4X3' WHERE company_name = 'VERTEX RESOURCE SERVICES LTD.';
