@@ -141,7 +141,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
   handleTabChange = (activeKey) => this.setState({ currentActiveTab: activeKey });
 
   render() {
-    const {contractedWork} = this.props;
+    const { contractedWork } = this.props;
     const contractedWorkPayment = contractedWork.contracted_work_payment || {};
     const contractedWorkPaymentExists = !isEmpty(contractedWorkPayment);
 
@@ -183,7 +183,11 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       {
         title: "Request Step",
         dataIndex: "payment_type",
-        render: (text) => <div><Text strong>{text}</Text></div>,
+        render: (text) => (
+          <div>
+            <Text strong>{text}</Text>
+          </div>
+        ),
       },
       {
         title: (
@@ -432,6 +436,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
             contractedWork.has_final_prfs,
             "FINAL"
           )}
+        {interimActualCost === finalActualCost && renderIdenticalEocAmountAlert()}
         <Field
           id={`${lowerCase(paymentType)}_approved_amount`}
           name={`${lowerCase(paymentType)}_approved_amount`}
@@ -485,6 +490,25 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
               This work item's {lowerCase(paymentType)} amount has previously been approved at&nbsp;
               <Text strong>{formatMoney(previousApprovedAmount)}</Text>
               {hasPrfs && " and used to generate PRFs"}!
+            </>
+          }
+          type="warning"
+          style={{ display: "inline-block" }}
+        />
+        <br />
+        <br />
+      </>
+    );
+
+    const renderIdenticalEocAmountAlert = () => (
+      <>
+        <Alert
+          showIcon
+          message={
+            <>
+              This work item's interim and final EoCs have the same total and may be identical
+              documents. The automatic calculations in this table may be incorrect and should be
+              disregarded.
             </>
           }
           type="warning"
