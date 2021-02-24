@@ -48,6 +48,13 @@ class PaymentDocument(AuditMixin, Base):
             invoice_number = f'{agreement_number}-{payment_phase}-{amount_generated + 1}'
             return invoice_number
 
+        def get_memo():
+            well_authorization_numbers = []
+            for cwp in self.contracted_work_payments:
+                cw = self.application.find_contracted_work_by_id(cwp.work_id)
+                well_authorization_numbers.append(cw['well_authorization_number'])
+            return ', '.join(well_authorization_numbers)
+
         def create_payment_details():
             def create_payment_detail(unique_id, well_authorization_number, amount):
                 return {
@@ -69,12 +76,8 @@ class PaymentDocument(AuditMixin, Base):
             if self.payment_document_code == 'FIRST_PRF':
                 amount = self.application.calc_first_prf_amount()
                 unique_id = create_unique_id()
-                well_authorization_numbers = ', '.join([
-                    cw['well_authorization_number']
-                    for cw in self.application.contracted_work('APPROVED', False)
-                ])
-                payment_details.append(
-                    create_payment_detail(unique_id, well_authorization_numbers, amount))
+                memo = get_memo()
+                payment_details.append(create_payment_detail(unique_id, memo, amount))
 
             elif self.payment_document_code in ('INTERIM_PRF', 'FINAL_PRF'):
                 for contracted_work_payment in self.contracted_work_payments:
@@ -130,6 +133,7 @@ class PaymentDocument(AuditMixin, Base):
             invoice_date = today_date
             invoice_number = self.invoice_number
             po_number = company_info.po_number
+            memo = get_memo()
             qualified_receiver_name = company_info.qualified_receiver_name
             date_payment_authorized = today_date
             expense_authority_name = company_info.expense_authority_name
@@ -147,6 +151,7 @@ class PaymentDocument(AuditMixin, Base):
                 'invoice_date': invoice_date,
                 'invoice_number': invoice_number,
                 'po_number': po_number,
+                'memo': memo,
                 'qualified_receiver_name': qualified_receiver_name,
                 'date_payment_authorized': date_payment_authorized,
                 'expense_authority_name': expense_authority_name,
