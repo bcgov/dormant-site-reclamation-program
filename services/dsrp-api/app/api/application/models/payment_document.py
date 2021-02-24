@@ -49,10 +49,11 @@ class PaymentDocument(AuditMixin, Base):
             return invoice_number
 
         def create_payment_details():
-            def create_payment_detail(unique_id, amount):
+            def create_payment_detail(unique_id, well_authorization_number, amount):
                 return {
                     'agreement_number': self.application.agreement_number,
                     'unique_id': unique_id,
+                    'well_authorization_number': well_authorization_number,
                     'amount': float(amount)
                 }
 
@@ -68,7 +69,12 @@ class PaymentDocument(AuditMixin, Base):
             if self.payment_document_code == 'FIRST_PRF':
                 amount = self.application.calc_first_prf_amount()
                 unique_id = create_unique_id()
-                payment_details.append(create_payment_detail(unique_id, amount))
+                well_authorization_numbers = ', '.join([
+                    cw['well_authorization_number']
+                    for cw in self.application.contracted_work('APPROVED', False)
+                ])
+                payment_details.append(
+                    create_payment_detail(unique_id, well_authorization_numbers, amount))
 
             elif self.payment_document_code in ('INTERIM_PRF', 'FINAL_PRF'):
                 for contracted_work_payment in self.contracted_work_payments:
@@ -102,7 +108,9 @@ class PaymentDocument(AuditMixin, Base):
                                 f'Work ID {work_id} final payment amount has not been set!')
 
                     unique_id = create_unique_id(work_id)
-                    payment_details.append(create_payment_detail(unique_id, amount))
+                    well_authorization_number = work['well_authorization_number']
+                    payment_details.append(
+                        create_payment_detail(unique_id, well_authorization_number, amount))
             else:
                 raise Exception('Unknown payment document code')
 
