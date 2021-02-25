@@ -1,7 +1,7 @@
 DROP VIEW IF EXISTS work_info_view;
 CREATE OR REPLACE VIEW work_info_view
 	AS SELECT
-id, guid, well_authorization_number,
+id, guid, work_id, well_authorization_number,
 contracted_work_type, planned_start_date, planned_end_date,
 well_file_review, abandonment_plan,mob_demob_site,camp_lodging,permanent_plugging_wellbore, cut_and_cap, removal_of_facilities, historical_well_file,
 site_visit, report_writing_submission, psi_review, intrusive_sampling, submission_of_samples, completion_of_notifications,analysis_results,psi_review_dsi_scope, complete_sampling,
@@ -12,6 +12,7 @@ estimated_cost
 FROM (
     SELECT
         *,
+        contracted_work_data->>'work_id' as work_id,
         contracted_work_data->>'planned_start_date' as planned_start_date,
         contracted_work_data->>'planned_end_date' as planned_end_date,
         COALESCE(NULLIF(contracted_work_data->>'well_file_review', '')::numeric, 0) as well_file_review,
