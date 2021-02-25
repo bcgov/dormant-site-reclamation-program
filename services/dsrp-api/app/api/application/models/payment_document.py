@@ -52,6 +52,8 @@ class PaymentDocument(AuditMixin, Base):
             well_authorization_numbers = []
             for cwp in self.contracted_work_payments:
                 cw = self.application.find_contracted_work_by_id(cwp.work_id)
+                if not cw:
+                    raise Exception(f'Work ID {cwp.work_id} does not exist on this application!')
                 well_authorization_numbers.append(cw['well_authorization_number'])
             return ', '.join(well_authorization_numbers)
 
