@@ -134,6 +134,7 @@ class Application(Base, AuditMixin):
                         if k != 'contracted_work':
                             continue
                         for cw_type, cw_data in v.items():
+                            cw_data['well_authorization_number'] = wan
                             well_sites[i]['contracted_work'][cw_type].update(cw_data)
 
         # Calculate the sum for each contracted work item

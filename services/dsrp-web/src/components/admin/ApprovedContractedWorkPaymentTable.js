@@ -41,6 +41,7 @@ const propTypes = {
   filterListContractedWorkPaymentStatusOptions: PropTypes.objectOf(PropTypes.any).isRequired,
   filterListContractedWorkTypeOptions: PropTypes.objectOf(PropTypes.any).isRequired,
   onSelectedRowsChanged: PropTypes.func.isRequired,
+  triggerSelectionReset: PropTypes.bool.isRequired,
   handleReviewContractedWorkPaymentModalSubmit: PropTypes.func.isRequired,
   contractedWorkPaymentStatusDropdownOptions: PropTypes.any.isRequired,
   contractedWorkPaymentStatusOptionsHash: PropTypes.any.isRequired,
@@ -94,9 +95,16 @@ export class ApprovedContractedWorkPaymentTable extends Component {
   };
 
   componentWillReceiveProps = (nextProps) => {
-    const newSelectedRows = this.transformRowData(
+    let newSelectedRows = this.transformRowData(
       nextProps.applicationsApprovedContractedWork || []
     ).filter(({ work_id }) => this.state.selectedRowKeys.includes(work_id));
+    if (
+      this.props.triggerSelectionReset !== nextProps.triggerSelectionReset &&
+      nextProps.triggerSelectionReset
+    ) {
+      newSelectedRows = [];
+      this.setState({ selectedRowKeys: [], selectedApplicationId: null });
+    }
     this.props.onSelectedRowsChanged(newSelectedRows);
   };
 

@@ -1,0 +1,1 @@
+UPDATE company_payment_info SET qualified_receiver_name = 'Rebecca Stevenson, Megan Burns, Hayden Hayer';
