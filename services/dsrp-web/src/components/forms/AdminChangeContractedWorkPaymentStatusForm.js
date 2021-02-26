@@ -503,8 +503,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       renderWarningAlert(
         <>
           This work item's interim and final EoCs have the same total and may be identical
-          documents. The automatic calculations in this table may be incorrect and should be
-          disregarded.
+          documents. The automatic calculations in this table may be incorrect and the approved
+          amount should be calculated manually.
         </>
       );
 
@@ -512,7 +512,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       renderWarningAlert(
         <>
           This work item's final EoC total is greater than its interim EoC total. The automatic
-          calculations in this table may be incorrect and should be disregarded.
+          calculations in this table may be incorrect and the approved amount should be calculated
+          manually.
         </>
       );
 
