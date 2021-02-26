@@ -437,6 +437,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
             "FINAL"
           )}
         {interimActualCost === finalActualCost && renderIdenticalEocAmountAlert()}
+        {finalActualCost > interimActualCost && renderFinalGreaterThanInterimEocAmountAlert()}
         <Field
           id={`${lowerCase(paymentType)}_approved_amount`}
           name={`${lowerCase(paymentType)}_approved_amount`}
@@ -481,43 +482,39 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       </>
     );
 
-    const renderAlreadyApprovedAlert = (previousApprovedAmount, hasPrfs, paymentType) => (
+    const renderWarningAlert = (message) => (
       <>
-        <Alert
-          showIcon
-          message={
-            <>
-              This work item's {lowerCase(paymentType)} amount has previously been approved at&nbsp;
-              <Text strong>{formatMoney(previousApprovedAmount)}</Text>
-              {hasPrfs && " and used to generate PRFs"}!
-            </>
-          }
-          type="warning"
-          style={{ display: "inline-block" }}
-        />
+        <Alert showIcon message={message} type="warning" style={{ display: "inline-block" }} />
         <br />
         <br />
       </>
     );
 
-    const renderIdenticalEocAmountAlert = () => (
-      <>
-        <Alert
-          showIcon
-          message={
-            <>
-              This work item's interim and final EoCs have the same total and may be identical
-              documents. The automatic calculations in this table may be incorrect and should be
-              disregarded.
-            </>
-          }
-          type="warning"
-          style={{ display: "inline-block" }}
-        />
-        <br />
-        <br />
-      </>
-    );
+    const renderAlreadyApprovedAlert = (previousApprovedAmount, hasPrfs, paymentType) =>
+      renderWarningAlert(
+        <>
+          This work item's {lowerCase(paymentType)} amount has previously been approved at&nbsp;
+          <Text strong>{formatMoney(previousApprovedAmount)}</Text>
+          {hasPrfs && " and used to generate PRFs"}!
+        </>
+      );
+
+    const renderIdenticalEocAmountAlert = () =>
+      renderWarningAlert(
+        <>
+          This work item's interim and final EoCs have the same total and may be identical
+          documents. The automatic calculations in this table may be incorrect and should be
+          disregarded.
+        </>
+      );
+
+    const renderFinalGreaterThanInterimEocAmountAlert = () =>
+      renderWarningAlert(
+        <>
+          This work item's final EoC total is greater than its interim EoC total. The automatic
+          calculations in this table may be incorrect and should be disregarded.
+        </>
+      );
 
     const renderStatusFields = (paymentType, paymentStatus) => {
       switch (paymentStatus) {
@@ -688,16 +685,11 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                 </Descriptions>
                 <Title level={4}>Update Final Status</Title>
                 {(contractedWorkPaymentExists &&
-                  isEmpty(contractedWorkPayment.final_payment_status) && (
+                  isEmpty(contractedWorkPayment.final_payment_status) &&
+                  renderWarningAlert(
                     <>
-                      <Alert
-                        showIcon
-                        message="Cannot update the final payment status until it has been submitted by the applicant."
-                        type="warning"
-                        style={{ display: "inline-block" }}
-                      />
-                      <br />
-                      <br />
+                      Cannot update the final payment status until it has been submitted by the
+                      applicant.
                     </>
                   )) || [
                   renderStatusSelectField("FINAL"),
