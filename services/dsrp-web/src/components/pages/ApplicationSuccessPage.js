@@ -41,16 +41,19 @@ export class ApplicationSuccessPage extends Component {
               If any of the work applied for is approved, you will receive an agreement that you
               must sign and upload along with:
               <ul className="landing-list">
-                  <li>
-                    A signed copy of the agreement you received from the Province of British
-                    Columbia
-                  </li>
-                  <li>
-                    A copy of the contract between your company and the permit holder named in the
-                    application
-                  </li>
-                  <li>A certificate of insurance</li>
-                </ul>
+                <li>
+                  A signed copy of the agreement you received from the Province of British Columbia
+                </li>
+                <li>
+                  A copy of the contract between your company and the permit holder named in the
+                  application
+                </li>
+                <li>A certificate of insurance</li>
+                <li>
+                  Evidence of Indigenous participation such as a letter, email or agreement that
+                  confirms the Indigenous participation that is identified in the application
+                </li>
+              </ul>
               When the files have been uploaded, you may begin work and the initial payment will be
               processed and sent to you at the address provided.
             </Paragraph>
