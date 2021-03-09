@@ -113,7 +113,7 @@ export class LandingPage extends Component {
             <br />
             {this.state.appsDisabled && (
               <Paragraph strong>
-                Increment 1 of the Program has closed to applications July 28, 2020.
+                Increment 2 of the Program has closed to applications - March 8, 2021.
               </Paragraph>
             )}
             <Row type="flex" justify="center">
