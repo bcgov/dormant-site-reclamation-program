@@ -85,6 +85,16 @@ export const currencyMask = createNumberMask({
   stringValue: false,
 });
 
+export const currencyAllowNegativeMask = createNumberMask({
+  prefix: "$",
+  suffix: "",
+  decimalPlaces: 2,
+  locale: "en-CA",
+  allowEmpty: true,
+  stringValue: false,
+  allowNegative: true,
+});
+
 export const metersMask = createNumberMask({
   prefix: "",
   suffix: " metres",
