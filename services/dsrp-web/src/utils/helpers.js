@@ -90,7 +90,7 @@ export const currencyAllowNegativeMask = createNumberMask({
   suffix: "",
   decimalPlaces: 2,
   locale: "en-CA",
-  allowEmpty: true,
+  allowEmpty: false,
   stringValue: false,
   allowNegative: true,
 });
