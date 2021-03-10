@@ -16,8 +16,8 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { lowerCase, isEmpty, isEqual, capitalize } from "lodash";
 import PropTypes from "prop-types";
-import { formatMoney, currencyMask, formatDate } from "@/utils/helpers";
-import { required, maxLength } from "@/utils/validate";
+import { formatMoney, currencyAllowNegativeMask, formatDate } from "@/utils/helpers";
+import { required, number, maxLength } from "@/utils/validate";
 import { renderConfig } from "@/components/common/config";
 import {
   getContractedWorkTypeOptionsHash,
@@ -45,52 +45,6 @@ const propTypes = {
   closeModal: PropTypes.func.isRequired,
   submitting: PropTypes.bool.isRequired,
   wells: PropTypes.arrayOf(PropTypes.any).isRequired,
-};
-
-const validateFormApprovedAmount = (
-  paymentType,
-  interimApprovedAmount,
-  finalApprovedAmount,
-  interimEstSharedCost,
-  finalEstSharedCost,
-  interimHalfEocTotal,
-  finalHalfEocTotal
-) => (value) => {
-  interimApprovedAmount = paymentType === "INTERIM" ? value : interimApprovedAmount;
-  finalApprovedAmount = paymentType === "FINAL" ? value : finalApprovedAmount;
-  const interimLostFunds = interimEstSharedCost - interimApprovedAmount;
-  const finalEligibleAmount = finalEstSharedCost + interimLostFunds;
-  const finalLostFunds = finalEligibleAmount - finalApprovedAmount;
-
-  if (paymentType === "INTERIM") {
-    if (value > interimHalfEocTotal) {
-      return `Cannot overpay on half of supplied interim EoC total of ${formatMoney(
-        interimHalfEocTotal
-      )}`;
-    }
-
-    if (interimLostFunds.toFixed(2) < 0) {
-      return `Cannot overpay on agreed interim payment amount of ${formatMoney(
-        interimEstSharedCost
-      )}`;
-    }
-  }
-
-  if (paymentType === "FINAL") {
-    if (value > finalHalfEocTotal) {
-      return `Cannot overpay on half of supplied final EoC total of ${formatMoney(
-        finalHalfEocTotal
-      )}`;
-    }
-
-    if (finalLostFunds.toFixed(2) < 0) {
-      return `Cannot overpay on agreed final payment amount (plus carry-over from unused interim funds) of ${formatMoney(
-        finalEligibleAmount
-      )}`;
-    }
-  }
-
-  return undefined;
 };
 
 const validateStatus = (paymentType, contractedWorkPayment) => (value) => {
@@ -454,25 +408,10 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
             </>
           }
           component={renderConfig.FIELD}
-          validate={
-            paymentType === this.state.currentActiveTab
-              ? [
-                  required,
-                  validateFormApprovedAmount(
-                    paymentType,
-                    interimApprovedAmount,
-                    finalApprovedAmount,
-                    interimEstSharedCost,
-                    finalEstSharedCost,
-                    interimHalfEocTotal,
-                    finalHalfEocTotal
-                  ),
-                ]
-              : null
-          }
+          validate={paymentType === this.state.currentActiveTab ? [number] : null}
           inputStyle={{ textAlign: "right" }}
           placeholder="$0.00"
-          {...currencyMask}
+          {...currencyAllowNegativeMask}
           onChange={(event, newValue) => {
             if (newValue && newValue.toString().split(".")[0].length > 8) {
               event.preventDefault();
