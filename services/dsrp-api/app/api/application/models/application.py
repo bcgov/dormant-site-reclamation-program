@@ -184,17 +184,19 @@ class Application(Base, AuditMixin):
         contracted_work_payments = []
         approved_applications = []
 
+        if company_name:
+            company_name = f'%{company_name}%'
+
         if application_id or application_guid or company_name:
             if application_id and not application_guid:
                 application = Application.query.filter_by(id=application_id).one_or_none()
                 application_guid = application.guid if application else None
             approved_applications = Application.query.filter(
-                and_(
-                    Application.application_status_code == 'FIRST_PAY_APPROVED',
-                    Application.id == application_id if application_id != None else True,
-                    Application.guid == application_guid if application_guid != None else True,
-                    Application.company_name.contains(company_name.upper())
-                    if company_name != None else True)).order_by(Application.id).all()
+                and_(Application.application_status_code == 'FIRST_PAY_APPROVED',
+                     Application.id == application_id if application_id != None else True,
+                     Application.guid == application_guid if application_guid != None else True,
+                     Application.company_name.ilike(company_name)
+                     if company_name != None else True)).order_by(Application.id).all()
             approved_application_guids = [x.guid for x in approved_applications]
             contracted_work_payments = ContractedWorkPayment.query.filter(
                 Application.guid.in_(approved_application_guids)).all()
