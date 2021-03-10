@@ -265,6 +265,7 @@ class Application(Base, AuditMixin):
         result['agreement_no'] = self.agreement_number
         result['application_guid'] = str(self.guid)
         result['agreement_date'] = datetime.now().strftime("%d, %b, %Y")
+        result['application_date'] = self.submission_date.strftime("%d, %b, %Y")
 
         # Create company info
         _company_details = self.json.get('company_details')
