@@ -127,34 +127,6 @@ class EmailService():
 
         self.send_email(to_email, from_email, subject, html_body, '', attachment, filename)
 
-    def send_shared_cost_agreement_amendment_document(self, application, amendment_file,
-                                                      amendment_filename):
-        if not Config.AMENDMENT_FROM_EMAIL or not Config.AMENDMENT_TO_EMAIL:
-            current_app.logger.warning(
-                'Email addresses required for emailing amendments are not set!')
-
-        from_email = Config.AMENDMENT_FROM_EMAIL
-
-        # For more useful testing purposes, if this value is not set, use the email of the current user
-        to_email = Config.AMENDMENT_TO_EMAIL
-        if not to_email:
-            to_email = User().get_user_email()
-            current_app.logger.warning(
-                f'Amendment recipient email is not set! Using the email of the current user instead: {to_email}'
-            )
-
-        subject = f'Shared Cost Agreement Amendment - #{application.agreement_number}'
-
-        html_body = f'''
-        <p>The Shared Cost Agreement Amendment document <i>{amendment_filename}</i> for Agreement Number #{application.agreement_number} is attached.</p>
-        <p>Please make any required adjustments to the DOCX before saving it as a PDF and forwarding it to the applicant for signing.</p>
-        '''
-        current_app.logger.info(html_body)
-        attachment = amendment_file
-        filename = amendment_filename
-
-        self.send_email(to_email, from_email, subject, html_body, '', attachment, filename)
-
     def send_email(self,
                    to_email,
                    from_email,

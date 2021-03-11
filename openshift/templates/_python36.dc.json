@@ -380,24 +380,6 @@
                     }
                   },
                   {
-                    "name": "AMENDMENT_FROM_EMAIL",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${EMAIL_ADDRESSES}",
-                        "key": "amendment-from-email"
-                      }
-                    }
-                  },
-                  {
-                    "name": "AMENDMENT_TO_EMAIL",
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "name": "${EMAIL_ADDRESSES}",
-                        "key": "amendment-to-email"
-                      }
-                    }
-                  },
-                  {
                     "name": "METABASE_EMBEDDING_SECRET_KEY",
                     "valueFrom": {
                       "secretKeyRef": {

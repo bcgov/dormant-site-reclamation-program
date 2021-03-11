@@ -103,8 +103,6 @@ class Config(object):
     PROGRAM_EMAIL = 'DormantSite.BC.Government@gov.bc.ca'
     PRF_FROM_EMAIL = os.environ.get('PRF_FROM_EMAIL', None)
     PRF_TO_EMAIL = os.environ.get('PRF_TO_EMAIL', None)
-    AMENDMENT_FROM_EMAIL = os.environ.get('AMENDMENT_FROM_EMAIL', None)
-    AMENDMENT_TO_EMAIL = os.environ.get('AMENDMENT_TO_EMAIL', None)
 
     URL = os.environ.get('URL', 'http://dormant-site-reclamation.gov.bc.ca')
 

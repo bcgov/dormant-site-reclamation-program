@@ -44,6 +44,18 @@ const description = (status) => {
       return (
         <StatusDescription description="Your documents have been received and are being reviewed." />
       );
+    case "AMENDMENT_STARTED":
+      return (
+        <StatusDescription
+          description="The amendment process for your application has been started. Please attach the files requested below."
+          sub="To see the work that has been approved for this application, please refer to the
+          agreement you have been asked to sign and upload."
+        />
+      );
+    case "AMENDMENT_SUBMITTED":
+      return (
+        <StatusDescription description="Your documents have been received and are being reviewed." />
+      );
     case "FIRST_PAY_APPROVED":
       return (
         <StatusDescription description="Your application has been approved and the first payment will be issued. You can manage the information required to process interim and final payments below." />
