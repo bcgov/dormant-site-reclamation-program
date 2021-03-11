@@ -38,7 +38,9 @@ class ApplicationDocumentListResource(Resource, UserMixin):
             raise NotFound('No application was found matching the provided reference number')
 
         # Documents can only be uploaded for application's in the correct status or if its being done by an admin
-        if application.application_status_code == 'WAIT_FOR_DOCS' or jwt.validate_roles([ADMIN]):
+        if application.application_status_code in ('WAIT_FOR_DOCS',
+                                                   'AMENDMENT_STARTED') or jwt.validate_roles(
+                                                       [ADMIN]):
             docs = request.json.get('documents', [])
 
             for doc in docs:
@@ -50,9 +52,14 @@ class ApplicationDocumentListResource(Resource, UserMixin):
                 application.save()
 
             if request.json.get('confirm_final_documents'):
+
+                application_status_code = 'DOC_SUBMITTED'
+                if application.application_status_code == 'AMENDMENT_STARTED':
+                    application_status_code = 'AMENDMENT_SUBMITTED'
+
                 app_status_change = ApplicationStatusChange(
                     application=application,
-                    application_status_code='DOC_SUBMITTED',
+                    application_status_code=application_status_code,
                     note='Thank you for uploading the required documents.')
                 app_status_change.save()
 
