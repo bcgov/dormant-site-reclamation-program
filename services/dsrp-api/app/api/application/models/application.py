@@ -305,6 +305,12 @@ class Application(Base, AuditMixin):
         return result
 
     @hybrid_property
+    def shared_cost_agreement_amendment_template_json(self):
+        """Generates the JSON used to generate this application's Shared Cost Agreement Amendment document."""
+        result = self.shared_cost_agreement_template_json
+        return result
+
+    @hybrid_property
     def applicant_name(self):
         return f"{self.json['company_contact']['first_name']} {self.json['company_contact']['last_name']}"
 

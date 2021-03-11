@@ -12,7 +12,7 @@ from app.api.services.email_service import EmailService
 from app.api.application.models.application_status import ApplicationStatus
 from app.api.application.models.payment_document import PaymentDocument
 from app.api.services.document_generator_service import DocumentGeneratorService, get_template_file_path
-from app.api.services.application_status_change_actions import action_first_pay_approved
+from app.api.services.application_status_change_actions import action_first_pay_approved, action_amendment_started
 
 
 class ApplicationStatusChange(Base, AuditMixin):
@@ -43,6 +43,8 @@ class ApplicationStatusChange(Base, AuditMixin):
     def determine_application_status_change_action(self):
         if self.application_status_code == 'FIRST_PAY_APPROVED':
             action_first_pay_approved(self.application)
+        elif self.application_status_code == 'AMENDMENT_STARTED':
+            action_amendment_started(self.application)
 
     def send_status_change_email(self):
         html_content = f"""
