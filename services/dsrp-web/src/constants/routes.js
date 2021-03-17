@@ -8,6 +8,7 @@ import ReviewApprovedContractedWorkPage from "@/components/pages/ReviewApprovedC
 import ViewApplicationPage from "@/components/pages/ViewApplicationPage";
 import ApplicationSuccessPage from "@/components/pages/ApplicationSuccessPage";
 import RequestAccessPage from "@/components/pages/RequestAccessPage";
+import ReviewCompanyPaymentInfoPage from "@/components/pages/ReviewCompanyPaymentInfoPage";
 
 export const HOME = {
   route: "/",
@@ -53,6 +54,13 @@ export const REVIEW_APPROVED_CONTRACTED_WORK = {
   dynamicRoute: ({ page, per_page, ...params }) =>
     `/review-approved-contracted-work?${queryString.stringify({ page, per_page, ...params })}`,
   component: ReviewApprovedContractedWorkPage,
+};
+
+export const COMPANY_PAYMENT_INFO = {
+  route: "/review-company-payment-info",
+  dynamicRoute: ({ page, per_page, ...params }) =>
+    `/review-company-payment-info?${queryString.stringify({ page, per_page, ...params })}`,
+  component: ReviewCompanyPaymentInfoPage,
 };
 
 export const VIEW_APPLICATION = {
