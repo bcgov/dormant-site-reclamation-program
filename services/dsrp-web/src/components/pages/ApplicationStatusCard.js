@@ -54,7 +54,10 @@ const description = (status) => {
       );
     case "AMENDMENT_SUBMITTED":
       return (
-        <StatusDescription description="Your documents have been received and are being reviewed." />
+        <StatusDescription
+          description="Your documents have been received and are being reviewed."
+          sub=" "
+        />
       );
     case "FIRST_PAY_APPROVED":
       return (

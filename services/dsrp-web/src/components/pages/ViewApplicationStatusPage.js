@@ -115,7 +115,10 @@ export class ViewApplicationStatusPage extends Component {
           <ApplicationStatusCard application={this.props.loadedApplication} />
           {(this.props.loadedApplication.application_status_code === "WAIT_FOR_DOCS" ||
             this.props.loadedApplication.application_status_code === "AMENDMENT_STARTED") && (
-            <DocumentUploadForm applicationGuid={this.props.loadedApplication.guid} />
+            <DocumentUploadForm
+              applicationGuid={this.props.loadedApplication.guid}
+              applicationStatusCode={this.props.loadedApplication.application_status_code}
+            />
           )}
           {this.props.loadedApplication.application_status_code === "FIRST_PAY_APPROVED" && (
             <ContractedWorkPaymentView
