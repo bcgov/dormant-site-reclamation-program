@@ -155,6 +155,7 @@ class ApplicationResource(Resource, UserMixin):
 
             if is_json_updated:
                 application.json["company_contact"] = json["company_contact"]
+                application.json["company_details"] = json["company_details"]
                 application.json["contract_details"] = json["contract_details"]
                 application.process_well_sites_work_items(
                     json["well_sites"], application.iterate_application_work_items_action)
