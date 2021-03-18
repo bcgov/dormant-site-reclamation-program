@@ -320,7 +320,8 @@ class Application(Base, AuditMixin):
 
         original_agreement_date = self.original_agreement_date
         if original_agreement_date:
-            local_datetime_converted = datetime.fromtimestamp(original_agreement_date)
+            utc_datetime_timestamp = float(original_agreement_date.strftime("%s"))
+            local_datetime_converted = datetime.fromtimestamp(utc_datetime_timestamp)
             original_agreement_date = local_datetime_converted.strftime("%d, %b, %Y")
         result['original_agreement_date'] = original_agreement_date
 
