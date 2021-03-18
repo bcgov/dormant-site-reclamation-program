@@ -144,13 +144,13 @@ class ApplicationResource(Resource, UserMixin):
             # map only specific fields
             application = Application.find_by_guid(application_guid)
 
-            is_note_updated = application.edit_note != request.json.get("edit_note")
+            edit_note = request.json.get("edit_note")
+            is_note_updated = application.edit_note != edit_note
 
             if is_note_updated:
-                application.edit_note = request.json.get("edit_note")
+                application.edit_note = f'{application.edit_note }\n{edit_note}' if application.edit_note else edit_note
 
             json = request.json.get("json")
-
             is_json_updated = DeepDiff(json, application.json, ignore_order=True) != {}
 
             if is_json_updated:
