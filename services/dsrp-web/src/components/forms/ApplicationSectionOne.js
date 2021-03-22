@@ -143,7 +143,7 @@ class ApplicationSectionOne extends Component {
                 placeholder="Company Name"
                 component={OrgBookSearch}
                 validate={[required]}
-                disabled={!this.props.isEditable}
+                disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                 format={null}
               />
               <Field
@@ -153,7 +153,7 @@ class ApplicationSectionOne extends Component {
                 placeholder="Business Number"
                 component={renderConfig.FIELD}
                 disabled={
-                  !this.props.isEditable ||
+                  (!this.props.isEditable && !this.props.isAdminEditMode) ||
                   (isEmpty(this.props.application) && this.props.orgBookCredential?.business_number)
                 }
                 validate={[required, exactLength(9)]}
@@ -166,7 +166,7 @@ class ApplicationSectionOne extends Component {
                     id="indigenous_participation_ind"
                     name="indigenous_participation_ind"
                     label="My proposal, as outlined in this application, includes Indigenous participation in completing the work."
-                    disabled={!this.props.isEditable}
+                    disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                     component={renderConfig.CHECKBOX}
                   />
                   {this.props.indigenousParticipation && (
@@ -176,7 +176,7 @@ class ApplicationSectionOne extends Component {
                       label="Please describe (Do not include any personal information):"
                       component={renderConfig.AUTO_SIZE_FIELD}
                       validate={[required, maxLength(65536)]}
-                      disabled={!this.props.isEditable}
+                      disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                     />
                   )}
                 </>
@@ -198,7 +198,7 @@ class ApplicationSectionOne extends Component {
                     }
                     placeholder="Select an option"
                     component={renderConfig.SELECT}
-                    disabled={!this.props.isEditable}
+                    disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                     validate={[required]}
                     format={null}
                     data={INDIGENOUS_APPLICANT_AFFILIATION_SELECT_OPTIONS}
@@ -223,7 +223,7 @@ class ApplicationSectionOne extends Component {
                         placeholder="Select an option"
                         mode="tags"
                         component={renderConfig.MULTI_SELECT}
-                        disabled={!this.props.isEditable}
+                        disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                         validate={[requiredList]}
                         format={null}
                         normalize={(value) =>
@@ -240,7 +240,7 @@ class ApplicationSectionOne extends Component {
                 label="Address Line 1"
                 placeholder="Address Line 1"
                 component={renderConfig.FIELD}
-                disabled={!this.props.isEditable}
+                disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                 validate={[required, maxLength(1024)]}
               />
               <Field
@@ -249,7 +249,7 @@ class ApplicationSectionOne extends Component {
                 label="Address Line 2 (Optional)"
                 placeholder={this.props.isEditable ? "Address Line 2 (Optional)" : ""}
                 component={renderConfig.FIELD}
-                disabled={!this.props.isEditable}
+                disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                 validate={[maxLength(1024)]}
               />
               <Field
@@ -258,7 +258,7 @@ class ApplicationSectionOne extends Component {
                 label="City"
                 placeholder="City"
                 component={renderConfig.FIELD}
-                disabled={!this.props.isEditable}
+                disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                 validate={[required, maxLength(1024)]}
               />
             </Col>
@@ -271,7 +271,7 @@ class ApplicationSectionOne extends Component {
                 label="Province"
                 placeholder="Province"
                 component={renderConfig.SELECT}
-                disabled={!this.props.isEditable}
+                disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                 validate={[required]}
                 format={null}
                 data={[{ value: "BC", label: "British Columbia" }]}
@@ -284,7 +284,7 @@ class ApplicationSectionOne extends Component {
                 label="Postal Code"
                 placeholder="Postal Code"
                 component={renderConfig.FIELD}
-                disabled={!this.props.isEditable}
+                disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                 validate={[required, postalCode]}
                 {...postalCodeBritishColumbiaMask}
               />

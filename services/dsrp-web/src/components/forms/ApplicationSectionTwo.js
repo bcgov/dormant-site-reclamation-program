@@ -1088,7 +1088,7 @@ class ApplicationSectionTwo extends Component {
                 }
                 placeholder="Search for permit holder for whom this work will be performed"
                 component={PermitHolderSelect}
-                disabled={!this.props.isEditable}
+                disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                 validate={[required]}
               />
             </Col>

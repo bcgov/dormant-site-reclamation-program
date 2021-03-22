@@ -118,6 +118,14 @@ class Application(Base, AuditMixin):
         return str(self.id).zfill(4)
 
     @hybrid_property
+    def original_agreement_date(self):
+        if self.status_changes is None:
+            return None
+        status_change = next(status_change for status_change in self.status_changes
+                             if status_change.application_status_code == 'FIRST_PAY_APPROVED')
+        return status_change.change_date if status_change else None
+
+    @hybrid_property
     def well_sites_with_review_data(self):
         """Merges well sites with their corresponding review data and provides extra information."""
 
@@ -301,6 +309,21 @@ class Application(Base, AuditMixin):
                 site += f' Planned Start Date: {wt_details["planned_start_date"]}\n'
                 site += f' Planned End Date: {wt_details["planned_end_date"]}\n'
                 result['formatted_well_sites'] += site
+
+        return result
+
+    @hybrid_property
+    def shared_cost_agreement_amendment_template_json(self):
+        """Generates the JSON used to generate this application's Shared Cost Agreement Amendment document."""
+
+        result = self.shared_cost_agreement_template_json
+
+        original_agreement_date = self.original_agreement_date
+        if original_agreement_date:
+            utc_datetime_timestamp = float(original_agreement_date.strftime("%s"))
+            local_datetime_converted = datetime.fromtimestamp(utc_datetime_timestamp)
+            original_agreement_date = local_datetime_converted.strftime("%d, %b, %Y")
+        result['original_agreement_date'] = original_agreement_date
 
         return result
 
