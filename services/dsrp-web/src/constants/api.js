@@ -62,3 +62,6 @@ export const APP_SETTINGS = "/settings";
 
 // OTP AUTHORIZATION
 export const AUTHORIZE_OTP = "/authorization";
+
+// Company Payment Info
+export const COMPANY_PAYMENT_INFO = (params) => `/company-payment-info?${queryString.stringify(params)}`;

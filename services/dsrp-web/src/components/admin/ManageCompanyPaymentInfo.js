@@ -10,14 +10,31 @@ import { openModal, closeModal } from "@/actions/modalActions";
 import * as routes from "@/constants/routes";
 import * as Strings from "@/constants/strings";
 
-const propTypes = {
+import { getCompanyPaymentInfos, getSelectedCompanyPaymentInfos } from "@/selectors/CPISelectors"
+import { createCompanyPaymentInfo, updateCompanyPaymentInfo, fetchCompanyPaymentInfos, fetchSelectedCompanyPaymentInfo } from "@/actionCreators/CPIActionCreator"
 
+import { CompanyPaymentInfoTable } from "@/components/admin/CompanyPaymentInfoTable";
+
+const propTypes = {
+  fetchCompanyPaymentInfos: PropTypes.any.isRequired,
+  createCompanyPaymentInfo: PropTypes.any.isRequired,
+  updateCompanyPaymentInfo: PropTypes.any.isRequired,
+  fetchSelectedCompanyPaymentInfo: PropTypes.any.isRequired,
 };
 
-const defaultProps = {};
+const defaultProps = {
+};
 
 const defaultParams = {
-
+  page: Strings.DEFAULT_PAGE_NUMBER,
+  per_page: Strings.DEFAULT_PAGE_SIZE,
+  company_name: undefined,
+  company_address: undefined,
+  po_number: undefined,
+  qualified_receiver_name: undefined,
+  expense_authority_name: undefined,
+  sort_field: "company_name",
+  sort_dir: "desc",
 };
 
 export class ManageCompanyPaymentInfo extends Component {
@@ -28,7 +45,16 @@ export class ManageCompanyPaymentInfo extends Component {
 
   renderDataFromURL = (params) => {
     const parsedParams = queryString.parse(params);
-
+    this.setState(
+      {
+        params: parsedParams,
+        isLoaded: false,
+      },
+      () =>
+        this.props.fetchCompanyPaymentInfos(this.state.params).then(() => {
+          this.setState({ isLoaded: true });
+        })
+    );
   };
 
   onPageChange = (page, per_page) => {
@@ -82,17 +108,42 @@ export class ManageCompanyPaymentInfo extends Component {
   render() {
     return (
       <>
-      <div>
-        Test
-      </div>
+        <Row>
+          <Col>
+            <CompanyPaymentInfoTable
+              params={this.state.params}
+              onPageChange={this.onPageChange}
+              isLoaded={this.state.isLoaded}
+
+            />
+          </Col>
+        </Row>
       </>
     );
   }
 }
 
-  ManageCompanyPaymentInfo.propTypes = propTypes;
+const mapStateToProps = (state) => ({
+
+});
+
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      fetchSelectedCompanyPaymentInfo,
+      createCompanyPaymentInfo,
+      updateCompanyPaymentInfo,
+      fetchCompanyPaymentInfos,
+      openModal,
+      closeModal,
+    },
+    dispatch
+  );
+
+ManageCompanyPaymentInfo.propTypes = propTypes;
 ManageCompanyPaymentInfo.defaultProps = defaultProps;
 
 export default compose(
   withRouter,
+  connect(mapStateToProps, mapDispatchToProps)
 )(ManageCompanyPaymentInfo);

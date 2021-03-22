@@ -3,7 +3,6 @@ import { bindActionCreators, compose } from "redux";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import ManageCompanyPaymentInfo from "@/components/admin/ManageCompanyPaymentInfo";
-// import ReviewApplicationInfo from "@/components/admin/ReviewApprovedContractedWorkInfo";
 import { Row, Col, Typography, Icon, Card, Popconfirm, Drawer, Button } from "antd";
 import { AuthorizationGuard } from "@/hoc/AuthorizationGuard";
 import * as Strings from "@/constants/strings";
@@ -32,7 +31,6 @@ export class ReviewCompanyPaymentInfoPage extends Component {
         </Row>
         <Row type="flex" justify="center" align="top" className="landing-section">
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-            {/* <ReviewApplicationInfo /> */}
             <ManageCompanyPaymentInfo />
           </Col>
         </Row>
