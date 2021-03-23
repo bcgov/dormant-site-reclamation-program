@@ -33,8 +33,7 @@ const { Text } = Typography;
 const propTypes = {
   params: PropTypes.objectOf(PropTypes.any).isRequired,
   isLoaded: PropTypes.bool.isRequired,
-  fetchCompanyPaymentInfos: PropTypes.func.isRequired,
-  fetchSelectedCompanyPaymentInfo: PropTypes.func.isRequired,
+  pageData: PropTypes.any.isRequired,
 };
 
 export class CompanyPaymentInfoTable extends Component {
@@ -43,9 +42,9 @@ export class CompanyPaymentInfoTable extends Component {
     const columns = [
       {
         title: "Company Name",
-        key: "company_payment_info_name",
-        dataIndex: "company_payment_info_name",
-        sortField: "company_payment_info_name",
+        key: "company_name",
+        dataIndex: "company_name",
+        sortField: "company_name",
         sorter: true,
         render: (text) => <div title="Company Name">{text}</div>,
       },
@@ -73,6 +72,19 @@ export class CompanyPaymentInfoTable extends Component {
         dataIndex: "expense_authority_name",
         render: (text) => <div title="Expense Authority Name">{text}</div>,
       },
+      {
+        title: "Edit",
+        key: "edit",
+        className: "table-header-center-align table-column-center-align",
+        render: (text, record) => (
+          <Button
+            type="link"
+            onClick={() => console.log("clicked")}
+          >
+            <Icon type="edit" className="icon-lg" />
+          </Button>
+        ),
+      },
     ];
 
     return (
@@ -80,8 +92,8 @@ export class CompanyPaymentInfoTable extends Component {
         <Table
           columns={columns}
           pagination={false}
-          rowKey={(record) => record.company_payment_info_name}
-          dataSource={this.props.fetchCompanyPaymentInfo}
+          rowKey={(record) => record.company_name}
+          dataSource={this.props.pageData}
           className="table-headers-center"
           loading={{
             spinning: !this.props.isLoaded,
@@ -96,13 +108,12 @@ CompanyPaymentInfoTable.propTypes = propTypes;
 
 const mapStateToProps = (state) => ({
 
+
 });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      fetchCompanyPaymentInfos,
-      fetchSelectedCompanyPaymentInfo,
     },
     dispatch
   );

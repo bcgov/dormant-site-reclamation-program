@@ -19,7 +19,9 @@ const propTypes = {
   fetchCompanyPaymentInfos: PropTypes.any.isRequired,
   createCompanyPaymentInfo: PropTypes.any.isRequired,
   updateCompanyPaymentInfo: PropTypes.any.isRequired,
+  getCompanyPaymentInfos: PropTypes.any.isRequired,
   fetchSelectedCompanyPaymentInfo: PropTypes.any.isRequired,
+  pageData: PropTypes.any.isRequired,
 };
 
 const defaultProps = {
@@ -114,7 +116,7 @@ export class ManageCompanyPaymentInfo extends Component {
               params={this.state.params}
               onPageChange={this.onPageChange}
               isLoaded={this.state.isLoaded}
-
+              pageData={this.props.pageData}
             />
           </Col>
         </Row>
@@ -124,13 +126,14 @@ export class ManageCompanyPaymentInfo extends Component {
 }
 
 const mapStateToProps = (state) => ({
-
+  pageData: getCompanyPaymentInfos(state),
 });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchSelectedCompanyPaymentInfo,
+      getCompanyPaymentInfos,
       createCompanyPaymentInfo,
       updateCompanyPaymentInfo,
       fetchCompanyPaymentInfos,

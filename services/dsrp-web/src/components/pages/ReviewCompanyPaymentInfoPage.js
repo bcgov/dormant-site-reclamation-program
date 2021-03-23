@@ -31,6 +31,18 @@ export class ReviewCompanyPaymentInfoPage extends Component {
         </Row>
         <Row type="flex" justify="center" align="top" className="landing-section">
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
+            <Button
+              type="link"
+              onClick={console.log("add")}
+              style={{ float: "right", marginTop: 40 }}
+            >
+              Add New
+              <Icon type="plus-square" className="icon-lg" />
+            </Button>
+          </Col>
+        </Row>
+        <Row type="flex" justify="center" align="top" className="landing-section">
+          <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
             <ManageCompanyPaymentInfo />
           </Col>
         </Row>
