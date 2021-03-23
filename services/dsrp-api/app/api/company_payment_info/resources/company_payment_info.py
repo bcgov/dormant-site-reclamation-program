@@ -21,7 +21,7 @@ class CompanyPaymentInfoResource(Resource, UserMixin):
     def post(self, cpi_name):
         company_payment_info = CompanyPaymentInfo(
             company_name=new_info['company_name'],
-            commpany_address=new_info['company_address'],
+            company_address=new_info['company_address'],
             po_number=new_info['po_number'],
             qualified_receiver_name=new_info['qualified_receiver_name'],
             expense_authority_name=new_info['expense_authority_name'],
