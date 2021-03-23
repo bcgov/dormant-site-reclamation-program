@@ -1,8 +1,7 @@
 from app.extensions import api
 from flask_restplus import fields
-from app.api.application.response_models import APPLICATION_DOCUMENT_SMALL
 
-COMPANY_WORK_INFO = api.model(
+COMPANY_PAYMENT_INFO = api.model(
     'CompanyPaymentInfo', {
         'company_name': fields.String,
         'commpany_address': fields.String,
