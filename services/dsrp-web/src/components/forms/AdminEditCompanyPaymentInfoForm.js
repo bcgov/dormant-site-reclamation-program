@@ -43,6 +43,7 @@ const propTypes = {
   companyPaymentInfo: PropTypes.any.isRequired,
   isAdd: PropTypes.any.isRequired,
   formValues: PropTypes.objectOf(PropTypes.any),
+  isPristine: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -80,6 +81,24 @@ export class AdminEditCompanyPaymentInfoForm extends Component {
     return data ? JSON.parse(data) : null;
   }
 
+  saveFormData() {
+    if (this.props.isPristine) {
+      return;
+    }
+
+    const data = {
+      formValues: this.props.formValues,
+      saveTimestamp: new Date().getTime(),
+    };
+
+    localStorage.setItem(FORM.ADMIN_EDIT_COMPANY_PAYMENT_INFO_FORM, JSON.stringify(data));
+
+    this.setState({
+      saveTimestamp: data.saveTimestamp,
+      previouslySavedFormValues: data.formValues,
+    });
+  }
+
   handleTabChange = (activeKey) => this.setState({ currentActiveTab: activeKey });
 
   render() {
@@ -103,35 +122,35 @@ export class AdminEditCompanyPaymentInfoForm extends Component {
               id="company_name"
               name="company_name"
               label="Name of the company the payment information relates to"
-              data={companyPaymentInfo.company_name}
+              // data={companyPaymentInfo.company_name}
               component={renderConfig.FIELD}
             />
             <Field
               id="company_address"
               name="company_address"
               label="Address of the company"
-              data={companyPaymentInfo.company_address}
+              // data={companyPaymentInfo.company_address}
               component={renderConfig.FIELD}
             />
             <Field
               id="po_number"
               name="po_number"
               label="PO number of the company"
-              data={companyPaymentInfo.po_number}
+              // data={companyPaymentInfo.po_number}
               component={renderConfig.FIELD}
             />
             <Field
               id="qualified_receiver_name"
               name="qualified_receiver_name"
               label="Qualified receiver name for the company"
-              data={companyPaymentInfo.qualified_receiver_name}
+              // data={companyPaymentInfo.qualified_receiver_name}
               component={renderConfig.FIELD}
             />
             <Field
               id="expense_authority_name"
               name="expense_authority_name"
               label="Expense Authority name for the company"
-              data={companyPaymentInfo.expense_authority_name}
+              // data={companyPaymentInfo.expense_authority_name}
               component={renderConfig.FIELD}
             />
           </Col>

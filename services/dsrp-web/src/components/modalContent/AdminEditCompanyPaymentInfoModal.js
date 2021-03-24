@@ -12,6 +12,7 @@ export const AdminEditCompanyPaymentInfoModal = (props) => {
       companyPaymentInfo={props.cpi}
       closeModal={props.closeModal}
       isAdd={props.isAdd}
+      initialValues={props.cpi}
     />
   );
 };
