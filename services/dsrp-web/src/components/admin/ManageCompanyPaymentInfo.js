@@ -22,6 +22,8 @@ const propTypes = {
   getCompanyPaymentInfos: PropTypes.any.isRequired,
   fetchSelectedCompanyPaymentInfo: PropTypes.any.isRequired,
   pageData: PropTypes.any.isRequired,
+  openModal: PropTypes.func.isRequired,
+  closeModal: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -117,6 +119,8 @@ export class ManageCompanyPaymentInfo extends Component {
               onPageChange={this.onPageChange}
               isLoaded={this.state.isLoaded}
               pageData={this.props.pageData}
+              openModal={this.props.openModal}
+              closeModal={this.props.closeModal}
             />
           </Col>
         </Row>

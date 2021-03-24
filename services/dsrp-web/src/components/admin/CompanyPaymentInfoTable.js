@@ -34,9 +34,27 @@ const propTypes = {
   params: PropTypes.objectOf(PropTypes.any).isRequired,
   isLoaded: PropTypes.bool.isRequired,
   pageData: PropTypes.any.isRequired,
+  openModal: PropTypes.func.isRequired,
+  closeModal: PropTypes.func.isRequired,
 };
 
 export class CompanyPaymentInfoTable extends Component {
+  handleEditCompanyPaymentInfo = (record) => {
+    console.log(this.props)
+    this.openEditCompanyPaymentInfoModal(record);
+  }
+
+  openEditCompanyPaymentInfoModal = (record) => 
+    this.props.openModal({
+      width: 800,
+      props: {
+        title: `Edit Payment Information for Company ${record.company_name}`,
+        cpi: record,
+        onSubmit: console.log("submitted"),
+        isAdd: false,
+      },
+      content: modalConfig.ADMIN_EDIT_COMPANY_PAYMENT_INFO,
+    });
 
   render() {
     const columns = [
@@ -79,7 +97,7 @@ export class CompanyPaymentInfoTable extends Component {
         render: (text, record) => (
           <Button
             type="link"
-            onClick={() => console.log("clicked")}
+            onClick={() => this.handleEditCompanyPaymentInfo(record)}
           >
             <Icon type="edit" className="icon-lg" />
           </Button>
