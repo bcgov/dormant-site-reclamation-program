@@ -50,10 +50,18 @@ class PaymentDocument(AuditMixin, Base):
 
         def get_memo():
             well_authorization_numbers = []
-            for cwp in self.contracted_work_payments:
-                cw = self.application.find_contracted_work_by_id(cwp.work_id)
+
+            work_ids = []
+            if self.payment_document_code == 'FIRST_PRF':
+                approved_work = self.application.contracted_work('APPROVED', False)
+                work_ids = [aw['work_id'] for aw in approved_work]
+            else:
+                work_ids = [cwp.work_id for cwp in self.contracted_work_payments]
+
+            for work_id in work_ids:
+                cw = self.application.find_contracted_work_by_id(work_id)
                 if not cw:
-                    raise Exception(f'Work ID {cwp.work_id} does not exist on this application!')
+                    raise Exception(f'Work ID {work_id} does not exist on this application!')
                 well_authorization_numbers.append(cw['well_authorization_number'])
             return ', '.join(well_authorization_numbers)
 
