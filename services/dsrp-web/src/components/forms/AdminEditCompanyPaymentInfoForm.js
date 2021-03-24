@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { reduxForm, Field, getFormValues } from "redux-form";
+import { isPristine, reduxForm, Field, getFormValues } from "redux-form";
 import {
   Row,
   Col,
@@ -81,6 +81,14 @@ export class AdminEditCompanyPaymentInfoForm extends Component {
     return data ? JSON.parse(data) : null;
   }
 
+  componentDidUpdate = () => {
+    if (!this.props.isPristine) {
+      window.onbeforeunload = () => true;
+    } else {
+      window.onbeforeunload = undefined;
+    }
+  }
+
   saveFormData() {
     if (this.props.isPristine) {
       return;
@@ -102,8 +110,6 @@ export class AdminEditCompanyPaymentInfoForm extends Component {
   handleTabChange = (activeKey) => this.setState({ currentActiveTab: activeKey });
 
   render() {
-    console.log("rendering form")
-    console.log(this.props)
     const companyPaymentInfo = this.props.companyPaymentInfo || {};
     const companyPaymentInfoExists = !isEmpty(companyPaymentInfo);
 
@@ -122,6 +128,7 @@ export class AdminEditCompanyPaymentInfoForm extends Component {
               id="company_name"
               name="company_name"
               label="Name of the company the payment information relates to"
+              disabled={!this.props.isAdd}
               component={renderConfig.FIELD}
             />
             <Field
@@ -184,6 +191,7 @@ AdminEditCompanyPaymentInfoForm.propTypes = propTypes;
 
 const mapStateToProps = (state) => ({
   formValues: getFormValues(FORM.ADMIN_EDIT_COMPANY_PAYMENT_INFO_FORM)(state),
+  isPristine: isPristine(FORM.ADMIN_EDIT_COMPANY_PAYMENT_INFO_FORM)(state),
 });
 
 export default compose(

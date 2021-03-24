@@ -40,11 +40,10 @@ const propTypes = {
 
 export class CompanyPaymentInfoTable extends Component {
   handleEditCompanyPaymentInfo = (record) => {
-    console.log(this.props)
     this.openEditCompanyPaymentInfoModal(record);
   }
 
-  openEditCompanyPaymentInfoModal = (record) => 
+  openEditCompanyPaymentInfoModal = (record) =>
     this.props.openModal({
       width: 800,
       props: {
@@ -52,6 +51,22 @@ export class CompanyPaymentInfoTable extends Component {
         cpi: record,
         onSubmit: console.log("submitted"),
         isAdd: false,
+      },
+      content: modalConfig.ADMIN_EDIT_COMPANY_PAYMENT_INFO,
+    });
+
+  handleAddCompanyPaymentInfo = () => {
+    this.openAddCompanyPaymentInfoModal();
+  }
+
+  openAddCompanyPaymentInfoModal = () =>
+    this.props.openModal({
+      width: 800,
+      props: {
+        title: `Add Payment Information for a Company`,
+        cpi: {},
+        onSubmit: console.log("submitted"),
+        isAdd: true,
       },
       content: modalConfig.ADMIN_EDIT_COMPANY_PAYMENT_INFO,
     });
@@ -107,6 +122,18 @@ export class CompanyPaymentInfoTable extends Component {
 
     return (
       <>
+        <Row type="flex" justify="center" align="top" className="landing-section">
+          <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
+            <Button
+              type="link"
+              onClick={() => this.openAddCompanyPaymentInfoModal()}
+              style={{ float: "right", marginTop: 40 }}
+            >
+              Add New
+              <Icon type="plus-square" className="icon-lg" />
+            </Button>
+          </Col>
+        </Row>
         <Table
           columns={columns}
           pagination={false}
