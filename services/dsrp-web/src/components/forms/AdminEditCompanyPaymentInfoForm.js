@@ -122,47 +122,59 @@ export class AdminEditCompanyPaymentInfoForm extends Component {
               id="company_name"
               name="company_name"
               label="Name of the company the payment information relates to"
-              // data={companyPaymentInfo.company_name}
               component={renderConfig.FIELD}
             />
             <Field
               id="company_address"
               name="company_address"
               label="Address of the company"
-              // data={companyPaymentInfo.company_address}
               component={renderConfig.FIELD}
             />
             <Field
               id="po_number"
               name="po_number"
               label="PO number of the company"
-              // data={companyPaymentInfo.po_number}
               component={renderConfig.FIELD}
             />
             <Field
               id="qualified_receiver_name"
               name="qualified_receiver_name"
               label="Qualified receiver name for the company"
-              // data={companyPaymentInfo.qualified_receiver_name}
               component={renderConfig.FIELD}
             />
             <Field
               id="expense_authority_name"
               name="expense_authority_name"
               label="Expense Authority name for the company"
-              // data={companyPaymentInfo.expense_authority_name}
               component={renderConfig.FIELD}
             />
           </Col>
         </Row>
-        {/* <Button type="primary" onClick={this.props.closeModal} disabled={this.props.submitting}>
-              Close
-        </Button>
-        <Button
-        type="primary" onClick={this.props.closeModal} disabled={this.props.submitting}
-        >
-              Update
-        </Button> */}
+
+        <div className="right">
+            <>
+              <Popconfirm
+                placement="topRight"
+                title="Are you sure you want to cancel?"
+                onConfirm={this.props.closeModal}
+                okText="Yes"
+                cancelText="No"
+                disabled={this.props.submitting}
+              >
+                <Button type="secondary" disabled={this.props.submitting}>
+                  Cancel
+                </Button>
+              </Popconfirm>
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{ marginLeft: 5 }}
+                loading={this.props.submitting}
+              >
+                Submit Changes
+              </Button>
+            </>
+        </div>
       </Form>
     );
   }
