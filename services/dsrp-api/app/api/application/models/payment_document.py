@@ -100,7 +100,7 @@ class PaymentDocument(AuditMixin, Base):
                             raise Exception(
                                 f'Work ID {work_id} interim payment has not been approved!')
                         amount = contracted_work_payment.interim_paid_amount
-                        if not amount:
+                        if amount is None:
                             raise Exception(
                                 f'Work ID {work_id} interim payment amount has not been set!')
                     else:
@@ -108,7 +108,7 @@ class PaymentDocument(AuditMixin, Base):
                             raise Exception(
                                 f'Work ID {work_id} final payment has not been approved!')
                         amount = contracted_work_payment.final_paid_amount
-                        if not amount:
+                        if amount is None:
                             raise Exception(
                                 f'Work ID {work_id} final payment amount has not been set!')
 
