@@ -136,7 +136,7 @@
         "annotations": {}
       },
       "spec": {
-        "completionDeadlineSeconds": 1440,
+        "completionDeadlineSeconds": 2880,
         "triggers": [
           {
             "type": "ImageChange",
@@ -192,7 +192,7 @@
         }
       },
       "spec": {
-        "completionDeadlineSeconds": 900,
+        "completionDeadlineSeconds": 1800,
         "triggers": [
           {
             "type": "ImageChange"
