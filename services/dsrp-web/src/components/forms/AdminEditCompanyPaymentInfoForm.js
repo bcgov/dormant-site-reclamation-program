@@ -37,7 +37,7 @@ const { Text, Title } = Typography;
 const { TabPane } = Tabs;
 
 const propTypes = {
-  handleSubmit: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
   submitting: PropTypes.bool.isRequired,
   companyPaymentInfo: PropTypes.any.isRequired,
@@ -113,46 +113,39 @@ export class AdminEditCompanyPaymentInfoForm extends Component {
     const companyPaymentInfo = this.props.companyPaymentInfo || {};
     const companyPaymentInfoExists = !isEmpty(companyPaymentInfo);
 
-    const handleSubmit = this.props.handleSubmit((values) =>
-      this.props.onSubmit(this.state.currentActiveTab, {
-        contracted_work_payment_code: this.state.currentActiveTab,
-        ...values,
-      })
-    );
-
     return (
-      <Form layout="vertical" onSubmit={handleSubmit}>
+      <Form layout="vertical" onSubmit={this.props.handleSubmit}>
         <Row gutter={48}>
           <Col span={24}>
             <Field
               id="company_name"
               name="company_name"
-              label="Name of the company the payment information relates to"
+              label="Company Name"
               disabled={!this.props.isAdd}
               component={renderConfig.FIELD}
             />
             <Field
               id="company_address"
               name="company_address"
-              label="Address of the company"
+              label="Company Address"
               component={renderConfig.FIELD}
             />
             <Field
               id="po_number"
               name="po_number"
-              label="PO number of the company"
+              label="PO Number"
               component={renderConfig.FIELD}
             />
             <Field
               id="qualified_receiver_name"
               name="qualified_receiver_name"
-              label="Qualified receiver name for the company"
+              label="Qualified Receiver Name"
               component={renderConfig.FIELD}
             />
             <Field
               id="expense_authority_name"
               name="expense_authority_name"
-              label="Expense Authority name for the company"
+              label="Expense Authority Name"
               component={renderConfig.FIELD}
             />
           </Col>
@@ -178,7 +171,7 @@ export class AdminEditCompanyPaymentInfoForm extends Component {
                 style={{ marginLeft: 5 }}
                 loading={this.props.submitting}
               >
-                Submit Changes
+                Submit
               </Button>
             </>
         </div>

@@ -36,6 +36,7 @@ const propTypes = {
   pageData: PropTypes.any.isRequired,
   openModal: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
+  handleUpdateCompanyPaymentInfo: PropTypes.func.isRequired,
 };
 
 export class CompanyPaymentInfoTable extends Component {
@@ -49,7 +50,7 @@ export class CompanyPaymentInfoTable extends Component {
       props: {
         title: `Edit Payment Information for Company ${record.company_name}`,
         cpi: record,
-        onSubmit: console.log("submitted"),
+        onSubmit: this.props.handleUpdateCompanyPaymentInfo,
         isAdd: false,
       },
       content: modalConfig.ADMIN_EDIT_COMPANY_PAYMENT_INFO,
@@ -65,7 +66,7 @@ export class CompanyPaymentInfoTable extends Component {
       props: {
         title: `Add Payment Information for a Company`,
         cpi: {},
-        onSubmit: console.log("submitted"),
+        onSubmit: this.props.handleCreateCompanyPaymentInfo,
         isAdd: true,
       },
       content: modalConfig.ADMIN_EDIT_COMPANY_PAYMENT_INFO,

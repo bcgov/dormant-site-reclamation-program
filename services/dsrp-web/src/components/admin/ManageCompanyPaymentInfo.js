@@ -109,6 +109,28 @@ export class ManageCompanyPaymentInfo extends Component {
     }
   }
 
+  handleUpdateCompanyPaymentInfo = (payload) => 
+    this.props.updateCompanyPaymentInfo(payload.company_name, payload).then(() => {
+      this.props.closeModal();
+      this.setState({
+        isLoaded: false,
+      });
+      this.props
+        .fetchCompanyPaymentInfos(this.state)
+        .then(() => this.setState({ isLoaded: true }));
+    });
+
+  handleCreateCompanyPaymentInfo = (payload) =>
+    this.props.createCompanyPaymentInfo(payload).then(() => {
+      this.props.closeModal();
+      this.setState({
+        isLoaded: false,
+      });
+      this.props
+        .fetchCompanyPaymentInfos(this.state)
+        .then(() => this.setState({ isLoaded: true }));
+    });
+
   render() {
     return (
       <>
@@ -121,6 +143,7 @@ export class ManageCompanyPaymentInfo extends Component {
               pageData={this.props.pageData}
               openModal={this.props.openModal}
               closeModal={this.props.closeModal}
+              handleUpdateCompanyPaymentInfo={this.handleUpdateCompanyPaymentInfo}
             />
           </Col>
         </Row>
