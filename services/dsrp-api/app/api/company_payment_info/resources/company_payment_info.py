@@ -16,21 +16,6 @@ from app.api.utils.include.user_info import User
 
 class CompanyPaymentInfoResource(Resource, UserMixin):
     @api.doc(description='Create a new company payment info record')
-    @api.marshal_with(COMPANY_PAYMENT_INFO, code=201)
-    @requires_role_admin
-    def post(self):
-        new_info = request.json
-        company_payment_info = CompanyPaymentInfo(
-            company_name=new_info['company_name'],
-            company_address=new_info['company_address'],
-            po_number=new_info['po_number'],
-            qualified_receiver_name=new_info['qualified_receiver_name'],
-            expense_authority_name=new_info['expense_authority_name'],
-        )
-        company_payment_info.save()
-        return company_payment_info
-
-    @api.doc(description='Create a new company payment info record')
     @api.marshal_with(COMPANY_PAYMENT_INFO, code=200)
     @requires_role_admin
     def put(self, company_name):
@@ -60,3 +45,18 @@ class CompanyPaymentInfoListResource(Resource, UserMixin):
     def get(self):
         company_payment_infos = CompanyPaymentInfo.all_company_payment_info()
         return company_payment_infos
+
+    @api.doc(description='Create a new company payment info record')
+    @api.marshal_with(COMPANY_PAYMENT_INFO, code=201)
+    @requires_role_admin
+    def post(self):
+        new_info = request.json['cpi']
+        company_payment_info = CompanyPaymentInfo(
+            company_name=new_info['company_name'],
+            company_address=new_info['company_address'],
+            po_number=new_info['po_number'],
+            qualified_receiver_name=new_info['qualified_receiver_name'],
+            expense_authority_name=new_info['expense_authority_name'],
+        )
+        company_payment_info.save()
+        return company_payment_info
