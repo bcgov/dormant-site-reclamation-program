@@ -87,13 +87,42 @@ const Subcontractor = (props) => (
       }
     >
       <Field
-        id="subcontractor_name"
-        name={`${props.member}.subcontractor_name`}
+        id="name"
+        name={`${props.member}.name`}
         label="Subcontractor Name"
         placeholder="Subcontractor Name"
         disabled={props.isViewOnly}
         component={renderConfig.FIELD}
         validate={[required, maxLength(1024)]}
+      />
+      <Field
+        id="amount"
+        name={`${props.member}.amount`}
+        label={label("Amount Paid", "Amount paid to the subcontractor.")}
+        placeholder="$0.00"
+        disabled={props.isViewOnly}
+        component={renderConfig.FIELD}
+        validate={[required, number]}
+        {...currencyMask}
+        onChange={(event, newValue) => {
+          if (newValue && newValue.toString().split(".")[0].length > 8) {
+            event.preventDefault();
+          }
+        }}
+      />
+      <Field
+        id="indigenous"
+        name={`${props.member}.indigenous`}
+        label={label(
+          "Indigenous Subcontractor",
+          "Indicate whether or not this is an Indigenous subcontractor."
+        )}
+        placeholder="Select an option"
+        disabled={props.isViewOnly}
+        component={renderConfig.SELECT}
+        validate={[requiredBoolean]}
+        format={booleanFormat}
+        data={booleanDropdownOptions}
       />
     </Card>
   </Col>
@@ -122,6 +151,7 @@ const renderSubcontractor = (props) => (
       </>
     )}
 
+    <br />
     <Field
       id="has_confirmed_subcontractors"
       name="has_confirmed_subcontractors"

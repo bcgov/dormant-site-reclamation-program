@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from sqlalchemy.schema import FetchedValue
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import desc, func, and_, select
 
@@ -72,6 +72,8 @@ class ContractedWorkPayment(Base, AuditMixin):
         'ApplicationDocument',
         lazy='selectin',
         foreign_keys=[final_report_application_document_guid])
+
+    subcontractors = db.Column(JSONB)
 
     status_changes = db.relationship(
         'ContractedWorkPaymentStatusChange',
