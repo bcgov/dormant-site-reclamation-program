@@ -40,10 +40,7 @@ export const updateCompanyPaymentInfo = (company_name, payload) => (dispatch) =>
       dispatch(success(reducerTypes.UPDATE_COMPANY_PAYMENT_INFO));
       return response;
     })
-    .catch((err) => {
-      dispatch(error(reducerTypes.UPDATE_COMPANY_PAYMENT_INFO));
-      throw new Error(err);
-    });
+    .catch(() => dispatch(error(reducerTypes.UPDATE_COMPANY_PAYMENT_INFO)));
 };
 
 export const createCompanyPaymentInfo = (cpi) => (dispatch) => {
@@ -59,8 +56,5 @@ export const createCompanyPaymentInfo = (cpi) => (dispatch) => {
       dispatch(success(reducerTypes.CREATE_COMPANY_PAYMENT_INFO));
       return response;
     })
-    .catch((err) => {
-      dispatch(error(reducerTypes.CREATE_COMPANY_PAYMENT_INFO));
-      throw new Error(err);
-    });
+    .catch(() => dispatch(error(reducerTypes.CREATE_COMPANY_PAYMENT_INFO)));
 };

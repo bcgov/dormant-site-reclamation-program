@@ -116,7 +116,7 @@ export class ManageCompanyPaymentInfo extends Component {
         isLoaded: false,
       });
       this.props
-        .fetchCompanyPaymentInfos(this.state)
+        .fetchCompanyPaymentInfos(this.state.params)
         .then(() => this.setState({ isLoaded: true }));
     });
 
@@ -127,7 +127,7 @@ export class ManageCompanyPaymentInfo extends Component {
         isLoaded: false,
       });
       this.props
-        .fetchCompanyPaymentInfos(this.state)
+        .fetchCompanyPaymentInfos(this.state.params)
         .then(() => this.setState({ isLoaded: true }));
     });
 
@@ -144,6 +144,7 @@ export class ManageCompanyPaymentInfo extends Component {
               openModal={this.props.openModal}
               closeModal={this.props.closeModal}
               handleUpdateCompanyPaymentInfo={this.handleUpdateCompanyPaymentInfo}
+              handleCreateCompanyPaymentInfo={this.handleCreateCompanyPaymentInfo}
             />
           </Col>
         </Row>

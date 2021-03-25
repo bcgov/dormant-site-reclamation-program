@@ -37,6 +37,7 @@ const propTypes = {
   openModal: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
   handleUpdateCompanyPaymentInfo: PropTypes.func.isRequired,
+  handleCreateCompanyPaymentInfo: PropTypes.func.isRequired,
 };
 
 export class CompanyPaymentInfoTable extends Component {
@@ -127,7 +128,7 @@ export class CompanyPaymentInfoTable extends Component {
           <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
             <Button
               type="link"
-              onClick={() => this.openAddCompanyPaymentInfoModal()}
+              onClick={() => this.handleAddCompanyPaymentInfo()}
               style={{ float: "right", marginTop: 40 }}
             >
               Add New
