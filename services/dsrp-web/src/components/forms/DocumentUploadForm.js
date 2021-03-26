@@ -15,6 +15,7 @@ const { Title, Text, Paragraph } = Typography;
 
 const propTypes = {
   applicationGuid: PropTypes.string.isRequired,
+  applicationStatusCode: PropTypes.string.isRequired,
   uploadedDocs: PropTypes.arrayOf(PropTypes.any),
   uploadDocs: PropTypes.func.isRequired,
   onDocumentUpload: PropTypes.func.isRequired,
@@ -86,18 +87,41 @@ export class DocumentUploadForm extends Component {
               </Text>
               <Paragraph>
                 <ul className="landing-list">
-                  <li>
-                    A signed copy of the agreement you received from the Province of British
-                    Columbia
-                  </li>
-                  <li>
-                    A copy of the contract between your company and the permit holder named in the
-                    application
-                  </li>
-                  <li>
-                    Evidence of Indigenous participation such as a letter, email or agreement that
-                    confirms the Indigenous participation that is identified in the application
-                  </li>
+                  {(this.props.applicationStatusCode === "WAIT_FOR_DOCS" && (
+                    <>
+                      <li>
+                        A signed copy of the agreement you received from the Province of British
+                        Columbia
+                      </li>
+                      <li>
+                        A copy of the contract between your company and the permit holder named in
+                        the application
+                      </li>
+                      <li>
+                        Evidence of Indigenous participation such as a letter, email or agreement
+                        that confirms the Indigenous participation that is identified in the
+                        application
+                      </li>
+                    </>
+                  )) || (
+                    <>
+                      <li>
+                        A PDF copy of the original email request for amendment that was sent to the
+                        Province of British Columbia
+                      </li>
+                      <li>
+                        A signed copy of the amendment you received from the Province of British
+                        Columbia
+                      </li>
+                      <li>
+                        Where a permit holder has been changed:
+                        <li>
+                          An updated copy of the contract between your company and the new permit
+                          holder named in the amendment request
+                        </li>
+                      </li>
+                    </>
+                  )}
                 </ul>
               </Paragraph>
               <Alert

@@ -21,6 +21,7 @@ from app.api.contracted_work.response_models import CONTRACTED_WORK_PAYMENT
 from app.api.application.models.application_history import ApplicationHistory
 from app.api.application.models.payment_document import PaymentDocument
 from app.api.contracted_work.models.contracted_work_payment import ContractedWorkPayment
+from app.api.nominated_well_site.models.nominated_well_site import NominatedWellSite
 from app.api.services.email_service import EmailService
 
 
@@ -114,8 +115,44 @@ class Application(Base, AuditMixin):
         return Application.json['company_details']['company_name']['label'].astext
 
     @hybrid_property
+    def operator_id(self):
+        return self.json['contract_details']['operator_id']
+
+    @hybrid_property
+    def permit_holder(self):
+        permit_holder = None
+
+        # If this is an initial-phase application, get the permit holder from the OGC Data Service
+        if self.application_phase_code == 'INITIAL':
+            try:
+                permit_holder = PermitHolderResource.get(
+                    self, operator_id=self.operator_id)['records'][0]['organization_name']
+            except:
+                pass
+
+        # If the permit holder is still null, attempt to find it in our nominated well site data
+        if permit_holder is None:
+            nominated_well_site = NominatedWellSite.query.filter_by(ba_id=self.operator_id).first()
+            if nominated_well_site:
+                permit_holder = nominated_well_site.operator
+
+        # If the permit holder is still null, we have no current way of finding it
+        if permit_holder is None:
+            current_app.logger.warning('Failed to find the permit holder.')
+
+        return permit_holder
+
+    @hybrid_property
     def agreement_number(self):
         return str(self.id).zfill(4)
+
+    @hybrid_property
+    def original_agreement_date(self):
+        if self.status_changes is None:
+            return None
+        status_change = next(status_change for status_change in self.status_changes
+                             if status_change.application_status_code == 'FIRST_PAY_APPROVED')
+        return status_change.change_date if status_change else None
 
     @hybrid_property
     def well_sites_with_review_data(self):
@@ -295,12 +332,28 @@ class Application(Base, AuditMixin):
                 if wt_details.get('contracted_work_status_code', None) != 'APPROVED':
                     continue
                 site = f'\nWell Authorization Number: {wan}\n'
+                site += f' Permit Holder: {self.permit_holder}\n' if self.permit_holder else f' Operator ID: {self.operator_id}\n'
                 site += f' Eligible Activities as described in Application: {worktype.replace("_"," ").capitalize()}\n'
                 site += f' Applicant\'s Estimated Cost: {"${:,.2f}".format(wt_details.get("contracted_work_total"))}\n'
                 site += f' Provincial Financial Contribution: {"${:,.2f}".format(self.calc_est_shared_cost(wt_details))}\n'
                 site += f' Planned Start Date: {wt_details["planned_start_date"]}\n'
                 site += f' Planned End Date: {wt_details["planned_end_date"]}\n'
                 result['formatted_well_sites'] += site
+
+        return result
+
+    @hybrid_property
+    def shared_cost_agreement_amendment_template_json(self):
+        """Generates the JSON used to generate this application's Shared Cost Agreement Amendment document."""
+
+        result = self.shared_cost_agreement_template_json
+
+        original_agreement_date = self.original_agreement_date
+        if original_agreement_date:
+            utc_datetime_timestamp = float(original_agreement_date.strftime("%s"))
+            local_datetime_converted = datetime.fromtimestamp(utc_datetime_timestamp)
+            original_agreement_date = local_datetime_converted.strftime("%d, %b, %Y")
+        result['original_agreement_date'] = original_agreement_date
 
         return result
 
@@ -427,19 +480,11 @@ class Application(Base, AuditMixin):
             </p>
             """
 
-        def create_contract_details(contract_details):
-            try:
-                permit_holder = PermitHolderResource.get(
-                    self, operator_id=contract_details["operator_id"])["records"][0]
-            except:
-                current_app.logger.warning(
-                    'Failed to find the permit holder. Displaying operator ID instead.')
-
+        def create_contract_details():
             return f"""
             <h1>Contract Details</h1>
-
             <h2>Permit Holder</h2>
-            <p>{permit_holder["organization_name"] if permit_holder else f'Operator ID: {contract_details["operator_id"]}'}</p>
+            <p>{self.permit_holder if self.permit_holder else f'Operator ID: {self.operator_id}'}</p>
             """
 
         def create_well_sites(well_sites):
@@ -532,7 +577,7 @@ class Application(Base, AuditMixin):
         html = f"""
         {create_company_details(self.json["company_details"])}     
         {create_company_contact(self.json["company_contact"])}
-        {create_contract_details(self.json["contract_details"])}
+        {create_contract_details()}
         {create_well_sites(self.json["well_sites"])}
         """
 

@@ -70,6 +70,13 @@ class ApplicationStatusChange(Base, AuditMixin):
             value, params = cgi.parse_header(doc.headers['content-disposition'])
             filename = params['filename']
             attachment = io.BytesIO(doc.content)
+        elif self.application_status.application_status_code == 'AMENDMENT_STARTED':
+            doc = DocumentGeneratorService.generate_document_and_stream_response(
+                get_template_file_path('shared-cost-agreement-amendment'),
+                self.application.shared_cost_agreement_amendment_template_json, 'pdf')
+            value, params = cgi.parse_header(doc.headers['content-disposition'])
+            filename = params['filename']
+            attachment = io.BytesIO(doc.content)
 
         with EmailService() as es:
             es.send_email_to_applicant(self.application, 'Application Status Change', html_content,
