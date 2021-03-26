@@ -25,9 +25,6 @@ import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
 import { modalConfig } from "@/components/modalContent/config";
 
-import { updateCompanyPaymentInfo, createCompanyPaymentInfo, fetchCompanyPaymentInfos, fetchSelectedCompanyPaymentInfo } from "@/actionCreators/CPIActionCreator"
-import { getCompanyPaymentInfos, getSelectedCompanyPaymentInfos } from "@/selectors/CPISelectors"
-
 const { Text } = Typography;
 
 const propTypes = {
@@ -80,7 +77,6 @@ export class CompanyPaymentInfoTable extends Component {
         key: "company_name",
         dataIndex: "company_name",
         sortField: "company_name",
-        sorter: true,
         render: (text) => <div title="Company Name">{text}</div>,
       },
       {
@@ -153,16 +149,4 @@ export class CompanyPaymentInfoTable extends Component {
 
 CompanyPaymentInfoTable.propTypes = propTypes;
 
-const mapStateToProps = (state) => ({
-
-
-});
-
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {
-    },
-    dispatch
-  );
-
-export default connect(mapStateToProps, mapDispatchToProps)(CompanyPaymentInfoTable);
+export default CompanyPaymentInfoTable;
