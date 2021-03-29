@@ -1,6 +1,6 @@
 import { request, success, error } from "../actions/genericActions";
 import * as reducerTypes from "../constants/reducerTypes";
-import * as CompanyPaymentInfoActions from "../actions/CompanyPaymentInfoActions";
+import * as companyPaymentInfoActions from "../actions/CompanyPaymentInfoActions";
 import * as API from "../constants/api";
 import { ENVIRONMENT } from "../constants/environment";
 import { createRequestHeader } from "../utils/requestHeaders";
@@ -12,7 +12,7 @@ export const fetchCompanyPaymentInfos = (params = {}) => (dispatch) => {
       .get(ENVIRONMENT.apiUrl + API.GET_COMPANY_PAYMENT_INFO(params), createRequestHeader())
       .then((response) => {
         dispatch(success(reducerTypes.FETCH_COMPANY_PAYMENT_INFOS));
-        dispatch(CompanyPaymentInfoActions.storeCompanyPaymentInfo(response.data));
+        dispatch(companyPaymentInfoActions.storeCompanyPaymentInfo(response.data));
       })
       .catch(() => dispatch(error(reducerTypes.FETCH_COMPANY_PAYMENT_INFOS)));
   };
