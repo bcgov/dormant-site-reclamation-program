@@ -3,6 +3,11 @@ import PropTypes from "prop-types";
 import AdminEditCompanyPaymentInfoStatusForm from "@/components/forms/AdminEditCompanyPaymentInfoForm";
 
 const propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+  companyPaymentInfo: PropTypes.any.isRequired,
+  closeModal: PropTypes.func.isRequired,
+  isAdd: PropTypes.bool.isRequired,
+  initialValues: PropTypes.any.isRequired,
 };
 
 export const AdminEditCompanyPaymentInfoModal = (props) => {

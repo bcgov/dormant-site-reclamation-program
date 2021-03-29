@@ -3,10 +3,9 @@ import { COMPANY_PAYMENT_INFO } from "../constants/reducerTypes";
 
 const initialState = {
   companyPaymentInfos: [],
-
 };
 
-export const CompanyPaymentInfoReducer = (state = initialState, action) => {
+export const companyPaymentInfoReducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.STORE_COMPANY_PAYMENT_INFO:
         return {
@@ -18,10 +17,10 @@ export const CompanyPaymentInfoReducer = (state = initialState, action) => {
     }
   };
   
-  const CompanyPaymentInfoReducerObject = {
-    [COMPANY_PAYMENT_INFO]: CompanyPaymentInfoReducer,
+  const companyPaymentInfoReducerObject = {
+    [COMPANY_PAYMENT_INFO]: companyPaymentInfoReducer,
   };
   
   export const getCompanyPaymentInfos = (state) => state[COMPANY_PAYMENT_INFO].companyPaymentInfos;
   
-  export default CompanyPaymentInfoReducerObject;
+  export default companyPaymentInfoReducerObject;

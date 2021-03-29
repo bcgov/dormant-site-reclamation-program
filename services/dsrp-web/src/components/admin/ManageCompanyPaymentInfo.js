@@ -10,8 +10,8 @@ import { openModal, closeModal } from "@/actions/modalActions";
 import * as routes from "@/constants/routes";
 import * as Strings from "@/constants/strings";
 
-import { getCompanyPaymentInfos } from "@/selectors/CompanyPaymentInfoSelectors"
-import { createCompanyPaymentInfo, updateCompanyPaymentInfo, fetchCompanyPaymentInfos } from "@/actionCreators/CompanyPaymentInfoActionCreator"
+import { getCompanyPaymentInfos } from "@/selectors/companyPaymentInfoSelectors"
+import { createCompanyPaymentInfo, updateCompanyPaymentInfo, fetchCompanyPaymentInfos } from "@/actionCreators/companyPaymentInfoActionCreator"
 
 import { CompanyPaymentInfoTable } from "@/components/admin/CompanyPaymentInfoTable";
 

@@ -1,6 +1,6 @@
 import { request, success, error } from "../actions/genericActions";
 import * as reducerTypes from "../constants/reducerTypes";
-import * as companyPaymentInfoActions from "../actions/CompanyPaymentInfoActions";
+import * as companyPaymentInfoActions from "../actions/companyPaymentInfoActions";
 import * as API from "../constants/api";
 import { ENVIRONMENT } from "../constants/environment";
 import { createRequestHeader } from "../utils/requestHeaders";
