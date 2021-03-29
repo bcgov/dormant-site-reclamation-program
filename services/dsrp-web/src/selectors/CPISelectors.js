@@ -4,5 +4,4 @@ import * as CPIReducer from "../reducers/CPIReducer";
 
 export const {
   getCompanyPaymentInfos,
-  getSelectedCompanyPaymentInfos,
 } = CPIReducer;

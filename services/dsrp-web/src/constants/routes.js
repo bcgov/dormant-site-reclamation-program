@@ -57,9 +57,9 @@ export const REVIEW_APPROVED_CONTRACTED_WORK = {
 };
 
 export const COMPANY_PAYMENT_INFO = {
-  route: "/review-company-payment-info",
+  route: "/company-payment-info",
   dynamicRoute: ({ page, per_page, ...params }) =>
-    `/review-company-payment-info?${queryString.stringify({ page, per_page, ...params })}`,
+    `/company-payment-info?${queryString.stringify({ page, per_page, ...params })}`,
   component: ReviewCompanyPaymentInfoPage,
 };
 

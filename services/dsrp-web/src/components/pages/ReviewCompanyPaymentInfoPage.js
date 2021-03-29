@@ -10,12 +10,7 @@ import { PageTracker } from "@/utils/trackers";
 
 const { Paragraph, Title } = Typography;
 
-const propTypes = {};
-
 export class ReviewCompanyPaymentInfoPage extends Component {
-  state = {};
-
-  componentDidMount() {}
 
   render() {
     return (
@@ -38,9 +33,6 @@ export class ReviewCompanyPaymentInfoPage extends Component {
     );
   }
 }
-
-
-ReviewCompanyPaymentInfoPage.propTypes = propTypes;
 
 export default compose(
   AuthorizationGuard()

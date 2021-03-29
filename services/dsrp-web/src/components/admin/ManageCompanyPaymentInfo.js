@@ -10,8 +10,8 @@ import { openModal, closeModal } from "@/actions/modalActions";
 import * as routes from "@/constants/routes";
 import * as Strings from "@/constants/strings";
 
-import { getCompanyPaymentInfos, getSelectedCompanyPaymentInfos } from "@/selectors/CPISelectors"
-import { createCompanyPaymentInfo, updateCompanyPaymentInfo, fetchCompanyPaymentInfos, fetchSelectedCompanyPaymentInfo } from "@/actionCreators/CPIActionCreator"
+import { getCompanyPaymentInfos } from "@/selectors/CPISelectors"
+import { createCompanyPaymentInfo, updateCompanyPaymentInfo, fetchCompanyPaymentInfos } from "@/actionCreators/CPIActionCreator"
 
 import { CompanyPaymentInfoTable } from "@/components/admin/CompanyPaymentInfoTable";
 
@@ -20,7 +20,6 @@ const propTypes = {
   createCompanyPaymentInfo: PropTypes.any.isRequired,
   updateCompanyPaymentInfo: PropTypes.any.isRequired,
   getCompanyPaymentInfos: PropTypes.any.isRequired,
-  fetchSelectedCompanyPaymentInfo: PropTypes.any.isRequired,
   pageData: PropTypes.any.isRequired,
   openModal: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
@@ -38,7 +37,7 @@ const defaultParams = {
   qualified_receiver_name: undefined,
   expense_authority_name: undefined,
   sort_field: "company_name",
-  sort_dir: "desc",
+  sort_dir: "asc",
 };
 
 export class ManageCompanyPaymentInfo extends Component {
@@ -160,7 +159,6 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      fetchSelectedCompanyPaymentInfo,
       getCompanyPaymentInfos,
       createCompanyPaymentInfo,
       updateCompanyPaymentInfo,

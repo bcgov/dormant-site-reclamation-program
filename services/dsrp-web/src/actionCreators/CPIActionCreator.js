@@ -17,17 +17,6 @@ export const fetchCompanyPaymentInfos = (params = {}) => (dispatch) => {
       .catch(() => dispatch(error(reducerTypes.FETCH_COMPANY_PAYMENT_INFOS)));
   };
 
-export const fetchSelectedCompanyPaymentInfo = (params = {}) => (dispatch) => {
-    dispatch(request(reducerTypes.FETCH_SELECTED_COMPANY_PAYMENT_INFO));
-    return CustomAxios()
-      .get(ENVIRONMENT.apiUrl + API.GET_COMPANY_PAYMENT_INFO(params), createRequestHeader())
-      .then((response) => {
-        dispatch(success(reducerTypes.FETCH_SELECTED_COMPANY_PAYMENT_INFO));
-        dispatch(CPIActions.storeCompanyPaymentInfo(response.data));
-      })
-      .catch(() => dispatch(error(reducerTypes.FETCH_SELECTED_COMPANY_PAYMENT_INFO)));
-  };
-
 export const updateCompanyPaymentInfo = (company_name, payload) => (dispatch) => {
   dispatch(request(reducerTypes.UPDATE_COMPANY_PAYMENT_INFO));
   return CustomAxios()

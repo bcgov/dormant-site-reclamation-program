@@ -3,7 +3,6 @@ import { CPI } from "../constants/reducerTypes";
 
 const initialState = {
   companyPaymentInfos: [],
-  selectedCompanyPaymentInfos: [],
 
 };
 
@@ -24,6 +23,5 @@ export const CPIReducer = (state = initialState, action) => {
   };
   
   export const getCompanyPaymentInfos = (state) => state[CPI].companyPaymentInfos;
-  export const getSelectedCompanyPaymentInfos = (state) => state[CPI].selectedCompanyPaymentInfos;
   
   export default CPIReducerObject;

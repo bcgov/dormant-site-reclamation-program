@@ -16,25 +16,12 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { lowerCase, isEmpty, isEqual, capitalize } from "lodash";
 import PropTypes from "prop-types";
-import { formatMoney, currencyAllowNegativeMask, formatDate } from "@/utils/helpers";
-import { required, number, maxLength } from "@/utils/validate";
 import { renderConfig } from "@/components/common/config";
-import {
-  getContractedWorkTypeOptionsHash,
-  getContractedWorkPaymentStatusOptionsHash,
-  getDropdownContractedWorkPaymentStatusOptions,
-} from "@/selectors/staticContentSelectors";
 import * as FORM from "@/constants/forms";
 import * as Strings from "@/constants/strings";
-import { downloadDocument } from "@/utils/actionlessNetworkCalls";
-import LinkButton from "@/components/common/LinkButton";
-import { toolTip } from "@/components/admin/ApplicationTable";
-import { CONTRACTED_WORK_PAYMENT_STATUS } from "@/constants/payments";
-import * as Payment from "@/utils/paymentHelper";
 
 const { Text, Title } = Typography;
 
-const { TabPane } = Tabs;
 
 const propTypes = {
   onSubmit: PropTypes.func.isRequired,
@@ -52,35 +39,6 @@ const defaultProps = {
 
 export class AdminEditCompanyPaymentInfoForm extends Component {
 
-  shouldComponentUpdate = (nextProps, nextState) =>
-    !isEqual(nextProps.formValues, this.props.formValues) ||
-    !isEqual(nextState, this.state) ||
-    nextProps.submitting !== this.props.submitting;
-
-  componentWillReceiveProps = (nextProps) => {
-    if (nextProps.formValues && !isEqual(nextProps.formValues, this.props.formValues)) {
-      this.setState({
-
-      });
-    }
-  };
-
-  componentDidMount() {
-    const data = this.getSavedFormData();
-    if (data) {
-      this.setState({
-        initialValues: data.formValues,
-        saveTimestamp: data.saveTimestamp,
-      });
-    }
-    this.autoSaveForm = setInterval(() => this.saveFormData(), 10000);
-  }
-
-  getSavedFormData() {
-    const data = localStorage.getItem(FORM.ADMIN_EDIT_COMPANY_PAYMENT_INFO_FORM);
-    return data ? JSON.parse(data) : null;
-  }
-
   componentDidUpdate = () => {
     if (!this.props.isPristine) {
       window.onbeforeunload = () => true;
@@ -88,26 +46,6 @@ export class AdminEditCompanyPaymentInfoForm extends Component {
       window.onbeforeunload = undefined;
     }
   }
-
-  saveFormData() {
-    if (this.props.isPristine) {
-      return;
-    }
-
-    const data = {
-      formValues: this.props.formValues,
-      saveTimestamp: new Date().getTime(),
-    };
-
-    localStorage.setItem(FORM.ADMIN_EDIT_COMPANY_PAYMENT_INFO_FORM, JSON.stringify(data));
-
-    this.setState({
-      saveTimestamp: data.saveTimestamp,
-      previouslySavedFormValues: data.formValues,
-    });
-  }
-
-  handleTabChange = (activeKey) => this.setState({ currentActiveTab: activeKey });
 
   render() {
     const companyPaymentInfo = this.props.companyPaymentInfo || {};
