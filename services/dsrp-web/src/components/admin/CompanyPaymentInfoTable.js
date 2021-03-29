@@ -47,7 +47,7 @@ export class CompanyPaymentInfoTable extends Component {
       width: 800,
       props: {
         title: `Edit Payment Information for Company ${record.company_name}`,
-        cpi: record,
+        companyPaymentInfo: record,
         onSubmit: this.props.handleUpdateCompanyPaymentInfo,
         isAdd: false,
       },
@@ -63,7 +63,7 @@ export class CompanyPaymentInfoTable extends Component {
       width: 800,
       props: {
         title: `Add Payment Information for a Company`,
-        cpi: {},
+        companyPaymentInfo: {},
         onSubmit: this.props.handleCreateCompanyPaymentInfo,
         isAdd: true,
       },

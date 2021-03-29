@@ -9,10 +9,10 @@ export const AdminEditCompanyPaymentInfoModal = (props) => {
   return (
     <AdminEditCompanyPaymentInfoStatusForm
       onSubmit={props.onSubmit}
-      companyPaymentInfo={props.cpi}
+      companyPaymentInfo={props.companyPaymentInfo}
       closeModal={props.closeModal}
       isAdd={props.isAdd}
-      initialValues={props.cpi}
+      initialValues={props.companyPaymentInfo}
     />
   );
 };

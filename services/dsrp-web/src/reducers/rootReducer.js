@@ -12,7 +12,7 @@ import {
   applicationReducer,
   appSettingsReducer,
   authorizationReducer,
-  CPIReducer
+  CompanyPaymentInfoReducer
 } from "@/reducers";
 
 // Function to create a reusable reducer (used in src/reducers/rootReducer)
@@ -31,7 +31,7 @@ export const reducerObject = {
   ...authenticationReducer,
   ...networkReducer,
   ...OGCReducer,
-  ...CPIReducer,
+  ...CompanyPaymentInfoReducer,
   ...applicationReducer,
   ...appSettingsReducer,
   ...authorizationReducer,
