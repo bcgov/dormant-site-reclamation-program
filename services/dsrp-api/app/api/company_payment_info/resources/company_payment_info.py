@@ -1,4 +1,3 @@
-from datetime import datetime
 from flask_restplus import Resource
 from flask import current_app, request
 from werkzeug.exceptions import NotFound, BadRequest, Unauthorized
@@ -8,10 +7,7 @@ from app.api.utils.access_decorators import requires_role_admin
 from app.api.utils.resources_mixins import UserMixin
 from app.api.company_payment_info.response_models import COMPANY_PAYMENT_INFO
 from app.api.company_payment_info.models.company_payment_info import CompanyPaymentInfo
-
-from app.api.utils.access_decorators import ADMIN
 from app.api.utils.access_decorators import requires_otp_or_admin
-from app.api.utils.include.user_info import User
 
 
 class CompanyPaymentInfoResource(Resource, UserMixin):
