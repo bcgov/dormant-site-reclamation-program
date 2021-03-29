@@ -46,7 +46,7 @@ class CompanyPaymentInfoListResource(Resource, UserMixin):
     @api.marshal_with(COMPANY_PAYMENT_INFO, code=201)
     @requires_role_admin
     def post(self):
-        new_info = request.json['cpi']
+        new_info = request.json
         company_payment_info = CompanyPaymentInfo(
             company_name=new_info['company_name'],
             company_address=new_info['company_address'],
