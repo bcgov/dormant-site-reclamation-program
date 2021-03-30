@@ -62,3 +62,8 @@ export const APP_SETTINGS = "/settings";
 
 // OTP AUTHORIZATION
 export const AUTHORIZE_OTP = "/authorization";
+
+// Company Payment Info
+export const GET_COMPANY_PAYMENT_INFO = (params) => `/company-payment-info`;
+export const UPDATE_COMPANY_PAYMENT_INFO = (companyName) => `/company-payment-info/${companyName}`;
+export const CREATE_COMPANY_PAYMENT_INFO = (params) => `/company-payment-info`;

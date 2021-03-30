@@ -17,3 +17,7 @@ class CompanyPaymentInfo(Base, AuditMixin):
     @classmethod
     def find_by_company_name(cls, company_name):
         return cls.query.filter_by(company_name=company_name).one_or_none()
+
+    @classmethod
+    def all_company_payment_info(cls):
+        return cls.query.all()
