@@ -21,6 +21,7 @@ from app.api.documents.namespace import api as download_api
 from app.api.dsrp_settings.namespace import api as dsrp_settings_api
 from app.api.authorization.namespace import api as authorization
 from app.api.nominated_well_site.namespace import api as nominate_well_site_api
+from app.api.company_payment_info.namespace import api as company_payment_info_api
 
 from app.commands import register_commands
 from app.config import Config
@@ -90,6 +91,7 @@ def register_routes(app):
     api.add_namespace(orgbook_api)
     api.add_namespace(authorization)
     api.add_namespace(nominate_well_site_api)
+    api.add_namespace(company_payment_info_api)
 
     # Healthcheck endpoint
     @api.route('/health')
