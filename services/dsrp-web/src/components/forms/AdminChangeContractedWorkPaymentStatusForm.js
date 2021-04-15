@@ -14,7 +14,7 @@ import {
 } from "antd";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { lowerCase, isEmpty, isEqual, capitalize } from "lodash";
+import { lowerCase, isEmpty, isEqual, capitalize, sumBy } from "lodash";
 import PropTypes from "prop-types";
 import { formatMoney, currencyAllowNegativeMask, formatDate } from "@/utils/helpers";
 import { required, number, maxLength } from "@/utils/validate";
@@ -763,6 +763,32 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                           Strings.DASH}
                       </Descriptions.Item>
                     </>
+                  )}
+                </Descriptions>
+                <Descriptions
+                  title="Subcontractor Information"
+                  column={2}
+                  layout="horizontal"
+                  colon={false}
+                >
+                  {contractedWorkPaymentExists && !isEmpty(contractedWorkPayment.subcontractors) && (
+                    <Descriptions.Item label="Total Contract Price" span={2}>
+                      {formatMoney(sumBy(contractedWorkPayment.subcontractors, "amount"))}
+                    </Descriptions.Item>
+                  )}
+                  {(contractedWorkPaymentExists &&
+                    !isEmpty(contractedWorkPayment.subcontractors) &&
+                    contractedWorkPayment.subcontractors.map((subcontractor) => (
+                      <>
+                        <Descriptions.Item label="Subcontractor Name">
+                          {subcontractor.name}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Contract Price">
+                          {formatMoney(subcontractor.amount)}
+                        </Descriptions.Item>
+                      </>
+                    ))) || (
+                    <Descriptions.Item>No subcontractor information provided.</Descriptions.Item>
                   )}
                 </Descriptions>
               </TabPane>

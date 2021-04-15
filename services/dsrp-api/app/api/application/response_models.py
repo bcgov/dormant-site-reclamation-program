@@ -82,6 +82,7 @@ APPLICATION_SUMMARY = api.model(
     'ApplicationSummary', {
         'id': fields.Integer,
         'guid': fields.String,
+        'application_phase_code': fields.String,
         'application_status_code': fields.String,
         'submission_date': fields.DateTime,
         'company_name': fields.String,
