@@ -98,7 +98,10 @@ const Subcontractor = (props) => (
       <Field
         id="amount"
         name={`${props.member}.amount`}
-        label={label("Amount Paid", "Amount paid to the subcontractor.")}
+        label={label(
+          "Contract Price",
+          "The Contract Price means the price payable to the Subcontractor for completion of its contractual obligations for this activity on this well site."
+        )}
         placeholder="$0.00"
         disabled={props.isViewOnly}
         component={renderConfig.FIELD}
