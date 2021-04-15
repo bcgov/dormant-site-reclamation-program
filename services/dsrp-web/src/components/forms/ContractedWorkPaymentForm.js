@@ -110,20 +110,6 @@ const Subcontractor = (props) => (
           }
         }}
       />
-      <Field
-        id="indigenous"
-        name={`${props.member}.indigenous`}
-        label={label(
-          "Indigenous Subcontractor",
-          "Indicate whether or not this is an Indigenous subcontractor."
-        )}
-        placeholder="Select an option"
-        disabled={props.isViewOnly}
-        component={renderConfig.SELECT}
-        validate={[requiredBoolean]}
-        format={booleanFormat}
-        data={booleanDropdownOptions}
-      />
     </Card>
   </Col>
 );
