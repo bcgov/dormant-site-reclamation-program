@@ -119,7 +119,7 @@
         "annotations": {}
       },
       "spec": {
-        "completionDeadlineSeconds": 1440,
+        "completionDeadlineSeconds": 2880,
         "successfulBuildsHistoryLimit": 3,
         "failedBuildsHistoryLimit": 3,
         "triggers": [
@@ -177,7 +177,7 @@
         }
       },
       "spec": {
-        "completionDeadlineSeconds": 600,
+        "completionDeadlineSeconds": 1200,
         "triggers": [
           {
             "type": "ImageChange"
