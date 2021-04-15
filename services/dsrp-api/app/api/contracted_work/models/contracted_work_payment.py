@@ -73,7 +73,7 @@ class ContractedWorkPayment(Base, AuditMixin):
         lazy='selectin',
         foreign_keys=[final_report_application_document_guid])
 
-    subcontractors = db.Column(JSONB)
+    subcontractors = db.Column(JSONB(none_as_null=True))
 
     status_changes = db.relationship(
         'ContractedWorkPaymentStatusChange',
