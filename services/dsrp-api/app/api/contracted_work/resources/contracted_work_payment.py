@@ -257,9 +257,7 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
         # Subcontractor reporting information
         subcontractors = final_payment_data.get('subcontractors')
         if subcontractors:
-            for subcontractor in subcontractors:
-                subcontractor['indigenous'] = parseBool(subcontractor['indigenous'])
-        payment.subcontractors = subcontractors
+            payment.subcontractors = subcontractors
 
         payment.save()
         return '', response_code
