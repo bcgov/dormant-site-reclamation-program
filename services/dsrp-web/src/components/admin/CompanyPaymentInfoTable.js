@@ -40,13 +40,13 @@ const propTypes = {
 export class CompanyPaymentInfoTable extends Component {
   handleEditCompanyPaymentInfo = (record) => {
     this.openEditCompanyPaymentInfoModal(record);
-  }
+  };
 
   openEditCompanyPaymentInfoModal = (record) =>
     this.props.openModal({
       width: 800,
       props: {
-        title: `Edit Payment Information for Company ${record.company_name}`,
+        title: `Edit Company Payment Information for ${record.company_name}`,
         companyPaymentInfo: record,
         onSubmit: this.props.handleUpdateCompanyPaymentInfo,
         isAdd: false,
@@ -56,13 +56,13 @@ export class CompanyPaymentInfoTable extends Component {
 
   handleAddCompanyPaymentInfo = () => {
     this.openAddCompanyPaymentInfoModal();
-  }
+  };
 
   openAddCompanyPaymentInfoModal = () =>
     this.props.openModal({
       width: 800,
       props: {
-        title: `Add Payment Information for a Company`,
+        title: "Add Company Payment Information",
         companyPaymentInfo: {},
         onSubmit: this.props.handleCreateCompanyPaymentInfo,
         isAdd: true,
@@ -108,10 +108,7 @@ export class CompanyPaymentInfoTable extends Component {
         key: "edit",
         className: "table-header-center-align table-column-center-align",
         render: (text, record) => (
-          <Button
-            type="link"
-            onClick={() => this.handleEditCompanyPaymentInfo(record)}
-          >
+          <Button type="link" onClick={() => this.handleEditCompanyPaymentInfo(record)}>
             <Icon type="edit" className="icon-lg" />
           </Button>
         ),
@@ -120,28 +117,30 @@ export class CompanyPaymentInfoTable extends Component {
 
     return (
       <>
-        <Row type="flex" justify="center" align="top" className="landing-section">
-          <Col xl={{ span: 24 }} xxl={{ span: 20 }}>
-            <Button
-              type="link"
-              onClick={() => this.handleAddCompanyPaymentInfo()}
-              style={{ float: "right", marginTop: 40 }}
-            >
-              Add New
-              <Icon type="plus-square" className="icon-lg" />
-            </Button>
+        <Row>
+          <Col>
+            <div style={{ float: "right" }}>
+              <Button type="link" onClick={() => this.handleAddCompanyPaymentInfo()}>
+                <Icon type="plus-square" className="icon-lg" />
+                Add New
+              </Button>
+            </div>
           </Col>
         </Row>
-        <Table
-          columns={columns}
-          pagination={false}
-          rowKey={(record) => record.company_name}
-          dataSource={this.props.pageData}
-          className="table-headers-center"
-          loading={{
-            spinning: !this.props.isLoaded,
-          }}
-        />
+        <Row>
+          <Col xl={{ span: 24 }} xxl={{ span: 24 }}>
+            <Table
+              columns={columns}
+              pagination={false}
+              rowKey={(record) => record.company_name}
+              dataSource={this.props.pageData}
+              className="table-headers-center"
+              loading={{
+                spinning: !this.props.isLoaded,
+              }}
+            />
+          </Col>
+        </Row>
       </>
     );
   }
