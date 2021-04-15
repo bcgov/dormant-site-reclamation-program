@@ -70,7 +70,7 @@ const Subcontractor = (props) => (
       className="subcontractor-card"
       title={`Subcontractor ${props.index + 1}`}
       extra={
-        props.isEditable && (
+        !props.isViewOnly && (
           <Popconfirm
             title="Are you sure you want to remove this subcontractor?"
             onConfirm={(e) => props.fields.remove(props.index)}
