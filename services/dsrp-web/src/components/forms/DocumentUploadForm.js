@@ -97,6 +97,7 @@ export class DocumentUploadForm extends Component {
                         A copy of the contract between your company and the permit holder named in
                         the application
                       </li>
+                      <li>A certificate of insurance</li>
                       <li>
                         Evidence of Indigenous participation such as a letter, email or agreement
                         that confirms the Indigenous participation that is identified in the

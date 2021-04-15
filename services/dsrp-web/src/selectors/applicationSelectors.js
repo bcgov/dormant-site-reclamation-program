@@ -8,12 +8,14 @@ import {
   get,
   startsWith,
   endsWith,
+  flatten,
 } from "lodash";
 import { createSelector } from "reselect";
 import * as applicationReducer from "../reducers/applicationReducer";
 import { getWells, getLiabilities, getNominatedWells } from "@/selectors/OGCSelectors";
 import { contractedWorkIdSorter } from "@/utils/helpers";
 import { APPLICATION_PHASE_CODES } from "@/constants/strings";
+import CONTRACT_WORK_SECTIONS from "@/constants/contract_work_sections";
 
 export const {
   getApplications,
@@ -86,10 +88,19 @@ export const getApplicationsWellSitesContractedWork = createSelector(
           null;
 
         const contractedWork = (isObjectLike(site.contracted_work) && site.contracted_work) || {};
-        Object.keys(contractedWork).map((type, ind) => {
-          const estimatedCostArray = Object.values(contractedWork[type]).filter(
-            (value) => !isNaN(value) && !(typeof value === "string")
+        Object.keys(contractedWork).map((type) => {
+          const amountFields = flatten(
+            CONTRACT_WORK_SECTIONS.find(
+              (cws) => cws.formSectionName === type
+            ).subSections.map((ss) => ss.amountFields.map((af) => af.fieldName))
           );
+          let estimatedCostArray = [];
+          amountFields.map((field) => {
+            if (field in contractedWork[type]) {
+              estimatedCostArray.push(contractedWork[type][field]);
+            }
+          });
+
           const contractedWorkStatusCode = get(
             reviewJsonWellSite,
             `contracted_work.${type}.contracted_work_status_code`,
