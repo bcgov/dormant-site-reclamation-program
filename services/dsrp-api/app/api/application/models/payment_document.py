@@ -137,7 +137,7 @@ class PaymentDocument(AuditMixin, Base):
 
             today_date = datetime.now().strftime('%B %-d, %Y')
 
-            account_coding = '057.2700A.26505.8001.2725067'
+            account_coding = '057.27808.26250.8001.2725067'
             supplier_name = company_info.company_name
             supplier_address = company_info.company_address
             invoice_date = today_date
