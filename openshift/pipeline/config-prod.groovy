@@ -240,11 +240,10 @@ app {
 environments {
     'prod' {
         vars {
-            DB_PVC_SIZE = '50Gi'
-            DOCUMENT_PVC_SIZE = '80Gi'
-            BACKUP_VERIFICATION_PVC_SIZE = '10Gi'
+            DB_PVC_SIZE = '5Gi'
+            BACKUP_VERIFICATION_PVC_SIZE = '5Gi'
             LOG_PVC_SIZE = '5Gi'
-            METABASE_PVC_SIZE = '20Gi'
+            METABASE_PVC_SIZE = '5Gi'
             git {
                 changeId = "${opt.'pr'}"
             }
