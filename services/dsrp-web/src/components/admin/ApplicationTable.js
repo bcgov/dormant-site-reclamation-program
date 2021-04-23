@@ -79,6 +79,7 @@ export class ApplicationTable extends Component {
     );
   };
 
+  // NOTE: This is probably wrong...
   getSum = (guid, field) =>
     this.props.applicationsWellSitesContractedWork
       .filter(({ application_guid }) => application_guid === guid)
@@ -403,12 +404,24 @@ export class ApplicationTable extends Component {
         render: (text, record) => {
           // NOTE: LMR is returned formatted, e.g., $50,000, so remove non-numeric characters.
           const lmr = record.LMR && parseFloat(record.LMR.replace(/[^0-9.-]+/g, ""));
+
+          const isOverriden = record.est_cost_override !== null;
+          const estCost = isOverriden ? record.est_cost_override : text;
+
           return (
             <div style={{ textAlign: "right" }} title="Est. Cost">
+              {isOverriden &&
+                toolTip(
+                  `Est. Cost was overridden by admin. Original value: ${formatMoney(text)}`,
+                  "color-warning table-record-tooltip"
+                )}
               {(lmr || lmr === 0) &&
-                Number(text) * 1.15 >= lmr &&
+                Number(estCost) * 1.15 >= lmr &&
                 toolTip("Est. Cost exceeds LMR by 15% or more", "color-error table-record-tooltip")}
-              {formatMoney(text) || Strings.DASH}
+              {formatMoney(estCost) || Strings.DASH}
+              <Button type="link" onClick={() => {}} size="small">
+                <Icon type="edit" style={{ marginLeft: 4 }} />
+              </Button>
             </div>
           );
         },
@@ -417,11 +430,15 @@ export class ApplicationTable extends Component {
         title: "Est. Shared Cost",
         key: "est_shared_cost",
         dataIndex: "est_shared_cost",
-        render: (text) => (
-          <div style={{ textAlign: "right" }} title="Est. Shared Cost">
-            {formatMoney(text) || Strings.DASH}
-          </div>
-        ),
+        render: (text, record) => {
+          const isOverriden = record.est_cost_override !== null;
+          const estSharedCost = isOverriden ? record.est_shared_cost_override : text;
+          return (
+            <div style={{ textAlign: "right" }} title="Est. Shared Cost">
+              {formatMoney(estSharedCost) || Strings.DASH}
+            </div>
+          );
+        },
       },
       {
         title: "LMR Value",
