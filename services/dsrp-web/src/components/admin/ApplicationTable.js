@@ -4,11 +4,14 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { isArray, isEmpty } from "lodash";
+import { bindActionCreators } from "redux";
+import { openModal, closeModal } from "@/actions/modalActions";
 import { Table, Icon, Tooltip, Pagination, Menu, Dropdown, Input, Button } from "antd";
 import { formatDateTime, formatDate, formatMoney, formatDateTimeFine } from "@/utils/helpers";
 import { getFilterListApplicationStatusOptions } from "@/selectors/staticContentSelectors";
 import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
+import { modalConfig } from "@/components/modalContent/config";
 
 const propTypes = {
   applications: PropTypes.any.isRequired,
@@ -16,8 +19,11 @@ const propTypes = {
   applicationPhaseDropdownOptions: PropTypes.objectOf(PropTypes.any).isRequired,
   applicationPhaseOptionsHash: PropTypes.objectOf(PropTypes.any).isRequired,
   handleTableChange: PropTypes.func.isRequired,
+  handleAdminOverrideEstimatedCost: PropTypes.func.isRequired,
   isLoaded: PropTypes.bool.isRequired,
   params: PropTypes.objectOf(PropTypes.any).isRequired,
+  openModal: PropTypes.func.isRequired,
+  closeModal: PropTypes.func.isRequired,
 };
 
 const defaultProps = {};
@@ -91,6 +97,7 @@ export class ApplicationTable extends Component {
     ).length;
 
   transformRowData = (applications) => {
+    console.log(this.props);
     const data = applications.map((application) => {
       return {
         ...application,
@@ -197,6 +204,18 @@ export class ApplicationTable extends Component {
       />
     );
   };
+
+  openAdminOverrideEstimatedCostModal = (contractedWork) =>
+    this.props.openModal({
+      width: 1000,
+      props: {
+        title: `Override Estimated Cost for Work ID ${contractedWork.work_id}`,
+        contractedWork: contractedWork,
+        initialValues: { est_cost_override: contractedWork.est_cost_override },
+        onSubmit: this.props.handleAdminOverrideEstimatedCost,
+      },
+      content: modalConfig.ADMIN_OVERRIDE_ESTIMATED_COST,
+    });
 
   render() {
     const phaseOptionsFilter = this.props.applicationPhaseDropdownOptions.map((p) => {
@@ -419,7 +438,11 @@ export class ApplicationTable extends Component {
                 Number(estCost) * 1.15 >= lmr &&
                 toolTip("Est. Cost exceeds LMR by 15% or more", "color-error table-record-tooltip")}
               {formatMoney(estCost) || Strings.DASH}
-              <Button type="link" onClick={() => {}} size="small">
+              <Button
+                type="link"
+                onClick={() => this.openAdminOverrideEstimatedCostModal(record)}
+                size="small"
+              >
                 <Icon type="edit" style={{ marginLeft: 4 }} />
               </Button>
             </div>
@@ -547,4 +570,13 @@ const mapStateToProps = (state) => ({
   filterListApplicationStatusOptions: getFilterListApplicationStatusOptions(state),
 });
 
-export default connect(mapStateToProps)(ApplicationTable);
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      openModal,
+      closeModal,
+    },
+    dispatch
+  );
+
+export default connect(mapStateToProps, mapDispatchToProps)(ApplicationTable);

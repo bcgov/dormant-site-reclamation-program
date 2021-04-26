@@ -4,57 +4,63 @@ import { Row, Col, Form, Button, Typography, Popconfirm } from "antd";
 import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
 import * as FORM from "@/constants/forms";
+import { currencyMask, formatMoney } from "@/utils/helpers";
+import { required, number } from "@/utils/validate";
 
 const { Text } = Typography;
 
 const propTypes = {
   handleSubmit: PropTypes.func.isRequired,
-  handleResume: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
   submitting: PropTypes.bool.isRequired,
 };
 
-export const AdminEditApplicationForm = (props) => (
+export const AdminOverrideEstimatedCostForm = (props) => (
   <Form layout="vertical" onSubmit={props.handleSubmit}>
-    <Text>Provide a note indicating the reason for editing the application.</Text>
+    {/* <Text>Provide a note indicating the reason for editing the application.</Text>
     <br />
-    <br />
+    <br /> */}
     <Row gutter={48}>
       <Col>
-        <Field id="note" name="edit_note" label="Note" component={renderConfig.AUTO_SIZE_FIELD} />
+        <Field
+          id="est_cost_override"
+          name="est_cost_override"
+          label="Estimated Cost Override"
+          component={renderConfig.FIELD}
+          placeholder="$0.00"
+          validate={[required, number]}
+          {...currencyMask}
+          onChange={(event, newValue) => {
+            if (newValue && newValue.toString().split(".")[0].length > 8) {
+              event.preventDefault();
+            }
+          }}
+        />
       </Col>
     </Row>
     <div className="right">
-      <Button
-        type="primary"
-        style={{ float: "left" }}
-        disabled={props.submitting}
-        onClick={props.handleResume}
-      >
-        Resume Editing
-      </Button>
       <Popconfirm
         placement="topRight"
-        title="Are you sure you want to discard your changes?"
+        title="Are you sure you want to cancel?"
         onConfirm={props.closeModal}
         okText="Yes"
         cancelText="No"
         disabled={props.submitting}
       >
         <Button type="secondary" disabled={props.submitting}>
-          Discard Changes
+          Cancel
         </Button>
       </Popconfirm>
       <Button type="primary" htmlType="submit" style={{ marginLeft: 5 }} loading={props.submitting}>
-        Save Changes
+        Submit
       </Button>
     </div>
   </Form>
 );
 
-AdminEditApplicationForm.propTypes = propTypes;
+AdminOverrideEstimatedCostForm.propTypes = propTypes;
 
 export default reduxForm({
-  form: FORM.ADMIN_EDIT_APPLICATION_FORM,
-  destroyOnUnmount: false,
-})(AdminEditApplicationForm);
+  form: FORM.ADMIN_OVERRIDE_ESTIMATED_COST_FORM,
+  enableReinitialize: true,
+})(AdminOverrideEstimatedCostForm);
