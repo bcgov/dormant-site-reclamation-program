@@ -507,19 +507,19 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                 {formatDate(contractedWork.planned_end_date)}
               </Descriptions.Item>
               <Descriptions.Item label="Total Estimated Cost">
+                {isEstimatedCostOverridden && (
+                  <Tooltip
+                    title={`Estimated cost was overridden by admin. Original value: ${formatMoney(
+                      contractedWork.contracted_work_total
+                    )}`}
+                  >
+                    <Icon type="dollar" className="color-warning" style={{ marginRight: 4 }} />
+                  </Tooltip>
+                )}
                 {formatMoney(
                   isEstimatedCostOverridden
                     ? contractedWork.contracted_work_total_override
                     : contractedWork.contracted_work_total
-                )}
-                {isEstimatedCostOverridden && (
-                  <Tooltip
-                    title={`Est. Cost was overridden by admin. Original value: ${formatMoney(
-                      contractedWork.contracted_work_total
-                    )}`}
-                  >
-                    <Icon type="dollar" className="color-warning" style={{ marginLeft: 4 }} />
-                  </Tooltip>
                 )}
               </Descriptions.Item>
             </Descriptions>
