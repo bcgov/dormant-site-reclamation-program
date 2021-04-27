@@ -97,7 +97,6 @@ export class ApplicationTable extends Component {
     ).length;
 
   transformRowData = (applications) => {
-    console.log(this.props);
     const data = applications.map((application) => {
       return {
         ...application,
