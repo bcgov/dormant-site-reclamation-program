@@ -48,4 +48,4 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 oc process -f ${DIR}/../openshift/templates/tools/jenkins/_jenkins.bc.json \
     -p NAME=jenkins \
     -p NAME_SUFFIX="" \
-    -p VERSION=v1 | oc apply -f - -n eazios-tools
+    -p VERSION=v1 | oc apply -f - -n 269007-tools
