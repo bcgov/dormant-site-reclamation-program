@@ -85,11 +85,29 @@ export class ApplicationTable extends Component {
     );
   };
 
-  // NOTE: This is probably wrong...
-  getSum = (guid, field) =>
-    this.props.applicationsWellSitesContractedWork
-      .filter(({ application_guid }) => application_guid === guid)
-      .reduce((sum, type) => +sum + +type[field], 0);
+  getTotalEstCost = (contractedWorks) => {
+    let sum = 0;
+    contractedWorks.map((cw) => {
+      if (cw.est_cost_override) {
+        sum += parseFloat(cw.est_cost_override);
+      } else {
+        sum += parseFloat(cw.est_cost);
+      }
+    });
+    return sum;
+  };
+
+  getTotalEstSharedCost = (contractedWorks) => {
+    let sum = 0;
+    contractedWorks.map((cw) => {
+      if (cw.est_cost_override) {
+        sum += parseFloat(cw.est_shared_cost_override);
+      } else {
+        sum += parseFloat(cw.est_shared_cost);
+      }
+    });
+    return sum;
+  };
 
   getNoWorkTypes = (guid) =>
     this.props.applicationsWellSitesContractedWork.filter(
@@ -98,6 +116,9 @@ export class ApplicationTable extends Component {
 
   transformRowData = (applications) => {
     const data = applications.map((application) => {
+      const contractedWorks = this.props.applicationsWellSitesContractedWork.filter(
+        (cw) => cw.application_guid === application.guid
+      );
       return {
         ...application,
         key: application.guid,
@@ -106,8 +127,8 @@ export class ApplicationTable extends Component {
         permit_holder: this.props.permitHoldersHash[application.json.contract_details.operator_id],
         wells: application.json.well_sites ? application.json.well_sites.length : 0,
         work_types: this.getNoWorkTypes(application.guid),
-        est_cost: this.getSum(application.guid, "est_cost"),
-        est_shared_cost: this.getSum(application.guid, "est_shared_cost"),
+        est_cost: this.getTotalEstCost(contractedWorks),
+        est_shared_cost: this.getTotalEstSharedCost(contractedWorks),
         payment: null,
       };
     });
