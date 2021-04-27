@@ -32,6 +32,8 @@ class ApplicationEstimatedCostOverride(Resource, UserMixin):
         estimated_cost_overrides = application.estimated_cost_overrides or {}
         estimated_cost_override = request.json.get('est_cost_override')
         estimated_cost_overrides[work_id] = estimated_cost_override
+        if estimated_cost_override is None:
+            del estimated_cost_overrides[work_id]
 
         if all(v is None for v in estimated_cost_overrides.values()):
             estimated_cost_overrides = None
