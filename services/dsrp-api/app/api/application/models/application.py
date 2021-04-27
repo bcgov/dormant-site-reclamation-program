@@ -40,7 +40,7 @@ class Application(Base, AuditMixin):
     submission_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     json = db.Column(JSONB, nullable=False)
     review_json = db.Column(JSONB)
-    estimated_cost_overrides = db.Column(JSONB)
+    estimated_cost_overrides = db.Column(JSONB(none_as_null=True))
     submitter_ip = db.Column(db.String)
     edit_note = db.Column(db.String)
     application_phase_code = db.Column(

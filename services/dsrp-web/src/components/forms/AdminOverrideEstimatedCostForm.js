@@ -28,7 +28,7 @@ export const AdminOverrideEstimatedCostForm = (props) => (
           label="Estimated Cost Override"
           component={renderConfig.FIELD}
           placeholder="$0.00"
-          validate={[required, number]}
+          validate={[number]}
           {...currencyMask}
           onChange={(event, newValue) => {
             if (newValue && newValue.toString().split(".")[0].length > 8) {
