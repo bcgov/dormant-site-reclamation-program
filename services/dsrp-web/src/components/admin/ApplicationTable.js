@@ -429,12 +429,12 @@ export class ApplicationTable extends Component {
           // NOTE: LMR is returned formatted, e.g., $50,000, so remove non-numeric characters.
           const lmr = record.LMR && parseFloat(record.LMR.replace(/[^0-9.-]+/g, ""));
 
-          const isOverriden = record.est_cost_override !== null;
-          const estCost = isOverriden ? record.est_cost_override : text;
+          const isOverridden = record.est_cost_override !== null;
+          const estCost = isOverridden ? record.est_cost_override : text;
 
           return (
             <div style={{ textAlign: "right" }} title="Est. Cost">
-              {isOverriden &&
+              {isOverridden &&
                 toolTip(
                   `Est. Cost was overridden by admin. Original value: ${formatMoney(text)}`,
                   "color-warning table-record-tooltip"
@@ -459,8 +459,8 @@ export class ApplicationTable extends Component {
         key: "est_shared_cost",
         dataIndex: "est_shared_cost",
         render: (text, record) => {
-          const isOverriden = record.est_cost_override !== null;
-          const estSharedCost = isOverriden ? record.est_shared_cost_override : text;
+          const isOverridden = record.est_cost_override !== null;
+          const estSharedCost = isOverridden ? record.est_shared_cost_override : text;
           return (
             <div style={{ textAlign: "right" }} title="Est. Shared Cost">
               {formatMoney(estSharedCost) || Strings.DASH}

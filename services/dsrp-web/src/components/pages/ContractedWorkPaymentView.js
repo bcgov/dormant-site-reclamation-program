@@ -330,7 +330,12 @@ export class ContractedWorkPaymentView extends Component {
             dataIndex: "contracted_work_total",
             className: "table-header-right-align table-column-right-align",
             sorter: nullableStringOrNumberSorter("contracted_work_total"),
-            render: (text) => <div title="Est. Cost">{formatMoney(text) || Strings.DASH}</div>,
+            render: (text, record) => {
+              // TODO: Display tooltip here for applicant to see that it was overridden?
+              const isOverridden = record.contracted_work_total_override !== null;
+              const estCost = isOverridden ? record.contracted_work_total_override : text;
+              return <div title="Est. Cost">{formatMoney(estCost) || Strings.DASH}</div>;
+            },
           },
           {
             title: "End Date",

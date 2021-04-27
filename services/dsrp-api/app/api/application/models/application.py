@@ -184,6 +184,10 @@ class Application(Base, AuditMixin):
                         cw_total += v
                 well_sites[i]['contracted_work'][cw_type]['contracted_work_total'] = round(
                     cw_total, 2)
+                work_id = well_sites[i]['contracted_work'][cw_type]['work_id']
+                estimated_cost_overrides = self.estimated_cost_overrides or {}
+                well_sites[i]['contracted_work'][cw_type][
+                    'contracted_work_total_override'] = estimated_cost_overrides.get(work_id)
 
         return well_sites
 
@@ -270,10 +274,12 @@ class Application(Base, AuditMixin):
 
     def calc_est_shared_cost(self, contracted_work):
         """Calculates the contracted work item's Estimated Shared Cost, which is half of the estimated cost \
-            unless that value is $100,000 or more, then it is $100,000.
+            unless that value is $100,000 or more, then it is $100,000. If the estimated cost value has been \
+            overridden, use that value instead.
         """
-
-        half_est_cost = round(contracted_work['contracted_work_total'] / 2.0, 2)
+        est_cost = contracted_work['contracted_work_total_override'] if contracted_work[
+            'contracted_work_total_override'] != None else contracted_work['contracted_work_total']
+        half_est_cost = round(est_cost / 2.0, 2)
         est_shared_cost = half_est_cost if half_est_cost <= 100000 else 100000
         return est_shared_cost
 
@@ -294,6 +300,7 @@ class Application(Base, AuditMixin):
         return round(self.calc_total_est_shared_cost() * 0.10, 2)
 
     @hybrid_property
+    # TODO: How do we need to consider the overridden estimated cost values in this document?
     def shared_cost_agreement_template_json(self):
         """Generates the JSON used to generate this application's Shared Cost Agreement document."""
 
@@ -344,6 +351,7 @@ class Application(Base, AuditMixin):
         return result
 
     @hybrid_property
+    # TODO: How do we need to consider the overridden estimated cost values in this document?
     def shared_cost_agreement_amendment_template_json(self):
         """Generates the JSON used to generate this application's Shared Cost Agreement Amendment document."""
 

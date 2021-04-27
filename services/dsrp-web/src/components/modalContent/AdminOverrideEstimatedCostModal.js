@@ -5,12 +5,19 @@ import AdminOverrideEstimatedCostForm from "@/components/forms/AdminOverrideEsti
 const propTypes = {
   contractedWork: PropTypes.any.isRequired,
   closeModal: PropTypes.func.isRequired,
+  initialValues: PropTypes.any.isRequired,
 };
 
 export const AdminOverrideEstimatedCostModal = (props) => {
   const handleSubmit = (values) =>
     props.onSubmit(props.contractedWork.application_guid, props.contractedWork.work_id, values);
-  return <AdminOverrideEstimatedCostForm onSubmit={handleSubmit} closeModal={props.closeModal} />;
+  return (
+    <AdminOverrideEstimatedCostForm
+      onSubmit={handleSubmit}
+      closeModal={props.closeModal}
+      initialValues={props.initialValues}
+    />
+  );
 };
 
 AdminOverrideEstimatedCostModal.propTypes = propTypes;

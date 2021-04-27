@@ -11,6 +11,8 @@ import {
   Descriptions,
   Tabs,
   Table,
+  Tooltip,
+  Icon,
 } from "antd";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -244,7 +246,6 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         ? parseFloat(this.props.formValues.final_approved_amount)
         : null;
 
-    const getTypeEstSharedCost = (percent, estSharedCost) => estSharedCost * (percent / 100);
     const getTypeMaxEligibleAmount = (eocTotalAmount) => eocTotalAmount * 0.5;
 
     // Initial payment calculations
@@ -476,6 +477,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       })
     );
 
+    const isEstimatedCostOverridden = contractedWork.contracted_work_total_override !== null;
+
     return (
       <Form layout="vertical" onSubmit={handleSubmit}>
         <Row gutter={48}>
@@ -504,7 +507,20 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                 {formatDate(contractedWork.planned_end_date)}
               </Descriptions.Item>
               <Descriptions.Item label="Total Estimated Cost">
-                {formatMoney(contractedWork.contracted_work_total)}
+                {formatMoney(
+                  isEstimatedCostOverridden
+                    ? contractedWork.contracted_work_total_override
+                    : contractedWork.contracted_work_total
+                )}
+                {isEstimatedCostOverridden && (
+                  <Tooltip
+                    title={`Est. Cost was overridden by admin. Original value: ${formatMoney(
+                      contractedWork.contracted_work_total
+                    )}`}
+                  >
+                    <Icon type="dollar" className="color-warning" style={{ marginLeft: 4 }} />
+                  </Tooltip>
+                )}
               </Descriptions.Item>
             </Descriptions>
           </Col>
