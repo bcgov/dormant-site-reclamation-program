@@ -86,11 +86,19 @@ export class ApplicationTable extends Component {
   };
 
   getTotalEstCost = (contractedWorks) =>
-    contractedWorks.reduce((sum, cw) => sum + parseFloat(cw.est_cost_override || cw.est_cost), 0);
+    contractedWorks.reduce(
+      (sum, cw) =>
+        sum + parseFloat(cw.est_cost_override !== null ? cw.est_cost_override : cw.est_cost),
+      0
+    );
 
   getTotalEstSharedCost = (contractedWorks) =>
     contractedWorks.reduce(
-      (sum, cw) => sum + parseFloat(cw.est_shared_cost_override || cw.est_shared_cost),
+      (sum, cw) =>
+        sum +
+        parseFloat(
+          cw.est_shared_cost_override !== null ? cw.est_shared_cost_override : cw.est_shared_cost
+        ),
       0
     );
 
