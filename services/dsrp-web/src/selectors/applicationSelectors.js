@@ -116,7 +116,7 @@ export const getApplicationsWellSitesContractedWork = createSelector(
           const workId = contractedWork[type].work_id;
 
           const estimatedCostOverride =
-            estimatedCostOverrides && estimatedCostOverrides[workId]
+            estimatedCostOverrides && workId in estimatedCostOverrides
               ? estimatedCostOverrides[workId]
               : null;
           const calculatedSharedCostOverride =
