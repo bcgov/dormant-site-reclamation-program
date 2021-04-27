@@ -115,9 +115,10 @@ export const getApplicationsWellSitesContractedWork = createSelector(
           const shouldSharedCostBeZero = !(contractedWorkStatusCode === "APPROVED");
           const workId = contractedWork[type].work_id;
 
-          const estimatedCostOverride = estimatedCostOverrides
-            ? estimatedCostOverrides[workId]
-            : null;
+          const estimatedCostOverride =
+            estimatedCostOverrides && estimatedCostOverrides[workId]
+              ? estimatedCostOverrides[workId]
+              : null;
           const calculatedSharedCostOverride =
             estimatedCostOverride !== null ? (estimatedCostOverride / 2).toFixed(2) : null;
           const sharedCostOverride =
