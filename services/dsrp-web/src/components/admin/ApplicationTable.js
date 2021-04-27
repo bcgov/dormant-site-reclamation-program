@@ -85,29 +85,14 @@ export class ApplicationTable extends Component {
     );
   };
 
-  getTotalEstCost = (contractedWorks) => {
-    let sum = 0;
-    contractedWorks.map((cw) => {
-      if (cw.est_cost_override) {
-        sum += parseFloat(cw.est_cost_override);
-      } else {
-        sum += parseFloat(cw.est_cost);
-      }
-    });
-    return sum;
-  };
+  getTotalEstCost = (contractedWorks) =>
+    contractedWorks.reduce((sum, cw) => sum + parseFloat(cw.est_cost_override || cw.est_cost), 0);
 
-  getTotalEstSharedCost = (contractedWorks) => {
-    let sum = 0;
-    contractedWorks.map((cw) => {
-      if (cw.est_cost_override) {
-        sum += parseFloat(cw.est_shared_cost_override);
-      } else {
-        sum += parseFloat(cw.est_shared_cost);
-      }
-    });
-    return sum;
-  };
+  getTotalEstSharedCost = (contractedWorks) =>
+    contractedWorks.reduce(
+      (sum, cw) => sum + parseFloat(cw.est_shared_cost_override || cw.est_shared_cost),
+      0
+    );
 
   getNoWorkTypes = (guid) =>
     this.props.applicationsWellSitesContractedWork.filter(
@@ -544,6 +529,7 @@ export class ApplicationTable extends Component {
       );
     };
 
+    console.log(this.transformRowData(this.props.applications));
     return (
       <>
         <Table
