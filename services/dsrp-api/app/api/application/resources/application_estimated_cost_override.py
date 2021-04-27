@@ -2,6 +2,7 @@ from flask_restplus import Resource
 from werkzeug.exceptions import NotFound
 from flask import request
 
+from sqlalchemy.orm.attributes import flag_modified
 from app.extensions import api
 from app.api.utils.resources_mixins import UserMixin
 from app.api.application.models.application import Application
@@ -36,6 +37,6 @@ class ApplicationEstimatedCostOverride(Resource, UserMixin):
             estimated_cost_overrides = None
 
         application.estimated_cost_overrides = estimated_cost_overrides
+        flag_modified(application, "estimated_cost_overrides")
         application.save()
-
         return '', 200
