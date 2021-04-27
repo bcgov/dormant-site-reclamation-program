@@ -537,7 +537,6 @@ export class ApplicationTable extends Component {
       );
     };
 
-    console.log(this.transformRowData(this.props.applications));
     return (
       <>
         <Table
