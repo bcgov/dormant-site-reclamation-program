@@ -311,7 +311,6 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
           this.state.selectedInterimStatus === "APPROVED",
         previous_amount: currentInterimApprovedAmount,
         payment_type: "Interim",
-        total_estimated_cost: contractedWork.contracted_work_total,
         payment_percent: `${Payment.interimPercent}%`,
         payment_estimated_shared_cost: interimEstSharedCost,
         eoc_document: contractedWork.interim_eoc_document,
