@@ -29,7 +29,7 @@ jobs:
 
       - name: Template build config
         run: |
-          oc -n ${{secrets.NS_TOOLS}} process -f openshift/templates/nginx.bc.yaml \
+          oc -n ${{secrets.NS_TOOLS}} process -f openshift4/templates/nginx.bc.yaml \
           -p NAMESPACE=${{secrets.NS_TOOLS}} \
           -p PR=${{env.PR}} \
           -p TAG=${{env.TAG}} \
