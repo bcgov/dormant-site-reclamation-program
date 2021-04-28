@@ -34,6 +34,8 @@ export const CREATE_CONTRACTED_WORK_PAYMENT_STATUS = (applicationGuid, workId) =
   `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/status`;
 export const UPDATE_CONTRACTED_WORK_PAYMENT_AUDIT_STATUS = (applicationGuid, workId) =>
   `${APPLICATION_CONTRACTED_WORK_PAYMENT(applicationGuid, workId)}/audit`;
+export const UPDATE_APPLICATION_ESTIMATED_COST_OVERRIDE = (applicationGuid, workId) =>
+  `/application/${applicationGuid}/work/${workId}/estimated-cost-override`;
 
 // Documents
 export const GET_TOKEN_FOR_DOC = (app_guid, doc_guid) =>
