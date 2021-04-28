@@ -343,6 +343,9 @@ class Application(Base, AuditMixin):
                 site += f' Permit Holder: {self.permit_holder}\n' if self.permit_holder else f' Operator ID: {self.operator_id}\n'
                 site += f' Eligible Activities as described in Application: {worktype.replace("_"," ").capitalize()}\n'
                 site += f' Applicant\'s Estimated Cost: {"${:,.2f}".format(wt_details.get("contracted_work_total"))}\n'
+                site += '' if wt_details.get(
+                    'contracted_work_total_override'
+                ) == None else f' Adjusted Estimated Cost: {"${:,.2f}".format(wt_details.get("contracted_work_total_override"))}\n'
                 site += f' Provincial Financial Contribution: {"${:,.2f}".format(self.calc_est_shared_cost(wt_details))}\n'
                 site += f' Planned Start Date: {wt_details["planned_start_date"]}\n'
                 site += f' Planned End Date: {wt_details["planned_end_date"]}\n'
