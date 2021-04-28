@@ -444,7 +444,7 @@ export class ApplicationTable extends Component {
             <div style={{ textAlign: "right" }} title="Est. Cost">
               {isOverridden &&
                 toolTip(
-                  `Est. Cost was overridden by admin. Original value: ${formatMoney(text)}`,
+                  `Estimated cost overridden by admin. Original value: ${formatMoney(text)}`,
                   "color-warning table-record-tooltip"
                 )}
               {(lmr || lmr === 0) &&
@@ -455,6 +455,7 @@ export class ApplicationTable extends Component {
                 type="link"
                 onClick={() => this.openAdminOverrideEstimatedCostModal(record)}
                 size="small"
+                title="Override Estimated Cost"
               >
                 <Icon type="edit" style={{ marginLeft: 4 }} />
               </Button>

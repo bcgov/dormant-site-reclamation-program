@@ -16,6 +16,7 @@ export const AdminOverrideEstimatedCostModal = (props) => {
       onSubmit={handleSubmit}
       closeModal={props.closeModal}
       initialValues={props.initialValues}
+      contractedWork={props.contractedWork}
     />
   );
 };

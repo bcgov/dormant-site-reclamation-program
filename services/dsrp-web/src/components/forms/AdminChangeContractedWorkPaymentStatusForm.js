@@ -509,11 +509,11 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
               <Descriptions.Item label="Total Estimated Cost">
                 {isEstimatedCostOverridden && (
                   <Tooltip
-                    title={`Estimated cost was overridden by admin. Original value: ${formatMoney(
+                    title={`Estimated cost overridden by admin. Original value: ${formatMoney(
                       contractedWork.contracted_work_total
                     )}`}
                   >
-                    <Icon type="dollar" className="color-warning" style={{ marginRight: 4 }} />
+                    <Icon type="info-circle" className="color-warning" style={{ marginRight: 4 }} />
                   </Tooltip>
                 )}
                 {formatMoney(
