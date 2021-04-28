@@ -300,7 +300,6 @@ class Application(Base, AuditMixin):
         return round(self.calc_total_est_shared_cost() * 0.10, 2)
 
     @hybrid_property
-    # TODO: How do we need to consider the overridden estimated cost values in this document?
     def shared_cost_agreement_template_json(self):
         """Generates the JSON used to generate this application's Shared Cost Agreement document."""
 
@@ -354,7 +353,6 @@ class Application(Base, AuditMixin):
         return result
 
     @hybrid_property
-    # TODO: How do we need to consider the overridden estimated cost values in this document?
     def shared_cost_agreement_amendment_template_json(self):
         """Generates the JSON used to generate this application's Shared Cost Agreement Amendment document."""
 
