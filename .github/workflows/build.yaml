@@ -1,0 +1,40 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - develop
+
+env:
+  PR: 42
+  TAG: dev
+  SELECTOR: dsrp-nginx-${{env.TAG}}
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Install oc
+        uses: redhat-actions/oc-installer@v1
+        with:
+          version: "4.6"
+
+      - name: oc login
+        run: |
+          oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
+
+      - name: Template build config
+        run: |
+          oc -n ${{secrets.NS_TOOLS}} process -f openshift/templates/nginx.bc.yaml \
+          -p NAMESPACE=${{secrets.NS_TOOLS}} \
+          -p PR=${{env.PR}} \
+          -p TAG=${{env.TAG}} \
+          | oc -n ${{secrets.NS_TOOLS}} apply -f -
+
+      - name: Trigger build
+        run: |
+          oc start-build ${{ env.SELECTOR }} -n ${{secrets.NS_TOOLS}} --wait --follow
