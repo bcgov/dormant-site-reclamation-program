@@ -39,7 +39,7 @@ jobs:
           -p SOURCE_REPOSITORY_URL=${{env.SOURCE_REPOSITORY_URL}} \
           -p SOURCE_REPOSITORY_REF=${{env.SOURCE_REPOSITORY_REF}} \
           -p SOURCE_CONTEXT_DIR=${{matrix.context_dir}} \
-          -p VERSION=${{env.TAG}} \
+          -p TAG=${{env.TAG}} \
           | oc -n ${{secrets.NS_TOOLS}} apply -f -
 
   build:
