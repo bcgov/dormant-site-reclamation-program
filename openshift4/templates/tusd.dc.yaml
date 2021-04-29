@@ -8,10 +8,8 @@ parameters:
     name: NAME
     required: true
     value: tusd
-  - name: SUFFIX
+  - name: TAG
     required: true
-  - name: CHANGE_ID
-    required: false
   - name: OBJECT_STORE_SECRET_NAME
     value: object-store-credentials
   - name: CPU_LIMIT
@@ -22,13 +20,11 @@ parameters:
     value: 200m
   - name: MEMORY_REQUEST
     value: 512Mi
-  - name: VERSION
-    required: true
 objects:
   - kind: Service
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       annotations:
         description: Exposes and load balances the application pods
     spec:
@@ -38,26 +34,13 @@ objects:
           port: 1080
           targetPort: 1080
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       type: ClusterIP
       sessionAffinity: None
-  - kind: ImageStream
-    apiVersion: v1
-    metadata:
-      name: ${NAME}
-      creationTimestamp: null
-      labels:
-        shared: "true"
-      annotations:
-        description: Keeps track of changes in the application image
-    spec:
-      lookupPolicy:
-        local: false
-      tags: []
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
     spec:
       strategy:
         type: Recreate
@@ -72,19 +55,19 @@ objects:
               - ${NAME}
             from:
               kind: ImageStreamTag
-              name: ${NAME}:${VERSION}
+              name: ${NAME}:${TAG}
       replicas: 1
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       template:
         metadata:
-          name: ${NAME}${SUFFIX}
+          name: ${NAME}
           labels:
-            name: ${NAME}${SUFFIX}
+            name: ${NAME}
         spec:
           containers:
             - name: ${NAME}
-              image: ' '
+              image: " "
               ports:
                 - containerPort: 1080
                   protocol: TCP
