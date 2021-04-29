@@ -26,9 +26,8 @@ objects:
           annotations: null
           from:
             kind: ImageStreamTag
-            name: postgresql-9.6-oracle-fdw:v1-stable
-            namespace: bcgov
-          generation: 1
+            name: rhscl-postgres-10-rhel7:latest
+            namespace: 269007-tools
           importPolicy: {}
           referencePolicy:
             type: Local
