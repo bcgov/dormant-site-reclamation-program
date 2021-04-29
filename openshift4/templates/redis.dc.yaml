@@ -133,7 +133,7 @@ parameters:
   - name: REDIS_VERSION
     displayName: Version of Redis Image
     description: Version of Redis image to be used (3.2 or latest).
-    value: "3.2"
+    value: "5"
   - name: SUFFIX
     displayName: Name Suffix
     description: A suffix appended to all objects
