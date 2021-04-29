@@ -18,7 +18,7 @@ jobs:
       matrix:
         include:
           - name: dsrp-nginx
-            config: _nginx
+            config: nginx
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
