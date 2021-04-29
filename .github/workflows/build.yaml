@@ -19,14 +19,16 @@ jobs:
         include:
           - name: dsrp-nginx
             config: nginx
+          - name: dsrp-postgres
+            config: postgresql
           # - name: dsrp-frontend
           #   config: nodejs
           # - name: dsrp-python-backend
           #   config: python36
           # - name: dsrp-flyway-migration-client
           #   config: flyway
-          # - name: dsrp-tusd
-          #   config: tusd
+          - name: dsrp-tusd
+            config: tusd
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -39,7 +41,7 @@ jobs:
           oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
       - name: Template build config
         run: |
-          oc -n ${{secrets.NS_TOOLS}} process -f openshift4/templates/${{ matrix.config }}.bc.yaml \
+          oc -n ${{secrets.NS_TOOLS}} process -f openshift4/templates/${{ matrix.config }}.bc.yaml --ignore-unknown-parameters=true \
           -p NAME=${{matrix.name}} \
           -p SOURCE_REPOSITORY_URL=${{env.SOURCE_REPOSITORY_URL}} \
           -p SOURCE_REPOSITORY_REF=${{env.SOURCE_REPOSITORY_REF}} \
@@ -65,17 +67,13 @@ jobs:
         run: |
           echo "Starting ordered build..."
 
-      # - name: postgres build
-      #   run: |
-      #     oc start-build dsrp-postgres -n ${{secrets.NS_TOOLS}} --wait
-
       - name: nginx build
         run: |
           oc start-build dsrp-nginx -n ${{secrets.NS_TOOLS}} --wait
 
-      # - name: tusd build
-      #   run: |
-      #     oc start-build dsrp-tusd -n ${{secrets.NS_TOOLS}} --wait
+      - name: tusd build
+        run: |
+          oc start-build dsrp-tusd -n ${{secrets.NS_TOOLS}} --wait
 
       # - name: dbbackup build
       #   run: |
