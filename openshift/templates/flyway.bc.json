@@ -43,7 +43,7 @@
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "openjdk18-openshift",
+        "name": "openjdk18",
         "creationTimestamp": null,
         "labels": {
           "shared": "true"
