@@ -9,7 +9,7 @@ parameters:
     description: A suffix appended to all objects
     required: true
   - name: TAG
-    required: true
+    value: dev
   - name: SOURCE_CONTEXT_DIR
     value: services/dsrp-api
   - name: SOURCE_REPOSITORY_URL

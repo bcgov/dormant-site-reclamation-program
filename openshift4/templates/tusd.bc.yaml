@@ -15,7 +15,7 @@ parameters:
     required: true
     value: https://github.com/bcgov/dsrp.git
   - name: TAG
-    required: true
+    value: dev
   - name: SOURCE_REPOSITORY_REF
     displayName: Git Reference
     description: The git reference or branch.

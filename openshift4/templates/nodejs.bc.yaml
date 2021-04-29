@@ -11,7 +11,7 @@ parameters:
   - name: APPLICATION_SUFFIX
     required: true
   - name: TAG
-    required: true
+    value: dev
   - name: BASE_PATH
     required: false
     value: /

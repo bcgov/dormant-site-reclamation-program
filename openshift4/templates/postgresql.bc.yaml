@@ -9,7 +9,7 @@ parameters:
     description: A name used for all objects
     required: true
   - name: TAG
-    required: true
+    value: dev
 objects:
   - kind: ImageStream
     apiVersion: v1

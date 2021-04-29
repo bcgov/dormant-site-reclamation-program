@@ -12,8 +12,8 @@ parameters:
     displayName: Name Suffix
     description: A suffix appended to all objects
     required: true
-  - name: TAG_NAME
-    required: true
+  - name: TAG
+    value: dev
 objects:
   - kind: ImageStream
     apiVersion: v1
@@ -26,7 +26,7 @@ objects:
       lookupPolicy:
         local: false
       tags:
-        - name: ${TAG_NAME}
+        - name: ${TAG}
           annotations: null
           from:
             kind: DockerImage
