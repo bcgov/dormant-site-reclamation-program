@@ -19,19 +19,24 @@ jobs:
         include:
           - name: dsrp-nginx
             config: nginx
+          # - name: dsrp-frontend
+          #   config: nodejs
+          # - name: dsrp-python-backend
+          #   config: python36
+          # - name: dsrp-flyway-migration-client
+          #   config: flyway
+          # - name: dsrp-tusd
+          #   config: tusd
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
-
       - name: Install oc
         uses: redhat-actions/oc-installer@v1
         with:
           version: "4.6"
-
       - name: oc login
         run: |
           oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
-
       - name: Template build config
         run: |
           oc -n ${{secrets.NS_TOOLS}} process -f openshift4/templates/${{ matrix.config }}.bc.yaml \
