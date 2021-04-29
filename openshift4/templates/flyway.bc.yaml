@@ -11,9 +11,9 @@ parameters:
   - name: TAG
     displayName: Name
     description: The output/built ImageStream tag names
-    required: true
+    value: dev
   - name: SOURCE_CONTEXT_DIR
-    required: true
+    value: migrations
   - name: SOURCE_REPOSITORY_URL
     required: true
   - name: SOURCE_REPOSITORY_REF

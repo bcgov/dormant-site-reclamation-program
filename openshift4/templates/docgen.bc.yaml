@@ -8,10 +8,6 @@ parameters:
     displayName: Name
     description: A name used for all objects
     required: true
-  - name: NAME_SUFFIX
-    displayName: Name Suffix
-    description: A suffix appended to all objects
-    required: true
   - name: TAG
     value: dev
 objects:

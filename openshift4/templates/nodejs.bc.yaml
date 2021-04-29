@@ -8,8 +8,6 @@ parameters:
     displayName: Name
     description: A suffix appended to all objects
     required: true
-  - name: APPLICATION_SUFFIX
-    required: true
   - name: TAG
     value: dev
   - name: BASE_PATH
@@ -113,7 +111,7 @@ objects:
   - kind: BuildConfig
     apiVersion: v1
     metadata:
-      name: ${NAME}${APPLICATION_SUFFIX}
+      name: ${NAME}
       creationTimestamp: null
       labels: {}
       annotations:
@@ -146,7 +144,7 @@ objects:
       output:
         to:
           kind: ImageStreamTag
-          name: ${NAME}${APPLICATION_SUFFIX}:${TAG}
+          name: ${NAME}:${TAG}
       resources:
         limits:
           cpu: "1"

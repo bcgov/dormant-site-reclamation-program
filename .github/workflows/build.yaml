@@ -21,14 +21,18 @@ jobs:
             config: nginx
           - name: dsrp-postgres
             config: postgresql
-          # - name: dsrp-frontend
-          #   config: nodejs
-          # - name: dsrp-python-backend
-          #   config: python36
-          # - name: dsrp-flyway-migration-client
-          #   config: flyway
+          - name: dsrp-frontend
+            config: nodejs
+          - name: dsrp-python-backend
+            config: python36
+          - name: dsrp-flyway-migration-client
+            config: flyway
           - name: dsrp-tusd
             config: tusd
+          - name: dsrp-docgen
+            config: docgen
+          - name: dsrp-database-backup
+            config: dbbackup
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -45,7 +49,6 @@ jobs:
           -p NAME=${{matrix.name}} \
           -p SOURCE_REPOSITORY_URL=${{env.SOURCE_REPOSITORY_URL}} \
           -p SOURCE_REPOSITORY_REF=${{env.SOURCE_REPOSITORY_REF}} \
-          -p SOURCE_CONTEXT_DIR=${{matrix.context_dir}} \
           -p TAG=${{env.TAG}} \
           | oc -n ${{secrets.NS_TOOLS}} apply -f -
 
