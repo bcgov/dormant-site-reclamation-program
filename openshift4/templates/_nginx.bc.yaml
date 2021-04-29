@@ -8,7 +8,7 @@ parameters:
     displayName: Name
     description: Build config name
     value: dsrp-nginx
-  - name: VERSION
+  - name: TAG
     value: dev
   - name: SOURCE_CONTEXT_DIR
     value: services/nginx
@@ -37,7 +37,7 @@ objects:
       name: ${NAME}
       creationTimestamp: null
       annotations:
-        description: Defines how to build the image
+        description: Defines how to build the nginx image
     spec:
       completionDeadlineSeconds: 600
       triggers:
@@ -55,7 +55,7 @@ objects:
         sourceStrategy:
           from:
             kind: ImageStreamTag
-            namespace: openshift
+            namespace: 269007-tools
             name: bcgov-s2i-nginx:latest
           env:
             - name: NGINX_AUX_DIR
@@ -63,5 +63,5 @@ objects:
       output:
         to:
           kind: ImageStreamTag
-          name: ${NAME}:${VERSION}
+          name: ${NAME}:${TAG}
       nodeSelector: null
