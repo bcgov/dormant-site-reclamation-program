@@ -8,14 +8,10 @@ parameters:
     displayName: Name
     description: A suffix appended to all objects
     required: true
-  - name: SUFFIX
-    displayName: Name Suffix
-    description: A suffix appended to all objects
-    required: true
-  - name: VERSION
+  - name: TAG
     required: true
   - name: SOURCE_CONTEXT_DIR
-    required: true
+    value: services/dsrp-api
   - name: SOURCE_REPOSITORY_URL
     required: true
   - name: SOURCE_REPOSITORY_REF
@@ -71,7 +67,7 @@ objects:
   - kind: BuildConfig
     apiVersion: v1
     metadata:
-      name: ${NAME}-base${SUFFIX}
+      name: ${NAME}-base
       creationTimestamp: null
       labels: {}
       annotations: {}
@@ -97,7 +93,7 @@ objects:
       output:
         to:
           kind: ImageStreamTag
-          name: ${NAME}-base:${VERSION}
+          name: ${NAME}-base:${TAG}
       resources:
         limits:
           cpu: 500m
@@ -110,7 +106,7 @@ objects:
   - kind: BuildConfig
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       creationTimestamp: null
       annotations:
         description: Defines how to build the application
@@ -131,14 +127,14 @@ objects:
         sourceStrategy:
           from:
             kind: ImageStreamTag
-            name: ${NAME}-base:${VERSION}
+            name: ${NAME}-base:${TAG}
           env:
             - name: BUILD_LOGLEVEL
               value: "2"
       output:
         to:
           kind: ImageStreamTag
-          name: ${NAME}:${VERSION}
+          name: ${NAME}:${TAG}
       resources:
         limits:
           cpu: 200m

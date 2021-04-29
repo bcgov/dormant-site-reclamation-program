@@ -8,11 +8,7 @@ parameters:
     displayName: Name
     description: A name used for all objects
     required: true
-  - name: NAME_SUFFIX
-    displayName: Name Suffix
-    description: A suffix appended to all objects
-    required: true
-  - name: TAG_NAME
+  - name: TAG
     required: true
 objects:
   - kind: ImageStream
@@ -26,7 +22,7 @@ objects:
       lookupPolicy:
         local: false
       tags:
-        - name: ${TAG_NAME}
+        - name: ${TAG}
           annotations: null
           from:
             kind: ImageStreamTag

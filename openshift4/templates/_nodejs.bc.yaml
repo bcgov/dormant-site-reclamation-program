@@ -8,13 +8,9 @@ parameters:
     displayName: Name
     description: A suffix appended to all objects
     required: true
-  - name: SUFFIX
-    displayName: Name Suffix
-    description: A suffix appended to all objects
-    required: true
   - name: APPLICATION_SUFFIX
     required: true
-  - name: VERSION
+  - name: TAG
     required: true
   - name: BASE_PATH
     required: false
@@ -22,7 +18,7 @@ parameters:
   - name: DOCKER_IMAGE_DIRECTORY
     value: openshift/docker-images/nodejs-10
   - name: SOURCE_CONTEXT_DIR
-    required: true
+    value: services/dsrp-web
   - name: SOURCE_REPOSITORY_URL
     required: true
   - name: SOURCE_REPOSITORY_REF
@@ -69,7 +65,7 @@ objects:
   - kind: ImageStream
     apiVersion: v1
     metadata:
-      name: ${NAME}${APPLICATION_SUFFIX}
+      name: ${NAME}
       creationTimestamp: null
       labels: {}
       annotations:
@@ -81,7 +77,7 @@ objects:
   - kind: BuildConfig
     apiVersion: v1
     metadata:
-      name: ${NAME}-base${SUFFIX}
+      name: ${NAME}-base
       creationTimestamp: null
       labels: {}
       annotations: {}
@@ -104,7 +100,7 @@ objects:
       output:
         to:
           kind: ImageStreamTag
-          name: ${NAME}-base:${VERSION}
+          name: ${NAME}-base:${TAG}
       resources:
         limits:
           cpu: "2"
@@ -139,7 +135,7 @@ objects:
         sourceStrategy:
           from:
             kind: ImageStreamTag
-            name: ${NAME}-base:${VERSION}
+            name: ${NAME}-base:${TAG}
           env:
             - name: BASE_PATH
               value: ${BASE_PATH}
@@ -150,7 +146,7 @@ objects:
       output:
         to:
           kind: ImageStreamTag
-          name: ${NAME}${APPLICATION_SUFFIX}:${VERSION}
+          name: ${NAME}${APPLICATION_SUFFIX}:${TAG}
       resources:
         limits:
           cpu: "1"
