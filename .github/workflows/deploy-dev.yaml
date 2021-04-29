@@ -1,0 +1,46 @@
+name: Deploy to dev
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - openshift4/templates/**.dc.yaml
+
+env:
+  TAG: dev
+  SOURCE_REPOSITORY_URL: https://github.com/bcgov/dormant-site-reclamation-program.git
+  SOURCE_REPOSITORY_REF: refs/pull/42/head
+
+jobs:
+  update-deployments:
+    name: update-deployments
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          # - config: dbbackup
+          # - config: docgen
+          # - config: nginx
+          # - config: nodejs
+          # - config: postgresql
+          # - config: python36
+          # - config: redis
+          - name: dsrp-tusd
+            config: tusd
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Install oc
+        uses: redhat-actions/oc-installer@v1
+        with:
+          version: "4.6"
+      - name: oc login
+        run: |
+          oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
+      - name: Update infrastructure in dev
+        run: |
+          oc -n ${{secrets.NS_DEV}} process -f openshift4/templates/${{ matrix.config }}.dc.yaml --ignore-unknown-parameters=true \
+          -p NAME=${{matrix.name}} \
+          -p TAG=${{env.TAG}} \
+          | oc -n ${{secrets.NS_DEV}} apply -f -
