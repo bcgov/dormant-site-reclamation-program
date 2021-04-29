@@ -11,89 +11,79 @@ env:
   SOURCE_REPOSITORY_REF: refs/pull/42/head
 
 jobs:
-  template:
-    name: template
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        include:
-          - name: dsrp-nginx
-            config: nginx
-          - name: dsrp-postgres
-            config: postgresql
-          - name: dsrp-frontend
-            config: nodejs
-          - name: dsrp-python-backend
-            config: python36
-          - name: dsrp-flyway-migration-client
-            config: flyway
-          - name: dsrp-tusd
-            config: tusd
-          - name: dsrp-docgen
-            config: docgen
-          - name: dsrp-database-backup
-            config: dbbackup
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-      - name: Install oc
-        uses: redhat-actions/oc-installer@v1
-        with:
-          version: "4.6"
-      - name: oc login
-        run: |
-          oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
-      - name: Template build config
-        run: |
-          oc -n ${{secrets.NS_TOOLS}} process -f openshift4/templates/${{ matrix.config }}.bc.yaml --ignore-unknown-parameters=true \
-          -p NAME=${{matrix.name}} \
-          -p SOURCE_REPOSITORY_URL=${{env.SOURCE_REPOSITORY_URL}} \
-          -p SOURCE_REPOSITORY_REF=${{env.SOURCE_REPOSITORY_REF}} \
-          -p TAG=${{env.TAG}} \
-          | oc -n ${{secrets.NS_TOOLS}} apply -f -
+  # template:
+  #   name: template
+  #   runs-on: ubuntu-20.04
+  #   strategy:
+  #     matrix:
+  #       include:
+  #         - name: dsrp-nginx
+  #           config: nginx
+  #         - name: dsrp-postgres
+  #           config: postgresql
+  #         - name: dsrp-frontend
+  #           config: nodejs
+  #         - name: dsrp-python-backend
+  #           config: python36
+  #         - name: dsrp-flyway-migration-client
+  #           config: flyway
+  #         - name: dsrp-tusd
+  #           config: tusd
+  #         - name: dsrp-docgen
+  #           config: docgen
+  #         - name: dsrp-database-backup
+  #           config: dbbackup
+  #   steps:
+  #     - name: Check out the repo
+  #       uses: actions/checkout@v2
+  #     - name: Install oc
+  #       uses: redhat-actions/oc-installer@v1
+  #       with:
+  #         version: "4.6"
+  #     - name: oc login
+  #       run: |
+  #         oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
+  #     - name: Template build config
+  #       run: |
+  #         oc -n ${{secrets.NS_TOOLS}} process -f openshift4/templates/${{ matrix.config }}.bc.yaml --ignore-unknown-parameters=true \
+  #         -p NAME=${{matrix.name}} \
+  #         -p SOURCE_REPOSITORY_URL=${{env.SOURCE_REPOSITORY_URL}} \
+  #         -p SOURCE_REPOSITORY_REF=${{env.SOURCE_REPOSITORY_REF}} \
+  #         -p TAG=${{env.TAG}} \
+  #         | oc -n ${{secrets.NS_TOOLS}} apply -f -
 
   build:
     name: build
-    needs: template
+    # needs: template
     runs-on: ubuntu-20.04
     steps:
       - name: Install oc
         uses: redhat-actions/oc-installer@v1
         with:
           version: "4.6"
-
       - name: oc login
         run: |
           oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
-
       - name: starting
         run: |
           echo "Starting ordered build..."
-
       - name: nginx build
         run: |
           oc start-build dsrp-nginx -n ${{secrets.NS_TOOLS}} --wait
-
       - name: tusd build
         run: |
           oc start-build dsrp-tusd -n ${{secrets.NS_TOOLS}} --wait
-
-      # - name: dbbackup build
-      #   run: |
-      #     oc start-build dsrp-dbbackup -n ${{secrets.NS_TOOLS}} --wait
-
-      # - name: flyway build
-      #   run: |
-      #     oc start-build dsrp-postgres -n ${{secrets.NS_TOOLS}} --wait
-
-      # - name: docgen build
-      #   run: |
-      #     oc start-build dsrp-docgen -n ${{secrets.NS_TOOLS}} --wait
-
-      # - name: backend build
-      #   run: |
-      #     oc start-build dsrp-backend -n ${{secrets.NS_TOOLS}} --wait
-
-      # - name: frontend build
-      #   run: |
-      #     oc start-build dsrp-frontend -n ${{secrets.NS_TOOLS}} --wait
+      - name: dbbackup build
+        run: |
+          oc start-build dsrp-dbbackup -n ${{secrets.NS_TOOLS}} --wait
+      - name: flyway build
+        run: |
+          oc start-build dsrp-flyway-migration-client -n ${{secrets.NS_TOOLS}} --wait
+      - name: backend build
+        run: |
+          oc start-build dsrp-backend-base -n ${{secrets.NS_TOOLS}} --wait
+          oc start-build dsrp-backend -n ${{secrets.NS_TOOLS}} --wait
+      - name: frontend build
+        run: |
+          oc start-build dsrp-frontend-base -n ${{secrets.NS_TOOLS}} --wait
+          oc start-build dsrp-frontend -n ${{secrets.NS_TOOLS}} --wait
