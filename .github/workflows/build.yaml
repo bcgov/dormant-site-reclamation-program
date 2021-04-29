@@ -62,32 +62,32 @@ jobs:
 
       # - name: postgres build
       #   run: |
-      #     oc start-build dsrp-postgres-${{env.TAG}} -n ${{secrets.NS_TOOLS}} --wait
+      #     oc start-build dsrp-postgres -n ${{secrets.NS_TOOLS}} --wait
 
       - name: nginx build
         run: |
-          oc start-build dsrp-nginx-${{env.TAG}} -n ${{secrets.NS_TOOLS}} --wait
+          oc start-build dsrp-nginx -n ${{secrets.NS_TOOLS}} --wait
 
       # - name: tusd build
       #   run: |
-      #     oc start-build dsrp-tusd-${{env.TAG}} -n ${{secrets.NS_TOOLS}} --wait
+      #     oc start-build dsrp-tusd -n ${{secrets.NS_TOOLS}} --wait
 
       # - name: dbbackup build
       #   run: |
-      #     oc start-build dsrp-dbbackup-${{env.TAG}} -n ${{secrets.NS_TOOLS}} --wait
+      #     oc start-build dsrp-dbbackup -n ${{secrets.NS_TOOLS}} --wait
 
       # - name: flyway build
       #   run: |
-      #     oc start-build dsrp-postgres-${{env.TAG}} -n ${{secrets.NS_TOOLS}} --wait
+      #     oc start-build dsrp-postgres -n ${{secrets.NS_TOOLS}} --wait
 
       # - name: docgen build
       #   run: |
-      #     oc start-build dsrp-docgen-${{env.TAG}} -n ${{secrets.NS_TOOLS}} --wait
+      #     oc start-build dsrp-docgen -n ${{secrets.NS_TOOLS}} --wait
 
       # - name: backend build
       #   run: |
-      #     oc start-build dsrp-backend-${{env.TAG}} -n ${{secrets.NS_TOOLS}} --wait
+      #     oc start-build dsrp-backend -n ${{secrets.NS_TOOLS}} --wait
 
       # - name: frontend build
       #   run: |
-      #     oc start-build dsrp-frontend-${{env.TAG}} -n ${{secrets.NS_TOOLS}} --wait
+      #     oc start-build dsrp-frontend -n ${{secrets.NS_TOOLS}} --wait
