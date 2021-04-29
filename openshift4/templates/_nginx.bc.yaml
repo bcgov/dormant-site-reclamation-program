@@ -6,16 +6,12 @@ metadata:
 parameters:
   - name: NAME
     displayName: Name
-    description: A suffix appended to all objects
-    required: true
-  - name: SUFFIX
-    displayName: Name Suffix
-    description: A suffix appended to all objects
-    required: true
+    description: Build config name
+    value: dsrp-nginx
   - name: VERSION
-    required: true
+    value: dev
   - name: SOURCE_CONTEXT_DIR
-    required: true
+    value: services/nginx
   - name: SOURCE_REPOSITORY_URL
     required: true
   - name: SOURCE_REPOSITORY_REF
@@ -38,7 +34,7 @@ objects:
   - kind: BuildConfig
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       creationTimestamp: null
       annotations:
         description: Defines how to build the image
