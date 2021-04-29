@@ -6,14 +6,22 @@ on:
       - develop
 
 env:
-  PR: 42
   TAG: dev
-  SELECTOR: dsrp-nginx-${{env.TAG}}
+  SOURCE_REPOSITORY_URL: https://github.com/bcgov/dormant-site-reclamation-program.git
+  SOURCE_REPOSITORY_REF: refs/pull/42/head
 
 jobs:
-  build:
-    name: build
+  template:
+    name: template
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          - name: dsrp-nginx-${{env.TAG}}
+            suffix:
+            config: _nginx.bc.yaml
+            context_dir: services/nginx
+
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -29,12 +37,53 @@ jobs:
 
       - name: Template build config
         run: |
-          oc -n ${{secrets.NS_TOOLS}} process -f openshift4/templates/nginx.bc.yaml \
+          oc -n ${{secrets.NS_TOOLS}} process -f openshift4/templates/${{ matrix.config }}.bc.yaml \
+          -p NAME=${{matrix.name}} \
+          -p VERSION=${{env.TAG}} \
+          -p SUFFIX=${{matrix.suffix}} \
+          -p SOURCE_REPOSITORY_URL=${{env.SOURCE_REPOSITORY_URL}} \
+          -p SOURCE_REPOSITORY_REF=${{env.SOURCE_REPOSITORY_REF}} \
+          -p SOURCE_CONTEXT_DIR=${{matrix.context_dir}} \
           -p NAMESPACE=${{secrets.NS_TOOLS}} \
-          -p PR=${{env.PR}} \
-          -p TAG=${{env.TAG}} \
           | oc -n ${{secrets.NS_TOOLS}} apply -f -
 
-      - name: Trigger build
+  build:
+    name: build
+    needs: template
+    runs-on: ubuntu-20.04
+    steps:
+      - name: starting
         run: |
-          oc start-build ${{ env.SELECTOR }} -n ${{secrets.NS_TOOLS}} --wait --follow
+          echo "Starting ordered build..."
+
+      # - name: postgres build
+      #   run: |
+      #     oc start-build dsrp-postgres-${{env.TAG}} -n ${{secrets.NS_TOOLS}} --wait
+
+      - name: nginx build
+        run: |
+          oc start-build dsrp-nginx-${{env.TAG}} -n ${{secrets.NS_TOOLS}} --wait
+
+      # - name: tusd build
+      #   run: |
+      #     oc start-build dsrp-tusd-${{env.TAG}} -n ${{secrets.NS_TOOLS}} --wait
+
+      # - name: dbbackup build
+      #   run: |
+      #     oc start-build dsrp-dbbackup-${{env.TAG}} -n ${{secrets.NS_TOOLS}} --wait
+
+      # - name: flyway build
+      #   run: |
+      #     oc start-build dsrp-postgres-${{env.TAG}} -n ${{secrets.NS_TOOLS}} --wait
+
+      # - name: docgen build
+      #   run: |
+      #     oc start-build dsrp-docgen-${{env.TAG}} -n ${{secrets.NS_TOOLS}} --wait
+
+      # - name: backend build
+      #   run: |
+      #     oc start-build dsrp-backend-${{env.TAG}} -n ${{secrets.NS_TOOLS}} --wait
+
+      # - name: frontend build
+      #   run: |
+      #     oc start-build dsrp-frontend-${{env.TAG}} -n ${{secrets.NS_TOOLS}} --wait
