@@ -46,4 +46,5 @@ jobs:
           oc -n ${{secrets.NS_DEV}} process -f openshift4/templates/${{ matrix.config }}.dc.yaml --ignore-unknown-parameters=true \
           -p NAME=${{matrix.name}} \
           -p TAG=${{env.TAG}} \
+          -p DSRP_DOMAIN=dsrp-nginx-269007-dev.apps.silver.devops.gov.bc.ca
           | oc -n ${{secrets.NS_DEV}} apply -f -

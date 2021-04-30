@@ -22,6 +22,8 @@ parameters:
     value: tusd
   - name: API_SERVICE_URL
     value: api
+  - name: DSRP_DOMAIN
+    required: true
   - name: CPU_LIMIT
     value: 200m
   - name: MEMORY_LIMIT
@@ -90,6 +92,8 @@ objects:
                   value: ${TUSD_SERVICE_URL}
                 - name: API_SERVICE_URL
                   value: ${API_SERVICE_URL}
+                - name: DSRP_DOMAIN
+                  value: ${DSRP_DOMAIN}
               resources:
                 limits:
                   cpu: ${CPU_LIMIT}
