@@ -15,15 +15,6 @@ metadata:
     openshift.io/documentation-url: https://github.com/sclorg/redis-container/tree/master/3.2
     openshift.io/support-url: https://access.redhat.com
 objects:
-  - kind: Secret
-    apiVersion: v1
-    metadata:
-      name: ${NAME}
-      annotations:
-        template.openshift.io/expose-password: "{.data['database-password']}"
-        as-copy-of: template.${NAME}-secret
-    stringData:
-      database-password: ${REDIS_PASSWORD}
   - kind: Service
     apiVersion: v1
     metadata:
@@ -124,12 +115,6 @@ parameters:
     displayName: Object names
     description: The name of the OpenShift objects.
     value: redis
-    required: true
-  - name: REDIS_PASSWORD
-    displayName: Redis Connection Password
-    description: Password for the Redis connection user.
-    generate: expression
-    from: "[a-zA-Z0-9]{16}"
     required: true
   - name: REDIS_VERSION
     displayName: Version of Redis Image
