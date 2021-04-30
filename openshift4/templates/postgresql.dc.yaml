@@ -11,6 +11,8 @@ parameters:
     name: NAME
     required: true
     value: postgresql
+  - name: TAG
+    required: true
   - description: Postgres secret name
     name: POSTGRES_SECRET_NAME
     value: template.dsrp-postgresql-secret
@@ -172,7 +174,7 @@ objects:
               - postgresql
             from:
               kind: ImageStreamTag
-              name: postgresql:${TAG}
+              name: ${NAME}:${TAG}
               namespace: 269007-tools
             lastTriggeredImage: ""
           type: ImageChange

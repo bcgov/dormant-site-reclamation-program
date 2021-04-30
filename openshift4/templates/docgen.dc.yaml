@@ -10,13 +10,7 @@ parameters:
     description: The name assigned to all of the docgen objects defined in this template.
     required: true
     value: docgen
-  - name: SUFFIX
-    displayName: Name
-    description: The name assigned to all of the docgen objects defined in this template.
-    required: true
-  - name: VERSION
-    required: true
-  - name: APPLICATION_SUFFIX
+  - name: TAG
     required: true
   - name: BASE_PATH
     required: false
@@ -58,7 +52,7 @@ objects:
   - kind: Service
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       annotations:
         description: Exposes and load balances the application pods
     spec:
@@ -67,11 +61,11 @@ objects:
           port: ${{PORT}}
           targetPort: ${{PORT}}
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       annotations:
         description: Defines how to deploy the application server
         template.alpha.openshift.io/wait-for-ready: "true"
@@ -94,16 +88,16 @@ objects:
               name: ${NAME}:${VERSION}
       replicas: ${{REPLICA_MIN}}
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       template:
         metadata:
-          name: ${NAME}${SUFFIX}
+          name: ${NAME}
           labels:
-            name: ${NAME}${SUFFIX}
+            name: ${NAME}
         spec:
           containers:
             - name: ${NAME}
-              image: ' '
+              image: " "
               env:
                 - name: APP_PORT
                   value: ${PORT}
@@ -147,14 +141,14 @@ objects:
   - apiVersion: autoscaling/v1
     kind: HorizontalPodAutoscaler
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       labels:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
     spec:
       maxReplicas: ${{REPLICA_MAX}}
       minReplicas: ${{REPLICA_MIN}}
       scaleTargetRef:
         apiVersion: v1
         kind: DeploymentConfig
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       targetCPUUtilizationPercentage: 95
