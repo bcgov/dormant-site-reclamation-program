@@ -21,10 +21,12 @@ jobs:
         include:
           # - config: dbbackup
           # - config: docgen
-          # - config: nginx
           # - config: nodejs
-          # - config: postgresql
           # - config: python36
+          - name: dsrp-postgresql
+            config: postgresql
+          - name: dsrp-nginx
+            config: nginx
           - name: dsrp-redis
             config: redis
           - name: dsrp-tusd
