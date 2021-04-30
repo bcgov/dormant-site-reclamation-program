@@ -20,7 +20,7 @@ parameters:
     displayName: Name Suffix
     description: A suffix appended to all objects
     required: true
-  - name: VERSION
+  - name: TAG
     required: true
   - name: METABASE_PVC_SIZE
     required: true
@@ -86,7 +86,7 @@ objects:
               - ${NAME}
             from:
               kind: ImageStreamTag
-              name: ${NAME}:${VERSION}
+              name: ${NAME}:${TAG}
       replicas: 1
       selector:
         name: ${NAME}${SUFFIX}
@@ -98,7 +98,7 @@ objects:
         spec:
           containers:
             - name: ${NAME}
-              image: ' '
+              image: " "
               ports:
                 - containerPort: 5432
                   protocol: TCP

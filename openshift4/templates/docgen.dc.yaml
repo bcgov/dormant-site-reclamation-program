@@ -74,7 +74,7 @@ objects:
               - ${NAME}
             from:
               kind: ImageStreamTag
-              name: ${NAME}:${VERSION}
+              name: ${NAME}:${TAG}
               namespace: ${IMAGE_NAMESPACE}
       replicas: ${{REPLICA_MIN}}
       selector:
