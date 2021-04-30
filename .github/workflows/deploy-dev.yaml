@@ -20,9 +20,10 @@ jobs:
     strategy:
       matrix:
         include:
-          # - config: dbbackup
           # - config: nodejs
           # - config: python36
+          - name: dsrp-dbbackup
+            config: dbbackup
           - name: dsrp-docgen
             config: docgen
           - name: dsrp-postgresql
