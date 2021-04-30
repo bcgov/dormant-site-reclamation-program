@@ -11,6 +11,7 @@ env:
   TAG: dev
   SOURCE_REPOSITORY_URL: https://github.com/bcgov/dormant-site-reclamation-program.git
   SOURCE_REPOSITORY_REF: refs/pull/42/head
+  APP_DOMAIN: dsrp-nginx-269007-dev.apps.silver.devops.gov.bc.ca
 
 jobs:
   update-deployments:
@@ -19,10 +20,12 @@ jobs:
     strategy:
       matrix:
         include:
-          # - config: dbbackup
-          # - config: docgen
           # - config: nodejs
           # - config: python36
+          - name: dsrp-dbbackup
+            config: dbbackup
+          - name: dsrp-docgen
+            config: docgen
           - name: dsrp-postgresql
             config: postgresql
           - name: dsrp-nginx
@@ -46,9 +49,9 @@ jobs:
           oc -n ${{secrets.NS_DEV}} process -f openshift4/templates/${{ matrix.config }}.dc.yaml --ignore-unknown-parameters=true \
           -p NAME=${{matrix.name}} \
           -p TAG=${{env.TAG}} \
-          -p DSRP_DOMAIN=dsrp-nginx-269007-dev.apps.silver.devops.gov.bc.ca \
           -p JWT_OIDC_WELL_KNOWN_CONFIG=https://test.oidc.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration \
           -p JWT_OIDC_AUDIENCE=dormant-application-dev \
           -p URL=https://dsrp-nginx-269007-dev.apps.silver.devops.gov.bc.ca \
           -p ENVIRONMENT_NAME=dev \
+          -p DSRP_DOMAIN=${{env.APP_DOMAIN}} \
           | oc -n ${{secrets.NS_DEV}} apply -f -
