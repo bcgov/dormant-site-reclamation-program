@@ -20,8 +20,10 @@ jobs:
     strategy:
       matrix:
         include:
-          # - config: nodejs
-          # - config: python36
+          - name: dsrp-frontend
+            config: nodejs
+          - name: dsrp-python-backend
+            config: python36
           - name: dsrp-dbbackup
             config: dbbackup
           - name: dsrp-docgen
