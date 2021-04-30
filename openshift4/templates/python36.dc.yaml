@@ -159,7 +159,7 @@ objects:
         spec:
           containers:
             - name: app
-              image: ' '
+              image: " "
               ports:
                 - containerPort: 5000
                   protocol: TCP
@@ -290,7 +290,7 @@ objects:
               command:
                 - cat
               stdin: true
-              image: ' '
+              image: " "
               env:
                 - name: FLYWAY_USER
                   valueFrom:
@@ -369,7 +369,7 @@ objects:
   - kind: Service
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       creationTimestamp: null
       labels: null
       annotations:
