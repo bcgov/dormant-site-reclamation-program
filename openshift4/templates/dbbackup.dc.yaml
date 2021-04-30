@@ -53,17 +53,6 @@ objects:
       backup.conf: |
         ${DATABASE_SERVICE_NAME}/dsrp
         0 2 * * * default ./backup.sh -s
-  - kind: ImageStream
-    apiVersion: v1
-    metadata:
-      name: ${NAME}
-      creationTimestamp: null
-      labels:
-        shared: "true"
-      annotations: {}
-    spec:
-      lookupPolicy:
-        local: false
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:

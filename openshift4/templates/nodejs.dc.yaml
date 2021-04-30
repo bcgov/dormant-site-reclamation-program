@@ -9,12 +9,10 @@ parameters:
     displayName: Name
     description: The name assigned to all of the frontend objects defined in this template.
     required: true
-    value: web
-  - name: TAG_NAME
+  - name: TAG
     displayName: Name
     description: The name assigned to all of the frontend objects defined in this template.
     required: true
-    value: latest
   - name: APPLICATION_DOMAIN
     displayName: Application Hostname
     description: The exposed hostname that will route to the Node.js service, if left blank a value will be defaulted.
@@ -74,7 +72,7 @@ objects:
   - kind: ImageStream
     apiVersion: v1
     metadata:
-      name: ${NAME}${APPLICATION_SUFFIX}
+      name: ${NAME}
       labels:
         shared: "true"
       annotations:
@@ -82,7 +80,7 @@ objects:
   - kind: Service
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       annotations:
         description: Exposes and load balances the application pods
     spec:
@@ -91,11 +89,11 @@ objects:
           port: ${{PORT}}
           targetPort: ${{PORT}}
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       annotations:
         description: Defines how to deploy the application server
         template.alpha.openshift.io/wait-for-ready: "true"
@@ -114,16 +112,16 @@ objects:
               - app
             from:
               kind: ImageStreamTag
-              name: ${NAME}${APPLICATION_SUFFIX}:${TAG_NAME}
+              name: ${NAME}:${TAG_NAME}
         - type: ConfigChange
       replicas: ${{REPLICA_MIN}}
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       template:
         metadata:
-          name: ${NAME}${SUFFIX}
+          name: ${NAME}
           labels:
-            name: ${NAME}${SUFFIX}
+            name: ${NAME}
         spec:
           containers:
             - name: app
@@ -183,14 +181,14 @@ objects:
   - apiVersion: autoscaling/v1
     kind: HorizontalPodAutoscaler
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       labels:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
     spec:
       maxReplicas: ${{REPLICA_MAX}}
       minReplicas: ${{REPLICA_MIN}}
       scaleTargetRef:
         apiVersion: v1
         kind: DeploymentConfig
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       targetCPUUtilizationPercentage: 95

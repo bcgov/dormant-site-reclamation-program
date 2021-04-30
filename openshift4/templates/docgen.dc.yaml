@@ -36,19 +36,6 @@ parameters:
   - name: REPLICA_MAX
     value: "1"
 objects:
-  - kind: ImageStream
-    apiVersion: v1
-    metadata:
-      name: ${NAME}
-      creationTimestamp: null
-      labels:
-        shared: "true"
-      annotations:
-        description: Keeps track of changes in the application image
-    spec:
-      lookupPolicy:
-        local: false
-      tags: []
   - kind: Service
     apiVersion: v1
     metadata:
