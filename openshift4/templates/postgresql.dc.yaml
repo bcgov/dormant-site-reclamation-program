@@ -11,39 +11,16 @@ parameters:
     name: NAME
     required: true
     value: postgresql
-  - name: SUFFIX
-    required: true
-    value: postgresql
-  - description: The name of the OpenShift Service exposed for the database.
-    displayName: Database Service Name
-    name: DATABASE_SERVICE_NAME
-    required: true
-    value: postgresql
-  - description: The OpenShift ImageStream name.
-    displayName: IMAGE_STREAM_NAME
-    name: IMAGE_STREAM_NAME
-    value: postgresql
-  - description: The OpenShift Namespace where the ImageStream resides.
-    displayName: Namespace
-    name: IMAGE_STREAM_NAMESPACE
-    value: ""
-  - description: Version of PostgreSQL image to be used (9.2, 9.4, 9.5 or latest).
-    displayName: Version of PostgreSQL Image
-    name: IMAGE_STREAM_VERSION
-    required: true
-    value: "9.6"
   - description: Postgres secret name
     name: POSTGRES_SECRET_NAME
     value: template.dsrp-postgresql-secret
   - description: Name of the PostgreSQL database accessed.
     displayName: PostgreSQL Database Name
     name: POSTGRESQL_DATABASE
-    required: true
     value: dsrp
   - description: Volume space available for data, e.g. 512Mi, 2Gi.
     displayName: Volume Capacity
     name: VOLUME_CAPACITY
-    required: true
     value: 1Gi
   - name: CPU_LIMIT
     value: 500m
@@ -59,14 +36,14 @@ objects:
     metadata:
       annotations:
         as-copy-of: ${POSTGRES_SECRET_NAME}
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
     stringData: {}
   - apiVersion: v1
     kind: Service
     metadata:
       annotations:
         template.openshift.io/expose-uri: postgres://{.spec.clusterIP}:{.spec.ports[?(.name=="postgresql")].port}
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
     spec:
       ports:
         - name: postgresql
@@ -75,7 +52,7 @@ objects:
           protocol: TCP
           targetPort: 5432
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       sessionAffinity: None
       type: ClusterIP
     status:
@@ -83,34 +60,23 @@ objects:
   - apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
     spec:
       accessModes:
         - ReadWriteOnce
       resources:
         requests:
           storage: ${VOLUME_CAPACITY}
-  - kind: ImageStream
-    apiVersion: v1
-    metadata:
-      name: ${IMAGE_STREAM_NAME}
-      creationTimestamp: null
-      labels:
-        shared: "true"
-      annotations: {}
-    spec:
-      lookupPolicy:
-        local: false
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
       annotations:
         template.alpha.openshift.io/wait-for-ready: "true"
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
     spec:
       replicas: 1
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       strategy:
         type: Recreate
         maxSurge: 50%
@@ -118,7 +84,7 @@ objects:
       template:
         metadata:
           labels:
-            name: ${NAME}${SUFFIX}
+            name: ${NAME}
         spec:
           containers:
             - capabilities: {}
@@ -144,12 +110,12 @@ objects:
                       key: database-name
                       name: ${POSTGRES_SECRET_NAME}
                 - name: PGCRYPTO_EXTENSION
-                  value: Y
+                  value: "Y"
                 - name: POSTGIS_EXTENSION
-                  value: Y
+                  value: "Y"
                 - name: PGOPTIONS
                   value: -c maintenance_work_mem=128MB
-              image: ' '
+              image: " "
               imagePullPolicy: IfNotPresent
               livenessProbe:
                 initialDelaySeconds: 30
@@ -188,16 +154,16 @@ objects:
               terminationMessagePath: /dev/termination-log
               volumeMounts:
                 - mountPath: /var/lib/pgsql/data
-                  name: ${NAME}${SUFFIX}-data
+                  name: ${NAME}-data
                 - mountPath: /var/run/postgresql
-                  name: ${NAME}${SUFFIX}-run
+                  name: ${NAME}-run
           dnsPolicy: ClusterFirst
           restartPolicy: Always
           volumes:
-            - name: ${NAME}${SUFFIX}-data
+            - name: ${NAME}-data
               persistentVolumeClaim:
-                claimName: ${NAME}${SUFFIX}
-            - name: ${NAME}${SUFFIX}-run
+                claimName: ${NAME}
+            - name: ${NAME}-run
               emptyDir: {}
       triggers:
         - imageChangeParams:
@@ -206,8 +172,8 @@ objects:
               - postgresql
             from:
               kind: ImageStreamTag
-              name: ${IMAGE_STREAM_NAME}:${IMAGE_STREAM_VERSION}
-              namespace: ${IMAGE_STREAM_NAMESPACE}
+              name: postgresql:${TAG}
+              namespace: 269007-tools
             lastTriggeredImage: ""
           type: ImageChange
         - type: ConfigChange

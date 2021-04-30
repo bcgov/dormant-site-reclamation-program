@@ -8,14 +8,10 @@ parameters:
     displayName: Name
     description: A name for all objects
     required: true
-  - name: SUFFIX
-    displayName: Name Suffix
-    description: A suffix appended to all objects
-    required: true
-  - name: VERSION
+  - name: TAG
     required: true
   - name: LOG_PVC_SIZE
-    required: true
+    value: 1Gi
   - name: ROUTE
     value: /
   - name: PATH_PREFIX
@@ -26,8 +22,6 @@ parameters:
     value: tusd
   - name: API_SERVICE_URL
     value: api
-  - name: DSRP_DOMAIN
-    required: true
   - name: CPU_LIMIT
     value: 200m
   - name: MEMORY_LIMIT
@@ -44,30 +38,17 @@ objects:
   - apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
-      name: dsrp-access-logs${SUFFIX}
+      name: dsrp-access-logs
     spec:
       accessModes:
         - ReadWriteMany
       resources:
         requests:
           storage: ${LOG_PVC_SIZE}
-  - kind: ImageStream
-    apiVersion: v1
-    metadata:
-      name: ${NAME}
-      creationTimestamp: null
-      labels:
-        shared: "true"
-      annotations:
-        description: Keeps track of changes in the application image
-    spec:
-      lookupPolicy:
-        local: false
-      tags: []
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       creationTimestamp: null
       labels: null
       annotations:
@@ -85,20 +66,21 @@ objects:
               - nginx
             from:
               kind: ImageStreamTag
-              name: ${NAME}:${VERSION}
+              name: ${NAME}:${TAG}
+              namespace: 269007-tools
         - type: ConfigChange
       replicas: ${{REPLICA_MIN}}
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       template:
         metadata:
-          name: ${NAME}${SUFFIX}
+          name: ${NAME}
           labels:
-            name: ${NAME}${SUFFIX}
+            name: ${NAME}
         spec:
           containers:
             - name: nginx
-              image: ' '
+              image: " "
               env:
                 - name: PATH_PREFIX
                   value: ${PATH_PREFIX}
@@ -108,8 +90,6 @@ objects:
                   value: ${TUSD_SERVICE_URL}
                 - name: API_SERVICE_URL
                   value: ${API_SERVICE_URL}
-                - name: DSRP_DOMAIN
-                  value: ${DSRP_DOMAIN}
               resources:
                 limits:
                   cpu: ${CPU_LIMIT}
@@ -119,7 +99,7 @@ objects:
                   memory: ${MEMORY_REQUEST}
               volumeMounts:
                 - mountPath: /var/log/nginx
-                  name: ${NAME}${SUFFIX}-log
+                  name: ${NAME}-log
               ports:
                 - containerPort: 8080
               livenessProbe:
@@ -143,27 +123,27 @@ objects:
                 successThreshold: 1
                 timeoutSeconds: 1
           volumes:
-            - name: ${NAME}${SUFFIX}-log
+            - name: ${NAME}-log
               persistentVolumeClaim:
-                claimName: dsrp-access-logs${SUFFIX}
+                claimName: dsrp-access-logs
   - apiVersion: autoscaling/v1
     kind: HorizontalPodAutoscaler
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       labels:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
     spec:
       maxReplicas: ${{REPLICA_MAX}}
       minReplicas: ${{REPLICA_MIN}}
       scaleTargetRef:
         apiVersion: v1
         kind: DeploymentConfig
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       targetCPUUtilizationPercentage: 95
   - kind: Service
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       creationTimestamp: null
       labels: null
       annotations:
@@ -175,22 +155,21 @@ objects:
           port: 8080
           targetPort: 8080
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       type: ClusterIP
       sessionAffinity: None
   - kind: Route
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       creationTimestamp: null
       labels:
-        component: ${NAME}
+        service: ${NAME}
     spec:
-      host: ${DSRP_DOMAIN}
       path: ${ROUTE}
       to:
         kind: Service
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
         weight: 100
       port:
         targetPort: web
