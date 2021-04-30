@@ -25,7 +25,8 @@ jobs:
           # - config: nodejs
           # - config: postgresql
           # - config: python36
-          # - config: redis
+          - name: dsrp-redis
+            config: redis
           - name: dsrp-tusd
             config: tusd
     steps:
