@@ -15,13 +15,13 @@ parameters:
   - name: ROUTE
     value: /
   - name: PATH_PREFIX
-    value: /
+    value: ""
   - name: DSRP_SERVICE_URL
-    value: /
+    value: http://dsrp-frontend:3000
   - name: TUSD_SERVICE_URL
-    value: tusd
+    value: http://tusd:1080/files
   - name: API_SERVICE_URL
-    value: api
+    value: http://dsrp-python-backend:5000
   - name: DSRP_DOMAIN
     required: true
   - name: CPU_LIMIT
