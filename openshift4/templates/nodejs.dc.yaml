@@ -9,13 +9,7 @@ parameters:
     displayName: Name
     description: The name assigned to all of the frontend objects defined in this template.
     required: true
-    value: web-api
-  - name: SUFFIX
-    displayName: Name
-    description: The name assigned to all of the frontend objects defined in this template.
-    required: true
-  - name: APPLICATION_SUFFIX
-    required: true
+    value: web
   - name: TAG_NAME
     displayName: Name
     description: The name assigned to all of the frontend objects defined in this template.
@@ -53,7 +47,7 @@ parameters:
   - name: API_URL
     displayName: API Url
     description: URL for the backend API
-    value: http://localhost:3000
+    value: http://dsrp-python-backend:3000
   - name: MATOMO_URL
     displayName: Matomo Url
     description: URL for the tracking component
@@ -61,7 +55,7 @@ parameters:
   - name: TUSD_URL
     displayName: TUSD Url
     description: URL for TUSD service
-    value: http://localhost:5001
+    value: http://tusd:5001
   - name: FN_LAYER_URL
     value: https://delivery.apps.gov.bc.ca/ext/sgw/geo.allgov
   - name: CPU_LIMIT
@@ -133,7 +127,7 @@ objects:
         spec:
           containers:
             - name: app
-              image: ' '
+              image: " "
               env:
                 - name: API_URL
                   value: ${API_URL}
