@@ -20,6 +20,8 @@ parameters:
     value: 200m
   - name: MEMORY_REQUEST
     value: 512Mi
+  - name: IMAGE_NAMESPACE
+    value: 269007-tools
 objects:
   - kind: Service
     apiVersion: v1
@@ -56,7 +58,7 @@ objects:
             from:
               kind: ImageStreamTag
               name: ${NAME}:${TAG}
-              namespace: 269007-tools
+              namespace: ${IMAGE_NAMESPACE}
       replicas: 1
       selector:
         name: ${NAME}

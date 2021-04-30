@@ -68,15 +68,9 @@ parameters:
     value: "1"
   - name: REPLICA_MAX
     value: "1"
+  - name: IMAGE_NAMESPACE
+    value: 269007-tools
 objects:
-  - kind: ImageStream
-    apiVersion: v1
-    metadata:
-      name: ${NAME}
-      labels:
-        shared: "true"
-      annotations:
-        description: Keeps track of changes in the application image
   - kind: Service
     apiVersion: v1
     metadata:
@@ -113,6 +107,7 @@ objects:
             from:
               kind: ImageStreamTag
               name: ${NAME}:${TAG_NAME}
+              namespace: ${IMAGE_NAMESPACE}
         - type: ConfigChange
       replicas: ${{REPLICA_MIN}}
       selector:

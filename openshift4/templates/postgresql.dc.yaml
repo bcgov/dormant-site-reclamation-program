@@ -32,6 +32,8 @@ parameters:
     value: 200m
   - name: MEMORY_REQUEST
     value: 1.5Gi
+  - name: IMAGE_NAMESPACE
+    value: 269007-tools
 objects:
   - apiVersion: v1
     kind: Secret
@@ -175,7 +177,7 @@ objects:
             from:
               kind: ImageStreamTag
               name: ${NAME}:${TAG}
-              namespace: 269007-tools
+              namespace: ${IMAGE_NAMESPACE}
             lastTriggeredImage: ""
           type: ImageChange
         - type: ConfigChange

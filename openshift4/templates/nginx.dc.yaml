@@ -38,7 +38,6 @@ parameters:
     value: "1"
   - name: IMAGE_NAMESPACE
     value: 269007-tools
-
 objects:
   - apiVersion: v1
     kind: PersistentVolumeClaim
