@@ -36,6 +36,9 @@ parameters:
     value: "1"
   - name: REPLICA_MAX
     value: "1"
+  - name: IMAGE_NAMESPACE
+    value: 269007-tools
+
 objects:
   - apiVersion: v1
     kind: PersistentVolumeClaim
@@ -69,7 +72,7 @@ objects:
             from:
               kind: ImageStreamTag
               name: ${NAME}:${TAG}
-              namespace: 269007-tools
+              namespace: ${IMAGE_NAMESPACE}
         - type: ConfigChange
       replicas: ${{REPLICA_MIN}}
       selector:

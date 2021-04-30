@@ -70,32 +70,9 @@ parameters:
     value: email-addresses
   - name: OBJECT_STORE_SECRET_NAME
     value: object-store-credentials
+  - name: IMAGE_NAMESPACE
+    value: 269007-tools
 objects:
-  - kind: ImageStream
-    apiVersion: v1
-    metadata:
-      name: ${NAME}
-      creationTimestamp: null
-      labels:
-        shared: "true"
-      annotations:
-        description: Keeps track of changes in the application image
-    spec:
-      lookupPolicy:
-        local: false
-      tags: []
-  - kind: ImageStream
-    apiVersion: v1
-    metadata:
-      name: ${FLYWAY_NAME}
-      generation: 1
-      creationTimestamp: null
-      labels:
-        shared: "true"
-      annotations: {}
-    spec:
-      lookupPolicy:
-        local: false
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
@@ -128,7 +105,8 @@ objects:
               - app
             from:
               kind: ImageStreamTag
-              name: ${NAME}:${TAG}
+              name: ${NAME}:${VERSION}
+              namespace: ${IMAGE_NAMESPACE}
         - type: ImageChange
           imageChangeParams:
             automatic: true
@@ -136,7 +114,8 @@ objects:
               - flyway-migration
             from:
               kind: ImageStreamTag
-              name: ${FLYWAY_NAME}:${TAG}
+              name: ${FLYWAY_NAME}:${VERSION}
+              namespace: ${IMAGE_NAMESPACE}
         - type: ConfigChange
       replicas: ${{REPLICA_MIN}}
       test: false
