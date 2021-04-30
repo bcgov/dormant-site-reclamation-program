@@ -69,21 +69,21 @@ jobs:
           echo "Starting ordered build..."
       - name: nginx build
         run: |
-          oc start-build dsrp-nginx -n ${{secrets.NS_TOOLS}} --wait
+          oc start-build dsrp-nginx -n ${{secrets.NS_TOOLS}}
       - name: tusd build
         run: |
-          oc start-build dsrp-tusd -n ${{secrets.NS_TOOLS}} --wait
+          oc start-build dsrp-tusd -n ${{secrets.NS_TOOLS}}
       - name: dbbackup build
         run: |
-          oc start-build dsrp-dbbackup -n ${{secrets.NS_TOOLS}} --wait
+          oc start-build dsrp-dbbackup -n ${{secrets.NS_TOOLS}}
       - name: flyway build
         run: |
-          oc start-build dsrp-flyway-migration-client -n ${{secrets.NS_TOOLS}} --wait
+          oc start-build dsrp-flyway-migration-client -n ${{secrets.NS_TOOLS}}
       - name: backend build
         run: |
           oc start-build dsrp-backend-base -n ${{secrets.NS_TOOLS}} --wait
-          oc start-build dsrp-backend -n ${{secrets.NS_TOOLS}} --wait
+          oc start-build dsrp-backend -n ${{secrets.NS_TOOLS}}
       - name: frontend build
         run: |
           oc start-build dsrp-frontend-base -n ${{secrets.NS_TOOLS}} --wait
-          oc start-build dsrp-frontend -n ${{secrets.NS_TOOLS}} --wait
+          oc start-build dsrp-frontend -n ${{secrets.NS_TOOLS}}
