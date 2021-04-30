@@ -332,6 +332,7 @@ class Application(Base, AuditMixin):
 
         # Create detailed info for each well site's contracted work items
         result['formatted_well_sites'] = ""
+        result['has_estimated_cost_overrides'] = False
         for ws in self.well_sites_with_review_data:
             site_details = ws.get('details', {})
             wan = site_details.get('well_authorization_number')
@@ -349,6 +350,8 @@ class Application(Base, AuditMixin):
                 site += f' Planned Start Date: {wt_details["planned_start_date"]}\n'
                 site += f' Planned End Date: {wt_details["planned_end_date"]}\n'
                 result['formatted_well_sites'] += site
+                if wt_details.get('contracted_work_total_override') != None:
+                    result['has_estimated_cost_overrides'] = True
 
         return result
 
