@@ -1,0 +1,1 @@
+ALTER TABLE application ADD COLUMN IF NOT EXISTS estimated_cost_overrides jsonb;

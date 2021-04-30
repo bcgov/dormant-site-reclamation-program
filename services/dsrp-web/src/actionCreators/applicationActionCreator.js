@@ -320,3 +320,27 @@ export const updateContractedWorkPaymentAuditStatus = (applicationGuid, workId, 
       throw new Error(err);
     });
 };
+
+export const updateApplicationEstimatedCostOverride = (applicationGuid, workId, payload) => (
+  dispatch
+) => {
+  dispatch(request(reducerTypes.UPDATE_APPLICATION_ESTIMATED_COST_OVERRIDE));
+  return CustomAxios()
+    .put(
+      ENVIRONMENT.apiUrl + API.UPDATE_APPLICATION_ESTIMATED_COST_OVERRIDE(applicationGuid, workId),
+      payload,
+      createRequestHeader()
+    )
+    .then((response) => {
+      notification.success({
+        message: "Application estimated cost override updated successfully",
+        duration: 10,
+      });
+      dispatch(success(reducerTypes.UPDATE_APPLICATION_ESTIMATED_COST_OVERRIDE));
+      return response;
+    })
+    .catch((err) => {
+      dispatch(error(reducerTypes.UPDATE_APPLICATION_ESTIMATED_COST_OVERRIDE));
+      throw new Error(err);
+    });
+};

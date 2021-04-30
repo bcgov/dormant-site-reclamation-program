@@ -61,6 +61,7 @@ export class ContractedWorkPaymentModal extends Component {
     const finalExtraInitialValues =
       finalPaymentStatus !== "INFORMATION_REQUIRED"
         ? {
+            has_confirmed_subcontractors: true,
             final_submission_confirmation: true,
             final_dormancy_and_shutdown_regulations_confirmation: true,
           }

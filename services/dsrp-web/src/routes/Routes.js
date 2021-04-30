@@ -46,6 +46,11 @@ const Routes = () => (
     />
     <Route
       exact
+      path={routes.COMPANY_PAYMENT_INFO.route}
+      component={AuthenticationGuard()(routes.COMPANY_PAYMENT_INFO.component)}
+    />
+    <Route
+      exact
       path={routes.VIEW_APPLICATION.route}
       component={AuthenticationGuard()(routes.VIEW_APPLICATION.component)}
     />

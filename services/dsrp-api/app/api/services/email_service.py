@@ -91,12 +91,12 @@ class EmailService():
         payment_details_rows_html = ''
         for payment_detail in doc.content['payment_details']:
             amount = '{0:.2f}'.format(payment_detail["amount"])
-            payment_details_rows_html += f'<tr><td>{payment_detail["agreement_number"]}</td><td>{payment_detail["unique_id"]}</td><td style="text-align: right;">{amount}</td></tr>'
+            payment_details_rows_html += f'<tr><td>{payment_detail["agreement_number"]}</td><td>{payment_detail["unique_id"]}</td><td style="text-align: right;">{amount}</td><td>{payment_detail["well_authorization_number"]}</td></tr>'
 
-        payment_details_total_row_html = f'<tr><th>Total Amount</th><td></td><td style="text-align: right;">{total_amount}</td></tr>'
+        payment_details_total_row_html = f'<tr><th>Total Amount</th><td></td><td style="text-align: right;">{total_amount}</td><td></td></tr>'
 
         payment_details_table_html = f'''
-            <tr><th style="vertical-align: top;">Payment Details</th><td><table><th>Agreement Number</th><th>Unique ID</th><th>Amount</th></tr>
+            <tr><th style="vertical-align: top;">Payment Details</th><td><table><th>Agreement Number</th><th>Unique ID</th><th>Amount</th><th>Well Authorization Number</th></tr>
             {payment_details_rows_html}
             {payment_details_total_row_html}</table></td>'''
 
@@ -113,6 +113,7 @@ class EmailService():
                 <tr><td><br /></td></tr>
                 {payment_details_table_html}
                 <tr><td><br /></td></tr>
+                <tr><th>Memo</th><td>{doc.content["memo"]}</td></tr>
                 <tr><th>Qualified Receiver Names</th><td>{doc.content["qualified_receiver_name"]}</td></tr>
                 <tr><th>Expense Authority Name</th><td>{doc.content["expense_authority_name"]}</td></tr>
                 <tr><th>Date Payment Authorized</th><td>{doc.content["date_payment_authorized"]}</td></tr>

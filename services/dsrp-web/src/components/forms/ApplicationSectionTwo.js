@@ -21,8 +21,8 @@ import { renderConfig } from "@/components/common/config";
 import { required, requiredList, maxLength } from "@/utils/validate";
 import * as FORM from "@/constants/forms";
 import {
-  PROGRAM_START_DATE,
   PROGRAM_END_DATE,
+  NOMINATION_PHASE_EARLIEST_START_DATE,
   DATE_FORMAT,
   HELP_EMAIL,
   APPLICATION_PHASE_CODES,
@@ -96,7 +96,7 @@ const disabledStartDate = (date, wellSiteFormValues, contractWorkSection) => {
     sectionValues && sectionValues.planned_end_date ? moment(sectionValues.planned_end_date) : null;
   return (
     selectedDate &&
-    (selectedDate < moment(PROGRAM_START_DATE, DATE_FORMAT) ||
+    (selectedDate < moment(NOMINATION_PHASE_EARLIEST_START_DATE, DATE_FORMAT) ||
       selectedDate > moment(PROGRAM_END_DATE, DATE_FORMAT) ||
       (endDate && selectedDate > endDate))
   );
@@ -111,8 +111,8 @@ const validateStartDate = (date, sectionValues) => {
     sectionValues && sectionValues.planned_end_date ? moment(sectionValues.planned_end_date) : null;
 
   if (selectedDate) {
-    if (selectedDate < moment(PROGRAM_START_DATE, DATE_FORMAT)) {
-      return `Date cannot be before the program's start date: ${PROGRAM_START_DATE}`;
+    if (selectedDate < moment(NOMINATION_PHASE_EARLIEST_START_DATE, DATE_FORMAT)) {
+      return `Date cannot be before the date: ${NOMINATION_PHASE_EARLIEST_START_DATE}`;
     }
     if (selectedDate > moment(PROGRAM_END_DATE, DATE_FORMAT)) {
       return `Date cannot be after the program's end date: ${PROGRAM_END_DATE}`;
@@ -136,7 +136,7 @@ const disabledEndDate = (date, wellSiteFormValues, contractWorkSection) => {
       : null;
   return (
     selectedDate &&
-    (selectedDate < moment(PROGRAM_START_DATE, DATE_FORMAT) ||
+    (selectedDate < moment(NOMINATION_PHASE_EARLIEST_START_DATE, DATE_FORMAT) ||
       selectedDate > moment(PROGRAM_END_DATE, DATE_FORMAT) ||
       (startDate && selectedDate < startDate))
   );
@@ -152,8 +152,8 @@ const validateEndDate = (date, sectionValues) => {
       ? moment(sectionValues.planned_start_date)
       : null;
   if (selectedDate) {
-    if (selectedDate < moment(PROGRAM_START_DATE, DATE_FORMAT)) {
-      return `Date cannot be before the program's start date: ${PROGRAM_START_DATE}`;
+    if (selectedDate < moment(NOMINATION_PHASE_EARLIEST_START_DATE, DATE_FORMAT)) {
+      return `Date cannot be before the date: ${NOMINATION_PHASE_EARLIEST_START_DATE}`;
     }
     if (selectedDate > moment(PROGRAM_END_DATE, DATE_FORMAT)) {
       return `Date cannot be after the program's end date: ${PROGRAM_END_DATE}`;
@@ -332,27 +332,23 @@ const asyncValidateWell = async (values, field) => {
   }
   return validateNominatedWell({ well_auth_number: parseInt(get(values, field)) }).then(
     (response) => {
-      if (response.data.records.length === 0)
-        asyncValidateError(
-          field,
-          "No match found. Enter another number or use the Look up well link to find the correct Authorization Number."
-        );
+      if (response.data.records.length === 0) asyncValidateError(field, "No match found.");
       if (response.data.records.length === 1) {
         if (!values.contract_details.operator_id)
           asyncValidateError(
             field,
-            "Please select the valid Permit Holder above for this Authorization Number."
+            "Please select the valid permit holder above for this Well Authorization Number."
           );
         if (response.data.records[0].operator_id !== values.contract_details.operator_id)
           asyncValidateError(
             field,
-            "This Authorization Number does not belong to the selected Permit Holder. Enter another number or use the Look up well link to find the correct Authorization Number."
+            "This is not a nominated well site for this permit holder. If you do not have the Well Authorization Number, contact the permit holder."
           );
       }
       if (response.data.records.length > 1)
         asyncValidateError(
           field,
-          `Multiple results for this Authorization Number. Please contact us for further assistance at ${HELP_EMAIL}`
+          `Multiple results were found for this Well Authorization Number. Please contact us for further assistance at ${HELP_EMAIL}`
         );
     }
   );
@@ -628,7 +624,7 @@ const validateWellSites = (value, allValues, props) => {
 };
 
 const IndigenousSubcontractor = (props) => (
-  <Col key={props.index} xl={{ span: 12 }} lg={{ span: 24 }}>
+  <Col key={props.index} xxl={{ span: 18 }} xl={{ span: 24 }}>
     <Card
       className="subcontractor-card"
       title={`Subcontractor ${props.index + 1}`}
@@ -724,7 +720,7 @@ const renderIndigenousSubcontractor = (props) => (
       </Paragraph>
     )}
     {!isEmpty(props.fields) && (
-      <Row gutter={48} type="flex" justify="start">
+      <Row gutter={48} type="flex" justify="center">
         {props.fields.map((member, index) => (
           <IndigenousSubcontractor member={member} index={index} {...props} />
         ))}
@@ -834,19 +830,21 @@ const renderWells = (props) => {
                       label={
                         <>
                           Authorization Number
-                          {props.isEditable && (
-                            <>
-                              <ApplicationFormTooltip content="Only wells that are classfied as Dormant with the Oil and Gas Commission can be entered." />
-                              <a
-                                style={{ float: "right" }}
-                                href="https://reports.bcogc.ca/ogc/f?p=200:81:16594283755468"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                Look up well
-                              </a>
-                            </>
-                          )}
+                          {props.isEditable &&
+                            props.application?.application_phase_code ===
+                              APPLICATION_PHASE_CODES.INITIAL && (
+                              <>
+                                <ApplicationFormTooltip content="Only wells that are classfied as Dormant with the Oil and Gas Commission can be entered." />
+                                <a
+                                  style={{ float: "right" }}
+                                  href="https://reports.bcogc.ca/ogc/f?p=200:81:16594283755468"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  Look up well
+                                </a>
+                              </>
+                            )}
                         </>
                       }
                       {...wellAuthorizationNumberMask}
@@ -1090,7 +1088,7 @@ class ApplicationSectionTwo extends Component {
                 }
                 placeholder="Search for permit holder for whom this work will be performed"
                 component={PermitHolderSelect}
-                disabled={!this.props.isEditable}
+                disabled={!this.props.isEditable && !this.props.isAdminEditMode}
                 validate={[required]}
               />
             </Col>

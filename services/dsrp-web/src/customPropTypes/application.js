@@ -4,6 +4,7 @@ import { PropTypes, shape } from "prop-types";
 export const applicationSummary = shape({
   id: PropTypes.number,
   guid: PropTypes.string,
+  application_phase_code: PropTypes.string,
   application_status_code: PropTypes.string,
   submission_date: PropTypes.string,
   company_name: PropTypes.string,

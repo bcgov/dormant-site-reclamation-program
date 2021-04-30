@@ -85,6 +85,16 @@ export const currencyMask = createNumberMask({
   stringValue: false,
 });
 
+export const currencyAllowNegativeMask = createNumberMask({
+  prefix: "$",
+  suffix: "",
+  decimalPlaces: 2,
+  locale: "en-CA",
+  allowEmpty: false,
+  stringValue: false,
+  allowNegative: true,
+});
+
 export const metersMask = createNumberMask({
   prefix: "",
   suffix: " metres",
@@ -105,20 +115,21 @@ export const phoneMask = createTextMask({
   // onCompletePattern: value => {},
 });
 
-export const postalCodeMask = createTextMask({
-  pattern: "XXX XXX",
+export const postalCodeBritishColumbiaMask = createTextMask({
+  pattern: "VXX XXX",
   // placeholder: '_',
   maskDefinitions: {
     X: {
       regExp: /[A-Za-z0-9]/,
       transform: (char) => char.toUpperCase(),
     },
+    V: {
+      regExp: /[vV]/,
+      transform: (char) => char.toUpperCase(),
+    },
   },
   guide: false,
-  // stripMask: true,
   allowEmpty: true,
-  // onChange: value => {},
-  // onCompletePattern: value => {},
 });
 
 export const guidMask = createTextMask({

@@ -254,6 +254,10 @@ class ContractedWorkPaymentFinal(Resource, UserMixin):
             application.save()
             payment.final_report_application_document_guid = final_report.application_document_guid
 
+        # Subcontractor reporting information
+        subcontractors = final_payment_data.get('subcontractors') or None
+        payment.subcontractors = subcontractors
+
         payment.save()
         return '', response_code
 
@@ -321,7 +325,7 @@ class AdminContractedWorkPaymentStatusChange(Resource, UserMixin):
         note = payment_status_data.get(f'{prefix}_note', None)
         if contracted_work_payment_status_code == 'APPROVED':
             approved_amount = payment_status_data[f'{prefix}_approved_amount']
-            if not approved_amount:
+            if approved_amount is None:
                 raise BadRequest('The amount to approve must be provided!')
 
             if contracted_work_payment_code == 'INTERIM':

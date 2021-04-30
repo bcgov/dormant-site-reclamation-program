@@ -55,7 +55,12 @@ const defaultParams = {
 };
 
 export class ReviewApprovedContractedWorkInfo extends Component {
-  state = { isLoaded: false, params: defaultParams, selectedRows: [] };
+  state = {
+    isLoaded: false,
+    params: defaultParams,
+    selectedRows: [],
+    triggerSelectionReset: false,
+  };
 
   renderDataFromURL = (params) => {
     const parsedParams = queryString.parse(params);
@@ -106,7 +111,7 @@ export class ReviewApprovedContractedWorkInfo extends Component {
   };
 
   onSelectedRowsChanged = (selectedRows) => {
-    this.setState({ selectedRows });
+    this.setState({ selectedRows, triggerSelectionReset: false });
   };
 
   handleReviewContractedWorkPaymentModalSubmit = (currentActiveTab, payload) => {
@@ -146,7 +151,7 @@ export class ReviewApprovedContractedWorkInfo extends Component {
       this.props.closeModal();
       this.props
         .fetchApplicationApprovedContractedWork(this.state.params)
-        .then(() => this.setState({ isLoaded: true }));
+        .then(() => this.setState({ isLoaded: true, triggerSelectionReset: true }));
     });
   };
 
@@ -277,6 +282,7 @@ export class ReviewApprovedContractedWorkInfo extends Component {
               params={this.state.params}
               handleTableChange={this.handleTableChange}
               onSelectedRowsChanged={this.onSelectedRowsChanged}
+              triggerSelectionReset={this.state.triggerSelectionReset}
               onPageChange={this.onPageChange}
               isLoaded={this.state.isLoaded}
               contractedWorkPaymentStatusDropdownOptions={

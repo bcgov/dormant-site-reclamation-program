@@ -18,6 +18,7 @@ import {
   fetchApplications,
   updateApplicationReview,
   createApplicationStatus,
+  updateApplicationEstimatedCostOverride,
 } from "@/actionCreators/applicationActionCreator";
 import {
   getDropdownApplicationStatusOptions,
@@ -124,14 +125,21 @@ export class ReviewApplicationInfo extends Component {
     );
   };
 
-  handleApplicationStatusChange = (guid, payload) => {
-    return this.props.createApplicationStatus(guid, payload).then(() => {
+  handleApplicationStatusChange = (guid, payload) =>
+    this.props.createApplicationStatus(guid, payload).then(() => {
       this.props.fetchApplications(this.state.params);
       this.props.closeModal();
     });
-  };
 
-  openUpdateStatusModal = (item, record) => {
+  handleAdminOverrideEstimatedCost = (application_guid, work_id, payload) =>
+    this.props
+      .updateApplicationEstimatedCostOverride(application_guid, work_id, payload)
+      .then(() => {
+        this.props.fetchApplications(this.state.params);
+        this.props.closeModal();
+      });
+
+  openUpdateStatusModal = (item, record) =>
     this.props.openModal({
       props: {
         title: `Update Status of ${record.company_name} to: ${
@@ -143,7 +151,6 @@ export class ReviewApplicationInfo extends Component {
       },
       content: modalConfig.UPDATE_APPLICATION_STATUS,
     });
-  };
 
   handleContractedWorkStatusChange = (item, contractedWork) => {
     const reviewJson = contractedWork.review_json || { well_sites: [] };
@@ -240,6 +247,7 @@ export class ReviewApplicationInfo extends Component {
               contractedWorkStatusOptionsHash={this.props.contractedWorkStatusOptionsHash}
               handleApplicationStatusChange={this.openUpdateStatusModal}
               handleContractedWorkStatusChange={this.handleContractedWorkStatusChange}
+              handleAdminOverrideEstimatedCost={this.handleAdminOverrideEstimatedCost}
               permitHoldersHash={this.props.permitHoldersHash}
               fetchLiabilities={this.props.fetchLiabilities}
               fetchWells={this.props.fetchWells}
@@ -270,6 +278,7 @@ const mapDispatchToProps = (dispatch) =>
     {
       fetchApplications,
       updateApplicationReview,
+      updateApplicationEstimatedCostOverride,
       fetchLiabilities,
       fetchWells,
       fetchPermitHolders,

@@ -70,6 +70,11 @@ export class HeaderDropdown extends Component {
                 <Link to={routes.REVIEW_APPROVED_CONTRACTED_WORK.route}>Approved Work</Link>
               </Button>
             </Menu.Item>
+            <Menu.Item key="company-payment-info" className="custom-menu-item" onItemHover={() => {}}>
+            <Button className="header-dropdown-item-button">
+              <Link to={routes.COMPANY_PAYMENT_INFO.route}>Company Payment Info</Link>
+            </Button>
+          </Menu.Item>
           </React.Fragment>
         </AuthorizationWrapper>
         {this.props.isAuthenticated && (
@@ -96,6 +101,11 @@ export class HeaderDropdown extends Component {
           >
             <Button className="header-dropdown-item-button">
               <Link to={routes.REVIEW_APPROVED_CONTRACTED_WORK.route}>Approved Work</Link>
+            </Button>
+          </Menu.Item>
+          <Menu.Item key="company-payment-info" className="custom-menu-item" onItemHover={() => {}}>
+            <Button className="header-dropdown-item-button">
+              <Link to={routes.COMPANY_PAYMENT_INFO.route}>Company Payment Info</Link>
             </Button>
           </Menu.Item>
         </AuthorizationWrapper>

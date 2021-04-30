@@ -46,11 +46,11 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
 
         # Get filtering query params
         work_id = request.args.get('work_id', type=str)
+        application_phase_code = request.args.getlist('application_phase_code', type=str)
         well_authorization_number = request.args.get('well_authorization_number', type=str)
         contracted_work_type = request.args.getlist('contracted_work_type', type=str)
         interim_payment_status_code = request.args.getlist('interim_payment_status_code', type=str)
         final_payment_status_code = request.args.getlist('final_payment_status_code', type=str)
-        application_phase_code = request.args.getlist('application_phase_code', type=str)
 
         # Apply filtering
         records = all_approved_contracted_work
@@ -66,6 +66,10 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
                         break
                     continue
 
+                if application_phase_code and approved_work[
+                        'application_phase_code'] not in application_phase_code:
+                    continue
+
                 if well_authorization_number and approved_work[
                         'well_authorization_number'] != well_authorization_number:
                     continue
@@ -78,20 +82,12 @@ class ApplicationApprovedContractedWorkListResource(Resource, UserMixin):
 
                 interim_status = 'INFORMATION_REQUIRED' if not contracted_work_payment else contracted_work_payment[
                     'interim_payment_status_code']
+                if interim_payment_status_code and interim_status not in interim_payment_status_code:
+                    continue
+
                 final_status = 'INFORMATION_REQUIRED' if not contracted_work_payment else contracted_work_payment[
                     'final_payment_status_code']
-
-                if interim_payment_status_code and final_payment_status_code:
-                    if interim_status not in interim_payment_status_code and final_status not in final_payment_status_code:
-                        continue
-                else:
-                    if interim_payment_status_code and interim_status not in interim_payment_status_code:
-                        continue
-                    if final_payment_status_code and final_status not in final_payment_status_code:
-                        continue
-
-                if application_phase_code and approved_work[
-                        'application_phase_code'] not in application_phase_code:
+                if final_payment_status_code and final_status not in final_payment_status_code:
                     continue
 
                 records.append(approved_work)

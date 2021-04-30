@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { Field } from "redux-form";
-import { Row, Col, Form, Button, Typography, Popconfirm, Alert, Tooltip, Icon } from "antd";
+import { Field, FieldArray } from "redux-form";
+import { Row, Col, Form, Button, Typography, Popconfirm, Alert, Tooltip, Icon, Card } from "antd";
 import { capitalize, isEmpty } from "lodash";
 import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
@@ -18,7 +18,7 @@ import {
 import { currencyMask, formatTitleString, metersMask, formatMoney } from "@/utils/helpers";
 import { PDF } from "@/constants/fileTypes";
 import { EOC_TEMPLATE, FINAL_REPORT_TEMPLATE } from "@/constants/assets";
-import { DATE_FORMAT, HELP_EMAIL } from "@/constants/strings";
+import { DATE_FORMAT, HELP_EMAIL, APPLICATION_PHASE_CODES } from "@/constants/strings";
 import { downloadDocument } from "@/utils/actionlessNetworkCalls";
 import LinkButton from "@/components/common/LinkButton";
 import CustomPropTypes from "@/customPropTypes";
@@ -63,6 +63,104 @@ const booleanFormat = (value) =>
   value === true || value === false || value === "true" || value === "false"
     ? value.toString()
     : undefined;
+
+const Subcontractor = (props) => (
+  <Col key={props.index} span={24}>
+    <Card
+      className="subcontractor-card"
+      title={`Subcontractor ${props.index + 1}`}
+      extra={
+        !props.isViewOnly && (
+          <Popconfirm
+            title="Are you sure you want to remove this subcontractor?"
+            onConfirm={(e) => props.fields.remove(props.index)}
+            okText="Yes"
+            cancelText="No"
+            placement="topRight"
+            arrowPointAtCenter
+          >
+            <Button type="link" className="color-white" style={{ float: "right" }}>
+              <Icon type="delete" theme="filled" className="icon-lg" />
+            </Button>
+          </Popconfirm>
+        )
+      }
+    >
+      <Field
+        id="name"
+        name={`${props.member}.name`}
+        label="Subcontractor Name"
+        placeholder="Subcontractor Name"
+        disabled={props.isViewOnly}
+        component={renderConfig.FIELD}
+        validate={[required, maxLength(1024)]}
+      />
+      <Field
+        id="amount"
+        name={`${props.member}.amount`}
+        label={label(
+          "Contract Price",
+          "The Contract Price means the price payable to the Subcontractor for completion of its contractual obligations for this activity on this well site."
+        )}
+        placeholder="$0.00"
+        disabled={props.isViewOnly}
+        component={renderConfig.FIELD}
+        validate={[required, number]}
+        {...currencyMask}
+        onChange={(event, newValue) => {
+          if (newValue && newValue.toString().split(".")[0].length > 8) {
+            event.preventDefault();
+          }
+        }}
+      />
+    </Card>
+  </Col>
+);
+
+const renderSubcontractor = (props) => (
+  <>
+    <Title level={4} style={{ margin: 0 }}>
+      Subcontractors
+    </Title>
+    {!isEmpty(props.fields) && (
+      <Row gutter={48} type="flex" justify="center">
+        {props.fields.map((member, index) => (
+          <Subcontractor member={member} index={index} {...props} />
+        ))}
+      </Row>
+    )}
+    {!props.isViewOnly && (
+      <>
+        <br />
+        <Button type="primary" onClick={() => props.fields.push({})}>
+          Add Subcontractor
+        </Button>
+        <br />
+        <br />
+      </>
+    )}
+
+    <br />
+    <Field
+      id="has_confirmed_subcontractors"
+      name="has_confirmed_subcontractors"
+      label="If applicable, I have provided information for all subcontractor(s) involved in completing this work."
+      disabled={props.isViewOnly}
+      component={renderConfig.CHECKBOX}
+      validate={[required]}
+    />
+  </>
+);
+
+const renderSubcontractorReportingFields = (isViewOnly) => {
+  return (
+    <Row className="final-report-fields">
+      <Col>
+        <FieldArray name="subcontractors" component={renderSubcontractor} isViewOnly={isViewOnly} />
+      </Col>
+    </Row>
+  );
+};
 
 const renderReportingFields = (workType, isViewOnly) => {
   const workTypeName =
@@ -624,6 +722,7 @@ export class ContractedWorkPaymentForm extends Component {
                     )) || <></>
                   }
                 />
+
                 <Form.Item
                   label={
                     <>
@@ -639,6 +738,22 @@ export class ContractedWorkPaymentForm extends Component {
                     isViewOnly
                   )}
                 </Form.Item>
+
+                {this.props.applicationSummary.application_phase_code ===
+                  APPLICATION_PHASE_CODES.NOMINATION && (
+                  <Form.Item
+                    label={
+                      <>
+                        <div>Subcontractor Information</div>
+                        <div className="font-weight-normal">
+                          List all subcontractors that were involved in completing this work.
+                        </div>
+                      </>
+                    }
+                  >
+                    {renderSubcontractorReportingFields(isViewOnly)}
+                  </Form.Item>
+                )}
               </>
             )}
 

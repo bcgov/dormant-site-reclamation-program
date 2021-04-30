@@ -50,7 +50,7 @@ class ApplicationStatusForm extends Component {
           <Button
             type="primary"
             htmlType="submit"
-            style={{ marginLeft: "5px" }}
+            style={{ marginLeft: 5 }}
             loading={this.props.submitting}
           >
             Update and Send

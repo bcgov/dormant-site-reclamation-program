@@ -68,5 +68,6 @@ CONTRACTED_WORK_PAYMENT = api.model(
         'remediation_type_of_document_submitted': fields.String,
         'remediation_reclaimed_to_meet_cor_p1_requirements': fields.Boolean,
         'reclamation_reclaimed_to_meet_cor_p2_requirements': fields.Boolean,
-        'reclamation_surface_reclamation_criteria_met': fields.Boolean
+        'reclamation_surface_reclamation_criteria_met': fields.Boolean,
+        'subcontractors': fields.Raw
     })

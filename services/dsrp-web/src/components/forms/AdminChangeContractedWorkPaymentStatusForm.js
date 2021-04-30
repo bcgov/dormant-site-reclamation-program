@@ -11,13 +11,15 @@ import {
   Descriptions,
   Tabs,
   Table,
+  Tooltip,
+  Icon,
 } from "antd";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { lowerCase, isEmpty, isEqual, capitalize } from "lodash";
+import { lowerCase, isEmpty, isEqual, capitalize, sumBy } from "lodash";
 import PropTypes from "prop-types";
-import { formatMoney, currencyMask, formatDate } from "@/utils/helpers";
-import { required, maxLength } from "@/utils/validate";
+import { formatMoney, currencyAllowNegativeMask, formatDate } from "@/utils/helpers";
+import { required, number, maxLength } from "@/utils/validate";
 import { renderConfig } from "@/components/common/config";
 import {
   getContractedWorkTypeOptionsHash,
@@ -45,52 +47,6 @@ const propTypes = {
   closeModal: PropTypes.func.isRequired,
   submitting: PropTypes.bool.isRequired,
   wells: PropTypes.arrayOf(PropTypes.any).isRequired,
-};
-
-const validateFormApprovedAmount = (
-  paymentType,
-  interimApprovedAmount,
-  finalApprovedAmount,
-  interimEstSharedCost,
-  finalEstSharedCost,
-  interimHalfEocTotal,
-  finalHalfEocTotal
-) => (value) => {
-  interimApprovedAmount = paymentType === "INTERIM" ? value : interimApprovedAmount;
-  finalApprovedAmount = paymentType === "FINAL" ? value : finalApprovedAmount;
-  const interimLostFunds = interimEstSharedCost - interimApprovedAmount;
-  const finalEligibleAmount = finalEstSharedCost + interimLostFunds;
-  const finalLostFunds = finalEligibleAmount - finalApprovedAmount;
-
-  if (paymentType === "INTERIM") {
-    if (value > interimHalfEocTotal) {
-      return `Cannot overpay on half of supplied interim EoC total of ${formatMoney(
-        interimHalfEocTotal
-      )}`;
-    }
-
-    if (interimLostFunds.toFixed(2) < 0) {
-      return `Cannot overpay on agreed interim payment amount of ${formatMoney(
-        interimEstSharedCost
-      )}`;
-    }
-  }
-
-  if (paymentType === "FINAL") {
-    if (value > finalHalfEocTotal) {
-      return `Cannot overpay on half of supplied final EoC total of ${formatMoney(
-        finalHalfEocTotal
-      )}`;
-    }
-
-    if (finalLostFunds.toFixed(2) < 0) {
-      return `Cannot overpay on agreed final payment amount (plus carry-over from unused interim funds) of ${formatMoney(
-        finalEligibleAmount
-      )}`;
-    }
-  }
-
-  return undefined;
 };
 
 const validateStatus = (paymentType, contractedWorkPayment) => (value) => {
@@ -141,7 +97,7 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
   handleTabChange = (activeKey) => this.setState({ currentActiveTab: activeKey });
 
   render() {
-    const {contractedWork} = this.props;
+    const { contractedWork } = this.props;
     const contractedWorkPayment = contractedWork.contracted_work_payment || {};
     const contractedWorkPaymentExists = !isEmpty(contractedWorkPayment);
 
@@ -183,7 +139,11 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       {
         title: "Request Step",
         dataIndex: "payment_type",
-        render: (text) => <div><Text strong>{text}</Text></div>,
+        render: (text) => (
+          <div>
+            <Text strong>{text}</Text>
+          </div>
+        ),
       },
       {
         title: (
@@ -286,7 +246,6 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         ? parseFloat(this.props.formValues.final_approved_amount)
         : null;
 
-    const getTypeEstSharedCost = (percent, estSharedCost) => estSharedCost * (percent / 100);
     const getTypeMaxEligibleAmount = (eocTotalAmount) => eocTotalAmount * 0.5;
 
     // Initial payment calculations
@@ -352,7 +311,6 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
           this.state.selectedInterimStatus === "APPROVED",
         previous_amount: currentInterimApprovedAmount,
         payment_type: "Interim",
-        total_estimated_cost: contractedWork.contracted_work_total,
         payment_percent: `${Payment.interimPercent}%`,
         payment_estimated_shared_cost: interimEstSharedCost,
         eoc_document: contractedWork.interim_eoc_document,
@@ -432,6 +390,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
             contractedWork.has_final_prfs,
             "FINAL"
           )}
+        {interimActualCost === finalActualCost && renderIdenticalEocAmountAlert()}
+        {finalActualCost > interimActualCost && renderFinalGreaterThanInterimEocAmountAlert()}
         <Field
           id={`${lowerCase(paymentType)}_approved_amount`}
           name={`${lowerCase(paymentType)}_approved_amount`}
@@ -448,25 +408,10 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
             </>
           }
           component={renderConfig.FIELD}
-          validate={
-            paymentType === this.state.currentActiveTab
-              ? [
-                  required,
-                  validateFormApprovedAmount(
-                    paymentType,
-                    interimApprovedAmount,
-                    finalApprovedAmount,
-                    interimEstSharedCost,
-                    finalEstSharedCost,
-                    interimHalfEocTotal,
-                    finalHalfEocTotal
-                  ),
-                ]
-              : null
-          }
+          validate={paymentType === this.state.currentActiveTab ? [number] : null}
           inputStyle={{ textAlign: "right" }}
           placeholder="$0.00"
-          {...currencyMask}
+          {...currencyAllowNegativeMask}
           onChange={(event, newValue) => {
             if (newValue && newValue.toString().split(".")[0].length > 8) {
               event.preventDefault();
@@ -476,24 +421,40 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
       </>
     );
 
-    const renderAlreadyApprovedAlert = (previousApprovedAmount, hasPrfs, paymentType) => (
+    const renderWarningAlert = (message) => (
       <>
-        <Alert
-          showIcon
-          message={
-            <>
-              This work item's {lowerCase(paymentType)} amount has previously been approved at&nbsp;
-              <Text strong>{formatMoney(previousApprovedAmount)}</Text>
-              {hasPrfs && " and used to generate PRFs"}!
-            </>
-          }
-          type="warning"
-          style={{ display: "inline-block" }}
-        />
+        <Alert showIcon message={message} type="warning" style={{ display: "inline-block" }} />
         <br />
         <br />
       </>
     );
+
+    const renderAlreadyApprovedAlert = (previousApprovedAmount, hasPrfs, paymentType) =>
+      renderWarningAlert(
+        <>
+          This work item's {lowerCase(paymentType)} amount has previously been approved at&nbsp;
+          <Text strong>{formatMoney(previousApprovedAmount)}</Text>
+          {hasPrfs && " and used to generate PRFs"}!
+        </>
+      );
+
+    const renderIdenticalEocAmountAlert = () =>
+      renderWarningAlert(
+        <>
+          This work item's interim and final EoCs have the same total and may be identical
+          documents. The automatic calculations in this table may be incorrect and the approved
+          amount should be calculated manually.
+        </>
+      );
+
+    const renderFinalGreaterThanInterimEocAmountAlert = () =>
+      renderWarningAlert(
+        <>
+          This work item's final EoC total is greater than its interim EoC total. The automatic
+          calculations in this table may be incorrect and the approved amount should be calculated
+          manually.
+        </>
+      );
 
     const renderStatusFields = (paymentType, paymentStatus) => {
       switch (paymentStatus) {
@@ -514,6 +475,8 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
         ...values,
       })
     );
+
+    const isEstimatedCostOverridden = contractedWork.contracted_work_total_override !== null;
 
     return (
       <Form layout="vertical" onSubmit={handleSubmit}>
@@ -543,7 +506,20 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                 {formatDate(contractedWork.planned_end_date)}
               </Descriptions.Item>
               <Descriptions.Item label="Total Estimated Cost">
-                {formatMoney(contractedWork.contracted_work_total)}
+                {isEstimatedCostOverridden && (
+                  <Tooltip
+                    title={`Estimated cost overridden by admin. Original value: ${formatMoney(
+                      contractedWork.contracted_work_total
+                    )}`}
+                  >
+                    <Icon type="info-circle" className="color-warning" style={{ marginRight: 4 }} />
+                  </Tooltip>
+                )}
+                {formatMoney(
+                  isEstimatedCostOverridden
+                    ? contractedWork.contracted_work_total_override
+                    : contractedWork.contracted_work_total
+                )}
               </Descriptions.Item>
             </Descriptions>
           </Col>
@@ -664,16 +640,11 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                 </Descriptions>
                 <Title level={4}>Update Final Status</Title>
                 {(contractedWorkPaymentExists &&
-                  isEmpty(contractedWorkPayment.final_payment_status) && (
+                  isEmpty(contractedWorkPayment.final_payment_status) &&
+                  renderWarningAlert(
                     <>
-                      <Alert
-                        showIcon
-                        message="Cannot update the final payment status until it has been submitted by the applicant."
-                        type="warning"
-                        style={{ display: "inline-block" }}
-                      />
-                      <br />
-                      <br />
+                      Cannot update the final payment status until it has been submitted by the
+                      applicant.
                     </>
                   )) || [
                   renderStatusSelectField("FINAL"),
@@ -807,6 +778,32 @@ export class AdminChangeContractedWorkPaymentStatusForm extends Component {
                           Strings.DASH}
                       </Descriptions.Item>
                     </>
+                  )}
+                </Descriptions>
+                <Descriptions
+                  title="Subcontractor Information"
+                  column={2}
+                  layout="horizontal"
+                  colon={false}
+                >
+                  {contractedWorkPaymentExists && !isEmpty(contractedWorkPayment.subcontractors) && (
+                    <Descriptions.Item label="Total Contract Price" span={2}>
+                      {formatMoney(sumBy(contractedWorkPayment.subcontractors, "amount"))}
+                    </Descriptions.Item>
+                  )}
+                  {(contractedWorkPaymentExists &&
+                    !isEmpty(contractedWorkPayment.subcontractors) &&
+                    contractedWorkPayment.subcontractors.map((subcontractor) => (
+                      <>
+                        <Descriptions.Item label="Subcontractor Name">
+                          {subcontractor.name}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Contract Price">
+                          {formatMoney(subcontractor.amount)}
+                        </Descriptions.Item>
+                      </>
+                    ))) || (
+                    <Descriptions.Item>No subcontractor information provided.</Descriptions.Item>
                   )}
                 </Descriptions>
               </TabPane>

@@ -1,0 +1,1 @@
+UPDATE company_payment_info SET company_address = '616-1231 PACIFIC BLVD, VANCOUVER, V6Z0E2' WHERE company_name = 'NORTH SHORE ENVIRONMENTAL CONSULTANTS INC.';

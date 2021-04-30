@@ -4,11 +4,14 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { isArray, isEmpty } from "lodash";
+import { bindActionCreators } from "redux";
+import { openModal, closeModal } from "@/actions/modalActions";
 import { Table, Icon, Tooltip, Pagination, Menu, Dropdown, Input, Button } from "antd";
 import { formatDateTime, formatDate, formatMoney, formatDateTimeFine } from "@/utils/helpers";
 import { getFilterListApplicationStatusOptions } from "@/selectors/staticContentSelectors";
 import * as Strings from "@/constants/strings";
 import * as route from "@/constants/routes";
+import { modalConfig } from "@/components/modalContent/config";
 
 const propTypes = {
   applications: PropTypes.any.isRequired,
@@ -16,8 +19,11 @@ const propTypes = {
   applicationPhaseDropdownOptions: PropTypes.objectOf(PropTypes.any).isRequired,
   applicationPhaseOptionsHash: PropTypes.objectOf(PropTypes.any).isRequired,
   handleTableChange: PropTypes.func.isRequired,
+  handleAdminOverrideEstimatedCost: PropTypes.func.isRequired,
   isLoaded: PropTypes.bool.isRequired,
   params: PropTypes.objectOf(PropTypes.any).isRequired,
+  openModal: PropTypes.func.isRequired,
+  closeModal: PropTypes.func.isRequired,
 };
 
 const defaultProps = {};
@@ -79,10 +85,22 @@ export class ApplicationTable extends Component {
     );
   };
 
-  getSum = (guid, field) =>
-    this.props.applicationsWellSitesContractedWork
-      .filter(({ application_guid }) => application_guid === guid)
-      .reduce((sum, type) => +sum + +type[field], 0);
+  getTotalEstCost = (contractedWorks) =>
+    contractedWorks.reduce(
+      (sum, cw) =>
+        sum + parseFloat(cw.est_cost_override !== null ? cw.est_cost_override : cw.est_cost),
+      0
+    );
+
+  getTotalEstSharedCost = (contractedWorks) =>
+    contractedWorks.reduce(
+      (sum, cw) =>
+        sum +
+        parseFloat(
+          cw.est_shared_cost_override !== null ? cw.est_shared_cost_override : cw.est_shared_cost
+        ),
+      0
+    );
 
   getNoWorkTypes = (guid) =>
     this.props.applicationsWellSitesContractedWork.filter(
@@ -91,6 +109,9 @@ export class ApplicationTable extends Component {
 
   transformRowData = (applications) => {
     const data = applications.map((application) => {
+      const contractedWorks = this.props.applicationsWellSitesContractedWork.filter(
+        (cw) => cw.application_guid === application.guid
+      );
       return {
         ...application,
         key: application.guid,
@@ -99,8 +120,8 @@ export class ApplicationTable extends Component {
         permit_holder: this.props.permitHoldersHash[application.json.contract_details.operator_id],
         wells: application.json.well_sites ? application.json.well_sites.length : 0,
         work_types: this.getNoWorkTypes(application.guid),
-        est_cost: this.getSum(application.guid, "est_cost"),
-        est_shared_cost: this.getSum(application.guid, "est_shared_cost"),
+        est_cost: this.getTotalEstCost(contractedWorks),
+        est_shared_cost: this.getTotalEstSharedCost(contractedWorks),
         payment: null,
       };
     });
@@ -196,6 +217,18 @@ export class ApplicationTable extends Component {
       />
     );
   };
+
+  openAdminOverrideEstimatedCostModal = (contractedWork) =>
+    this.props.openModal({
+      width: 1000,
+      props: {
+        title: `Override Estimated Cost for Work ID ${contractedWork.work_id}`,
+        contractedWork: contractedWork,
+        initialValues: { est_cost_override: contractedWork.est_cost_override },
+        onSubmit: this.props.handleAdminOverrideEstimatedCost,
+      },
+      content: modalConfig.ADMIN_OVERRIDE_ESTIMATED_COST,
+    });
 
   render() {
     const phaseOptionsFilter = this.props.applicationPhaseDropdownOptions.map((p) => {
@@ -403,12 +436,29 @@ export class ApplicationTable extends Component {
         render: (text, record) => {
           // NOTE: LMR is returned formatted, e.g., $50,000, so remove non-numeric characters.
           const lmr = record.LMR && parseFloat(record.LMR.replace(/[^0-9.-]+/g, ""));
+
+          const isOverridden = record.est_cost_override !== null;
+          const estCost = isOverridden ? record.est_cost_override : text;
+
           return (
             <div style={{ textAlign: "right" }} title="Est. Cost">
+              {isOverridden &&
+                toolTip(
+                  `Estimated cost overridden by admin. Original value: ${formatMoney(text)}`,
+                  "color-warning table-record-tooltip"
+                )}
               {(lmr || lmr === 0) &&
-                Number(text) * 1.15 >= lmr &&
+                Number(estCost) * 1.15 >= lmr &&
                 toolTip("Est. Cost exceeds LMR by 15% or more", "color-error table-record-tooltip")}
-              {formatMoney(text) || Strings.DASH}
+              {formatMoney(estCost) || Strings.DASH}
+              <Button
+                type="link"
+                onClick={() => this.openAdminOverrideEstimatedCostModal(record)}
+                size="small"
+                title="Override Estimated Cost"
+              >
+                <Icon type="edit" style={{ marginLeft: 4 }} />
+              </Button>
             </div>
           );
         },
@@ -417,11 +467,15 @@ export class ApplicationTable extends Component {
         title: "Est. Shared Cost",
         key: "est_shared_cost",
         dataIndex: "est_shared_cost",
-        render: (text) => (
-          <div style={{ textAlign: "right" }} title="Est. Shared Cost">
-            {formatMoney(text) || Strings.DASH}
-          </div>
-        ),
+        render: (text, record) => {
+          const isOverridden = record.est_cost_override !== null;
+          const estSharedCost = isOverridden ? record.est_shared_cost_override : text;
+          return (
+            <div style={{ textAlign: "right" }} title="Est. Shared Cost">
+              {formatMoney(estSharedCost) || Strings.DASH}
+            </div>
+          );
+        },
       },
       {
         title: "LMR Value",
@@ -530,4 +584,13 @@ const mapStateToProps = (state) => ({
   filterListApplicationStatusOptions: getFilterListApplicationStatusOptions(state),
 });
 
-export default connect(mapStateToProps)(ApplicationTable);
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      openModal,
+      closeModal,
+    },
+    dispatch
+  );
+
+export default connect(mapStateToProps, mapDispatchToProps)(ApplicationTable);
