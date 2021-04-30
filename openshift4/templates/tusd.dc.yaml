@@ -64,6 +64,7 @@ objects:
           name: ${NAME}
           labels:
             name: ${NAME}
+            service: tusd
         spec:
           containers:
             - name: ${NAME}
