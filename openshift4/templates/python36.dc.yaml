@@ -8,10 +8,6 @@ parameters:
     displayName: Name
     description: A name for all objects
     required: true
-  - name: SUFFIX
-    displayName: Name Suffix
-    description: A suffix appended to all objects
-    required: true
   - name: FLYWAY_NAME
     displayName: Name
     description: A name for flyway objects
@@ -19,7 +15,7 @@ parameters:
   - name: DB_CONFIG_NAME
     displayName: Database Config Name
     description: Configuration name for the database
-    required: true
+    value: dsrp-postgresql
   - name: VERSION
     required: true
   - name: JWT_OIDC_WELL_KNOWN_CONFIG
@@ -27,8 +23,6 @@ parameters:
     required: true
   - name: JWT_OIDC_AUDIENCE
     displayName: Keycloak clientId
-    required: true
-  - name: APPLICATION_DOMAIN
     required: true
   - description: This is a host url for DSRP, used in generating emails etc.
     name: URL
@@ -68,8 +62,6 @@ parameters:
     description: The name or Id of the environment.  This variable is used by the webhook integration to identify the environment in which the backup notifications originate.
     required: false
     value: dev
-  - name: API_URL
-    required: true
   - name: DOCUMENT_GENERATOR_URL
     value: ${DOCUMENT_GENERATOR_URL}
   - name: SMTP_CREDENTIALS
@@ -107,7 +99,7 @@ objects:
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       creationTimestamp: null
       labels: null
       annotations:
@@ -149,13 +141,13 @@ objects:
       replicas: ${{REPLICA_MIN}}
       test: false
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       template:
         metadata:
-          name: ${NAME}${SUFFIX}
+          name: ${NAME}
           creationTimestamp: null
           labels:
-            name: ${NAME}${SUFFIX}
+            name: ${NAME}
         spec:
           containers:
             - name: app
@@ -355,16 +347,16 @@ objects:
   - apiVersion: autoscaling/v1
     kind: HorizontalPodAutoscaler
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       labels:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
     spec:
       maxReplicas: ${{REPLICA_MAX}}
       minReplicas: ${{REPLICA_MIN}}
       scaleTargetRef:
         apiVersion: v1
         kind: DeploymentConfig
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       targetCPUUtilizationPercentage: 95
   - kind: Service
     apiVersion: v1
@@ -381,6 +373,6 @@ objects:
           port: 5000
           targetPort: 5000
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       type: ClusterIP
       sessionAffinity: None
