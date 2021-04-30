@@ -1,0 +1,43 @@
+name: Promote to test
+
+on:
+  workflow_run:
+    workflows:
+      - Deploy to dev
+    types:
+      - completed
+
+env:
+  ORIG_TAG: dev
+  PROMOTE_TAG: test
+  SOURCE_REPOSITORY_URL: https://github.com/bcgov/dormant-site-reclamation-program.git
+  SOURCE_REPOSITORY_REF: refs/pull/42/head
+
+jobs:
+  promote-to-test:
+    name: promote-to-test
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          # - name: dsrp-dbbackup
+          # - name: dsrp-docgen
+          - name: dsrp-postgres
+          - name: dsrp-nginx
+          # - name: dsrp-tusd
+    steps:
+      - name: Install oc
+        uses: redhat-actions/oc-installer@v1
+        with:
+          version: "4.6"
+      - name: oc login
+        run: |
+          oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
+      - name: Promote dev to test
+        run: |
+          oc -n ${{secrets.NS_TOOLS}} tag \
+          ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.ORIG_TAG }} \
+          ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.PROMOTE_TAG }}
+      - name: Rollout to test
+        run: |
+          oc -n ${{ secrets.NS_TEST }} rollout latest ${{ matrix.name }}
