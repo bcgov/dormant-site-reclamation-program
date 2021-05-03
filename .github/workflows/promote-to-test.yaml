@@ -25,8 +25,8 @@ jobs:
           - name: dsrp-frontend
           - name: dsrp-python-backend
           - name: dsrp-flyway-migration-client
-          # - name: dsrp-tusd
-          # - name: dsrp-docgen
+          - name: dsrp-tusd
+          - name: dsrp-docgen
           # - name: dsrp-dbbackup
 
     steps:

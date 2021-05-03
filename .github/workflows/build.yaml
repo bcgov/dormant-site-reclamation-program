@@ -93,6 +93,31 @@ jobs:
           oc -n ${{secrets.NS_TOOLS}} tag \
           ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.INITIAL_TAG }} \
           ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.TAG }}
-      # - name: Rollout to dev namespace
-      #   run: |
-      #     oc -n ${{ secrets.NS_DEV }} rollout latest ${{ matrix.name }}
+
+  rollout:
+    name: rollout
+    needs: build
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          - name: dsrp-nginx
+          - name: dsrp-postgres
+          - name: dsrp-frontend
+          - name: dsrp-python-backend
+          - name: dsrp-flyway-migration-client
+          - name: dsrp-tusd
+          - name: dsrp-docgen
+          - name: dsrp-dbbackup
+    steps:
+      - name: Install oc
+        uses: redhat-actions/oc-installer@v1
+        with:
+          version: "4.6"
+      - name: oc login
+        run: |
+          oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
+      - name: rollout to dev
+        if: matrix.name != 'dsrp-flyway-migration-client'
+        run: |
+          oc -n ${{ secrets.NS_DEV }} rollout latest ${{ matrix.name }}
