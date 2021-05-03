@@ -3,9 +3,10 @@ name: Build
 on:
   push:
     branches:
-      - develop
+      - main
 
 env:
+  INITIAL_TAG: latest
   TAG: dev
   SOURCE_REPOSITORY_URL: https://github.com/bcgov/dormant-site-reclamation-program.git
   SOURCE_REPOSITORY_REF: refs/pull/42/head
@@ -17,21 +18,21 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: dsrp-nginx
-            config: nginx
-          - name: dsrp-postgres
-            config: postgresql
-          - name: dsrp-frontend
-            config: nodejs
-          - name: dsrp-python-backend
-            config: python36
-          - name: dsrp-flyway-migration-client
-            config: flyway
-          - name: dsrp-tusd
-            config: tusd
-          - name: dsrp-docgen
-            config: docgen
-          - name: dsrp-database-backup
+          # - name: dsrp-nginx
+          #   config: nginx
+          # - name: dsrp-postgres
+          #   config: postgresql
+          # - name: dsrp-frontend
+          #   config: nodejs
+          # - name: dsrp-python-backend
+          #   config: python36
+          # - name: dsrp-flyway-migration-client
+          #   config: flyway
+          # - name: dsrp-tusd
+          #   config: tusd
+          # - name: dsrp-docgen
+          #   config: docgen
+          - name: dsrp-dbbackup
             config: dbbackup
     steps:
       - name: Check out the repo
@@ -49,7 +50,7 @@ jobs:
           -p NAME=${{matrix.name}} \
           -p SOURCE_REPOSITORY_URL=${{env.SOURCE_REPOSITORY_URL}} \
           -p SOURCE_REPOSITORY_REF=${{env.SOURCE_REPOSITORY_REF}} \
-          -p TAG=${{env.TAG}} \
+          -p TAG=${{env.INITIAL_TAG}} \
           | oc -n ${{secrets.NS_TOOLS}} apply -f -
 
   build:
@@ -81,9 +82,17 @@ jobs:
           oc start-build dsrp-flyway-migration-client -n ${{secrets.NS_TOOLS}}
       - name: backend build
         run: |
-          oc start-build dsrp-backend-base -n ${{secrets.NS_TOOLS}} --wait
-          oc start-build dsrp-backend -n ${{secrets.NS_TOOLS}}
+          oc start-build dsrp-python-backend-base -n ${{secrets.NS_TOOLS}} --wait
+          oc start-build dsrp-python-backend -n ${{secrets.NS_TOOLS}}
       - name: frontend build
         run: |
           oc start-build dsrp-frontend-base -n ${{secrets.NS_TOOLS}} --wait
           oc start-build dsrp-frontend -n ${{secrets.NS_TOOLS}}
+      - name: add dev tag
+        run: |
+          oc -n ${{secrets.NS_TOOLS}} tag \
+          ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.INITIAL_TAG }} \
+          ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.TAG }}
+      - name: Rollout to dev namespace
+        run: |
+          oc -n ${{ secrets.NS_DEV }} rollout latest ${{ matrix.name }}

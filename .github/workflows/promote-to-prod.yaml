@@ -1,30 +1,37 @@
-name: Promote to test
+name: Promote to prod
 
 on:
-  workflow_run:
-    workflows:
-      - Build
-    types:
-      - completed
+  workflow_dispatch:
 
 env:
-  ORIG_TAG: dev
-  PROMOTE_TAG: test
+  ORIG_TAG: test
+  PROMOTE_TAG: prod
   SOURCE_REPOSITORY_URL: https://github.com/bcgov/dormant-site-reclamation-program.git
   SOURCE_REPOSITORY_REF: refs/pull/42/head
 
 jobs:
-  promote-to-test:
-    name: promote-to-test
+  initiate:
+    name: initiate
+    runs-on: ubuntu-20.04
+    environment:
+      name: production
+    steps:
+      - name: Waiting for approval
+        run: |
+          echo "Starting prod promotion..."
+
+  promote-to-prod:
+    needs: initiate
+    name: promote-to-prod
     runs-on: ubuntu-20.04
     strategy:
       matrix:
         include:
-          - name: dsrp-dbbackup
-          # - name: dsrp-docgen
+          - name: dsrp-database-backup
+          - name: dsrp-docgen
           - name: dsrp-postgres
           - name: dsrp-nginx
-          # - name: dsrp-tusd
+          - name: dsrp-tusd
     steps:
       - name: Install oc
         uses: redhat-actions/oc-installer@v1
@@ -33,11 +40,11 @@ jobs:
       - name: oc login
         run: |
           oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
-      - name: Promote dev to test
+      - name: Promote test to prod
         run: |
           oc -n ${{secrets.NS_TOOLS}} tag \
           ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.ORIG_TAG }} \
           ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.PROMOTE_TAG }}
-      - name: Rollout to test
+      - name: Rollout to prod
         run: |
-          oc -n ${{ secrets.NS_TEST }} rollout latest ${{ matrix.name }}
+          oc -n ${{ secrets.NS_PROD }} rollout latest ${{ matrix.name }}

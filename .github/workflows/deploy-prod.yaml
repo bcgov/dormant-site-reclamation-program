@@ -1,21 +1,28 @@
-name: Deploy to dev
+name: Deploy to prod
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - openshift4/templates/**.dc.yaml
+  workflow_dispatch:
 
 env:
-  TAG: dev
+  TAG: prod
   SOURCE_REPOSITORY_URL: https://github.com/bcgov/dormant-site-reclamation-program.git
   SOURCE_REPOSITORY_REF: refs/pull/42/head
-  APP_DOMAIN: dsrp-nginx-269007-dev.apps.silver.devops.gov.bc.ca
+  APP_DOMAIN: dsrp-nginx-269007-prod.apps.silver.devops.gov.bc.ca
 
 jobs:
-  update-dev-deployments:
-    name: update-dev-deployments
+  initiate:
+    name: initiate
+    runs-on: ubuntu-20.04
+    environment:
+      name: production
+    steps:
+      - name: Waiting for approval
+        run: |
+          echo "Starting prod deploy..."
+
+  update-prod-deployments:
+    needs: initiate
+    name: update-prod-deployments
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -46,18 +53,18 @@ jobs:
       - name: oc login
         run: |
           oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
-      - name: Update infrastructure in dev
+      - name: Update infrastructure in prod
         run: |
-          oc -n ${{secrets.NS_DEV}} process -f openshift4/templates/${{ matrix.config }}.dc.yaml --ignore-unknown-parameters=true \
+          oc -n ${{secrets.NS_PROD}} process -f openshift4/templates/${{ matrix.config }}.dc.yaml --ignore-unknown-parameters=true \
           -p NAME=${{matrix.name}} \
           -p TAG=${{env.TAG}} \
           -p JWT_OIDC_WELL_KNOWN_CONFIG=https://test.oidc.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration \
-          -p JWT_OIDC_AUDIENCE=dormant-application-dev \
-          -p URL=https://dsrp-nginx-269007-dev.apps.silver.devops.gov.bc.ca \
-          -p ENVIRONMENT_NAME=dev \
+          -p JWT_OIDC_AUDIENCE=dormant-application-prod \
+          -p URL=https://dsrp-nginx-269007-prod.apps.silver.devops.gov.bc.ca \
+          -p ENVIRONMENT_NAME=prod \
           -p DSRP_DOMAIN=${{env.APP_DOMAIN}} \
           -p KEYCLOAK_URL=https://test.oidc.gov.bc.ca/auth \
-          -p KEYCLOAK_CLIENT_ID=dormant-application-dev \
+          -p KEYCLOAK_CLIENT_ID=dormant-application-prod \
           -p SITEMINDER_URL=https://logontest7.gov.bc.ca \
           -p MATOMO_URL=https://matomo-269007-test.pathfinder.gov.bc.ca/ \
-          | oc -n ${{secrets.NS_DEV}} apply -f -
+          | oc -n ${{secrets.NS_PROD}} apply -f -
