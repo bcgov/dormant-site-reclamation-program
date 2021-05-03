@@ -7,7 +7,7 @@ parameters:
   - name: NAME
     displayName: Name
     description: A name used for all objects
-    required: true
+    value: docgen
   - name: TAG
     value: dev
 objects:

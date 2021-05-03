@@ -16,3 +16,4 @@ __pycache__
 venv*
 .act.secrets
 act/*
+openshift4/templates/dockerhub.yaml

@@ -7,7 +7,7 @@ parameters:
   - name: NAME
     displayName: Name
     description: A name used for all objects
-    required: true
+    value: postgresql
   - name: TAG
     value: dev
 objects:

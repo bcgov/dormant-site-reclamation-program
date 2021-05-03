@@ -7,7 +7,7 @@ parameters:
   - name: NAME
     displayName: Name
     description: Build config name
-    value: dsrp-nginx
+    value: nginx
   - name: TAG
     value: dev
   - name: SOURCE_CONTEXT_DIR

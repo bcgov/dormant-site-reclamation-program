@@ -7,7 +7,7 @@ parameters:
   - name: NAME
     displayName: Name
     description: A name used for all objects
-    required: true
+    value: flyway
   - name: TAG
     displayName: Name
     description: The output/built ImageStream tag names
