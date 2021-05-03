@@ -38,7 +38,7 @@ jobs:
           oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
       - name: Template build config
         run: |
-          oc -n ${{secrets.NS_TOOLS}} process -f openshift4/templates/${{ matrix.config }}.bc.yaml --ignore-unknown-parameters=true \
+          oc -n ${{secrets.NS_TOOLS}} process -f openshift4/templates/${{ matrix.name }}.bc.yaml --ignore-unknown-parameters=true \
           -p SOURCE_REPOSITORY_URL=${{env.SOURCE_REPOSITORY_URL}} \
           -p SOURCE_REPOSITORY_REF=${{env.SOURCE_REPOSITORY_REF}} \
           -p TAG=${{env.INITIAL_TAG}} \
@@ -109,6 +109,6 @@ jobs:
         run: |
           oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
       - name: rollout to dev
-        if: matrix.name != 'dsrp-flyway-migration-client'
+        if: matrix.name != 'flyway'
         run: |
           oc -n ${{ secrets.NS_DEV }} rollout latest ${{ matrix.name }}
