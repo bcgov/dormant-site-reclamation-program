@@ -45,7 +45,7 @@ parameters:
   - name: API_URL
     displayName: API Url
     description: URL for the backend API
-    value: http://dsrp-python-backend:3000
+    value: http://python-backend:3000
   - name: MATOMO_URL
     displayName: Matomo Url
     description: URL for the tracking component

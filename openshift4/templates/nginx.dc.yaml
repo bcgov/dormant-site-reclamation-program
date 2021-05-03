@@ -17,11 +17,11 @@ parameters:
   - name: PATH_PREFIX
     value: ""
   - name: DSRP_SERVICE_URL
-    value: http://dsrp-frontend:3000
+    value: http://frontend:3000
   - name: TUSD_SERVICE_URL
     value: http://tusd:1080/files
   - name: API_SERVICE_URL
-    value: http://dsrp-python-backend:5000
+    value: http://python-backend:5000
   - name: DSRP_DOMAIN
     required: true
   - name: CPU_LIMIT
