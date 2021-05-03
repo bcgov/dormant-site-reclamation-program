@@ -20,22 +20,14 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: dsrp-frontend
-            config: nodejs
-          - name: dsrp-python-backend
-            config: python36
-          - name: dsrp-dbbackup
-            config: dbbackup
-          - name: dsrp-docgen
-            config: docgen
-          - name: dsrp-postgres
-            config: postgresql
-          - name: dsrp-nginx
-            config: nginx
-          - name: dsrp-redis
-            config: redis
-          - name: dsrp-tusd
-            config: tusd
+          - config: nodejs
+          - config: python36
+          - config: dbbackup
+          - config: docgen
+          - config: postgresql
+          - config: nginx
+          - config: redis
+          - config: tusd
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -49,7 +41,6 @@ jobs:
       - name: Update infrastructure in dev
         run: |
           oc -n ${{secrets.NS_DEV}} process -f openshift4/templates/${{ matrix.config }}.dc.yaml --ignore-unknown-parameters=true \
-          -p NAME=${{matrix.name}} \
           -p TAG=${{env.TAG}} \
           -p JWT_OIDC_WELL_KNOWN_CONFIG=https://test.oidc.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration \
           -p JWT_OIDC_AUDIENCE=dormant-application-dev \
