@@ -20,11 +20,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: dsrp-dbbackup
-          # - name: dsrp-docgen
-          - name: dsrp-postgres
           - name: dsrp-nginx
+          - name: dsrp-postgres
+          - name: dsrp-frontend
+          - name: dsrp-python-backend
+          - name: dsrp-flyway-migration-client
           # - name: dsrp-tusd
+          # - name: dsrp-docgen
+          - name: dsrp-dbbackup
+
     steps:
       - name: Install oc
         uses: redhat-actions/oc-installer@v1

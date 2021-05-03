@@ -18,20 +18,20 @@ jobs:
     strategy:
       matrix:
         include:
-          # - name: dsrp-nginx
-          #   config: nginx
-          # - name: dsrp-postgres
-          #   config: postgresql
-          # - name: dsrp-frontend
-          #   config: nodejs
-          # - name: dsrp-python-backend
-          #   config: python36
-          # - name: dsrp-flyway-migration-client
-          #   config: flyway
-          # - name: dsrp-tusd
-          #   config: tusd
-          # - name: dsrp-docgen
-          #   config: docgen
+          - name: dsrp-nginx
+            config: nginx
+          - name: dsrp-postgres
+            config: postgresql
+          - name: dsrp-frontend
+            config: nodejs
+          - name: dsrp-python-backend
+            config: python36
+          - name: dsrp-flyway-migration-client
+            config: flyway
+          - name: dsrp-tusd
+            config: tusd
+          - name: dsrp-docgen
+            config: docgen
           - name: dsrp-dbbackup
             config: dbbackup
     steps:
