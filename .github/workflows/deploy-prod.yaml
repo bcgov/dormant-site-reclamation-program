@@ -35,7 +35,7 @@ jobs:
             config: dbbackup
           - name: dsrp-docgen
             config: docgen
-          - name: dsrp-postgresql
+          - name: dsrp-postgres
             config: postgresql
           - name: dsrp-nginx
             config: nginx

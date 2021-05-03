@@ -93,6 +93,6 @@ jobs:
           oc -n ${{secrets.NS_TOOLS}} tag \
           ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.INITIAL_TAG }} \
           ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.TAG }}
-      - name: Rollout to dev namespace
-        run: |
-          oc -n ${{ secrets.NS_DEV }} rollout latest ${{ matrix.name }}
+      # - name: Rollout to dev namespace
+      #   run: |
+      #     oc -n ${{ secrets.NS_DEV }} rollout latest ${{ matrix.name }}

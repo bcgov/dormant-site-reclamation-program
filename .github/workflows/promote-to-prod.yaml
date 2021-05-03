@@ -34,7 +34,7 @@ jobs:
           - name: dsrp-flyway-migration-client
           # - name: dsrp-tusd
           # - name: dsrp-docgen
-          - name: dsrp-dbbackup
+          # - name: dsrp-dbbackup
 
     steps:
       - name: Install oc
@@ -49,6 +49,6 @@ jobs:
           oc -n ${{secrets.NS_TOOLS}} tag \
           ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.ORIG_TAG }} \
           ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.PROMOTE_TAG }}
-      - name: Rollout to prod
-        run: |
-          oc -n ${{ secrets.NS_PROD }} rollout latest ${{ matrix.name }}
+      # - name: Rollout to prod
+      #   run: |
+      #     oc -n ${{ secrets.NS_PROD }} rollout latest ${{ matrix.name }}
