@@ -7,7 +7,7 @@ parameters:
   - name: NAME
     displayName: Name
     description: A name for all objects
-    required: true
+    value: backend
   - name: FLYWAY_NAME
     displayName: Name
     description: A name for flyway objects
