@@ -82,7 +82,10 @@ objects:
       runPolicy: SerialLatestOnly
       source:
         contextDir: openshift/docker-images/python-36
-        type: Binary
+        type: Git
+        git:
+          uri: ${SOURCE_REPOSITORY_URL}
+          ref: ${SOURCE_REPOSITORY_REF}
       strategy:
         type: Docker
         dockerStrategy:
