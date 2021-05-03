@@ -1,7 +1,7 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: dsrp-python-dc
+  name: dsrp-backend-dc
   creationTimestamp: null
 parameters:
   - name: NAME

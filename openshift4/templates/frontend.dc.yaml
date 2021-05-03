@@ -1,7 +1,7 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: dsrp-nodejs-dc
+  name: dsrp-frontend-dc
   annotations:
     template.openshift.io/bindable: "false"
 parameters:

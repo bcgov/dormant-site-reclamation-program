@@ -1,41 +1,50 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: dsrp-python-bc
+  name: dsrp-frontend-bc
   creationTimestamp: null
 parameters:
   - name: NAME
     displayName: Name
     description: A suffix appended to all objects
-    value: python-backend
+    name: frontend
   - name: TAG
     value: dev
+  - name: BASE_PATH
+    required: false
+    value: /
+  - name: DOCKER_IMAGE_DIRECTORY
+    value: openshift/docker-images/nodejs-10
   - name: SOURCE_CONTEXT_DIR
-    value: services/dsrp-api
+    value: services/dsrp-web
   - name: SOURCE_REPOSITORY_URL
     required: true
   - name: SOURCE_REPOSITORY_REF
     required: false
     value: master
+  - name: NODE_ENV
+    displayName: Node Environment
+    description: Environment for running node
+    value: production
 objects:
   - kind: ImageStream
     apiVersion: v1
     metadata:
-      name: rhscl-python-36-rhel7
+      name: redhat-ubi-node-10
       creationTimestamp: null
       annotations:
-        description: Python Base Image
+        description: Nodejs Base Image
       labels:
         shared: "true"
     spec:
       lookupPolicy:
         local: false
       tags:
-        - name: 3.6.1-36
+        - name: latest
           annotations: null
           from:
             kind: DockerImage
-            name: registry.access.redhat.com/rhscl/python-36-rhel7:1-36
+            name: registry.access.redhat.com/ubi8/nodejs-10:latest
           importPolicy: {}
           referencePolicy:
             type: Local
@@ -45,7 +54,7 @@ objects:
       name: ${NAME}-base
       creationTimestamp: null
       annotations:
-        description: Python Runtime Image
+        description: Nodejs Runtime Image
       labels:
         shared: "true"
     spec:
@@ -56,8 +65,7 @@ objects:
     metadata:
       name: ${NAME}
       creationTimestamp: null
-      labels:
-        shared: "true"
+      labels: {}
       annotations:
         description: Keeps track of changes in the application image
     spec:
@@ -73,15 +81,13 @@ objects:
       annotations: {}
     spec:
       completionDeadlineSeconds: 1440
-      successfulBuildsHistoryLimit: 3
-      failedBuildsHistoryLimit: 3
       triggers:
         - type: ImageChange
           imageChange: {}
         - type: ConfigChange
       runPolicy: SerialLatestOnly
       source:
-        contextDir: openshift/docker-images/python-36
+        contextDir: ${DOCKER_IMAGE_DIRECTORY}
         type: Git
         git:
           uri: ${SOURCE_REPOSITORY_URL}
@@ -91,19 +97,18 @@ objects:
         dockerStrategy:
           from:
             kind: ImageStreamTag
-            name: rhscl-python-36-rhel7:3.6.1-36
-          env: []
+            name: redhat-ubi-node-10:latest
       output:
         to:
           kind: ImageStreamTag
           name: ${NAME}-base:${TAG}
       resources:
         limits:
-          cpu: 500m
-          memory: 2Gi
+          cpu: "2"
+          memory: 4Gi
         requests:
-          cpu: 250m
-          memory: 1Gi
+          cpu: "1"
+          memory: 2Gi
       postCommit: {}
       nodeSelector: null
   - kind: BuildConfig
@@ -111,10 +116,11 @@ objects:
     metadata:
       name: ${NAME}
       creationTimestamp: null
+      labels: {}
       annotations:
         description: Defines how to build the application
     spec:
-      completionDeadlineSeconds: 600
+      completionDeadlineSeconds: 900
       triggers:
         - type: ImageChange
         - type: ConfigChange
@@ -132,8 +138,12 @@ objects:
             kind: ImageStreamTag
             name: ${NAME}-base:${TAG}
           env:
-            - name: BUILD_LOGLEVEL
-              value: "2"
+            - name: BASE_PATH
+              value: ${BASE_PATH}
+            - name: ASSET_PATH
+              value: ${BASE_PATH}/
+            - name: SKIP_NPM_INSTALL
+              value: "true"
       output:
         to:
           kind: ImageStreamTag
