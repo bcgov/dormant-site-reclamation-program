@@ -49,6 +49,7 @@ jobs:
           oc -n ${{secrets.NS_TOOLS}} tag \
           ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.ORIG_TAG }} \
           ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.PROMOTE_TAG }}
-      # - name: Rollout to prod
-      #   run: |
-      #     oc -n ${{ secrets.NS_PROD }} rollout latest ${{ matrix.name }}
+      - name: Rollout to prod
+        if: matrix.name != 'dsrp-flyway-migration-client'
+        run: |
+          oc -n ${{ secrets.NS_PROD }} rollout latest ${{ matrix.name }}
