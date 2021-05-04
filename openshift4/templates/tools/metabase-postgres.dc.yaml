@@ -25,7 +25,7 @@ parameters:
   - name: METABASE_PVC_SIZE
     required: true
   - name: METABASE_SECRET_NAME
-    value: template.dsrp-metabase-key
+    value: template.metabase-key
 objects:
   - apiVersion: v1
     kind: Service

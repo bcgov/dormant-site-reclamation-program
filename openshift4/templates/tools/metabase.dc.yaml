@@ -30,7 +30,7 @@ parameters:
   - name: TAG
     required: true
   - name: METABASE_SECRET_NAME
-    value: template.dsrp-metabase-key
+    value: template.metabase-key
   - name: IMAGE_NAMESPACE
     value: 269007-tools
 objects:
