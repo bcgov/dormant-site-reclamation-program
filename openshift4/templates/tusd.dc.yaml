@@ -112,8 +112,6 @@ objects:
                       key: bucket-id
                 - name: AWS_REGION
                   value: eu-west-1
-                - name: CHANGE_ID
-                  value: ${CHANGE_ID}
                 - name: S3_BUCKET_ID
                   valueFrom:
                     secretKeyRef:
