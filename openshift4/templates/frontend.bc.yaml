@@ -7,7 +7,7 @@ parameters:
   - name: NAME
     displayName: Name
     description: A suffix appended to all objects
-    name: frontend
+    value: frontend
   - name: TAG
     value: dev
   - name: BASE_PATH
