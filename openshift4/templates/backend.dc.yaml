@@ -11,11 +11,11 @@ parameters:
   - name: FLYWAY_NAME
     displayName: Name
     description: A name for flyway objects
-    value: dsrp-flyway
+    value: flyway
   - name: DB_CONFIG_NAME
     displayName: Database Config Name
     description: Configuration name for the database
-    value: dsrp-postgresql
+    value: postgresql
   - name: TAG
     required: true
   - name: JWT_OIDC_WELL_KNOWN_CONFIG
@@ -32,15 +32,15 @@ parameters:
     value: /
   - name: DSRP_METABASE_SECRET
     required: false
-    value: template.dsrp-metabase-key
+    value: template.metabase-key
   - name: ONE_TIME_PASSWORD_TIMEOUT_SECONDS
     required: false
     value: "14400"
   - name: REDIS_CONFIG_NAME
     required: false
-    value: template.dsrp-redis-secret
+    value: template.redis-secret
   - name: CACHE_REDIS_HOST
-    value: dsrp-redis
+    value: redis
   - name: CPU_LIMIT
     value: 200m
   - name: MEMORY_LIMIT

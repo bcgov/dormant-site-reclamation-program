@@ -4,5 +4,5 @@ data:
     {{BASE64_WEBHOOK_URL}}
 kind: Secret
 metadata:
-  name: template.dsrp-rocket-chat-integrations
+  name: template.rocket-chat-integrations
 type: Opaque

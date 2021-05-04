@@ -9,5 +9,5 @@ data:
   postgres-password: ~
 kind: Secret
 metadata:
-  name: template.dsrp-metabase-key
+  name: template.metabase-key
 type: Opaque
