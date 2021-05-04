@@ -7,7 +7,7 @@ parameters:
   - name: NAME
     displayName: Name
     description: A suffix appended to all objects
-    value: python-backend
+    value: backend
   - name: TAG
     value: dev
   - name: SOURCE_CONTEXT_DIR
