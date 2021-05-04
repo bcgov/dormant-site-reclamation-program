@@ -61,29 +61,24 @@ jobs:
           echo "Starting ordered build..."
       - name: nginx build
         run: |
-          oc start-build dsrp-nginx -n ${{secrets.NS_TOOLS}}
+          oc start-build nginx -n ${{secrets.NS_TOOLS}}
       - name: tusd build
         run: |
-          oc start-build dsrp-tusd -n ${{secrets.NS_TOOLS}}
+          oc start-build tusd -n ${{secrets.NS_TOOLS}}
       - name: dbbackup build
         run: |
-          oc start-build dsrp-dbbackup -n ${{secrets.NS_TOOLS}}
+          oc start-build dbbackup -n ${{secrets.NS_TOOLS}}
       - name: flyway build
         run: |
-          oc start-build dsrp-flyway-migration-client -n ${{secrets.NS_TOOLS}}
+          oc start-build flyway -n ${{secrets.NS_TOOLS}}
       - name: backend build
         run: |
-          oc start-build dsrp-python-backend-base -n ${{secrets.NS_TOOLS}} --wait
-          oc start-build dsrp-python-backend -n ${{secrets.NS_TOOLS}}
+          oc start-build backend-base -n ${{secrets.NS_TOOLS}} --wait
+          oc start-build backend -n ${{secrets.NS_TOOLS}}
       - name: frontend build
         run: |
-          oc start-build dsrp-frontend-base -n ${{secrets.NS_TOOLS}} --wait
-          oc start-build dsrp-frontend -n ${{secrets.NS_TOOLS}}
-      - name: add dev tag
-        run: |
-          oc -n ${{secrets.NS_TOOLS}} tag \
-          ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.INITIAL_TAG }} \
-          ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.TAG }}
+          oc start-build frontend-base -n ${{secrets.NS_TOOLS}} --wait
+          oc start-build frontend -n ${{secrets.NS_TOOLS}}
 
   rollout:
     name: rollout
@@ -92,14 +87,14 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: dsrp-nginx
-          - name: dsrp-postgres
-          - name: dsrp-frontend
-          - name: dsrp-python-backend
-          - name: dsrp-flyway-migration-client
-          - name: dsrp-tusd
-          - name: dsrp-docgen
-          - name: dsrp-dbbackup
+          - name: nginx
+          - name: postgresql
+          - name: frontend
+          - name: backend
+          - name: flyway
+          - name: tusd
+          - name: docgen
+          - name: dbbackup
     steps:
       - name: Install oc
         uses: redhat-actions/oc-installer@v1
@@ -108,6 +103,11 @@ jobs:
       - name: oc login
         run: |
           oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
+      - name: add dev tag
+        run: |
+          oc -n ${{secrets.NS_TOOLS}} tag \
+          ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.INITIAL_TAG }} \
+          ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.TAG }}
       - name: rollout to dev
         if: matrix.name != 'flyway'
         run: |
