@@ -106,7 +106,7 @@ objects:
               - app
             from:
               kind: ImageStreamTag
-              name: ${NAME}:${TAG_NAME}
+              name: ${NAME}:${TAG}
               namespace: ${IMAGE_NAMESPACE}
         - type: ConfigChange
       replicas: ${{REPLICA_MIN}}
