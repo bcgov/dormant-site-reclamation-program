@@ -8,7 +8,6 @@ parameters:
   - name: NAME
     displayName: Name
     description: The name assigned to all of the docgen objects defined in this template.
-    required: true
     value: docgen
   - name: TAG
     required: true

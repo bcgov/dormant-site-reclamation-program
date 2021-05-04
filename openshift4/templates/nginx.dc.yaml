@@ -7,7 +7,7 @@ parameters:
   - name: NAME
     displayName: Name
     description: A name for all objects
-    required: true
+    value: nginx
   - name: TAG
     required: true
   - name: LOG_PVC_SIZE
@@ -21,7 +21,7 @@ parameters:
   - name: TUSD_SERVICE_URL
     value: http://tusd:1080/files
   - name: API_SERVICE_URL
-    value: http://python-backend:5000
+    value: http://backend:5000
   - name: DSRP_DOMAIN
     required: true
   - name: CPU_LIMIT

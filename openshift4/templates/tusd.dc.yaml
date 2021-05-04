@@ -6,7 +6,6 @@ parameters:
   - description: The name of the tusd deployment.
     displayName: Deployment Name
     name: NAME
-    required: true
     value: tusd
   - name: TAG
     required: true

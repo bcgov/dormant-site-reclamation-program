@@ -9,7 +9,6 @@ parameters:
   - description: The name of the OpenShift Service exposed for the database.
     displayName: Database Service Name
     name: NAME
-    required: true
     value: postgresql
   - name: TAG
     required: true
