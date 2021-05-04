@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - services/**
+      - migrations/**
+      - openshift4/templates/**.bc.yaml
 
 env:
   INITIAL_TAG: latest
@@ -44,10 +48,15 @@ jobs:
           -p TAG=${{env.INITIAL_TAG}} \
           | oc -n ${{secrets.NS_TOOLS}} apply -f -
 
-  build:
-    name: build
+  build-bases:
+    name: build-bases
     needs: template
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          - name: frontend
+          - name: backend
     steps:
       - name: Install oc
         uses: redhat-actions/oc-installer@v1
@@ -56,33 +65,40 @@ jobs:
       - name: oc login
         run: |
           oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
-      - name: starting
+      - name: build
         run: |
-          echo "Starting ordered build..."
-      - name: nginx build
-        run: |
-          oc start-build nginx -n ${{secrets.NS_TOOLS}}
-      - name: tusd build
-        run: |
-          oc start-build tusd -n ${{secrets.NS_TOOLS}}
-      - name: dbbackup build
-        run: |
-          oc start-build dbbackup -n ${{secrets.NS_TOOLS}}
-      - name: flyway build
-        run: |
-          oc start-build flyway -n ${{secrets.NS_TOOLS}}
-      - name: backend build
-        run: |
-          oc start-build backend-base -n ${{secrets.NS_TOOLS}} --wait
-          oc start-build backend -n ${{secrets.NS_TOOLS}}
-      - name: frontend build
-        run: |
-          oc start-build frontend-base -n ${{secrets.NS_TOOLS}} --wait
-          oc start-build frontend -n ${{secrets.NS_TOOLS}}
+          oc start-build ${{ matrix.name }}-base -n ${{secrets.NS_TOOLS}} --wait
 
-  rollout:
-    name: rollout
-    needs: build
+  build:
+    name: build
+    needs: build-bases
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          - name: nginx
+          - name: postgresql
+          - name: frontend
+          - name: backend
+          - name: flyway
+          - name: tusd
+          - name: docgen
+          - name: dbbackup
+    steps:
+      - name: Install oc
+        uses: redhat-actions/oc-installer@v1
+        with:
+          version: "4.6"
+      - name: oc login
+        run: |
+          oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
+      - name: build
+        run: |
+          oc start-build ${{ matrix.name }} -n ${{secrets.NS_TOOLS}} --wait
+
+  tag:
+    name: tag
+    # needs: build
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -108,7 +124,31 @@ jobs:
           oc -n ${{secrets.NS_TOOLS}} tag \
           ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.INITIAL_TAG }} \
           ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.TAG }}
-      - name: rollout to dev
-        if: matrix.name != 'flyway'
+
+  rollout:
+    name: rollout
+    # needs: tag
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: nginx
+          - name: postgresql
+          - name: frontend
+          - name: backend
+          - name: tusd
+          - name: docgen
+          - name: dbbackup
+    steps:
+      - name: Install oc
+        uses: redhat-actions/oc-installer@v1
+        with:
+          version: "4.6"
+      - name: oc login
         run: |
-          oc -n ${{ secrets.NS_DEV }} rollout latest ${{ matrix.name }}
+          oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
+      - name: rollout to dev
+        run: |
+          oc -n ${{ secrets.NS_DEV }} rollout latest ${{ matrix.name }} || true
+        continue-on-error: true

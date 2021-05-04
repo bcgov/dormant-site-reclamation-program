@@ -20,8 +20,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - config: nodejs
-          - config: python36
+          - config: frontend
+          - config: backend
           - config: dbbackup
           - config: docgen
           - config: postgresql
