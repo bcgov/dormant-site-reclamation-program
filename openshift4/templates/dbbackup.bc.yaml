@@ -8,7 +8,7 @@ parameters:
     displayName: Name
     description: The name assigned to all of the resources defined in this template.
     required: true
-    value: backup
+    value: dbbackup
   - name: TAG
     displayName: Output Image Tag
     description: The tag given to the built image.

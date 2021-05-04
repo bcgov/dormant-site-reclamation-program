@@ -7,7 +7,7 @@ parameters:
     displayName: Name
     description: The name assigned to all of the resources defined in this template.
     required: true
-    value: backup
+    value: dbbackup
   - name: TAG
     required: true
   - name: DATABASE_SERVICE_NAME
