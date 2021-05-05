@@ -22,6 +22,8 @@ parameters:
     value: 10Gi
   - name: METABASE_SECRET_NAME
     value: template.metabase-key
+  - name: IMAGE_NAMESPACE
+    value: 269007-tools
 objects:
   - apiVersion: v1
     kind: Service
@@ -53,17 +55,6 @@ objects:
       resources:
         requests:
           storage: ${METABASE_PVC_SIZE}
-  - kind: ImageStream
-    apiVersion: v1
-    metadata:
-      name: ${NAME}
-      creationTimestamp: null
-      labels:
-        shared: "true"
-    spec:
-      lookupPolicy:
-        local: false
-      tags: []
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
@@ -83,6 +74,7 @@ objects:
             from:
               kind: ImageStreamTag
               name: ${NAME}:${TAG}
+              namespace: ${IMAGE_NAMESPACE}
       replicas: 1
       selector:
         name: ${NAME}

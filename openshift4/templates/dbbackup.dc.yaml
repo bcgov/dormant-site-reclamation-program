@@ -144,7 +144,7 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       name: ${WEBHOOK_SECRET_NAME}
-                      key: dsrp-chatops-db-backup
+                      key: chatops-db-backup
                 - name: DATABASE_SERVER_TIMEOUT
                   value: "600"
                 - name: ENVIRONMENT_NAME
