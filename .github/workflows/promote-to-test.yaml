@@ -58,6 +58,7 @@ jobs:
           - name: tusd
           - name: docgen
           - name: dbbackup
+          - name: redis
     steps:
       - name: Install oc
         uses: redhat-actions/oc-installer@v1

@@ -145,6 +145,7 @@ jobs:
           - name: tusd
           - name: docgen
           - name: dbbackup
+          - name: redis
           - name: metabase
           - name: metabase-postgres
     steps:
