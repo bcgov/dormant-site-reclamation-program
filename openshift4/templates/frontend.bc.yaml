@@ -12,7 +12,7 @@ parameters:
     value: dev
   - name: BASE_PATH
     required: false
-    value: /
+    value: ""
   - name: DOCKER_IMAGE_DIRECTORY
     value: openshift/docker-images/nodejs-10
   - name: SOURCE_CONTEXT_DIR
@@ -141,7 +141,7 @@ objects:
             - name: BASE_PATH
               value: ${BASE_PATH}
             - name: ASSET_PATH
-              value: ${BASE_PATH}
+              value: ${BASE_PATH}/
             - name: SKIP_NPM_INSTALL
               value: "true"
       output:
