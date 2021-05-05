@@ -25,7 +25,7 @@ parameters:
     displayName: Verification Volume Size
     description: The size of the persistent volume , e.g. 512Mi, 1Gi, 2Gi.
     value: 1Gi
--   name: BACKUP_VOLUME_SIZE
+  - name: BACKUP_VOLUME_SIZE
     displayName: Backup Volume Size
     description: The size of the persistent volume , e.g. 512Mi, 1Gi, 2Gi.
     value: 5Gi
