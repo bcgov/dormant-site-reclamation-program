@@ -38,7 +38,7 @@ parameters:
     value: "14400"
   - name: REDIS_CONFIG_NAME
     required: false
-    value: template.redis-secret
+    value: redis
   - name: CACHE_REDIS_HOST
     value: redis
   - name: CPU_LIMIT
