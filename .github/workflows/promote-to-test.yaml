@@ -26,6 +26,8 @@ jobs:
           - name: tusd
           - name: docgen
           - name: dbbackup
+          - name: metabase
+          - name: metabase-postgres
 
     steps:
       - name: Install oc

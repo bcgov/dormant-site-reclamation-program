@@ -33,6 +33,8 @@ jobs:
           - name: tusd
           - name: docgen
           - name: dbbackup
+          - name: metabase
+          - name: metabase-postgres
     steps:
       - name: Install oc
         uses: redhat-actions/oc-installer@v1
