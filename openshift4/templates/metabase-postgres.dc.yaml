@@ -19,7 +19,7 @@ parameters:
   - name: TAG
     required: true
   - name: METABASE_PVC_SIZE
-    required: true
+    value: 10Gi
   - name: METABASE_SECRET_NAME
     value: template.metabase-key
 objects:
