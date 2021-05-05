@@ -13,7 +13,8 @@ env:
   INITIAL_TAG: latest
   TAG: dev
   SOURCE_REPOSITORY_URL: https://github.com/bcgov/dormant-site-reclamation-program.git
-  SOURCE_REPOSITORY_REF: refs/pull/42/head
+  # SOURCE_REPOSITORY_REF: refs/pull/42/head
+  SOURCE_REPOSITORY_REF: devops-migration
 
 jobs:
   template:

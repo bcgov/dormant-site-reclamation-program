@@ -14,7 +14,7 @@ parameters:
     description: The name of the database service.
     value: postgresql
   - name: WEBHOOK_SECRET_NAME
-    value: template.dsrp-rocket-chat-integrations
+    value: template.rocket-chat-integrations
   - name: ENVIRONMENT_NAME
     displayName: Environment Name (Environment Id)
     description: The name or Id of the environment.  This variable is used by the webhook integration to identify the environment in which the backup notifications originate.
