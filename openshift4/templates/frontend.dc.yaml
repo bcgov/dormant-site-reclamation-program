@@ -19,7 +19,7 @@ parameters:
     value: ""
   - name: BASE_PATH
     required: false
-    value: /
+    value: ""
   - name: PORT
     value: "3000"
   - name: NODE_ENV
@@ -45,7 +45,7 @@ parameters:
   - name: API_URL
     displayName: API Url
     description: URL for the backend API
-    value: http://python-backend:3000
+    value: https://nginx-269007-dev.apps.silver.devops.gov.bc.ca/
   - name: MATOMO_URL
     displayName: Matomo Url
     description: URL for the tracking component
