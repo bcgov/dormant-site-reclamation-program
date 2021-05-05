@@ -29,7 +29,7 @@ parameters:
     required: true
   - name: BASE_PATH
     required: false
-    value: /
+    value: /api
   - name: DSRP_METABASE_SECRET
     required: false
     value: template.metabase-key
@@ -63,7 +63,7 @@ parameters:
     required: false
     value: dev
   - name: DOCUMENT_GENERATOR_URL
-    value: ${DOCUMENT_GENERATOR_URL}
+    value: http://docgen:3030
   - name: SMTP_CREDENTIALS
     value: smtp-credentials
   - name: EMAIL_ADDRESSES
