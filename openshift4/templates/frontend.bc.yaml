@@ -141,7 +141,7 @@ objects:
             - name: BASE_PATH
               value: ${BASE_PATH}
             - name: ASSET_PATH
-              value: ${BASE_PATH}/
+              value: ${BASE_PATH}
             - name: SKIP_NPM_INSTALL
               value: "true"
       output:
