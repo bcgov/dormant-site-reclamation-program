@@ -53,17 +53,6 @@ objects:
       resources:
         requests:
           storage: ${METABASE_PVC_SIZE}
-  - kind: ImageStream
-    apiVersion: v1
-    metadata:
-      name: ${NAME}
-      creationTimestamp: null
-      labels:
-        shared: "true"
-    spec:
-      lookupPolicy:
-        local: false
-      tags: []
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
