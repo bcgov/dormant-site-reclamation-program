@@ -22,9 +22,13 @@ parameters:
   - name: ENVIRONMENT_FRIENDLY_NAME
     value: Dormant Site Reclamation Program
   - name: VERIFICATION_VOLUME_SIZE
-    displayName: Persistent Volume Size
+    displayName: Verification Volume Size
     description: The size of the persistent volume , e.g. 512Mi, 1Gi, 2Gi.
     value: 1Gi
+-   name: BACKUP_VOLUME_SIZE
+    displayName: Backup Volume Size
+    description: The size of the persistent volume , e.g. 512Mi, 1Gi, 2Gi.
+    value: 5Gi
   - name: CPU_REQUEST
     value: "0"
   - name: CPU_LIMIT
@@ -46,6 +50,18 @@ objects:
       resources:
         requests:
           storage: ${VERIFICATION_VOLUME_SIZE}
+  - kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: dsrp-db-backup-data
+    spec:
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: ${BACKUP_VOLUME_SIZE}
+      storageClassName: netapp-file-backup
+      volumeMode: Filesystem
   - kind: ConfigMap
     apiVersion: v1
     metadata:
