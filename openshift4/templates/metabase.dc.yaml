@@ -113,7 +113,7 @@ objects:
                       name: ${METABASE_SECRET_NAME}
                       key: postgres-password
                 - name: MB_DB_HOST
-                  value: ${NAME_DATABASE}${SUFFIX}
+                  value: ${NAME_DATABASE}
                 - name: ENVIRONMENT_NAME
                   value: ${ENVIRONMENT_NAME}
                 - name: MB_ENCRYPTION_SECRET_KEY
