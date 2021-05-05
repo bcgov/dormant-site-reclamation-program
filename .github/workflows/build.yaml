@@ -77,12 +77,10 @@ jobs:
       matrix:
         include:
           - name: nginx
-          - name: postgresql
           - name: frontend
           - name: backend
           - name: flyway
           - name: tusd
-          - name: docgen
           - name: dbbackup
     steps:
       - name: Install oc
@@ -98,7 +96,7 @@ jobs:
 
   tag:
     name: tag
-    # needs: build
+    needs: build
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -127,7 +125,7 @@ jobs:
 
   rollout:
     name: rollout
-    # needs: tag
+    needs: tag
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
