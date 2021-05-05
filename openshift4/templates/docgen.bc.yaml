@@ -21,13 +21,13 @@ objects:
     spec:
       lookupPolicy:
         local: true
-      tags:
-        - name: ${TAG}
-          annotations: null
-          from:
-            kind: DockerImage
-            name: bcgovimages/doc-gen-api:v1.0.0
-          generation: 1
-          importPolicy: {}
-          referencePolicy:
-            type: Local
+      # tags:
+      #   - name: ${TAG}
+      #     annotations: null
+      #     from:
+      #       kind: DockerImage
+      #       name: bcgovimages/doc-gen-api:v1.0.0
+      #     generation: 1
+      #     importPolicy: {}
+      #     referencePolicy:
+      #       type: Local
