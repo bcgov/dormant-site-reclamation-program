@@ -10,8 +10,6 @@ on:
 env:
   ORIG_TAG: dev
   PROMOTE_TAG: test
-  SOURCE_REPOSITORY_URL: https://github.com/bcgov/dormant-site-reclamation-program.git
-  SOURCE_REPOSITORY_REF: refs/pull/42/head
 
 jobs:
   promote-to-test:
@@ -20,14 +18,14 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: dsrp-nginx
-          - name: dsrp-postgres
-          - name: dsrp-frontend
-          - name: dsrp-python-backend
-          - name: dsrp-flyway-migration-client
-          - name: dsrp-tusd
-          - name: dsrp-docgen
-          # - name: dsrp-dbbackup
+          - name: nginx
+          - name: postgresql
+          - name: frontend
+          - name: backend
+          - name: flyway
+          - name: tusd
+          - name: docgen
+          - name: dbbackup
 
     steps:
       - name: Install oc
@@ -42,7 +40,31 @@ jobs:
           oc -n ${{secrets.NS_TOOLS}} tag \
           ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.ORIG_TAG }} \
           ${{ secrets.NS_TOOLS }}/${{ matrix.name }}:${{ env.PROMOTE_TAG }}
-      - name: Rollout to test
-        if: matrix.name != 'dsrp-flyway-migration-client'
+
+  rollout-test:
+    name: rollout-test
+    needs: promote-to-test
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: nginx
+          - name: postgresql
+          - name: frontend
+          - name: backend
+          - name: tusd
+          - name: docgen
+          - name: dbbackup
+    steps:
+      - name: Install oc
+        uses: redhat-actions/oc-installer@v1
+        with:
+          version: "4.6"
+      - name: oc login
         run: |
-          oc -n ${{ secrets.NS_TEST }} rollout latest ${{ matrix.name }}
+          oc login --token=${{ secrets.BUILD_TOKEN }} --server=${{ secrets.CLUSTER_API }}
+      - name: rollout to test
+        run: |
+          oc -n ${{ secrets.NS_TEST }} rollout latest ${{ matrix.name }} || true
+        continue-on-error: true

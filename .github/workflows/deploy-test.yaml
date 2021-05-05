@@ -9,8 +9,6 @@ on:
 
 env:
   TAG: test
-  SOURCE_REPOSITORY_URL: https://github.com/bcgov/dormant-site-reclamation-program.git
-  SOURCE_REPOSITORY_REF: refs/pull/42/head
   APP_DOMAIN: dsrp-nginx-269007-test.apps.silver.devops.gov.bc.ca
 
 jobs:
