@@ -31,6 +31,8 @@ jobs:
           - name: tusd
           - name: docgen
           - name: dbbackup
+          - name: metabase
+          - name: metabase-postgres
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -83,6 +85,8 @@ jobs:
           - name: flyway
           - name: tusd
           - name: dbbackup
+          - name: metabase
+          - name: metabase-postgres
     steps:
       - name: Install oc
         uses: redhat-actions/oc-installer@v1
@@ -110,6 +114,8 @@ jobs:
           - name: tusd
           - name: docgen
           - name: dbbackup
+          - name: metabase
+          - name: metabase-postgres
     steps:
       - name: Install oc
         uses: redhat-actions/oc-installer@v1
@@ -139,6 +145,8 @@ jobs:
           - name: tusd
           - name: docgen
           - name: dbbackup
+          - name: metabase
+          - name: metabase-postgres
     steps:
       - name: Install oc
         uses: redhat-actions/oc-installer@v1

@@ -23,10 +23,6 @@ parameters:
     required: true
   - name: APPLICATION_DOMAIN
     required: true
-  - name: SUFFIX
-    displayName: Name Suffix
-    description: A suffix appended to all objects
-    required: true
   - name: TAG
     required: true
   - name: METABASE_SECRET_NAME
@@ -37,7 +33,7 @@ objects:
   - kind: Service
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       annotations:
         description: Exposes and load balances the application pods
     spec:
@@ -47,13 +43,13 @@ objects:
           port: 3000
           targetPort: 3000
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       type: ClusterIP
       sessionAffinity: None
   - kind: Route
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
     spec:
       host: ${APPLICATION_DOMAIN}
       tls:
@@ -62,14 +58,14 @@ objects:
       path: /
       to:
         kind: Service
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       port:
         targetPort: 3000-tcp
       wildcardPolicy: None
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
     spec:
       strategy:
         type: Rolling
@@ -88,12 +84,12 @@ objects:
               namespace: ${IMAGE_NAMESPACE}
       replicas: 1
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       template:
         metadata:
-          name: ${NAME}${SUFFIX}
+          name: ${NAME}
           labels:
-            name: ${NAME}${SUFFIX}
+            name: ${NAME}
         spec:
           containers:
             - name: ${NAME}

@@ -33,6 +33,8 @@ jobs:
           - config: nginx
           - config: redis
           - config: tusd
+          - config: metabase
+          - config: metabase-postgres
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2

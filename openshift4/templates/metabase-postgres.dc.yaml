@@ -16,10 +16,6 @@ parameters:
     description: The name of the OpenShift objects.
     value: metabase-postgres
     required: true
-  - name: SUFFIX
-    displayName: Name Suffix
-    description: A suffix appended to all objects
-    required: true
   - name: TAG
     required: true
   - name: METABASE_PVC_SIZE
@@ -32,7 +28,7 @@ objects:
     metadata:
       annotations:
         template.openshift.io/expose-uri: postgres://{.spec.clusterIP}:{.spec.ports[?(.name=="postgresql")].port}
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
     spec:
       ports:
         - name: postgresql
@@ -40,7 +36,7 @@ objects:
           protocol: TCP
           targetPort: 5432
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       sessionAffinity: None
       type: ClusterIP
     status:
@@ -48,7 +44,7 @@ objects:
   - apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
       annotations:
         volume.beta.kubernetes.io/storage-provisioner: netapp.io/trident
     spec:
@@ -71,7 +67,7 @@ objects:
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
     spec:
       strategy:
         type: Recreate
@@ -89,12 +85,12 @@ objects:
               name: ${NAME}:${TAG}
       replicas: 1
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${NAME}
       template:
         metadata:
-          name: ${NAME}${SUFFIX}
+          name: ${NAME}
           labels:
-            name: ${NAME}${SUFFIX}
+            name: ${NAME}
         spec:
           containers:
             - name: ${NAME}
@@ -139,7 +135,7 @@ objects:
                       - pg_ctl stop -D /var/lib/pgsql/data/userdata
               volumeMounts:
                 - mountPath: /var/lib/pgsql/data
-                  name: ${NAME}${SUFFIX}-data
+                  name: ${NAME}-data
               resources:
                 requests:
                   cpu: ${CPU_REQUEST}
@@ -151,8 +147,8 @@ objects:
               imagePullPolicy: IfNotPresent
               capabilities: {}
           volumes:
-            - name: ${NAME}${SUFFIX}-data
+            - name: ${NAME}-data
               persistentVolumeClaim:
-                claimName: ${NAME}${SUFFIX}
+                claimName: ${NAME}
           restartPolicy: Always
           dnsPolicy: ClusterFirst
