@@ -14,6 +14,7 @@ __pycache__
 *.sw*
 *last-backup
 venv*
+[~][$]*
 .act.secrets
 act/*
 openshift4/templates/dockerhub.yaml

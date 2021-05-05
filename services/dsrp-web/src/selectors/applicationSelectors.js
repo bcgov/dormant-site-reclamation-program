@@ -67,6 +67,10 @@ export const getApplicationsWellSitesContractedWork = createSelector(
       }
 
       const reviewJson = (isObjectLike(application.review_json) && application.review_json) || null;
+      const estimatedCostOverrides =
+        (isObjectLike(application.estimated_cost_overrides) &&
+          application.estimated_cost_overrides) ||
+        null;
 
       wellSites.map((site, index) => {
         if (isEmpty(site)) {
@@ -106,12 +110,28 @@ export const getApplicationsWellSitesContractedWork = createSelector(
             `contracted_work.${type}.contracted_work_status_code`,
             null
           );
+
           const maxSharedCost = 100000;
+          const shouldSharedCostBeZero = !(contractedWorkStatusCode === "APPROVED");
+          const workId = contractedWork[type].work_id;
+
+          const estimatedCostOverride =
+            estimatedCostOverrides && workId in estimatedCostOverrides
+              ? estimatedCostOverrides[workId]
+              : null;
+          const calculatedSharedCostOverride =
+            estimatedCostOverride !== null ? (estimatedCostOverride / 2).toFixed(2) : null;
+          const sharedCostOverride =
+            calculatedSharedCostOverride > maxSharedCost
+              ? maxSharedCost
+              : calculatedSharedCostOverride;
+          const sharedCostOverrideByStatus = shouldSharedCostBeZero ? 0 : sharedCostOverride;
+
           const calculatedSharedCost = (sum(estimatedCostArray) / 2).toFixed(2);
           const sharedCost =
             calculatedSharedCost > maxSharedCost ? maxSharedCost : calculatedSharedCost;
-          const shouldSharedCostBeZero = !(contractedWorkStatusCode === "APPROVED");
           const sharedCostByStatus = shouldSharedCostBeZero ? 0 : sharedCost;
+
           const OGCStatus = !isEmpty(filteredWells[wellAuthorizationNumber])
             ? filteredWells[wellAuthorizationNumber].current_status
             : null;
@@ -124,15 +144,17 @@ export const getApplicationsWellSitesContractedWork = createSelector(
           const wellSiteContractedWorkType = {
             key: `${application.guid}.${wellAuthorizationNumber}.${type}`,
             well_index: index,
-            application_guid: application.guid || null,
-            work_id: contractedWork[type].work_id || null,
+            application_guid: application.guid,
+            work_id: workId,
             well_authorization_number: wellAuthorizationNumber,
             contracted_work_type: type,
             contracted_work_type_description: startCase(camelCase(type)),
             priority_criteria: priorityCriteria,
-            completion_date: contractedWork[type].planned_end_date || null,
+            completion_date: contractedWork[type].planned_end_date,
             est_cost: sum(estimatedCostArray),
             est_shared_cost: sharedCostByStatus,
+            est_cost_override: estimatedCostOverride,
+            est_shared_cost_override: sharedCostOverrideByStatus,
             LMR: getLMR(type, liability),
             OGC_status: OGCStatus,
             location,

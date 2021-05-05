@@ -52,6 +52,7 @@ export class ApplicationSuccessPage extends Component {
                 <li>
                   Evidence of Indigenous participation such as a letter, email or agreement that
                   confirms the Indigenous participation that is identified in the application
+                  (Program staff, in addition, may also confirm this with the Indigenous community)
                 </li>
               </ul>
               When the files have been uploaded, you may begin work and the initial payment will be

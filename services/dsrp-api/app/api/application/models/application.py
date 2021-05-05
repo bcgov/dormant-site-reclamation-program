@@ -40,6 +40,7 @@ class Application(Base, AuditMixin):
     submission_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     json = db.Column(JSONB, nullable=False)
     review_json = db.Column(JSONB)
+    estimated_cost_overrides = db.Column(JSONB(none_as_null=True))
     submitter_ip = db.Column(db.String)
     edit_note = db.Column(db.String)
     application_phase_code = db.Column(
@@ -183,6 +184,10 @@ class Application(Base, AuditMixin):
                         cw_total += v
                 well_sites[i]['contracted_work'][cw_type]['contracted_work_total'] = round(
                     cw_total, 2)
+                work_id = well_sites[i]['contracted_work'][cw_type]['work_id']
+                estimated_cost_overrides = self.estimated_cost_overrides or {}
+                well_sites[i]['contracted_work'][cw_type][
+                    'contracted_work_total_override'] = estimated_cost_overrides.get(work_id)
 
         return well_sites
 
@@ -269,10 +274,12 @@ class Application(Base, AuditMixin):
 
     def calc_est_shared_cost(self, contracted_work):
         """Calculates the contracted work item's Estimated Shared Cost, which is half of the estimated cost \
-            unless that value is $100,000 or more, then it is $100,000.
+            unless that value is $100,000 or more, then it is $100,000. If the estimated cost value has been \
+            overridden, use that value instead.
         """
-
-        half_est_cost = round(contracted_work['contracted_work_total'] / 2.0, 2)
+        est_cost = contracted_work['contracted_work_total_override'] if contracted_work[
+            'contracted_work_total_override'] != None else contracted_work['contracted_work_total']
+        half_est_cost = round(est_cost / 2.0, 2)
         est_shared_cost = half_est_cost if half_est_cost <= 100000 else 100000
         return est_shared_cost
 
@@ -325,6 +332,7 @@ class Application(Base, AuditMixin):
 
         # Create detailed info for each well site's contracted work items
         result['formatted_well_sites'] = ""
+        result['has_estimated_cost_overrides'] = False
         for ws in self.well_sites_with_review_data:
             site_details = ws.get('details', {})
             wan = site_details.get('well_authorization_number')
@@ -335,10 +343,15 @@ class Application(Base, AuditMixin):
                 site += f' Permit Holder: {self.permit_holder}\n' if self.permit_holder else f' Operator ID: {self.operator_id}\n'
                 site += f' Eligible Activities as described in Application: {worktype.replace("_"," ").capitalize()}\n'
                 site += f' Applicant\'s Estimated Cost: {"${:,.2f}".format(wt_details.get("contracted_work_total"))}\n'
+                site += '' if wt_details.get(
+                    'contracted_work_total_override'
+                ) == None else f' Adjusted Estimated Cost: {"${:,.2f}".format(wt_details.get("contracted_work_total_override"))}\n'
                 site += f' Provincial Financial Contribution: {"${:,.2f}".format(self.calc_est_shared_cost(wt_details))}\n'
                 site += f' Planned Start Date: {wt_details["planned_start_date"]}\n'
                 site += f' Planned End Date: {wt_details["planned_end_date"]}\n'
                 result['formatted_well_sites'] += site
+                if wt_details.get('contracted_work_total_override') != None:
+                    result['has_estimated_cost_overrides'] = True
 
         return result
 
