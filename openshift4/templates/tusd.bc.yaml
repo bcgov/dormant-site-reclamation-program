@@ -27,25 +27,25 @@ parameters:
     required: false
     value: openshift/docker-images/tusd
 objects:
-  # - kind: ImageStream
-  #   apiVersion: v1
-  #   metadata:
-  #     name: ${NAME}-base
-  #     creationTimestamp: null
-  #     labels:
-  #       shared: "true"
-  #   spec:
-  #     lookupPolicy:
-  #       local: false
-  #     tags:
-  #       - name: v1.3.0
-  #         annotations: null
-  #         from:
-  #           kind: DockerImage
-  #           name: tusproject/tusd:v1.3.0
-  #         importPolicy: {}
-  #         referencePolicy:
-  #           type: Local
+  - kind: ImageStream
+    apiVersion: v1
+    metadata:
+      name: ${NAME}-base
+      creationTimestamp: null
+      labels:
+        shared: "true"
+    spec:
+      lookupPolicy:
+        local: true
+      tags:
+        - name: v1.3.0
+          annotations: null
+          from:
+            kind: DockerImage
+            name: tusproject/tusd:v1.3.0
+          importPolicy: {}
+          referencePolicy:
+            type: Local
   - kind: ImageStream
     apiVersion: v1
     metadata:
