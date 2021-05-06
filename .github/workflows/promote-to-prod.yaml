@@ -58,15 +58,15 @@ jobs:
       matrix:
         include:
           - name: nginx
-          - name: postgresql
+          # - name: postgresql
           - name: frontend
           - name: backend
           - name: tusd
           - name: docgen
           - name: dbbackup
-          - name: redis
-          - name: metabase
-          - name: metabase-postgres
+          # - name: redis
+          # - name: metabase
+          # - name: metabase-postgres
     steps:
       - name: Install oc
         uses: redhat-actions/oc-installer@v1
