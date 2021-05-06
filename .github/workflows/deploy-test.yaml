@@ -44,9 +44,9 @@ jobs:
           -p TAG=${{env.TAG}} \
           -p JWT_OIDC_WELL_KNOWN_CONFIG=https://test.oidc.gov.bc.ca/auth/realms/hud2v882/.well-known/openid-configuration \
           -p JWT_OIDC_AUDIENCE=dormant-application-test \
-          -p API_URL=https://nginx-269007-test.apps.silver.devops.gov.bc.ca/api \
-          -p TUSD_URL=https://nginx-269007-test.apps.silver.devops.gov.bc.ca/files \
-          -p URL=https://nginx-269007-test.apps.silver.devops.gov.bc.ca \
+          -p API_URL=https://dsrp-test.apps.silver.devops.gov.bc.ca/api \
+          -p TUSD_URL=https://dsrp-test.apps.silver.devops.gov.bc.ca/files \
+          -p URL=https://dsrp-test.apps.silver.devops.gov.bc.ca \
           -p ENVIRONMENT_NAME=test \
           -p DSRP_DOMAIN=${{env.APP_DOMAIN}} \
           -p KEYCLOAK_URL=https://test.oidc.gov.bc.ca/auth \
