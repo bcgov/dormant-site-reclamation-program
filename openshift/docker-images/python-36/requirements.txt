@@ -3,7 +3,7 @@ cached-property==1.5.1
 factory-boy==3.0.1
 Flask==1.1.2
 Flask-Caching==1.9.0
-Flask-Cors==3.0.8
+Flask-Cors==3.0.9
 flask-jwt-oidc==0.1.5
 flask-restplus==0.13.0
 Flask-SQLAlchemy==2.4.4
