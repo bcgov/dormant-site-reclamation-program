@@ -3,11 +3,11 @@ app {
     version = 'snapshot'
         namespaces {
         'build'{
-            namespace = 'eazios-tools'
+            namespace = '269007-tools'
             disposable = true
         }
         'test' {
-            namespace = 'eazios-test'
+            namespace = '269007-test'
             disposable = false
         }
     }
@@ -34,7 +34,7 @@ app {
         version = "${app.build.env.name}-${app.build.env.id}"
 
         suffix = "-${app.git.changeId}"
-        namespace = 'eazios-tools'
+        namespace = '269007-tools'
         timeoutInSeconds = 60*40
     }
 
@@ -77,7 +77,7 @@ app {
                             'ENVIRONMENT_NAME':"${vars.deployment.namespace}",
                             'ENVIRONMENT_FRIENDLY_NAME':"Dormant Site Reclamation Program (TEST)",
                             'DATABASE_SERVICE_NAME':"dsrp-postgresql${vars.deployment.suffix}",
-                            'NFS_VOLUME_IDENTIFIER':"bk-eazios-test-7ty3vusrx8u5",
+                            'NFS_VOLUME_IDENTIFIER':"bk-269007-test-7ty3vusrx8u5",
                             'CPU_REQUEST':"${vars.resources.backup.cpu_request}",
                             'CPU_LIMIT':"${vars.resources.backup.cpu_limit}",
                             'MEMORY_REQUEST':"${vars.resources.backup.memory_request}",
@@ -343,7 +343,7 @@ environments {
                     name = "test"
                 }
                 key = 'test'
-                namespace = 'eazios-test'
+                namespace = '269007-test'
                 suffix = "-test"
                 application_suffix = "-pr-${vars.git.changeId}"
                 node_env = "test"

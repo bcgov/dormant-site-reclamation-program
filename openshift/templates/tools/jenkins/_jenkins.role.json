@@ -1,87 +1,89 @@
 {
-    "kind": "Template",
-    "apiVersion": "v1",
-    "metadata": {
-        "name": "Jenkins - Role",
-        "annotations": {
-            "template.openshift.io/bindable": "false"
-        }
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "Jenkins - Role",
+    "annotations": {
+      "template.openshift.io/bindable": "false"
+    }
+  },
+  "parameters": [
+    {
+      "name": "NAME",
+      "displayName": "Name",
+      "description": "A name used for all objects",
+      "required": false
     },
-    "parameters": [
+    {
+      "name": "NAME_SUFFIX",
+      "displayName": "Name",
+      "description": "A name used for all objects",
+      "required": false
+    },
+    {
+      "name": "VERSION",
+      "displayName": "Name",
+      "description": "The output/built ImageStream tag names",
+      "required": false
+    }
+  ],
+  "objects": [
+    {
+      "apiVersion": "v1",
+      "groupNames": null,
+      "kind": "RoleBinding",
+      "metadata": {
+        "name": "jenkins_edit",
+        "namespace": "269007-dev"
+      },
+      "roleRef": {
+        "name": "edit"
+      },
+      "subjects": [
         {
-            "name": "NAME",
-            "displayName": "Name",
-            "description": "A name used for all objects",
-            "required": false
-        },
-        {
-            "name": "NAME_SUFFIX",
-            "displayName": "Name",
-            "description": "A name used for all objects",
-            "required": false
-        },
-        {
-            "name": "VERSION",
-            "displayName": "Name",
-            "description": "The output/built ImageStream tag names",
-            "required": false
+          "kind": "ServiceAccount",
+          "name": "jenkins",
+          "namespace": "269007-tools"
         }
-    ],
-    "objects": [
+      ]
+    },
+    {
+      "apiVersion": "v1",
+      "groupNames": null,
+      "kind": "RoleBinding",
+      "metadata": {
+        "name": "jenkins_edit",
+        "namespace": "269007-test"
+      },
+      "roleRef": {
+        "name": "edit"
+      },
+      "subjects": [
         {
-            "apiVersion": "v1",
-            "groupNames": null,
-            "kind": "RoleBinding",
-            "metadata": {
-                "name": "jenkins_edit",
-                "namespace": "eazios-dev"
-            },
-            "roleRef": {
-                "name": "edit"
-            },
-            "subjects": [
-                {
-                    "kind": "ServiceAccount",
-                    "name": "jenkins",
-                    "namespace": "eazios-tools"
-                }
-            ]
-        },{
-            "apiVersion": "v1",
-            "groupNames": null,
-            "kind": "RoleBinding",
-            "metadata": {
-                "name": "jenkins_edit",
-                "namespace": "eazios-test"
-            },
-            "roleRef": {
-                "name": "edit"
-            },
-            "subjects": [
-                {
-                    "kind": "ServiceAccount",
-                    "name": "jenkins",
-                    "namespace": "eazios-tools"
-                }
-            ]
-        },{
-            "apiVersion": "v1",
-            "groupNames": null,
-            "kind": "RoleBinding",
-            "metadata": {
-                "name": "jenkins_edit",
-                "namespace": "eazios-prod"
-            },
-            "roleRef": {
-                "name": "edit"
-            },
-            "subjects": [
-                {
-                    "kind": "ServiceAccount",
-                    "name": "jenkins",
-                    "namespace": "eazios-tools"
-                }
-            ]
+          "kind": "ServiceAccount",
+          "name": "jenkins",
+          "namespace": "269007-tools"
         }
-    ]
+      ]
+    },
+    {
+      "apiVersion": "v1",
+      "groupNames": null,
+      "kind": "RoleBinding",
+      "metadata": {
+        "name": "jenkins_edit",
+        "namespace": "269007-prod"
+      },
+      "roleRef": {
+        "name": "edit"
+      },
+      "subjects": [
+        {
+          "kind": "ServiceAccount",
+          "name": "jenkins",
+          "namespace": "269007-tools"
+        }
+      ]
+    }
+  ]
 }

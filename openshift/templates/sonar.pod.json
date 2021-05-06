@@ -24,7 +24,7 @@
       "displayName": "SonarQube host",
       "description": "SonarQube server",
       "required": true,
-      "value": "https://sonarqube-eazios-tools.pathfinder.gov.bc.ca"
+      "value": "https://sonarqube-269007-tools.pathfinder.gov.bc.ca"
     },
     {
       "name": "DB_CONFIG_NAME",
@@ -73,12 +73,7 @@
           {
             "name": "test",
             "image": "${IMAGE}",
-            "command": [
-              "container-entrypoint",
-              "bash",
-              "-c",
-              "./run_tests.sh"
-            ],
+            "command": ["container-entrypoint", "bash", "-c", "./run_tests.sh"],
             "resources": {
               "limits": {
                 "cpu": "${CPU_LIMIT}",

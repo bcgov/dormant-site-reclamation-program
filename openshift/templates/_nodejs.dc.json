@@ -89,7 +89,7 @@
       "name": "MATOMO_URL",
       "displayName": "Matomo Url",
       "description": "URL for the tracking component",
-      "value": "https://matomo-eazios-test.pathfinder.gov.bc.ca/"
+      "value": "https://matomo-269007-test.pathfinder.gov.bc.ca/"
     },
     {
       "name": "TUSD_URL",
