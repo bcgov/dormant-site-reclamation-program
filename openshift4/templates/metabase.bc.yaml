@@ -62,6 +62,8 @@ objects:
         app: ${NAME}
         buildconfig: ${NAME}
     spec:
+      successfulBuildsHistoryLimit: 5
+      failedBuildsHistoryLimit: 5
       source:
         type: Git
         git:

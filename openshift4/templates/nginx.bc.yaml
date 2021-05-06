@@ -39,6 +39,8 @@ objects:
       annotations:
         description: Defines how to build the nginx image
     spec:
+      successfulBuildsHistoryLimit: 5
+      failedBuildsHistoryLimit: 5
       completionDeadlineSeconds: 600
       triggers:
         - type: ImageChange

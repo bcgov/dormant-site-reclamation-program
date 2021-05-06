@@ -72,9 +72,9 @@ objects:
       labels: {}
       annotations: {}
     spec:
+      successfulBuildsHistoryLimit: 5
+      failedBuildsHistoryLimit: 5
       completionDeadlineSeconds: 1440
-      successfulBuildsHistoryLimit: 3
-      failedBuildsHistoryLimit: 3
       triggers:
         - type: ImageChange
           imageChange: {}
@@ -114,6 +114,8 @@ objects:
       annotations:
         description: Defines how to build the application
     spec:
+      successfulBuildsHistoryLimit: 5
+      failedBuildsHistoryLimit: 5
       completionDeadlineSeconds: 600
       triggers:
         - type: ImageChange
