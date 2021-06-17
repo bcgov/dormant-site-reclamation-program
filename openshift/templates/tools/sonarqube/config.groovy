@@ -3,7 +3,7 @@ app {
     name = 'sonarqube'
     namespaces { //can't call environments :(
         'build'{
-            namespace = 'eazios-tools'
+            namespace = '269007-tools'
             disposable = true
         }
         'dev' {

@@ -33,11 +33,11 @@ template='{.items[?(@.tag.name=="build-pr-%s")].metadata.name}'
 # ===================================================================================================
 for pr in "$@"
 do
-    oc project eazios-dev
+    oc project 269007-dev
 
     oc delete secret,pvc,all -l change-id=$pr
 
-    oc project eazios-tools
+    oc project 269007-tools
 
     oc delete all -l change-id=$pr
     tags=`oc get istag -o=jsonpath=$(printf "${template}" "${pr}")`

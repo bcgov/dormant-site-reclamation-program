@@ -4,11 +4,11 @@ app {
 
     namespaces {
         'build'{
-            namespace = 'eazios-tools'
+            namespace = '269007-tools'
             disposable = true
         }
         'dev' {
-            namespace = 'eazios-dev'
+            namespace = '269007-dev'
             disposable = true
         }
     }
@@ -35,7 +35,7 @@ app {
         version = "${app.build.env.name}-${app.build.env.id}"
 
         suffix = "-${app.git.changeId}"
-        namespace = 'eazios-tools'
+        namespace = '269007-tools'
     }
 
     deployment {
@@ -77,7 +77,7 @@ app {
                 //             'ENVIRONMENT_NAME':"${vars.deployment.namespace}",
                 //             'ENVIRONMENT_FRIENDLY_NAME':"Dormant Site Reclamation Program (DEV)",
                 //             'DATABASE_SERVICE_NAME':"dsrp-postgresql${vars.deployment.suffix}",
-                //             'NFS_VOLUME_IDENTIFIER':"bk-eazios-dev-rz5el8sdtrii",
+                //             'NFS_VOLUME_IDENTIFIER':"bk-269007-dev-rz5el8sdtrii",
                 //             'CPU_REQUEST':"${vars.resources.backup.cpu_request}",
                 //             'CPU_LIMIT':"${vars.resources.backup.cpu_limit}",
                 //             'MEMORY_REQUEST':"${vars.resources.backup.memory_request}",
@@ -345,7 +345,7 @@ environments {
                     name = "dev"
                 }
                 key = 'dev'
-                namespace = 'eazios-dev'
+                namespace = '269007-dev'
                 suffix = "-pr-${vars.git.changeId}"
                 application_suffix = "-pr-${vars.git.changeId}"
                 node_env = "development"
