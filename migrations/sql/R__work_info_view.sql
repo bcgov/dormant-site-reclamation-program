@@ -2,7 +2,7 @@ DROP VIEW IF EXISTS work_info_view;
 CREATE OR REPLACE VIEW work_info_view
 	AS SELECT
 id, guid, work_id, well_authorization_number,
-contracted_work_type, planned_start_date, planned_end_date,
+contracted_work_type, contracted_work_status_code, planned_start_date, planned_end_date,
 well_file_review, abandonment_plan,mob_demob_site,camp_lodging,permanent_plugging_wellbore, cut_and_cap, removal_of_facilities, historical_well_file,
 site_visit, report_writing_submission, psi_review, intrusive_sampling, submission_of_samples, completion_of_notifications,analysis_results,psi_review_dsi_scope, complete_sampling,
 analysis_lab_results,development_remediation_plan,technical_report_writing, surface_recontouring,topsoil_replacement, revegetation_monitoring, excavation,contaminated_soil, confirmatory_sampling,
@@ -99,7 +99,8 @@ FROM (
     FROM (
         SELECT
             *,
-            to_jsonb(contracted_work)->'value' as contracted_work_data
+            to_jsonb(contracted_work)->'value' as contracted_work_data,
+            review_sites->well_authorization_number->'contracted_work'->contracted_work_type->>'contracted_work_status_code' as contracted_work_status_code
         FROM (
             SELECT
                 *,
@@ -112,6 +113,7 @@ FROM (
                     id,
                     guid,
                     application.json,
+                    jsonb_array_elements(application.review_json -> 'well_sites') as review_sites,
                     jsonb_array_elements(application.json -> 'well_sites') as well_site
                 FROM
                     application
