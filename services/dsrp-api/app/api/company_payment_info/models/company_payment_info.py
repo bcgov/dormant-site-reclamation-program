@@ -8,6 +8,7 @@ class CompanyPaymentInfo(Base, AuditMixin):
     company_name = db.Column(db.String, primary_key=True)
     company_address = db.Column(db.String, nullable=False)
     po_number = db.Column(db.String, nullable=False)
+    po_number_2 = db.Column(db.String)
     qualified_receiver_name = db.Column(db.String, nullable=False)
     expense_authority_name = db.Column(db.String, nullable=False)
 

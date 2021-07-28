@@ -1,0 +1,1 @@
+ALTER TABLE company_payment_info ADD COLUMN IF NOT EXISTS po_number_2 varchar;

@@ -1,23 +1,20 @@
 import io
 import json
 
-from sqlalchemy.dialects.postgresql import UUID, ARRAY, JSONB
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.schema import FetchedValue
 from datetime import datetime
 from marshmallow import fields
-from werkzeug.exceptions import NotImplemented, BadRequest
-from sqlalchemy.ext.hybrid import hybrid_property
+from werkzeug.exceptions import BadRequest
 
 from app.extensions import db
 from app.api.utils.models_mixins import AuditMixin, Base
 from app.api.company_payment_info.models import CompanyPaymentInfo
 from app.api.application.models.payment_document_type import PaymentDocumentType
-from app.api.application.models.payment_document_contracted_work_payment_xref import PaymentDocumentContractedWorkPaymentXref
 from app.api.contracted_work.models.contracted_work_payment import ContractedWorkPayment
 from app.api.services.object_store_storage_service import ObjectStoreStorageService
 from app.api.services.document_generator_service import DocumentGeneratorService, get_template_file_path
 from app.api.services.email_service import EmailService
-from app.config import Config
 
 
 class PaymentDocument(AuditMixin, Base):
@@ -142,7 +139,13 @@ class PaymentDocument(AuditMixin, Base):
             supplier_address = company_info.company_address
             invoice_date = today_date
             invoice_number = self.invoice_number
+
             po_number = company_info.po_number
+            if self.application.application_phase_code == 'NOMINATION':
+                po_number = company_info.po_number_2
+                if po_number is None:
+                    raise Exception('This company is missing its PO Number 2!')
+
             memo = get_memo()
             qualified_receiver_name = company_info.qualified_receiver_name
             date_payment_authorized = today_date
