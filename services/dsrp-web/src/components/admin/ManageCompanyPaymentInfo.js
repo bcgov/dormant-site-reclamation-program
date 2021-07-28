@@ -28,8 +28,6 @@ const propTypes = {
   closeModal: PropTypes.func.isRequired,
 };
 
-const defaultProps = {};
-
 const defaultParams = {
   page: Strings.DEFAULT_PAGE_NUMBER,
   per_page: Strings.DEFAULT_PAGE_SIZE,
@@ -166,7 +164,6 @@ const mapDispatchToProps = (dispatch) =>
   );
 
 ManageCompanyPaymentInfo.propTypes = propTypes;
-ManageCompanyPaymentInfo.defaultProps = defaultProps;
 
 export default compose(
   withRouter,
