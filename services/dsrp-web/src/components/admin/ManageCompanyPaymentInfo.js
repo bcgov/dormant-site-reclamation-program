@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { Button, Icon, Row, Col, Dropdown, Menu } from "antd";
+import { Row, Col } from "antd";
 import { withRouter } from "react-router-dom";
-import { isEmpty } from "lodash";
 import { bindActionCreators, compose } from "redux";
 import queryString from "query-string";
 import { openModal, closeModal } from "@/actions/modalActions";
@@ -131,22 +130,20 @@ export class ManageCompanyPaymentInfo extends Component {
 
   render() {
     return (
-      <>
-        <Row>
-          <Col>
-            <CompanyPaymentInfoTable
-              params={this.state.params}
-              onPageChange={this.onPageChange}
-              isLoaded={this.state.isLoaded}
-              pageData={this.props.pageData}
-              openModal={this.props.openModal}
-              closeModal={this.props.closeModal}
-              handleUpdateCompanyPaymentInfo={this.handleUpdateCompanyPaymentInfo}
-              handleCreateCompanyPaymentInfo={this.handleCreateCompanyPaymentInfo}
-            />
-          </Col>
-        </Row>
-      </>
+      <Row>
+        <Col>
+          <CompanyPaymentInfoTable
+            params={this.state.params}
+            onPageChange={this.onPageChange}
+            isLoaded={this.state.isLoaded}
+            pageData={this.props.pageData}
+            openModal={this.props.openModal}
+            closeModal={this.props.closeModal}
+            handleUpdateCompanyPaymentInfo={this.handleUpdateCompanyPaymentInfo}
+            handleCreateCompanyPaymentInfo={this.handleCreateCompanyPaymentInfo}
+          />
+        </Col>
+      </Row>
     );
   }
 }

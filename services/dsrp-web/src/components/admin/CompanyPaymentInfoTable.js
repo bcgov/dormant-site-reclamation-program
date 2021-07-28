@@ -1,31 +1,8 @@
-import moment from "moment";
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { Link } from "react-router-dom";
-import { isArray, isEmpty, startCase, camelCase } from "lodash";
-import {
-  Table,
-  Icon,
-  Pagination,
-  Input,
-  Button,
-  Popover,
-  Tooltip,
-  Divider,
-  Row,
-  Col,
-  Typography,
-} from "antd";
-import { formatMoney, formatDate, formatDateTimeFine } from "@/utils/helpers";
-import { openModal, closeModal } from "@/actions/modalActions";
-
+import { Table, Icon, Button, Row, Col, Typography } from "antd";
 import * as Strings from "@/constants/strings";
-import * as route from "@/constants/routes";
 import { modalConfig } from "@/components/modalContent/config";
-
-const { Text } = Typography;
 
 const propTypes = {
   params: PropTypes.objectOf(PropTypes.any).isRequired,
@@ -95,7 +72,7 @@ export class CompanyPaymentInfoTable extends Component {
         title: "PO Number 2",
         key: "po_number_2",
         dataIndex: "po_number_2",
-        render: (text) => <div title="PO Number 2">{text}</div>,
+        render: (text) => <div title="PO Number 2">{text || Strings.DASH}</div>,
       },
       {
         title: "Qualified Receiver Name",
