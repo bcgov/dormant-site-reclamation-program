@@ -1,27 +1,11 @@
 import React, { Component } from "react";
 import { isPristine, reduxForm, Field, getFormValues } from "redux-form";
-import {
-  Row,
-  Col,
-  Alert,
-  Form,
-  Button,
-  Typography,
-  Popconfirm,
-  Descriptions,
-  Tabs,
-  Table,
-} from "antd";
+import { Row, Col, Form, Button, Popconfirm } from "antd";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { lowerCase, isEmpty, isEqual, capitalize } from "lodash";
 import PropTypes from "prop-types";
 import { renderConfig } from "@/components/common/config";
 import * as FORM from "@/constants/forms";
-import * as Strings from "@/constants/strings";
-
-const { Text, Title } = Typography;
-
 
 const propTypes = {
   onSubmit: PropTypes.func.isRequired,
@@ -29,27 +13,21 @@ const propTypes = {
   submitting: PropTypes.bool.isRequired,
   companyPaymentInfo: PropTypes.any.isRequired,
   isAdd: PropTypes.any.isRequired,
-  formValues: PropTypes.objectOf(PropTypes.any),
+  formValues: PropTypes.objectOf(PropTypes.any).isRequired,
   isPristine: PropTypes.bool.isRequired,
 };
 
-const defaultProps = {
-  formValues: null,
-};
-
 export class AdminEditCompanyPaymentInfoForm extends Component {
-
   componentDidUpdate = () => {
     if (!this.props.isPristine) {
       window.onbeforeunload = () => true;
     } else {
       window.onbeforeunload = undefined;
     }
-  }
+  };
 
   render() {
     const companyPaymentInfo = this.props.companyPaymentInfo || {};
-    const companyPaymentInfoExists = !isEmpty(companyPaymentInfo);
 
     return (
       <Form layout="vertical" onSubmit={this.props.handleSubmit}>
@@ -75,6 +53,12 @@ export class AdminEditCompanyPaymentInfoForm extends Component {
               component={renderConfig.FIELD}
             />
             <Field
+              id="po_number_2"
+              name="po_number_2"
+              label="PO Number 2"
+              component={renderConfig.FIELD}
+            />
+            <Field
               id="qualified_receiver_name"
               name="qualified_receiver_name"
               label="Qualified Receiver Name"
@@ -90,28 +74,28 @@ export class AdminEditCompanyPaymentInfoForm extends Component {
         </Row>
 
         <div className="right">
-            <>
-              <Popconfirm
-                placement="topRight"
-                title="Are you sure you want to cancel?"
-                onConfirm={this.props.closeModal}
-                okText="Yes"
-                cancelText="No"
-                disabled={this.props.submitting}
-              >
-                <Button type="secondary" disabled={this.props.submitting}>
-                  Cancel
-                </Button>
-              </Popconfirm>
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{ marginLeft: 5 }}
-                loading={this.props.submitting}
-              >
-                Submit
+          <>
+            <Popconfirm
+              placement="topRight"
+              title="Are you sure you want to cancel?"
+              onConfirm={this.props.closeModal}
+              okText="Yes"
+              cancelText="No"
+              disabled={this.props.submitting}
+            >
+              <Button type="secondary" disabled={this.props.submitting}>
+                Cancel
               </Button>
-            </>
+            </Popconfirm>
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{ marginLeft: 5 }}
+              loading={this.props.submitting}
+            >
+              Submit
+            </Button>
+          </>
         </div>
       </Form>
     );

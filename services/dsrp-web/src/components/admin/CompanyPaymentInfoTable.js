@@ -92,6 +92,12 @@ export class CompanyPaymentInfoTable extends Component {
         render: (text) => <div title="PO Number">{text}</div>,
       },
       {
+        title: "PO Number 2",
+        key: "po_number_2",
+        dataIndex: "po_number_2",
+        render: (text) => <div title="PO Number 2">{text}</div>,
+      },
+      {
         title: "Qualified Receiver Name",
         key: "qualified_receiver_name",
         dataIndex: "qualified_receiver_name",

@@ -19,6 +19,7 @@ class CompanyPaymentInfoResource(Resource, UserMixin):
         new_info = request.json
         company_payment_info.company_address = new_info['company_address']
         company_payment_info.po_number = new_info['po_number']
+        company_payment_info.po_number_2 = new_info.get('po_number_2')
         company_payment_info.qualified_receiver_name = new_info['qualified_receiver_name']
         company_payment_info.expense_authority_name = new_info['expense_authority_name']
         company_payment_info.save()
@@ -51,6 +52,7 @@ class CompanyPaymentInfoListResource(Resource, UserMixin):
             company_name=new_info['company_name'],
             company_address=new_info['company_address'],
             po_number=new_info['po_number'],
+            po_number_2=new_info.get('po_number_2'),
             qualified_receiver_name=new_info['qualified_receiver_name'],
             expense_authority_name=new_info['expense_authority_name'],
         )

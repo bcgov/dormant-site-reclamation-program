@@ -10,8 +10,12 @@ import { openModal, closeModal } from "@/actions/modalActions";
 import * as routes from "@/constants/routes";
 import * as Strings from "@/constants/strings";
 
-import { getCompanyPaymentInfos } from "@/selectors/companyPaymentInfoSelectors"
-import { createCompanyPaymentInfo, updateCompanyPaymentInfo, fetchCompanyPaymentInfos } from "@/actionCreators/companyPaymentInfoActionCreator"
+import { getCompanyPaymentInfos } from "@/selectors/companyPaymentInfoSelectors";
+import {
+  createCompanyPaymentInfo,
+  updateCompanyPaymentInfo,
+  fetchCompanyPaymentInfos,
+} from "@/actionCreators/companyPaymentInfoActionCreator";
 
 import { CompanyPaymentInfoTable } from "@/components/admin/CompanyPaymentInfoTable";
 
@@ -25,8 +29,7 @@ const propTypes = {
   closeModal: PropTypes.func.isRequired,
 };
 
-const defaultProps = {
-};
+const defaultProps = {};
 
 const defaultParams = {
   page: Strings.DEFAULT_PAGE_NUMBER,
@@ -34,6 +37,7 @@ const defaultParams = {
   company_name: undefined,
   company_address: undefined,
   po_number: undefined,
+  po_number_2: undefined,
   qualified_receiver_name: undefined,
   expense_authority_name: undefined,
   sort_field: "company_name",
@@ -70,9 +74,7 @@ export class ManageCompanyPaymentInfo extends Component {
     if (!this.state.isLoaded) {
       return;
     }
-    this.props.history.replace(
-      routes.COMPANY_PAYMENT_INFO.dynamicRoute(this.state.params)
-    );
+    this.props.history.replace(routes.COMPANY_PAYMENT_INFO.dynamicRoute(this.state.params));
   };
 
   handleReset = () => {
@@ -91,10 +93,7 @@ export class ManageCompanyPaymentInfo extends Component {
           ...params,
         },
       },
-      () =>
-        this.props.history.replace(
-          routes.COMPANY_PAYMENT_INFO.dynamicRoute(this.state.params)
-        )
+      () => this.props.history.replace(routes.COMPANY_PAYMENT_INFO.dynamicRoute(this.state.params))
     );
   }
 
@@ -108,7 +107,7 @@ export class ManageCompanyPaymentInfo extends Component {
     }
   }
 
-  handleUpdateCompanyPaymentInfo = (payload) => 
+  handleUpdateCompanyPaymentInfo = (payload) =>
     this.props.updateCompanyPaymentInfo(payload.company_name, payload).then(() => {
       this.props.closeModal();
       this.setState({
