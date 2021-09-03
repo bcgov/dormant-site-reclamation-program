@@ -2,6 +2,8 @@
 
 ## Installation and Usage
 
+This project was built off of the MDS project (https://github.com/bcgov/mds) and uses the same tech stack.
+
 This file describes how to run the project and develop against it.
 
 ## Requirements
@@ -18,69 +20,27 @@ This file describes how to run the project and develop against it.
 
 ### Setting up local development
 
-The Makefile may be in a broken state and is currently not commonly used for development.
+**NOTE:** This project also has a Makefile but it may be in a broken state and is not currently used for development.
 
-If you are developing without an IDIR, or if remote Keycloak is down, you'll
-need to run a local Keycloak instance. The local development environment is
-based on `.env-dev-local-keycloak`. You can make a copy of this file as `.env`
-and/or run the following command to set up a local Keycloak instance.
-
+- Get your ".env" files from a teammate so that various services will run correctly.
+- Navigate to the project directory and run the following commands to install and run the backend:
 ```
-make local-dev
+docker-compose up -d --build backend
+docker-compose up -d --build docgen-api
 ```
+**Note:** If you also work on the MDS project, you may need to bring down those containers, as the DSRP project will want to bring up containers that use the same ports.
 
-If you wish to have a completely fresh environment, you can run the following
-command at any time:
-
+- Navigate to the `dsrp-web` directory and run the following commands to install and run the frontend:
 ```
-make rebuild-all-local
+npm install
+npm run serve
 ```
 
-NOTE: Always wait for all commands to complete before running subsequent
-commands.
+- There is currently no script to easily get test data. A common flow is to:
+1. Port forward the test or prod database to your system
+2. Use the import data feature in a client, e.g., DBeaver, to import data from the forwarded database to your local database
 
-### Troubleshooting
-
-Should anything go awry with the above commands, you may wish to isolate the
-failure by running individual commands. A common setup for contributors is to
-run the frontend on the host machine and everything else in Docker. To do so,
-execute the following commands:
-
-```
-$ make clean
-$ make keycloak
-$ make backend
-$ make keycloak-user
-$ make generate-rand100
-```
-
-The backend is now running and seeded with random data. Run the following
-commands from within the `/frontend` directory to initialize the frontend:
-
-```
-$ npm ci
-$ npm run serve
-```
-
-### Seeding data with Test environment Database
-
-N/A
-
-## Developing workflow tips
-
-If you are planning to run the frontend on your host machine, ensure you are
-using Node 10 (lts/dubnium) and npm 6. You may choose to use a version manager
-such as [nvm](https://github.com/nvm-sh/nvm) if working on multiple projects.
-
-### Browser Caching
-
-If you are rebuilding often, you may encounter browser caching.
-
-To address this, you may:
-
-- Periodically clear the cache.
-- Disable cache (available in Chrome/Chromium)
-- Open an Incognito window (Chrome/Chromium)
+**Important note about importing real data into your local environment:** You MUST use a script/write SQL to change the email addresses in each `application.json` column, otherwise, you will be causing the system to email the actual applicants!
 
 ### Using the Document Manager and Document Generator locally
 
