@@ -50,7 +50,6 @@ export const RenderMultiSelect = (props) => (
       <Select
         disabled={!props.data || props.disabled}
         mode={props.mode}
-        getPopupContainer={() => document.getElementById(props.id)}
         placeholder={props.placeholder}
         id={props.id}
         onSearch={props.onSearch}

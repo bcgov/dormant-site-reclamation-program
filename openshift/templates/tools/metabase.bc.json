@@ -130,7 +130,7 @@
             "name": "${NAME}:${VERSION}"
           }
         },
-        "completionDeadlineSeconds": 600,
+        "completionDeadlineSeconds": 1440,
         "triggers": [
           {
             "type": "ConfigChange"

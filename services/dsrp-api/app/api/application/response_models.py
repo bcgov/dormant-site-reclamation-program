@@ -69,6 +69,7 @@ APPLICATION = api.model(
         'submission_date': fields.DateTime,
         'json': fields.Raw,
         'review_json': fields.Raw,
+        'estimated_cost_overrides': fields.Raw,
         'documents': fields.List(fields.Nested(APPLICATION_DOCUMENT, skip_none=True)),
         'payment_documents': fields.List(fields.Nested(PAYMENT_DOCUMENT, skip_none=True)),
         'edit_note': fields.String,
@@ -82,6 +83,7 @@ APPLICATION_SUMMARY = api.model(
     'ApplicationSummary', {
         'id': fields.Integer,
         'guid': fields.String,
+        'application_phase_code': fields.String,
         'application_status_code': fields.String,
         'submission_date': fields.DateTime,
         'company_name': fields.String,

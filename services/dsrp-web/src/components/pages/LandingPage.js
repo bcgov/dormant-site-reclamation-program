@@ -58,12 +58,32 @@ export class LandingPage extends Component {
               British Columbia the opportunity to nominate dormant sites for reclamation.
             </Paragraph>
 
+            <Title level={4}>Funding Increment 2 - $50,000,000 Financial Contribution</Title>
+            <Paragraph>
+              Applications will be accepted from British Columbia contractors for work on dormant
+              oil or natural gas sites that have been nominated under the{" "}
+              <a
+                href="https://www2.gov.bc.ca/gov/content/industry/natural-gas-oil/responsible-oil-gas-development/dormant-sites-reclamation-program/site-nomination"
+                target="_blank"
+              >
+                Site Nomination
+              </a>{" "}
+              process.
+            </Paragraph>
+            <Paragraph>
+              <strong>Note:</strong> All Permit Holders that had sites nominated in this process
+              have been notified.
+            </Paragraph>
+
             <Title level={4}>Before you apply:</Title>
             <Paragraph>
               <ul className="landing-list">
                 <li>
                   Read the <strong>full details</strong> of the program by{" "}
-                  <a href="https://www2.gov.bc.ca/gov/content/industry/natural-gas-oil/responsible-oil-gas-development/dormant-sites-reclamation-program">
+                  <a
+                    href="https://www2.gov.bc.ca/gov/content/industry/natural-gas-oil/responsible-oil-gas-development/dormant-sites-reclamation-program"
+                    target="_blank"
+                  >
                     clicking here
                   </a>
                   .
@@ -86,14 +106,14 @@ export class LandingPage extends Component {
                 <li>Well authorization number</li>
                 <li>Job steps</li>
                 <li>Estimated cost of every work component</li>
-                <li>Confirmation of all eligibility criteria that apply to each site</li>
+                <li>Subcontractor details, where applicable</li>
               </ul>
             </Paragraph>
             <br />
             <br />
             {this.state.appsDisabled && (
               <Paragraph strong>
-                Increment 1 of the Program has closed to applications July 28, 2020.
+                Increment 2 of the Program has closed to applications - March 8, 2021.
               </Paragraph>
             )}
             <Row type="flex" justify="center">

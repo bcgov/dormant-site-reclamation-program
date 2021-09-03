@@ -8,6 +8,7 @@ class CompanyPaymentInfo(Base, AuditMixin):
     company_name = db.Column(db.String, primary_key=True)
     company_address = db.Column(db.String, nullable=False)
     po_number = db.Column(db.String, nullable=False)
+    po_number_2 = db.Column(db.String)
     qualified_receiver_name = db.Column(db.String, nullable=False)
     expense_authority_name = db.Column(db.String, nullable=False)
 
@@ -17,3 +18,7 @@ class CompanyPaymentInfo(Base, AuditMixin):
     @classmethod
     def find_by_company_name(cls, company_name):
         return cls.query.filter_by(company_name=company_name).one_or_none()
+
+    @classmethod
+    def all_company_payment_info(cls):
+        return cls.query.all()

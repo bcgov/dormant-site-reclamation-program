@@ -45,12 +45,7 @@ export const AdminEditApplicationForm = (props) => (
           Discard Changes
         </Button>
       </Popconfirm>
-      <Button
-        type="primary"
-        htmlType="submit"
-        style={{ marginLeft: "5px" }}
-        loading={props.submitting}
-      >
+      <Button type="primary" htmlType="submit" style={{ marginLeft: 5 }} loading={props.submitting}>
         Save Changes
       </Button>
     </div>

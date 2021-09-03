@@ -4,6 +4,7 @@ from app.config import Config
 
 DOCUMENT_TYPE_FILE_MAP = {
     'shared-cost-agreement': 'shared_cost_agreement.docx',
+    'shared-cost-agreement-amendment': 'shared_cost_agreement_amendment.docx',
     'payment-request-form': 'payment_request_form.xlsx'
 }
 

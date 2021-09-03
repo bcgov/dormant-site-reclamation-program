@@ -1,23 +1,20 @@
 import io
 import json
 
-from sqlalchemy.dialects.postgresql import UUID, ARRAY, JSONB
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.schema import FetchedValue
 from datetime import datetime
 from marshmallow import fields
-from werkzeug.exceptions import NotImplemented, BadRequest
-from sqlalchemy.ext.hybrid import hybrid_property
+from werkzeug.exceptions import BadRequest
 
 from app.extensions import db
 from app.api.utils.models_mixins import AuditMixin, Base
 from app.api.company_payment_info.models import CompanyPaymentInfo
 from app.api.application.models.payment_document_type import PaymentDocumentType
-from app.api.application.models.payment_document_contracted_work_payment_xref import PaymentDocumentContractedWorkPaymentXref
 from app.api.contracted_work.models.contracted_work_payment import ContractedWorkPayment
 from app.api.services.object_store_storage_service import ObjectStoreStorageService
 from app.api.services.document_generator_service import DocumentGeneratorService, get_template_file_path
 from app.api.services.email_service import EmailService
-from app.config import Config
 
 
 class PaymentDocument(AuditMixin, Base):
@@ -48,11 +45,29 @@ class PaymentDocument(AuditMixin, Base):
             invoice_number = f'{agreement_number}-{payment_phase}-{amount_generated + 1}'
             return invoice_number
 
+        def get_memo():
+            well_authorization_numbers = []
+
+            work_ids = []
+            if self.payment_document_code == 'FIRST_PRF':
+                approved_work = self.application.contracted_work('APPROVED', False)
+                work_ids = [aw['work_id'] for aw in approved_work]
+            else:
+                work_ids = [cwp.work_id for cwp in self.contracted_work_payments]
+
+            for work_id in work_ids:
+                cw = self.application.find_contracted_work_by_id(work_id)
+                if not cw:
+                    raise Exception(f'Work ID {work_id} does not exist on this application!')
+                well_authorization_numbers.append(cw['well_authorization_number'])
+            return ', '.join(well_authorization_numbers)
+
         def create_payment_details():
-            def create_payment_detail(unique_id, amount):
+            def create_payment_detail(unique_id, well_authorization_number, amount):
                 return {
                     'agreement_number': self.application.agreement_number,
                     'unique_id': unique_id,
+                    'well_authorization_number': well_authorization_number,
                     'amount': float(amount)
                 }
 
@@ -68,7 +83,8 @@ class PaymentDocument(AuditMixin, Base):
             if self.payment_document_code == 'FIRST_PRF':
                 amount = self.application.calc_first_prf_amount()
                 unique_id = create_unique_id()
-                payment_details.append(create_payment_detail(unique_id, amount))
+                memo = get_memo()
+                payment_details.append(create_payment_detail(unique_id, memo, amount))
 
             elif self.payment_document_code in ('INTERIM_PRF', 'FINAL_PRF'):
                 for contracted_work_payment in self.contracted_work_payments:
@@ -89,7 +105,7 @@ class PaymentDocument(AuditMixin, Base):
                             raise Exception(
                                 f'Work ID {work_id} interim payment has not been approved!')
                         amount = contracted_work_payment.interim_paid_amount
-                        if not amount:
+                        if amount is None:
                             raise Exception(
                                 f'Work ID {work_id} interim payment amount has not been set!')
                     else:
@@ -97,12 +113,14 @@ class PaymentDocument(AuditMixin, Base):
                             raise Exception(
                                 f'Work ID {work_id} final payment has not been approved!')
                         amount = contracted_work_payment.final_paid_amount
-                        if not amount:
+                        if amount is None:
                             raise Exception(
                                 f'Work ID {work_id} final payment amount has not been set!')
 
                     unique_id = create_unique_id(work_id)
-                    payment_details.append(create_payment_detail(unique_id, amount))
+                    well_authorization_number = work['well_authorization_number']
+                    payment_details.append(
+                        create_payment_detail(unique_id, well_authorization_number, amount))
             else:
                 raise Exception('Unknown payment document code')
 
@@ -116,12 +134,24 @@ class PaymentDocument(AuditMixin, Base):
 
             today_date = datetime.now().strftime('%B %-d, %Y')
 
-            account_coding = '057.2700A.26505.8001.2725067'
+            account_coding_1 = '057.27808.26250.8001.2725067'
+            account_coding_2 = '057.27808.26250.8001.2725070'
+            account_coding = account_coding_1
+            if self.application.application_phase_code == 'NOMINATION':
+                account_coding = account_coding_2
+
             supplier_name = company_info.company_name
             supplier_address = company_info.company_address
             invoice_date = today_date
             invoice_number = self.invoice_number
+
             po_number = company_info.po_number
+            if self.application.application_phase_code == 'NOMINATION':
+                po_number = company_info.po_number_2
+                if po_number is None:
+                    raise Exception('This company is missing its PO Number 2!')
+
+            memo = get_memo()
             qualified_receiver_name = company_info.qualified_receiver_name
             date_payment_authorized = today_date
             expense_authority_name = company_info.expense_authority_name
@@ -139,6 +169,7 @@ class PaymentDocument(AuditMixin, Base):
                 'invoice_date': invoice_date,
                 'invoice_number': invoice_number,
                 'po_number': po_number,
+                'memo': memo,
                 'qualified_receiver_name': qualified_receiver_name,
                 'date_payment_authorized': date_payment_authorized,
                 'expense_authority_name': expense_authority_name,

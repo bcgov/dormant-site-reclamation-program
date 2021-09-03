@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  dsrp-chatops-db-backup: >-
+    {{BASE64_WEBHOOK_URL}}
+kind: Secret
+metadata:
+  name: template.rocket-chat-integrations
+type: Opaque

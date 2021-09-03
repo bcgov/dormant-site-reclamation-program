@@ -3,7 +3,7 @@ app {
     version = 'snapshot'
         namespaces {
         'build'{
-            namespace = 'eazios-tools'
+            namespace = '269007-tools'
             disposable = true
         }
     }
@@ -30,7 +30,7 @@ app {
         version = "${app.build.env.name}-${app.build.env.id}"
 
         suffix = "-${app.git.changeId}"
-        namespace = 'eazios-tools'
+        namespace = '269007-tools'
         timeoutInSeconds = 60*40 // 40 minutes
         templates = [
                 [

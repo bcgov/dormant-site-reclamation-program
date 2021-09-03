@@ -3,11 +3,11 @@ app {
     version = 'snapshot'
         namespaces {
         'build'{
-            namespace = 'eazios-tools'
+            namespace = '269007-tools'
             disposable = true
         }
         'prod' {
-            namespace = 'eazios-prod'
+            namespace = '269007-prod'
             disposable = false
         }
     }
@@ -34,7 +34,7 @@ app {
         version = "${app.build.env.name}-${app.build.env.id}"
 
         suffix = "-${app.git.changeId}"
-        namespace = 'eazios-tools'
+        namespace = '269007-tools'
     }
 
     deployment {
@@ -76,7 +76,7 @@ app {
                             'ENVIRONMENT_NAME':"${vars.deployment.namespace}",
                             'ENVIRONMENT_FRIENDLY_NAME':"Dormant Site Reclamation Program (PROD)",
                             'DATABASE_SERVICE_NAME':"dsrp-postgresql${vars.deployment.suffix}",
-                            'NFS_VOLUME_IDENTIFIER':"bk-eazios-prod-5bnkhh28q45l",
+                            'NFS_VOLUME_IDENTIFIER':"bk-269007-prod-5bnkhh28q45l",
                             'CPU_REQUEST':"${vars.resources.backup.cpu_request}",
                             'CPU_LIMIT':"${vars.resources.backup.cpu_limit}",
                             'MEMORY_REQUEST':"${vars.resources.backup.memory_request}",
@@ -240,11 +240,10 @@ app {
 environments {
     'prod' {
         vars {
-            DB_PVC_SIZE = '50Gi'
-            DOCUMENT_PVC_SIZE = '80Gi'
-            BACKUP_VERIFICATION_PVC_SIZE = '10Gi'
+            DB_PVC_SIZE = '5Gi'
+            BACKUP_VERIFICATION_PVC_SIZE = '5Gi'
             LOG_PVC_SIZE = '5Gi'
-            METABASE_PVC_SIZE = '20Gi'
+            METABASE_PVC_SIZE = '5Gi'
             git {
                 changeId = "${opt.'pr'}"
             }
@@ -345,10 +344,10 @@ environments {
                 suffix = "-prod"
                 application_suffix = "-pr-${vars.git.changeId}"
                 key = 'prod'
-                namespace = 'eazios-prod'
+                namespace = '269007-prod'
                 node_env = "production"
                 fn_layer_url = "https://apps.gov.bc.ca/ext/sgw/geo.allgov"
-                matomo_url = "https://matomo-eazios-prod.pathfinder.gov.bc.ca/"
+                matomo_url = "https://matomo-269007-prod.pathfinder.gov.bc.ca/"
             }
             modules {
                 'dsrp-frontend' {
